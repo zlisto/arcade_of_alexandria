@@ -1,0 +1,5 @@
+﻿node_modules
+dist
+books/*.pdf
+*.pdf
+.DS_Store

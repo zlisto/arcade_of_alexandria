@@ -1,0 +1,19 @@
+{
+  "protocol": "mvw/0.1",
+  "name": "Arcade of Alexandria",
+  "description": "A Metaverse Web hall where textbooks become video games. Talk to Callimachus the librarian, search the catalog, and play cabinets \u2014 starting with Algebraic Topology.",
+  "spawns": {
+    "default": "Near the entrance, facing down the arcade hall",
+    "from_square": "In front of the portal back to Metaverse Square, facing into the hall",
+    "hub_portal": "In front of the portal back to Metaverse Square, facing into the hall"
+  },
+  "portals": [
+    {
+      "id": "to_metaverse_square",
+      "label": "Metaverse Square",
+      "href": "https://zlisto.github.io/hub_world/",
+      "spawn": "by_arcade_of_alexandria",
+      "where": "The glowing doorway on the north wall"
+    }
+  ]
+}
