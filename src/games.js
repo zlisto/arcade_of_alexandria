@@ -6,12 +6,12 @@
 export const GAMES = [
   {
     id: 'algebraic_topology',
-    title: 'Algebraic Topology',
+    title: 'Winding World',
     subject: 'Mathematics',
-    blurb: 'Homotopy, fundamental groups, and covering spaces — play the ideas from the classic textbook.',
-    authors: 'Source textbook in books/',
-    href: null,
-    status: 'coming_soon',
+    blurb: 'Homotopy, fundamental groups, and covering spaces — play the ideas from Hatcher’s Algebraic Topology.',
+    authors: 'Allen Hatcher · Algebraic Topology',
+    href: 'https://zlisto.github.io/game_algebraic_topology/',
+    status: 'live',
     theme: { primary: '#5b6ee1', secondary: '#2a2f55', accent: '#c9d4ff', wood: '#6b4a2a', label: 'TORUS' },
   },
   {
