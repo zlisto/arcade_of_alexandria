@@ -26,7 +26,8 @@ export const PORTAL = {
   label: 'Metaverse Square',
 }
 
-export const GUIDE = { x: 0, z: 4.5, r: 0.45 }
+// At default spawn you face -z; left is -x — Callimachus stands there so you can turn and talk.
+export const GUIDE = { x: -2.4, z: 8.1, r: 0.45 }
 GUIDE.rot = Math.atan2(SPAWNS.default.x - GUIDE.x, SPAWNS.default.z - GUIDE.z)
 
 // One cabinet per catalog game, alternating left / right down the hall.
