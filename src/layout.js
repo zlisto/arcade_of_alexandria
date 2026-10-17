@@ -26,8 +26,9 @@ export const PORTAL = {
   label: 'Metaverse Square',
 }
 
-// At default spawn you face -z; left is -x — Callimachus stands there so you can turn and talk.
-export const GUIDE = { x: -2.4, z: 8.1, r: 0.45 }
+// At default spawn (0, 8) you face -z; left is -x. Blue floor is outside the ±1.6m beige aisle.
+// Keep him close on that blue strip so you can turn left and talk — not down the hall behind a cabinet.
+export const GUIDE = { x: -2.5, z: 7.2, r: 0.45 }
 GUIDE.rot = Math.atan2(SPAWNS.default.x - GUIDE.x, SPAWNS.default.z - GUIDE.z)
 
 // One cabinet per catalog game, alternating left / right down the hall.
@@ -45,13 +46,13 @@ export const MACHINES = GAMES.map((g, i) => {
   }
 })
 
-// Featured: Algebraic Topology in the center aisle (first title they're building)
+// Featured: Algebraic Topology just off the aisle (not blocking the walk or the librarian)
 export const FEATURED = {
   id: 'featured_algebraic_topology',
   gameId: 'algebraic_topology',
-  x: 0,
-  z: -8,
-  rot: Math.PI,
+  x: 3.2,
+  z: -6,
+  rot: -Math.PI / 2 + 0.35,
   title: 'Algebraic Topology',
 }
 
