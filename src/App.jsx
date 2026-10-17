@@ -12,7 +12,7 @@ import { onIdentity, presence } from './mvw.js'
 
 const NAME = 'Arcade of Alexandria'
 const BLURB =
-  'A hall of cabinets where textbooks become video games. Talk to Callimachus the librarian, search the catalog, and play Algebraic Topology when it is ready.'
+  'A hall of blocky cabinets for college courses — Biology, Organic Chemistry, Literature, Calculus, and more. Talk to Callimachus, search the catalog, aim at a machine and press E.'
 
 const MACHINE_IDS = new Set(ALL_MACHINES.map((m) => m.id))
 

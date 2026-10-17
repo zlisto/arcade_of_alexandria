@@ -1,7 +1,7 @@
 // Fixed lines for Callimachus the librarian (no AI).
 
 export const GREETING = (v) =>
-  `Welcome${v ? `, ${v}` : ''} to the **Arcade of Alexandria**. I am **Callimachus**, keeper of the catalogs. Here, textbooks become video games that teach — walk the cabinets, or search the shelf of games below. Our first volume is **Algebraic Topology**.`
+  `Welcome${v ? `, ${v}` : ''} to the **Arcade of Alexandria**. I am **Callimachus**, keeper of the catalogs. Here, college textbooks become video games — Biology, Organic Chemistry, Literature, Calculus, and more. Search the catalog below, or walk to a cabinet and press **E**.`
 
 export const FACTS = [
   {
@@ -11,16 +11,16 @@ export const FACTS = [
 It lives on the Metaverse Web: walk in through a portal, talk to me, play a cabinet, then walk out to Metaverse Square.`,
   },
   {
+    q: 'What courses are here?',
+    a: `Cabinets for common college courses: **Biology**, **Organic Chemistry**, **Literature**, **Calculus**, **Microeconomics**, **Physics**, **Computer Science**, and **Algebraic Topology** (our first deep build).
+
+Every title starts as "coming soon" until its own game repo goes live — then we drop in the link.`,
+  },
+  {
     q: 'How do the games work?',
     a: `Each game is its own site, linked from a cabinet here. Aim at a machine and **click** or press **E** to play.
 
-Games are built in separate repos. When a new one is ready, we add its link to the catalog — the hall grows as the library does.`,
-  },
-  {
-    q: 'What is Algebraic Topology?',
-    a: `Our first title. It will teach ideas from the algebraic topology textbook: **homotopy**, the **fundamental group**, **covering spaces**, and more — through mechanics, not trivia.
-
-The cabinet is already on the floor. The game itself is still being forged; clicking it for now will tell you it is coming soon.`,
+Games are built in separate repos. When a new one is ready, add its \`href\` in \`src/games.js\` — the hall picks it up automatically.`,
   },
   {
     q: 'Who are you?',
@@ -30,7 +30,7 @@ No oracle, no live model: my answers are prepared, like scrolls on the shelf.`,
   },
   {
     q: 'How do I add a game?',
-    a: `Build the game in its own repository, host it, then add an entry to \`src/games.js\` here with a title, blurb, and \`href\`. The cabinet and my search list pick it up automatically.
+    a: `Build the game in its own repository, host it, then add an entry to \`src/games.js\` here with a title, blurb, theme colors, and \`href\`. The cabinet and my search list pick it up automatically.
 
 Authors of the source textbooks keep their attribution — every game must carry the book's metadata.`,
   },

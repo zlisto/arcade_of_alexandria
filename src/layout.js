@@ -29,35 +29,28 @@ export const PORTAL = {
 export const GUIDE = { x: 0, z: 4.5, r: 0.45 }
 GUIDE.rot = Math.atan2(SPAWNS.default.x - GUIDE.x, SPAWNS.default.z - GUIDE.z)
 
-// Arcade cabinets: left and right rows. First game gets a real machine; extras are empty "coming soon" slots.
-const leftZs = [-10, -5, 0, 5]
-const rightZs = [-10, -5, 0, 5]
-export const MACHINES = [
-  ...leftZs.map((z, i) => ({
-    id: GAMES[i]?.id ?? `empty_l_${i}`,
-    gameId: GAMES[i]?.id ?? null,
-    x: ROOM.xMin + 1.4,
-    z,
-    rot: Math.PI / 2, // face into the hall (+x)
-    title: GAMES[i]?.title ?? 'Empty cabinet',
-  })),
-  ...rightZs.map((z, i) => ({
-    id: GAMES[i + leftZs.length]?.id ?? `empty_r_${i}`,
-    gameId: GAMES[i + leftZs.length]?.id ?? null,
-    x: ROOM.xMax - 1.4,
-    z,
-    rot: -Math.PI / 2,
-    title: GAMES[i + leftZs.length]?.title ?? 'Empty cabinet',
-  })),
-]
+// One cabinet per catalog game, alternating left / right down the hall.
+const slots = [-12, -8, -4, 0, 4, 8]
+export const MACHINES = GAMES.map((g, i) => {
+  const left = i % 2 === 0
+  const row = Math.floor(i / 2)
+  return {
+    id: g.id,
+    gameId: g.id,
+    x: left ? ROOM.xMin + 1.55 : ROOM.xMax - 1.55,
+    z: slots[row] ?? 8,
+    rot: left ? Math.PI / 2 : -Math.PI / 2,
+    title: g.title,
+  }
+})
 
-// Put Algebraic Topology on a prominent center-front cabinet too
+// Featured: Algebraic Topology in the center aisle (first title they're building)
 export const FEATURED = {
   id: 'featured_algebraic_topology',
   gameId: 'algebraic_topology',
   x: 0,
   z: -8,
-  rot: Math.PI, // face south, toward spawn
+  rot: Math.PI,
   title: 'Algebraic Topology',
 }
 
@@ -66,7 +59,6 @@ export const ALL_MACHINES = [...MACHINES, FEATURED]
 export function collide(pos) {
   pos.x = Math.max(ROOM.xMin + R_PLAYER, Math.min(ROOM.xMax - R_PLAYER, pos.x))
   pos.z = Math.max(ROOM.zMin + R_PLAYER, Math.min(ROOM.zMax - R_PLAYER, pos.z))
-  // librarian
   {
     const dx = pos.x - GUIDE.x
     const dz = pos.z - GUIDE.z
@@ -77,10 +69,9 @@ export function collide(pos) {
       pos.z = GUIDE.z + (dz / d) * rr
     }
   }
-  // cabinets (rough boxes)
   for (const m of ALL_MACHINES) {
-    const hw = 0.55
-    const hd = 0.45
+    const hw = 0.7
+    const hd = 0.55
     const cx = Math.max(m.x - hw, Math.min(m.x + hw, pos.x))
     const cz = Math.max(m.z - hd, Math.min(m.z + hd, pos.z))
     const ex = pos.x - cx

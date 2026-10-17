@@ -66,8 +66,8 @@ export default function World({ talking = false, onTalk }) {
       <ambientLight intensity={0.35} />
       <hemisphereLight args={['#ffe8c8', '#2a2035', 0.55]} />
       <pointLight position={[0, H - 0.5, 0]} intensity={40} distance={30} color="#ffd6a0" />
-      <pointLight position={[-8, 3, -6]} intensity={18} distance={16} color="#ff4fa3" />
-      <pointLight position={[8, 3, -6]} intensity={18} distance={16} color="#5fe39b" />
+      <pointLight position={[-8, 3, -6]} intensity={16} distance={16} color="#e8a86a" />
+      <pointLight position={[8, 3, -6]} intensity={16} distance={16} color="#6ab0c9" />
 
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[CX, 0, CZ]} material={floorMat}>
         <planeGeometry args={[W, D]} />
