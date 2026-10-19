@@ -1,0 +1,155 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "winding-world",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "games/algebraic_topology",
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "5180",
+        "--strictPort"
+      ],
+      "port": 5180
+    },
+    {
+      "name": "winding-world-2",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "games/algebraic_topology",
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "5181",
+        "--strictPort"
+      ],
+      "port": 5181
+    },
+    {
+      "name": "winding-world-3",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "games/algebraic_topology",
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "5182",
+        "--strictPort"
+      ],
+      "port": 5182
+    },
+    {
+      "name": "winding-world-4",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "games/algebraic_topology",
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "5183",
+        "--strictPort"
+      ],
+      "port": 5183
+    },
+    {
+      "name": "winding-world-5",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "games/algebraic_topology",
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "5184",
+        "--strictPort"
+      ],
+      "port": 5184
+    },
+    {
+      "name": "winding-world-6",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "games/algebraic_topology",
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "5185",
+        "--strictPort"
+      ],
+      "port": 5185
+    },
+    {
+      "name": "winding-world-7",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "games/algebraic_topology",
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "5186",
+        "--strictPort"
+      ],
+      "port": 5186
+    },
+    {
+      "name": "winding-world-8",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "games/algebraic_topology",
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "5187",
+        "--strictPort"
+      ],
+      "port": 5187
+    },
+    {
+      "name": "winding-world-9",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "games/algebraic_topology",
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "5188",
+        "--strictPort"
+      ],
+      "port": 5188
+    },
+    {
+      "name": "winding-world-10",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "games/algebraic_topology",
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "5189",
+        "--strictPort"
+      ],
+      "port": 5189
+    }
+  ]
+}
