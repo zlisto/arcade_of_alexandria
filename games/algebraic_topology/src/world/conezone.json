@@ -1,0 +1,66 @@
+{
+  "note": "The Cone Zone (World 0 · Level 5): a terrace of operation works on the Foundry cliff, in level-local units (x east, z south). Each works is a round platform with a machine (it runs one or more operations on spaces), source pedestals that dispense specimen spaces (Coners plug them by coning them), and a two-place output shelf. Gyroid arrives from the forge door in the south and leaves north toward the Timber Yard.",
+  "bounds": { "minX": -20, "maxX": 20, "minZ": -26, "maxZ": 20 },
+  "causewayWidth": 1.5,
+  "start": [0, 16],
+  "sites": [
+    { "id": "cone_landing", "name": "Forge Door Landing", "kind": "start", "pos": [0, 16], "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 1.7 }] } },
+    {
+      "id": "cone_works",
+      "name": "The Cone Works",
+      "stage": "station",
+      "pos": [0, 7],
+      "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 5.4 }] },
+      "machine": [0, -1.6],
+      "shelf": [[2.9, -2.6], [3.9, -0.9]],
+      "sources": [{ "spec": "circle", "at": [-2.4, 1.9] }, { "spec": "s0", "at": [0.4, 2.9] }],
+      "emmy": [-3.6, -1.8],
+      "enemies": [["coner", -3.4, -3.2], ["sphere", 3.2, 2.6]]
+    },
+    {
+      "id": "suspension_works",
+      "name": "The Suspension Works",
+      "stage": "station",
+      "pos": [-11, -2.5],
+      "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 5.4 }] },
+      "machine": [0, -1.6],
+      "shelf": [[2.9, -2.6], [3.9, -0.9]],
+      "sources": [{ "spec": "s0", "at": [-1.2, 2.6] }],
+      "emmy": [-3.6, -1.6],
+      "enemies": [["sphere", -3, 2.6], ["sphere", 3, 2.8]]
+    },
+    {
+      "id": "wedge_product",
+      "name": "Wedge & Product",
+      "stage": "station",
+      "pos": [11, -2.5],
+      "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 5.4 }] },
+      "machine": [0, -1.6],
+      "shelf": [[2.9, -2.6], [3.9, -0.9]],
+      "sources": [{ "spec": "circle", "at": [-2.4, 1.9] }, { "spec": "interval", "at": [0.4, 2.9] }],
+      "emmy": [-3.6, -1.6],
+      "enemies": [["coner", 3.4, 3.2], ["coner", -3.6, -3.4]]
+    },
+    {
+      "id": "recipe_board",
+      "name": "The Recipe Board",
+      "stage": "station",
+      "pos": [0, -12],
+      "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 5.4 }] },
+      "machine": [0, -1.6],
+      "shelf": [[2.9, -2.6], [3.9, -0.9]],
+      "sources": [{ "spec": "point", "at": [-3.3, 0.9] }, { "spec": "s0", "at": [-1.4, 2.8] }, { "spec": "disk", "at": [1.0, 3.1] }],
+      "emmy": [-3.8, -1.8],
+      "enemies": [["sphere", 3.4, 2.6]],
+      "wave": [["coner", -4, 3.6], ["coner", 4.2, 3.4], ["sphere", 0, 4.4]]
+    }
+  ],
+  "causeways": [
+    { "a": [0, 14.5], "b": [0, 12.1] },
+    { "a": [-3.6, 3.2], "b": [-7.6, 1.2] },
+    { "a": [3.6, 3.2], "b": [7.6, 1.2] },
+    { "a": [-8.2, -7.1], "b": [-3.7, -9.4] },
+    { "a": [8.2, -7.1], "b": [3.7, -9.4] }
+  ],
+  "exit": { "gate": [0, -19.2], "a": [0, -17.1], "b": [0, -24.5], "to": "timber_yard" }
+}

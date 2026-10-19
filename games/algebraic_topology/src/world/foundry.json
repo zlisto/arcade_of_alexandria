@@ -1,0 +1,58 @@
+{
+  "note": "The Skeleton Foundry's Assembly Hall (World 0 · Level 4) in level-local units: x east, z south. Each forge station is a round platform with a furnace hub at its center (the one 0-cell) and petal tracks that leave the hub and come back (each forged track is a 1-cell, a loop at the hub). Gyroid arrives from the Mirror Gate in the south and leaves north toward the Cone Zone.",
+  "bounds": { "minX": -20, "maxX": 20, "minZ": -26, "maxZ": 18 },
+  "causewayWidth": 1.5,
+  "start": [0, 14],
+  "sites": [
+    { "id": "foundry_landing", "name": "Foundry Gate", "kind": "start", "pos": [0, 14], "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 1.7 }] } },
+    {
+      "id": "sphere_press",
+      "name": "The Sphere Press",
+      "stage": "station",
+      "pos": [0, 5.5],
+      "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 5.4 }] },
+      "tracks": [{ "angle": 1.5708, "length": 3.9 }],
+      "emmy": [-3.2, 2.6],
+      "enemies": [["sphere", -3, -2.5], ["sphere", 3, -2.5]]
+    },
+    {
+      "id": "twin_loops",
+      "name": "Twin Loops",
+      "stage": "station",
+      "pos": [-11, -3.5],
+      "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 5.4 }] },
+      "tracks": [{ "angle": 3.1416, "length": 4.3 }, { "angle": 0, "length": 4.3 }],
+      "emmy": [0.6, 4.2],
+      "enemies": [["sphere", -2, -3.6], ["torus", 2.5, 3.2], ["unglue", 3, -3]]
+    },
+    {
+      "id": "one_loop",
+      "name": "One Loop",
+      "stage": "station",
+      "pos": [11, -3.5],
+      "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 5.4 }] },
+      "tracks": [{ "angle": 1.5708, "length": 4.2 }],
+      "emmy": [-3.4, 2.4],
+      "enemies": [["unglue", 3, -2.5], ["sphere", -3, -2.5]]
+    },
+    {
+      "id": "blueprint_wall",
+      "name": "The Blueprint Wall",
+      "stage": "station",
+      "pos": [0, -12.5],
+      "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 5.4 }] },
+      "tracks": [{ "angle": 3.1416, "length": 4.3 }, { "angle": 0, "length": 4.3 }],
+      "emmy": [-3.6, 3.2],
+      "enemies": [["torus", 0, 3.6]],
+      "wave": [["unglue", -4, -2], ["unglue", 4, -2], ["unglue", 0, 4], ["sphere", -3, 3]]
+    }
+  ],
+  "causeways": [
+    { "a": [0, 12.5], "b": [0, 10.6] },
+    { "a": [-3.6, 1.9], "b": [-7.3, -0.6] },
+    { "a": [3.6, 1.9], "b": [7.3, -0.6] },
+    { "a": [-8.4, -7.6], "b": [-3.6, -9.7] },
+    { "a": [8.4, -7.6], "b": [3.6, -9.7] }
+  ],
+  "exit": { "gate": [0, -19.4], "a": [0, -17.6], "b": [0, -24.5], "to": "cone_zone" }
+}

@@ -1,0 +1,1822 @@
+{
+  "world": 0,
+  "levels": {
+    "0-1": {
+      "status": "built",
+      "site": "Retract Reef overworld: Landing Pier → the Walkway, the Fork, the O, Twin Lagoons → Null's Mirage at the broken causeway.",
+      "story": "Morning after the collapse. Gyroid wakes at the Landing Pier; the walkway slabs are gone but the amber spines held. Emmy shows how a thick reef shrinks onto its spine without losing anything that matters. With four reefs saved, Null's Mirage stages four forged 'retractions'; naming the broken rule in each mends the causeway to Tidewarp Flats.",
+      "objective": "Save the four reefs by shrinking each onto a spine through its beacons, then expose Null's four forgeries.",
+      "mechanics": [
+        "Explore in third person (WASD); overhead follow camera; minimap from the World 0 map.",
+        "Fundamental Lash (click toward the mouse): spheres collapse in one lash, tori need two (one loop each).",
+        "Spool (2 / Q, click to start and stop): walk to lay spine thread on a reef.",
+        "Slide: the reef deformation-retracts onto the spine; Gyroid rides his own tile. Saved reefs regrow, healed.",
+        "The spine is valid when it is connected and every region of reef − spine touches exactly one shore; otherwise the failing region turns red with a diagnosis (leak / fenced patch / disconnected)."
+      ],
+      "math_check": "Deformation retraction of a planar region onto a drawn graph: valid iff the spine is connected and each complementary region is a collar on a single boundary curve; the slide follows the gradient of a harmonic function in each collar (continuous by construction).",
+      "stages": [
+        {
+          "name": "The Walkway",
+          "beat": "teach",
+          "description": "Clear two spheres; the spine is given; watch the slide and the five rules turn green."
+        },
+        {
+          "name": "The Fork",
+          "beat": "practice",
+          "description": "A thick T: spool a spine through three beacons."
+        },
+        {
+          "name": "The O",
+          "beat": "twist",
+          "description": "First torus. A short spine leaks across the ring; only a loop around the hole holds."
+        },
+        {
+          "name": "Twin Lagoons",
+          "beat": "master",
+          "description": "A disk with two holes: figure-eight, theta or barbell spines all work (Hatcher's three)."
+        },
+        {
+          "name": "Null's Mirage",
+          "beat": "master",
+          "description": "Four forgeries, each breaking one rule; name the rule. Wins mend the broken causeway."
+        }
+      ],
+      "enemies": [
+        {
+          "name": "Sphere spawn",
+          "description": "One lash; loops slide off a sphere, so it collapses to a point."
+        },
+        {
+          "name": "Torus spawn",
+          "description": "Two lashes: the first lights a loop around its tube, the second a loop through its hole."
+        }
+      ],
+      "tools": "Uses the Lash; unlocks the Spool (anchor_spool).",
+      "music": "The Retract Reef theme: 92 bpm D dorian chiptune — pads, echoing pulse arpeggio, triangle bass, sine lead on the second phrase.",
+      "visuals": "Basalt reefs on a dark luminous sea, gold spines and beacons, violet spawn; saved reefs warm to a pale gold-grey.",
+      "movie": "level-0-1-intro “Spines That Held” (scripted)."
+    },
+    "0-2": {
+      "site": "Tidewarp Flats — wide wet basalt flats east of the mended causeway, with tide pools and stone posts.",
+      "story": "Past the mended causeway the tide reshapes every path on the flats each hour. Null's engineers 'help' by snapping paths straight to a single post. Gyroid learns that a homotopy is the whole continuous movie of maps — and that a snap is not a movie.",
+      "objective": "Guide the tide: deform gold ribbon-paths into the shapes the shrines ask for, keeping the marked posts fixed, without crossing open water.",
+      "mechanics": [
+        "Ribbons are maps from an interval into the flats. Gyroid grabs a ribbon point with the Spool and walks it; the ribbon bends continuously behind him (a homotopy, recorded as a ghost trail).",
+        "Posts pin points of a ribbon: a homotopy rel those posts never moves them.",
+        "Tide pools are holes in the flats: a ribbon can't pass through water, so some targets can only be reached by going around.",
+        "Tide Glass (new): scrub a recorded deformation backwards and forwards in time — every frame must connect to the next.",
+        "Null's Snap: a ‘deformation’ that jumps; the player finds the frame where it tears."
+      ],
+      "math_check": "Path homotopy in a planar region with holes, rel endpoints; continuity in time (consecutive frames are close); retraction (a single map) versus deformation retraction (a continuous family).",
+      "stages": [
+        {
+          "name": "Tide Line",
+          "beat": "teach",
+          "description": "The tide bends a ribbon on its own; scrub the Tide Glass and watch a homotopy as a movie of maps."
+        },
+        {
+          "name": "Hold the Posts",
+          "beat": "practice",
+          "description": "Walk a ribbon into the shrine's target shape with both end posts fixed — a homotopy rel endpoints."
+        },
+        {
+          "name": "The Pools",
+          "beat": "twist",
+          "description": "Two targets on opposite sides of a tide pool: one is reachable by sliding around the pool, the other isn't by any slide Gyroid can find. Emmy: proving it's impossible needs a tool from the next world."
+        },
+        {
+          "name": "Null's Snap",
+          "beat": "master",
+          "description": "Null retracts the whole flats onto one post in a single snap. Every space retracts to a point; find the frame where his ‘deformation’ tears."
+        }
+      ],
+      "enemies": [
+        {
+          "name": "Snapper",
+          "description": "New: a violet crab that clips ribbons. A clipped ribbon is discontinuous and must be re-tied before the shrine accepts it. One lash."
+        },
+        {
+          "name": "Sphere and torus spawn",
+          "description": "As in 0-1, now drifting with the tide."
+        }
+      ],
+      "tools": "Uses the Lash and Spool; unlocks the Tide Glass (scrub time).",
+      "music": "Variation on the reef theme: slower (80 bpm), tidal swells on the pad, a ticking clock-like pluck when the Tide Glass is out.",
+      "visuals": "Mirror-wet basalt flats at low tide, stone posts, glowing gold ribbons with translucent ghost copies; violet sparks where a snap tears.",
+      "movie": "level-0-2-intro “The Tide Bends Everything” (scripted).",
+      "status": "built"
+    },
+    "0-3": {
+      "site": "Mirror Shoals — five reefs on either side of a glassy, star-reflecting channel: Solid Shoal, Ring Reef, Twin Mirror, the Dumbbell, and the reef before the Mirror Gate to the Skeleton Foundry.",
+      "story": "The figure-eight and the theta both came from Twin Lagoons, yet they look nothing alike. Emmy shows how to prove two places are 'the same shape': maps both ways whose round trips slide home. The Mirror Gate opens only for someone who can do it — and Emmy seems to know what's behind it.",
+      "objective": "Prove reefs are the same shape: shrink loops, slide reefs onto spines (0-1's deformation retraction), and show one reef slides onto two different spines — then open the Mirror Gate.",
+      "mechanics": [
+        "Loops on stakes (0-2's Spool): unhook every stake and a loop on solid ground shrinks to its post; around a hole it catches.",
+        "Point spine: a one-point spine slides a solid reef onto a point — contractible (homotopy equivalent to a point).",
+        "Two spines, one reef: the same two-hole reef deformation retracts onto a figure-eight and onto a theta, so they are homotopy equivalent (Hatcher, Corollary 0.21: both are deformation retracts of one space).",
+        "One loop per hole: a ring spine on a two-hole reef leaks; adding a second loop and a bar (a barbell) works.",
+        "Mirror spawn: each has an intangible reflection across its reef's mirror line; only the solid one can be lashed.",
+        "The lesson shows explicit maps f : eight → theta and g : theta → eight (collapse the bar) whose round trips slide home."
+      ],
+      "math_check": "Homotopy equivalence (fg ≃ 1, gf ≃ 1) and contractibility (Hatcher pp. 3–4), proved in play via deformation retractions checked by the 0-1 slide engine; X ≃ Y iff both are deformation retracts of some Z (Corollary 0.21, p. 16). Flag: that the ring is not contractible is left unproved until World 1.",
+      "stages": [
+        {
+          "name": "Solid Shoal",
+          "beat": "teach",
+          "description": "Unhook a loop: it shrinks to its post. Then a one-point spine slides the whole reef onto a point — contractible."
+        },
+        {
+          "name": "Ring Reef",
+          "beat": "teach",
+          "description": "Its loop catches on the hole; Emmy flags that proving it can't shrink needs World 1."
+        },
+        {
+          "name": "Twin Mirror",
+          "beat": "practice",
+          "description": "Slide one two-hole reef onto a figure-eight, let it regrow, then onto a theta: the two spines are the same shape."
+        },
+        {
+          "name": "Dumbbell",
+          "beat": "twist",
+          "description": "Null's ring spine leaks (a hole without a loop); a barbell spine works."
+        },
+        {
+          "name": "The Mirror Gate",
+          "beat": "master",
+          "description": "Any valid spine on an odd two-hole reef; the gate lights figure-eight, theta and barbell, leaves the ring dark, and opens onto the Foundry."
+        }
+      ],
+      "enemies": [
+        {
+          "name": "Mirror spawn",
+          "description": "New: a faceted mirror-crystal creature with an intangible, flickering reflection across its reef's mirror line; lash the solid one. One lash."
+        },
+        {
+          "name": "Sphere and torus spawn",
+          "description": "One and two lashes."
+        }
+      ],
+      "tools": "Uses the Lash and Spool (spines and loops).",
+      "music": "Mirror Shoals theme: 72 bpm E lydian celesta bells over a slow pad; every two-bar motif is answered by its mirror image (inverted).",
+      "visuals": "A still mirror channel reflecting stars; two thick basalt reefs; gold threads arcing between them; a tall mirrored gate with forge-light behind it.",
+      "movie": "level-0-3-intro “Two Reefs, One Shape” and the lesson level-0-3-lesson “Same Shape”.",
+      "status": "built"
+    },
+    "0-4": {
+      "site": "The Skeleton Foundry's Assembly Hall — four forge stations (round basalt platforms with a furnace hub and petal tracks) under a press gantry, and the forge door to the Cone Zone.",
+      "story": "Through the Mirror Gate, Emmy's secret comes out: she built the Foundry's cell presses, and Null's engineers turned them into collapse engines. She gives Gyroid the Cell-Smith so they can build places back — cell by cell.",
+      "objective": "Forge cell complexes at four presses — the sphere (twice), the torus, the projective plane and the Klein bottle — and open the forge door with χ.",
+      "mechanics": [
+        "Cell-Smith (new): click the furnace hub to forge the point (the one 0-cell).",
+        "Walk a petal track out from the hub and back: an edge (a 1-cell), a loop at the point, arrow in the direction walked, lettered a, b.",
+        "Walk a word along the edges (forward = a, against the arrow = a⁻¹), then click the hub: the press glues a disk (a 2-cell) along that loop.",
+        "The press's hologram folds the flat cell into the space it makes; a wrong word builds something else, shown and explained, then let go.",
+        "χ = points − edges + disks, counted live on the blueprint card.",
+        "Unglues tear forged edges; re-walk a torn track to re-forge it."
+      ],
+      "math_check": "Cell complexes built skeleton by skeleton (Hatcher pp. 5–8); one-vertex structures: S² = e⁰ ∪ e² and also e⁰ ∪ e¹ ∪ 2e²; T² along a b a⁻¹ b⁻¹; RP² along a a; Klein bottle along a b a⁻¹ b; χ as even minus odd cells (Example 0.2). Flag: that χ depends only on the space is Theorem 2.44 (Chapter 2) — stated, not proved here. Also: with one vertex, a disk on a a⁻¹ is a sphere with two points glued (χ = 1), and the game says so.",
+      "stages": [
+        {
+          "name": "The Sphere Press",
+          "beat": "teach",
+          "description": "Point + a disk with its rim crushed to it: a sphere. Again as one edge + two hemispheres: same χ = 2."
+        },
+        {
+          "name": "Twin Loops",
+          "beat": "practice",
+          "description": "Edges a, b; a disk along a b a⁻¹ b⁻¹: the torus folds (roll, then bend). χ = 0."
+        },
+        {
+          "name": "One Loop",
+          "beat": "twist",
+          "description": "A disk along a just fills the loop (a disk); along a a it's the projective plane, which crosses itself in 3D."
+        },
+        {
+          "name": "The Blueprint Wall",
+          "beat": "master",
+          "description": "a b a⁻¹ b under an Unglue wave: the Klein bottle; then answer χ = 0 to open the forge door."
+        }
+      ],
+      "enemies": [
+        {
+          "name": "Unglue",
+          "description": "New: a violet seam-ripper that tears forged edges loose; re-walk the track to re-forge. One lash."
+        },
+        {
+          "name": "Sphere and torus spawn",
+          "description": "One and two lashes."
+        }
+      ],
+      "tools": "Unlocks the Cell-Smith (cell_smith).",
+      "music": "Forge theme: 100 bpm C minor — anvil strikes on the off-beats, square bass and brass, bellows swells, the reef melody in minor.",
+      "visuals": "Basalt forge hall, furnaces glowing amber, cranes laying curved glowing edges, a square sheet folding into a torus mid-air; Gyroid's brass-and-indigo gauntlet.",
+      "movie": "level-0-4-intro “Emmy's Foundry” and the lesson level-0-4-lesson “Built from Cells”.",
+      "status": "built"
+    },
+    "0-5": {
+      "site": "Cone Zone — a terrace of workstations on the Foundry cliff.",
+      "story": "Null's engineers are 'fixing' ring islands by coning them off: joining every point of a ring to one tip, which fills the hole. Gyroid learns the operations on spaces — cone, suspension, wedge, product, quotient — so a plugged hole can't fool him.",
+      "objective": "Stop the coning crews and use the stations to build target spaces from simpler ones.",
+      "mechanics": [
+        "Operation stations: feed a space in, choose cone, suspension, wedge or product, and get the new space (with its cells added).",
+        "Recipe puzzles: reach a target space by a chain of operations (circle → suspension → sphere; circle × circle → torus; circle ∨ circle → figure-eight).",
+        "Quotients: collapse a subspace to a point; collapsing something contractible keeps the shape, collapsing a loop doesn't.",
+        "Spot the plug: a coned ring is a disk — contractible — even if it still looks like a ring from the side."
+      ],
+      "math_check": "Cones are contractible; suspension of Sⁿ is Sⁿ⁺¹; products and wedges add cells predictably; collapsing a contractible subcomplex preserves homotopy type.",
+      "stages": [
+        {
+          "name": "The Cone",
+          "beat": "teach",
+          "description": "Watch a crew cone a ring: the hole fills. Any cone shrinks to its tip."
+        },
+        {
+          "name": "Two Tips",
+          "beat": "practice",
+          "description": "Suspend two points: a circle. Suspend a circle: a sphere."
+        },
+        {
+          "name": "Wedge and Product",
+          "beat": "twist",
+          "description": "Build the figure-eight as a wedge and the torus as circle × circle; compare it with the torus from the Assembly Hall by counting cells."
+        },
+        {
+          "name": "Recipes",
+          "beat": "master",
+          "description": "Chain operations to match three targets while coning crews try to plug your inputs."
+        }
+      ],
+      "enemies": [
+        {
+          "name": "Coner",
+          "description": "New: a violet engineer drone that beams a cone onto a ring; lash it before the beam finishes or the ring is plugged. Two lashes."
+        },
+        {
+          "name": "Sphere spawn",
+          "description": "One lash."
+        }
+      ],
+      "tools": "Uses the Cell-Smith; unlocks the Suspension Sling (suspension_sling).",
+      "music": "Bright, mechanical: arpeggios that climb and fold back (cone up, cone down), a steady four-on-the-floor kick.",
+      "visuals": "Terraced basalt stations under moonlight, glowing gold cones and double cones, a small circle sweeping a torus; violet drones with cone beams.",
+      "movie": "level-0-5-intro “Null's Plugs” and the lesson level-0-5-lesson “New Spaces from Old”.",
+      "status": "built"
+    },
+    "0-6": {
+      "site": "Timber Yard — a tangled network of narrow walkways over the sea at the Foundry's edge; the unbuilt bridge to the Hollow Throne starts here.",
+      "story": "The yard's walkways have grown into a tangle. Felling a tree of walkways keeps the shape; felling a loop erases a hole — which is exactly what Null's spawn do. Counting platforms minus walkways tells bouquets apart. With the yard cleared, Gyroid forges the bridge to the Throne.",
+      "objective": "Collapse each tangle to a bouquet of loops without killing a loop, and read its petal count from χ.",
+      "mechanics": [
+        "Mark a tree with the Spool: amber walkways that reach every platform without closing a loop.",
+        "Fell: tree walkways fold toward one platform; the rest become petals of a bouquet.",
+        "Loop guard: trying to fell a walkway whose ends are the same platform is refused (it would erase a hole).",
+        "Census: χ = platforms − walkways never changes when a tree is felled; petals = 1 − χ.",
+        "Bridge: after the census, forge the Throne bridge's cells with the Cell-Smith."
+      ],
+      "math_check": "Collapsing a contractible subcomplex (a tree) is a homotopy equivalence; every connected graph is ≃ a wedge of 1 − χ circles.",
+      "stages": [
+        {
+          "name": "One Edge",
+          "beat": "teach",
+          "description": "Shrink a single walkway between two platforms: nothing is lost."
+        },
+        {
+          "name": "Spanning Tree",
+          "beat": "practice",
+          "description": "Mark a tree that touches every platform; fell it; count the petals."
+        },
+        {
+          "name": "The Wrong Cut",
+          "beat": "twist",
+          "description": "Loop-biter spawn collapse a petal; stop them, and see why a loop can't be felled."
+        },
+        {
+          "name": "Census",
+          "beat": "master",
+          "description": "Three tangles that look different: fell all three and sort them by χ."
+        }
+      ],
+      "enemies": [
+        {
+          "name": "Loop-biter",
+          "description": "New: violet beetles that chew a petal loop and collapse it. Two lashes."
+        },
+        {
+          "name": "Unglue",
+          "description": "From 0-4: tears forged edges."
+        }
+      ],
+      "tools": "Uses the Spool and Cell-Smith.",
+      "music": "Woodwind-like square leads and a log-drum pattern; a big chord on each successful fell.",
+      "visuals": "A web of narrow basalt walkways, a highlighted amber tree folding inward, petals of a bouquet around one glowing node; the black spire across the water.",
+      "movie": "level-0-6-intro “Timber Yard” and the lesson level-0-6-lesson “Felling Trees”.",
+      "status": "built"
+    },
+    "0-B": {
+      "site": "Cylinder Works — a sealed workshop off the Assembly Hall holding a huge translucent cylinder.",
+      "story": "Emmy's first machine. If you already know how the edge of a piece moves, can you extend that motion over the whole piece without changing where it starts? For anything built from cells, yes — one cell at a time.",
+      "objective": "Fill the cylinder's interior with a motion that matches the given floor and side band, cell by cell.",
+      "mechanics": [
+        "The floor shows the starting map; a band on the side shows the prescribed motion of a subcomplex.",
+        "Extend cell by cell with the Cell-Smith, in order of dimension: points, then edges, then disks.",
+        "A cell can be filled only once the motion on its boundary is already decided."
+      ],
+      "math_check": "The homotopy extension property for CW pairs: X×{0} ∪ A×I is a retract of X×I, built cell by cell.",
+      "stages": [
+        {
+          "name": "Floor and Band",
+          "beat": "teach",
+          "description": "Read the start and the prescribed motion."
+        },
+        {
+          "name": "Points First",
+          "beat": "practice",
+          "description": "Extend over the 0-cells, then the edges."
+        },
+        {
+          "name": "Wrong Order",
+          "beat": "twist",
+          "description": "Try a disk before its edges: refused."
+        },
+        {
+          "name": "Full Cylinder",
+          "beat": "master",
+          "description": "Fill the whole interior."
+        }
+      ],
+      "enemies": [
+        {
+          "name": "None",
+          "description": "A quiet puzzle room."
+        }
+      ],
+      "tools": "Uses the Cell-Smith.",
+      "music": "A music-box version of the forge theme, sparse and warm.",
+      "visuals": "A tall translucent cylinder filling with gold light cell by cell; an arched window onto the moonlit sea.",
+      "movie": "level-0-b-intro “The Cylinder Works” and the lesson level-0-b-lesson “One Cell at a Time”.",
+      "status": "built"
+    }
+  },
+  "castle": {
+    "site": "The Hollow Throne — Null's black-glass spire in the northwest, reached over the bridge forged at the Timber Yard.",
+    "story": "Gyroid climbs to Null's throne room, where the Null Crown hangs over a floor of shifting reef. Null tests everything World 0 taught: fake deformations, illegal collapses, false equivalences. Gyroid beats every forgery — but when Null insists a ring is secretly a point, Gyroid has no proof. Null laughs and escapes along the broken Winding Way.",
+    "objective": "Survive Null's three trials and expose every illegal simplification.",
+    "phases": [
+      {
+        "name": "Live forgeries",
+        "description": "Null's deformations play out on the arena floor. Lash the frame where a rule breaks (starts still, stays on the reef, ends on the spine, spine fixed, no tearing) to freeze it. Tests 0-1 and 0-2."
+      },
+      {
+        "name": "Simplifications",
+        "description": "Null collapses three walkway networks. Lash the beacons of illegal collapses (a loop felled, a hole coned) and spare the legal ones (a tree felled). Tests 0-5 and 0-6."
+      },
+      {
+        "name": "Same shape?",
+        "description": "Null shows pairs of reefs and claims they match. Build the round-trip maps for the true pairs; refuse the false ones. Tests 0-3."
+      },
+      {
+        "name": "The ring",
+        "description": "Null holds up a ring: ‘It's just a point.’ No World 0 tool can refute him — the arena's rules all hold for every slide Gyroid tries. Null escapes. Scripted loss of the argument, win of the castle."
+      }
+    ],
+    "enemies": [
+      {
+        "name": "Crown shards",
+        "description": "Violet fragments orbiting Null that dive at Gyroid; one lash each."
+      },
+      {
+        "name": "Every World 0 spawn",
+        "description": "Waves of spheres, tori, Snappers, Coners and Loop-biters between phases."
+      }
+    ],
+    "tools": "Everything from World 0: Lash, Spool, Tide Glass, Cell-Smith, Suspension Sling.",
+    "music": "Null's motif (D–E♭–D–A) on a pipe-organ-like square pad, rising a semitone each phase; the reef theme returns in a minor key when Null escapes.",
+    "visuals": "A circular throne room of black glass at the top of the spire, the Null Crown floating above, a reef-tile floor that ripples with Null's deformations, the moonlit world far below through open arches.",
+    "movie": "castle-0-intro “The Hollow Throne” and castle-0-outro “A Ring Is a Ring”.",
+    "status": "built"
+  },
+  "castle_art": {
+    "file": "castle-0-hollow-throne.png",
+    "scene": "Castle 'The Hollow Throne': a circular throne room of black glass at the top of a tall black spire, open arches looking down on a moonlit archipelago far below. The floor is made of basalt reef tiles rippling as if being deformed. Above an empty obsidian throne floats a broken circular crown of black metal with violet inward-pointing spikes, glowing violet. Count Null (tall, obsidian robes, pale porcelain mask, from the reference) stands before the throne holding up a glowing ring. Gyroid stands facing him across the floor with a gold lasso. Violet crown shards orbit the room."
+  },
+  "videos": [
+    {
+      "id": "castle-0-intro",
+      "title": "The Hollow Throne",
+      "plays": "Before castle-0, after crossing the forged bridge from the Timber Yard",
+      "world": 0,
+      "status": "scripted",
+      "story_start": 0,
+      "story_end": 34,
+      "pace": [
+        [
+          0,
+          null,
+          0.85
+        ]
+      ],
+      "synopsis": "Gyroid crosses the bridge forged at the Timber Yard and climbs the black spire. In the throne room Null waits under the Crown, amused that a courier has come to argue shapes with him. He promises three trials.",
+      "scenes": [
+        {
+          "id": "A",
+          "start": 0,
+          "end": 7,
+          "title": "The bridge",
+          "description": "Gyroid runs across the newly forged gold-seamed bridge toward the black spire; the Foundry glows behind. Emmy stays at the bridgehead."
+        },
+        {
+          "id": "B",
+          "start": 7,
+          "end": 13,
+          "title": "The climb",
+          "description": "A spiral stair of black glass around the spire's outside; the world falls away below."
+        },
+        {
+          "id": "C",
+          "start": 13,
+          "end": 22,
+          "title": "The throne room",
+          "description": "A circular hall with open arches. The reef-tile floor ripples. Null stands before an empty throne, the Crown floating overhead."
+        },
+        {
+          "id": "D",
+          "start": 22,
+          "end": 30,
+          "title": "Three trials",
+          "description": "Null gestures; three violet sigils light in the floor. Crown shards begin to orbit."
+        },
+        {
+          "id": "E",
+          "start": 30,
+          "end": 34,
+          "title": "Title",
+          "description": "Title card at 30: “World 0 · Castle — The Hollow Throne”."
+        }
+      ],
+      "captions": [
+        {
+          "t": 0.6,
+          "end": 4.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "The bridge holds. Go — I'll keep the Foundry lit behind you."
+        },
+        {
+          "t": 7.4,
+          "end": 11.4,
+          "speaker": "Narrator",
+          "text": "The Hollow Throne: a spire of black glass, and at its top, the one who started the collapse."
+        },
+        {
+          "t": 13.6,
+          "end": 18,
+          "speaker": "Count Null",
+          "portrait": "count-null",
+          "text": "The courier who keeps holes. You've learned to bend my reef without breaking it. Impressive."
+        },
+        {
+          "t": 18.2,
+          "end": 21.8,
+          "speaker": "Count Null",
+          "portrait": "count-null",
+          "text": "But bending is cheap. Can you tell a true simplification from a false one?"
+        },
+        {
+          "t": 22.4,
+          "end": 26.4,
+          "speaker": "Count Null",
+          "portrait": "count-null",
+          "text": "Three trials. Fail one, and your precious reef becomes a point."
+        },
+        {
+          "t": 26.6,
+          "end": 29.8,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "Then I won't fail."
+        }
+      ],
+      "title_card": {
+        "t": 30,
+        "end": 34
+      }
+    },
+    {
+      "id": "castle-0-outro",
+      "title": "A Ring Is a Ring",
+      "plays": "After castle-0's final phase — the end of World 0",
+      "world": 0,
+      "status": "scripted",
+      "story_start": 0,
+      "story_end": 38,
+      "pace": [
+        [
+          0,
+          null,
+          0.85
+        ]
+      ],
+      "synopsis": "Gyroid has exposed every forgery. Null holds up a ring and calls it a point; Gyroid can't prove otherwise. Null escapes along the severed Winding Way toward Bouquet Bastion. Emmy names what they need: an invariant.",
+      "scenes": [
+        {
+          "id": "A",
+          "start": 0,
+          "end": 8,
+          "title": "The last claim",
+          "description": "The arena still. Null lifts a glowing ring between two fingers."
+        },
+        {
+          "id": "B",
+          "start": 8,
+          "end": 16,
+          "title": "No proof",
+          "description": "Gyroid tries to slide the ring to a point on the arena floor; every slide stops short of the hole. He can't make it shrink — but he can't show it never could."
+        },
+        {
+          "id": "C",
+          "start": 16,
+          "end": 24,
+          "title": "Escape",
+          "description": "Null steps backwards off the spire's edge onto a violet ribbon of light that races away north along the broken Way."
+        },
+        {
+          "id": "D",
+          "start": 24,
+          "end": 32,
+          "title": "Emmy",
+          "description": "At the bridgehead at dawn, Emmy and Gyroid look north: the Way's next stretch leads to two loop districts meeting at a beacon."
+        },
+        {
+          "id": "E",
+          "start": 32,
+          "end": 38,
+          "title": "World 0 complete",
+          "description": "Card: “World 0 complete — Retract Reef restored.” Then the World 1 map unfolds."
+        }
+      ],
+      "captions": [
+        {
+          "t": 0.6,
+          "end": 4.8,
+          "speaker": "Count Null",
+          "portrait": "count-null",
+          "text": "Every trick of mine, exposed. Well done. Now — this ring."
+        },
+        {
+          "t": 5,
+          "end": 8,
+          "speaker": "Count Null",
+          "portrait": "count-null",
+          "text": "It is a point. Prove it isn't."
+        },
+        {
+          "t": 8.6,
+          "end": 12.8,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "Every slide I try stops at the hole. It won't shrink."
+        },
+        {
+          "t": 13,
+          "end": 16,
+          "speaker": "Count Null",
+          "portrait": "count-null",
+          "text": "Won't — or can't? You don't know. Nobody here knows."
+        },
+        {
+          "t": 16.4,
+          "end": 20.4,
+          "speaker": "Narrator",
+          "text": "And with that, Null stepped off the spire and was gone up the broken Winding Way."
+        },
+        {
+          "t": 24.4,
+          "end": 28.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "He's right about one thing. Bending can't prove a hole is there. We need something that counts it."
+        },
+        {
+          "t": 28.8,
+          "end": 31.8,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "Then we follow him, and find it."
+        }
+      ],
+      "title_card": {
+        "t": 32,
+        "end": 38
+      }
+    },
+    {
+      "id": "level-0-2-lesson",
+      "title": "How the Tide Works",
+      "plays": "After the 0-2 intro, before play starts; replayable from the level's “How it works” button",
+      "world": 0,
+      "level_id": "0-2",
+      "status": "built",
+      "kind": "lesson",
+      "story_start": 0,
+      "story_end": 70,
+      "pace": [
+        [
+          0,
+          null,
+          0.85
+        ]
+      ],
+      "synopsis": "A slowed-down explainer of 0-2's idea and tools. A path is a map f : I → X; a homotopy is a continuous movie of paths, one map F on the square I × I whose rows are the frames fₜ; rel A means the posts never move (the square's side edges). The Tide Glass scrubs t; the Spool makes homotopies by hand and hooks the ribbon onto stakes. What breaks a homotopy: a cut, a jump between frames, crossing water. A 3D demo on the flats plays beside a 2D diagram of the interval and the square.",
+      "scenes": [
+        {
+          "id": "A",
+          "start": 0,
+          "end": 9,
+          "title": "A path is a map",
+          "description": "Top-down over a ribbon between two posts. A bead slides along the ribbon while, in the diagram, a bead slides along the interval [0, 1]: s ↦ f(s)."
+        },
+        {
+          "id": "B",
+          "start": 9,
+          "end": 21,
+          "title": "A homotopy is a movie",
+          "description": "The tide bends the ribbon from t = 0 to t = 1; five frames freeze as ghosts. The diagram becomes the square I × I, each frozen frame a row, the current frame a gold row at height t."
+        },
+        {
+          "id": "C",
+          "start": 21,
+          "end": 30,
+          "title": "The Tide Glass",
+          "description": "The movie scrubs back and forth; the diagram shows the Tide Glass slider and Z / X keys, and faint ghosts hug the ribbon on either side."
+        },
+        {
+          "id": "D",
+          "start": 30,
+          "end": 38,
+          "title": "Rel A",
+          "description": "The two posts pulse gold; the square's left and right edges light up: F(0, t) = a, F(1, t) = b for every t — the ribbon's ends are pinned (A)."
+        },
+        {
+          "id": "E",
+          "start": 38,
+          "end": 50,
+          "title": "The Spool",
+          "description": "Gyroid walks to the ribbon, clicks to grab it, walks it out to a stake and clicks to let go; it hooks on. The diagram lights each control as it's used."
+        },
+        {
+          "id": "F",
+          "start": 50,
+          "end": 60,
+          "title": "What breaks a homotopy",
+          "description": "Three forbidden moves: a cut (the ribbon in two pieces, violet sparks), a jump (two neighbouring frames far apart), and crossing water at the pool shrine (the wet stretch violet)."
+        },
+        {
+          "id": "G",
+          "start": 60,
+          "end": 70,
+          "title": "Summary",
+          "description": "Crane up over the flats; the diagram shows the summary card. Title card at 65."
+        }
+      ],
+      "captions": [
+        {
+          "t": 0.5,
+          "end": 4.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Let’s slow everything down. This gold ribbon is a path: a map $f$ from the interval $I = [0, 1]$ into the flats."
+        },
+        {
+          "t": 4.8,
+          "end": 8.8,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Slide $s$ from 0 to 1, and $f(s)$ runs along the ribbon from one post to the other."
+        },
+        {
+          "t": 9.4,
+          "end": 13.4,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Now let the tide move it. At each time $t$ there’s a new path, $fₜ$. Here are a few frames."
+        },
+        {
+          "t": 13.6,
+          "end": 17.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Stack every frame and you get one map $F(s, t)$ on the square $I × I$: $s$ along the ribbon, $t$ through time. Each row of the square is one frame."
+        },
+        {
+          "t": 17.8,
+          "end": 20.8,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "So a homotopy is the whole movie — not just the first and last picture."
+        },
+        {
+          "t": 21.4,
+          "end": 25.4,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "The Tide Glass scrubs that movie. Press 3 to hold it; Z and X — or the wheel — move $t$ back and forth."
+        },
+        {
+          "t": 25.6,
+          "end": 29.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Watch the faint ghosts either side: in a real homotopy, neighbouring frames are always close together."
+        },
+        {
+          "t": 30.4,
+          "end": 34.4,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "And the posts? The ribbon’s ends never move, in any frame: $F(0, t) = a$ and $F(1, t) = b$ for every $t$."
+        },
+        {
+          "t": 34.6,
+          "end": 37.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "That’s a homotopy relative to $A$ — $rel A$ — where $A$ is the set of points on the ribbon that are pinned in place."
+        },
+        {
+          "t": 38.4,
+          "end": 42.4,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Your Spool makes homotopies by hand. Press 2, walk up to the ribbon and click to grab it."
+        },
+        {
+          "t": 42.6,
+          "end": 46.4,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Walk, and the ribbon follows. Every step is a new frame, so the movie stays continuous."
+        },
+        {
+          "t": 46.6,
+          "end": 49.8,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Click beside a stake to let go: the ribbon hooks on, and that point joins $A$ — one more point that stays put."
+        },
+        {
+          "t": 50.4,
+          "end": 53.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Three things break a homotopy. A cut: the ribbon has to stay in one piece."
+        },
+        {
+          "t": 53.8,
+          "end": 56.4,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "A jump: no frame can leap away from the one before."
+        },
+        {
+          "t": 56.6,
+          "end": 59.8,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "And crossing water: every frame has to stay on the flats."
+        },
+        {
+          "t": 60.4,
+          "end": 64.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "So: a homotopy is a continuous movie of paths, and $rel A$ means the pinned points stay put. That’s all the shrines ask."
+        },
+        {
+          "t": 64.8,
+          "end": 67.8,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "Bend, don’t break. Got it."
+        }
+      ],
+      "title_card": {
+        "t": 65.5,
+        "end": 70
+      }
+    },
+    {
+      "id": "level-0-3-lesson",
+      "title": "Same Shape",
+      "plays": "After the 0-3 intro, before play starts; replayable from the level's “How it works” button",
+      "world": 0,
+      "level_id": "0-3",
+      "status": "built",
+      "kind": "lesson",
+      "story_start": 0,
+      "story_end": 70,
+      "pace": [
+        [
+          0,
+          null,
+          0.85
+        ]
+      ],
+      "synopsis": "Homotopy equivalence, slowly: explicit maps f (eight → theta) and g (theta → eight, collapsing the bar), drawn as gold threads; a point's round trip lands near home and slides back (g∘f ≃ 1). Then the quick proof the level uses — one reef that deformation retracts onto both — contractibility, and the controls.",
+      "scenes": [
+        {
+          "id": "A",
+          "start": 0,
+          "end": 10,
+          "title": "Same shape?",
+          "description": "A figure-eight and a theta side by side in gold. The diagram asks X ≟ Y."
+        },
+        {
+          "id": "B",
+          "start": 10,
+          "end": 24,
+          "title": "Maps both ways",
+          "description": "Gold threads draw f from the eight to the theta, then g back. The diagram shows X ⇄ Y with f and g."
+        },
+        {
+          "id": "C",
+          "start": 24,
+          "end": 36,
+          "title": "Round trips slide home",
+          "description": "A bead travels p → f(p) → g(f(p)) and slides back to p along the eight. The diagram: g∘f ≃ 1, f∘g ≃ 1."
+        },
+        {
+          "id": "D",
+          "start": 36,
+          "end": 48,
+          "title": "One reef, two spines",
+          "description": "A two-hole reef slides onto a figure-eight, grows back, and slides onto a theta. The diagram: Z deformation retracts onto X and onto Y, so X ≃ Y."
+        },
+        {
+          "id": "E",
+          "start": 48,
+          "end": 56,
+          "title": "Contractible",
+          "description": "A solid reef slides onto a point; a loop around a ring's hole catches."
+        },
+        {
+          "id": "F",
+          "start": 56,
+          "end": 64,
+          "title": "How to play",
+          "description": "Controls for spines and Slide; Mirror spawn and their reflections."
+        },
+        {
+          "id": "G",
+          "start": 64,
+          "end": 70,
+          "title": "Summary",
+          "description": "Summary card; title card at 66.5."
+        }
+      ],
+      "captions": [
+        {
+          "t": 0.5,
+          "end": 4.8,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Two reefs: a figure-eight and a theta. They look different. Are they the same shape?"
+        },
+        {
+          "t": 5,
+          "end": 9.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "In topology, “same shape” means something precise — maps both ways that can be undone, up to sliding."
+        },
+        {
+          "t": 10.4,
+          "end": 14.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Start with a map f from the eight to the theta: each loop of the eight goes once around one loop of the theta."
+        },
+        {
+          "t": 14.8,
+          "end": 18.8,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "The crossing goes to the middle of the bar. Each gold thread joins a point to where f sends it."
+        },
+        {
+          "t": 19,
+          "end": 23.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "And a map g back: squash the theta’s bar to the crossing, and wrap each side around a loop of the eight."
+        },
+        {
+          "t": 24.4,
+          "end": 28.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Now follow one point there and back: across to the theta by f, then home by g."
+        },
+        {
+          "t": 28.8,
+          "end": 32.6,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "It doesn’t land exactly where it started…"
+        },
+        {
+          "t": 32.8,
+          "end": 35.8,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "No — but it slides home along the eight. g after f is homotopic to the identity."
+        },
+        {
+          "t": 36.4,
+          "end": 40.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "When both round trips slide home, f is a homotopy equivalence: X and Y are the same shape."
+        },
+        {
+          "t": 40.8,
+          "end": 44.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "There’s a quicker way to prove it: find one reef that slides onto both."
+        },
+        {
+          "t": 44.8,
+          "end": 47.8,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "This reef deforms onto the eight… and onto the theta. Same shape."
+        },
+        {
+          "t": 48.4,
+          "end": 52.2,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "A reef that slides onto a single point is contractible: the same shape as a point."
+        },
+        {
+          "t": 52.4,
+          "end": 55.8,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "A loop around a hole catches. Proving the ring isn’t contractible has to wait for World 1."
+        },
+        {
+          "t": 56.4,
+          "end": 60.2,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "To prove a reef: Spool (2), click to start the thread, walk it through the beacons, click to stop — then Slide."
+        },
+        {
+          "t": 60.4,
+          "end": 63.8,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "And Mirror spawn come in pairs. Lash the solid one; the flickering one is only a reflection."
+        },
+        {
+          "t": 64.4,
+          "end": 68.6,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "Same shape, different look. Let’s open that gate."
+        }
+      ],
+      "title_card": {
+        "t": 66.5,
+        "end": 70
+      }
+    },
+    {
+      "id": "level-0-4-lesson",
+      "title": "Built from Cells",
+      "plays": "After the 0-4 intro, before play starts; replayable from the level's “How it works” button",
+      "world": 0,
+      "level_id": "0-4",
+      "status": "built",
+      "kind": "lesson",
+      "story_start": 0,
+      "story_end": 72,
+      "pace": [
+        [
+          0,
+          null,
+          0.85
+        ]
+      ],
+      "synopsis": "Cell complexes, slowly: skeletons X⁰ ⊂ X¹ ⊂ X²; the sphere as a point and a disk; the torus as a square glued along a b a⁻¹ b⁻¹ (folded live); the projective plane along a a (crossing itself in 3D); χ; then Gyroid works a furnace to show the controls.",
+      "scenes": [
+        {
+          "id": "A",
+          "start": 0,
+          "end": 12,
+          "title": "Built in stages",
+          "description": "A point appears; two loops grow out of it and back (edges glued at both ends); a disk fills one loop. The diagram lists X⁰ ⊂ X¹ ⊂ X²."
+        },
+        {
+          "id": "B",
+          "start": 12,
+          "end": 22,
+          "title": "The sphere",
+          "description": "A flat disk curls up as its whole rim is drawn to one point: a sphere. Diagram: e⁰ ∪ e² = S²."
+        },
+        {
+          "id": "C",
+          "start": 22,
+          "end": 34,
+          "title": "The torus",
+          "description": "A square with arrowed edges a, b rolls into a tube (a meets a), then bends into a ring (b meets b). Diagram: a b a⁻¹ b⁻¹."
+        },
+        {
+          "id": "D",
+          "start": 34,
+          "end": 44,
+          "title": "Arrows matter",
+          "description": "A disk whose rim runs round loop a twice, the same way: it folds into a surface that passes through itself — the projective plane."
+        },
+        {
+          "id": "E",
+          "start": 44,
+          "end": 52,
+          "title": "χ",
+          "description": "Counting cells: points − edges + disks for each build."
+        },
+        {
+          "id": "F",
+          "start": 52,
+          "end": 66,
+          "title": "At the furnace",
+          "description": "Gyroid steps onto a furnace, clicks to forge the point, walks the track out and back to forge edge a, walks it again to write a, and clicks to press a disk along a (a hemisphere folds above the press)."
+        },
+        {
+          "id": "G",
+          "start": 66,
+          "end": 72,
+          "title": "Summary",
+          "description": "The torus again; the summary card."
+        }
+      ],
+      "captions": [
+        {
+          "t": 0.5,
+          "end": 4.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Everything in the Foundry is built in stages. First, points — the 0-cells."
+        },
+        {
+          "t": 4.8,
+          "end": 8.4,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Then edges, glued on by their two ends. Glue both ends to the same point and the edge becomes a loop."
+        },
+        {
+          "t": 8.6,
+          "end": 11.8,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Then disks, glued along loops. Each stage sits inside the next."
+        },
+        {
+          "t": 12.4,
+          "end": 16.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "The simplest sphere: one point, and one disk whose entire rim is crushed onto that point."
+        },
+        {
+          "t": 16.8,
+          "end": 21.4,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "Like pulling the drawstring on a bag until the opening's gone."
+        },
+        {
+          "t": 22.4,
+          "end": 26.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "The torus: one point, two loops $a$ and $b$, and one square disk. Its rim is glued along $a b a⁻¹ b⁻¹$."
+        },
+        {
+          "t": 26.8,
+          "end": 33.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Watch matching arrows meet: the two a-sides glue into a tube, then the two b-sides bend the tube round into a ring."
+        },
+        {
+          "t": 34.4,
+          "end": 38.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Now one loop, $a$, and a disk whose rim goes round $a$ twice — the same way both times."
+        },
+        {
+          "t": 38.8,
+          "end": 43.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "There’s no room in our space to do that without the disk passing through itself. That’s the projective plane."
+        },
+        {
+          "t": 44.4,
+          "end": 48.2,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "And a count: points minus edges plus disks. That’s χ, the Euler characteristic."
+        },
+        {
+          "t": 48.4,
+          "end": 51.8,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Build the same place two different ways and χ comes out the same — though proving that waits for World 2."
+        },
+        {
+          "t": 52.3,
+          "end": 53.5,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Here's how it works at a furnace. Watch Gyroid."
+        },
+        {
+          "t": 53.6,
+          "end": 54.0,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Click the furnace with the Cell-Smith: that's the point."
+        },
+        {
+          "t": 54.1,
+          "end": 57.3,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Walk out along the track, round its loop and back onto the furnace: an edge, $a$ — a loop at the point."
+        },
+        {
+          "t": 57.9,
+          "end": 61.0,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Walk it again, the way its arrows point. That writes $a$ on the disk's rim — see “walked” on the panel."
+        },
+        {
+          "t": 61.4,
+          "end": 64.2,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Then click the furnace: the press glues a disk along $a$. A bowl — a hemisphere."
+        },
+        {
+          "t": 64.4,
+          "end": 66.0,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "And lash the Unglues — if one tears an edge, walk that track again."
+        },
+        {
+          "t": 66.4,
+          "end": 69.4,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "Points, edges, disks. Let's build."
+        }
+      ],
+      "title_card": {
+        "t": 69.5,
+        "end": 72
+      }
+    },
+    {
+      "id": "level-0-5-lesson",
+      "title": "New Spaces from Old",
+      "plays": "After the 0-5 intro, before play starts; replayable from the level's “How it works” button",
+      "world": 0,
+      "level_id": "0-5",
+      "status": "built",
+      "kind": "lesson",
+      "story_start": 0,
+      "story_end": 62,
+      "pace": [
+        [
+          0,
+          null,
+          0.85
+        ]
+      ],
+      "synopsis": "Operations on spaces, slowly: the cone (a ring's hole fills and every loop slides to the tip); the suspension (two points → a circle → a sphere); the wedge (two rings touch at one point); the product (a small ring swept round a big one: a torus, with a cell for each pair of cells); the quotient (a disk's rim collapsed: a sphere); then the works' controls.",
+      "scenes": [
+        {
+          "id": "A",
+          "start": 0,
+          "end": 11,
+          "title": "The cone",
+          "description": "A glowing ring; its tip rises and pulls it into a cone. A loop on the rim slides up the cone and vanishes at the tip. Diagram: CX, X's cells plus one on each plus the tip; χ = 1."
+        },
+        {
+          "id": "B",
+          "start": 11,
+          "end": 22,
+          "title": "The suspension",
+          "description": "Two points sprout arcs to a tip above and below: a circle. The circle grows a double cone that rounds into a sphere. Diagram: S(S⁰) = S¹, S(S¹) = S²."
+        },
+        {
+          "id": "C",
+          "start": 22,
+          "end": 29,
+          "title": "The wedge",
+          "description": "Two rings glide together until they touch at one point: a figure-eight. Diagram: X ∨ Y, cells add, minus one point."
+        },
+        {
+          "id": "D",
+          "start": 29,
+          "end": 39,
+          "title": "The product",
+          "description": "A small ring travels round a big one, sweeping out a torus. Diagram: the four pairs of cells, 1 + 2 + 1."
+        },
+        {
+          "id": "E",
+          "start": 39,
+          "end": 47,
+          "title": "The quotient",
+          "description": "A disk's rim is drawn to one point and it closes into a sphere. Diagram: D²/∂D² = S²; collapsing something contractible keeps the shape."
+        },
+        {
+          "id": "F",
+          "start": 47,
+          "end": 56,
+          "title": "How to play",
+          "description": "The works' controls: pick up, feed, choose the operation, take the result off the shelf, pull plugs."
+        },
+        {
+          "id": "G",
+          "start": 56,
+          "end": 62,
+          "title": "Summary",
+          "description": "Cone, suspension, wedge, product, quotient — and the cells each adds."
+        }
+      ],
+      "captions": [
+        {
+          "t": 0.5,
+          "end": 5,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "A cone: take a space and join every one of its points to a single new tip."
+        },
+        {
+          "t": 5.2,
+          "end": 10.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Cone a ring and the hole fills in. Any loop on it can slide up to the tip and shrink away — a cone always shrinks to its tip."
+        },
+        {
+          "t": 11.4,
+          "end": 16,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "A suspension uses two tips, one above and one below. Suspend two points and you get two arcs: a circle."
+        },
+        {
+          "t": 16.2,
+          "end": 21.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Suspend the circle and you get a double cone, which is a sphere. Each suspension climbs one dimension."
+        },
+        {
+          "t": 22.4,
+          "end": 28.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "A wedge glues two spaces together at a single point. Two rings make a figure-eight."
+        },
+        {
+          "t": 29.4,
+          "end": 33.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "A product: every point of one space paired with every point of the other. A ring times a ring, swept round, is a torus."
+        },
+        {
+          "t": 33.8,
+          "end": 38.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Its cells come in pairs: point with point, point with edge, edge with point, edge with edge. That's one point, two edges and one disk."
+        },
+        {
+          "t": 39.4,
+          "end": 43.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "A quotient collapses part of a space to a single point. Collapse a disk's rim and it closes up into a sphere."
+        },
+        {
+          "t": 43.8,
+          "end": 46.8,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "The rim was a loop, so the shape changed. Collapse something that shrinks to a point and the shape stays the same."
+        },
+        {
+          "t": 47.4,
+          "end": 51.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "At each works: click a pedestal to pick up a copy of its space, then click the machine to feed it in."
+        },
+        {
+          "t": 51.8,
+          "end": 55.8,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "New spaces land on the shelf, and you can carry them back in. Lash the Coners. If one plugs a pedestal, click it to pull the plug."
+        },
+        {
+          "t": 56.4,
+          "end": 61,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "Cone, suspend, wedge, multiply, collapse. Got it."
+        }
+      ],
+      "title_card": {
+        "t": 58.5,
+        "end": 62
+      }
+    },
+    {
+      "id": "level-0-6-lesson",
+      "title": "Felling Trees",
+      "plays": "After the 0-6 intro, before play starts; replayable from the level's “How it works” button",
+      "world": 0,
+      "level_id": "0-6",
+      "status": "built",
+      "kind": "lesson",
+      "story_start": 0,
+      "story_end": 70,
+      "pace": [
+        [
+          0,
+          null,
+          0.85
+        ]
+      ],
+      "synopsis": "Felling trees, slowly: a tree (no cycle) has n − 1 edges and collapses to a point safely; a graph with a cycle — a triangle with a tail — gets a spanning tree marked (n − 1 edges touching every node, the edge that would close the cycle refused), and felling it leaves the unmarked edge as a loop round the surviving hole; collapsing the cycle too kills the hole; χ = nodes − edges and petals = 1 − χ; then the Spool and Cell-Smith controls. Uses both names: nodes (platforms) and edges (walkways).",
+      "scenes": [
+        {
+          "id": "A",
+          "start": 0,
+          "end": 11,
+          "title": "A tree",
+          "description": "A tree of 4 nodes and 3 edges. Gyroid marks each edge amber (n − 1 = 3), then fells it: every node slides into one — a point."
+        },
+        {
+          "id": "B",
+          "start": 11,
+          "end": 19,
+          "title": "A cycle",
+          "description": "A triangle with a tail: 4 nodes, 4 edges. The triangle's three edges glow pink — a cycle — round a dark disk labelled 'hole'."
+        },
+        {
+          "id": "C",
+          "start": 19,
+          "end": 31,
+          "title": "A spanning tree",
+          "description": "Gyroid marks the tail and two sides of the triangle: 3 = n − 1 edges, every node reached. He tries the third side; it flashes red, refused — it would close the cycle."
+        },
+        {
+          "id": "D",
+          "start": 31,
+          "end": 40,
+          "title": "Fell",
+          "description": "The marked tree folds into one node; the unmarked side rounds out into a loop at that node, the hole carried inside it."
+        },
+        {
+          "id": "E",
+          "start": 40,
+          "end": 48,
+          "title": "The wrong cut",
+          "description": "The same graph with all four edges marked violet, cycle included; it collapses to a point and the hole shrinks to nothing."
+        },
+        {
+          "id": "F",
+          "start": 48,
+          "end": 55,
+          "title": "χ",
+          "description": "The petal again; diagram: tree 4 − 3 = 1 → no petals, cycle 4 − 4 = 0 → one petal, petals = 1 − χ."
+        },
+        {
+          "id": "G",
+          "start": 55,
+          "end": 63,
+          "title": "How to play",
+          "description": "Spool marks edges, cycle-closing edges refused; Cell-Smith clicks any node to fell; lash Loop-biters."
+        },
+        {
+          "id": "H",
+          "start": 63,
+          "end": 70,
+          "title": "Summary",
+          "description": "Every connected graph is a bouquet of 1 − χ circles."
+        }
+      ],
+      "captions": [
+        {
+          "t": 0.5,
+          "end": 4.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "A graph is made of nodes — the platforms — joined by edges — the walkways. This one is a tree: it has no cycles."
+        },
+        {
+          "t": 4.8,
+          "end": 7.0,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "A tree on $n$ nodes always has exactly $n − 1$ edges. Here: 4 nodes, 3 edges. Gyroid marks them all."
+        },
+        {
+          "t": 7.2,
+          "end": 10.8,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Now he fells it: every edge shrinks, every node slides into one. A tree has no hole in it, so nothing is lost — it’s just a point."
+        },
+        {
+          "t": 11.4,
+          "end": 15.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "This graph has a cycle: the triangle. Follow its three edges and you come back where you started."
+        },
+        {
+          "t": 15.8,
+          "end": 18.8,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "A cycle goes round a hole. That hole is what makes this space more than a point, and we must not lose it."
+        },
+        {
+          "t": 19.4,
+          "end": 23.8,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "So we don’t fell everything. Gyroid marks a spanning tree: edges that reach every node, never closing a cycle. That takes $n − 1 = 3$ edges."
+        },
+        {
+          "t": 24.0,
+          "end": 28.8,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "The third side of the triangle? Refused. Marking it would close the cycle, and a cycle isn’t a tree."
+        },
+        {
+          "t": 29.0,
+          "end": 31.4,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Every node is touched, no cycle is closed. That’s a spanning tree."
+        },
+        {
+          "t": 32.0,
+          "end": 35.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Fell it. The tree shrinks into one node — safe, because a tree has no hole."
+        },
+        {
+          "t": 35.8,
+          "end": 39.8,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "The edge he didn’t mark now starts and ends at that one node: it’s a loop, a petal. The hole is still inside it."
+        },
+        {
+          "t": 40.4,
+          "end": 44.0,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Now the wrong cut: mark every edge, the cycle too, and squash it all."
+        },
+        {
+          "t": 44.2,
+          "end": 47.8,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Everything goes to a point, and the hole dies with it. That’s a different space — Null’s move."
+        },
+        {
+          "t": 48.4,
+          "end": 52.0,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Count nodes minus edges: that’s $χ$. The tree: $4 − 3 = 1$. The cycle graph: $4 − 4 = 0$."
+        },
+        {
+          "t": 52.2,
+          "end": 54.8,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Felling never changes $χ$, and the petals you end with number $1 − χ$."
+        },
+        {
+          "t": 55.4,
+          "end": 59.0,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "On the decks: hold the Spool and click edges to mark a spanning tree. An edge that would close a cycle is refused."
+        },
+        {
+          "t": 59.2,
+          "end": 62.8,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "When the tree reaches every node, take the Cell-Smith and click any node to fell onto it. And lash those Loop-biters."
+        },
+        {
+          "t": 63.4,
+          "end": 67.2,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "Mark a tree, keep the cycles. Timber!"
+        }
+      ],
+      "title_card": {
+        "t": 67.5,
+        "end": 70
+      }
+    },
+    {
+      "id": "level-0-b-lesson",
+      "title": "One Cell at a Time",
+      "plays": "After the 0-B intro; replayable from the level's “How it works” button",
+      "world": 0,
+      "level_id": "0-B",
+      "status": "built",
+      "kind": "lesson",
+      "story_start": 0,
+      "story_end": 52,
+      "pace": [
+        [
+          0,
+          null,
+          0.85
+        ]
+      ],
+      "synopsis": "The homotopy extension property, slowly: X × I as space × time; A's given motion as teal columns; extending over a free point (it stays put) and an edge (it stretches between its ends); a disk refused until its whole rim moves; why it always works (Dⁿ × I retracts onto its floor and walls); controls.",
+      "scenes": [
+        {
+          "id": "A",
+          "start": 0,
+          "end": 10,
+          "title": "Space × time",
+          "description": "An edge on the cylinder floor; its left end's motion rises as a teal column."
+        },
+        {
+          "id": "B",
+          "start": 10,
+          "end": 20,
+          "title": "Extend",
+          "description": "The right point's column rises straight; then the edge's sheet stretches between the two columns."
+        },
+        {
+          "id": "C",
+          "start": 20,
+          "end": 32,
+          "title": "Boundary first",
+          "description": "A square with a disk: the disk is refused (its rim flashes red); points, then edges fill; then the disk's column."
+        },
+        {
+          "id": "D",
+          "start": 32,
+          "end": 40,
+          "title": "Why it works",
+          "description": "Diagram: projecting Dⁿ × I from a point above lands it on its floor and walls."
+        },
+        {
+          "id": "E",
+          "start": 40,
+          "end": 48,
+          "title": "How to play",
+          "description": "Click glowing cells; refused cells show what's missing."
+        },
+        {
+          "id": "F",
+          "start": 48,
+          "end": 52,
+          "title": "Summary",
+          "description": "Every CW pair has the homotopy extension property."
+        }
+      ],
+      "captions": [
+        {
+          "t": 0.5,
+          "end": 4.8,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "The cylinder's floor is a space, X. Going up the cylinder is time."
+        },
+        {
+          "t": 5,
+          "end": 9.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Part of the floor, A, already has a motion chosen for it. Here it's the left point, drifting as time goes up."
+        },
+        {
+          "t": 10.4,
+          "end": 14.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "To extend the motion, start with the free point. It only has to start in the right place, so it can just stay put."
+        },
+        {
+          "t": 14.8,
+          "end": 19.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Now both ends of the edge are decided. The edge's column simply stretches between them."
+        },
+        {
+          "t": 20.4,
+          "end": 25,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "A disk is different. Its column has a floor and walls, and the walls are its rim's columns. Until those are decided, it's refused."
+        },
+        {
+          "t": 25.2,
+          "end": 31.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "So go in order of dimension: points, then the edges around the disk, then the disk itself."
+        },
+        {
+          "t": 32.4,
+          "end": 36.4,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Why does the disk's column always fill? A box, disk times time, can be squashed onto just its floor and walls."
+        },
+        {
+          "t": 36.6,
+          "end": 39.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Shine a light from a point above it: every point of the box lands on the floor or a wall."
+        },
+        {
+          "t": 40.4,
+          "end": 44.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "In the Cylinder Works: click a glowing cell on the floor to raise its column."
+        },
+        {
+          "t": 44.8,
+          "end": 47.8,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "If its boundary isn't decided yet, the missing cells flash red."
+        },
+        {
+          "t": 48.4,
+          "end": 51.6,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "One cell at a time. Got it."
+        }
+      ],
+      "title_card": {
+        "t": 49,
+        "end": 52
+      }
+    },
+    {
+      "id": "level-0-2-intro",
+      "title": "The Tide Bends Everything",
+      "plays": "Before World 0 · Level 2, when Gyroid reaches Tidewarp Flats",
+      "world": 0,
+      "level_id": "0-2",
+      "status": "scripted",
+      "story_start": 0,
+      "story_end": 32,
+      "pace": [
+        [
+          0,
+          null,
+          0.85
+        ]
+      ],
+      "synopsis": "Past the broken causeway (bridged with the Spool), the tide reshapes Tidewarp Flats every hour. Emmy frames 0-2: a homotopy is a whole continuous movie of maps, and a homotopy 'rel A' keeps some posts fixed throughout. Null offers a cheat — send everything to one point instantly — and Emmy names the difference between a retraction and a deformation.",
+      "scenes": [
+        {
+          "id": "A",
+          "start": 0,
+          "end": 6,
+          "title": "Bridging the gap",
+          "description": "The broken causeway from Twin Lagoons. Gyroid runs a gold Spool thread across the gap; it firms into a spine and the causeway knits along it. Beyond: wide wet tidal flats."
+        },
+        {
+          "id": "B",
+          "start": 6,
+          "end": 14,
+          "title": "The tide",
+          "description": "On the flats, glowing gold ribbon paths lie between stone posts. The tide rolls in and every ribbon bends smoothly into a new shape — ghost copies trace the motion. One middle post stays lit and every ribbon passes through it the whole time."
+        },
+        {
+          "id": "C",
+          "start": 14,
+          "end": 21,
+          "title": "Null's shortcut",
+          "description": "A violet flash: Count Null's image hangs over the water. With a flick he sends a ribbon to a single point — no motion in between, it simply snaps there. Sparks of violet where it tore."
+        },
+        {
+          "id": "D",
+          "start": 21,
+          "end": 28,
+          "title": "Emmy's answer",
+          "description": "Emmy kneels by a ribbon and slows the tide with a gesture; the ribbon bends frame by frame, the fixed post never moving. Gyroid lays a hand on the post."
+        },
+        {
+          "id": "E",
+          "start": 28,
+          "end": 32,
+          "title": "Title",
+          "description": "Wide over the flats as the tide turns. Title card at 28: “World 0 · Level 2 — Bend, Don't Break”."
+        }
+      ],
+      "captions": [
+        {
+          "t": 0.6,
+          "end": 5,
+          "speaker": "Narrator",
+          "text": "The Spool bridged the broken causeway. Beyond it, the tide had its own ideas."
+        },
+        {
+          "t": 6.4,
+          "end": 10.8,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Tidewarp Flats. Every hour the tide reshapes every path out here — continuously, one moment flowing into the next."
+        },
+        {
+          "t": 11,
+          "end": 13.8,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "That whole movie of shapes is a homotopy."
+        },
+        {
+          "t": 14.4,
+          "end": 18.4,
+          "speaker": "Count Null",
+          "portrait": "count-null",
+          "text": "Why wait for the tide? I can send every path to one point. Instantly."
+        },
+        {
+          "t": 18.6,
+          "end": 21,
+          "speaker": "Count Null",
+          "portrait": "count-null",
+          "text": "Every space retracts to a point, courier."
+        },
+        {
+          "t": 21.4,
+          "end": 25.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "A retraction can be one snap. A deformation is the whole movie — every frame in between — and with a pool in the way, no such movie exists."
+        },
+        {
+          "t": 25.8,
+          "end": 28.2,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "And these posts never move while the tide works?"
+        },
+        {
+          "t": 28.2,
+          "end": 31.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "That's a homotopy $rel$ those posts: they stay still the whole time."
+        }
+      ],
+      "title_card": {
+        "t": 28,
+        "end": 32
+      }
+    }
+  ]
+}

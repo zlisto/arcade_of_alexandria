@@ -1,0 +1,303 @@
+{
+  "title": "Winding World",
+  "tagline": "Trace the loop. Deform the lie. Lash what χ cannot explain.",
+  "overall_story": "The Winding World is a self-contained realm of mutable spaces: corridors that rewrite themselves, surfaces that sprout teeth, and enemies whose defenses are the shape of the ground they stand on. Gyroid — path-weaver named for a labyrinthine minimal surface that tunnels forever through space — takes up the Fundamental Lash with Seifert (a hard-nosed route coach) and Chi Euler (a clanking cell-counter who never shuts up about alternating sums). Their quarry is the Space-Born: Nullhomotoe the Sphere, Tori Dual-Circuit, Genus Gerry, and worse. The campaign runs from deformation retractions through π₁ and coverings, then peeks at homology, cohomology, and higher homotopy — not as trivia, but as moves you must perform with the whip. No arcade framing inside this world; it stands alone.",
+  "goal": "Win encounters by constructing and reasoning about loops, fixed-endpoint homotopies, loop concatenation, reduced words, and lifted paths—not by selecting a stated invariant from a list. Euler characteristic is a structural clue and consistency check, never a stand-alone attack answer. Combat is an instructional metaphor: Gyroid’s route and deformation work must establish why a lash path can or cannot be simplified or identified with another path before the attack resolves.",
+  "cast": {
+    "hero": {
+      "name": "Gyroid",
+      "role": "Player hero · path-weaver",
+      "pun_of": "gyroid (triply periodic minimal surface)",
+      "blurb": "Named for a cool, endlessly tunneling surface. Traces, joins, deforms, and lifts whip-paths. Starts every fight at a marked basepoint and refuses discontinuous jumps on principle."
+    },
+    "allies": [
+      {
+        "name": "Seifert",
+        "role": "Route coach",
+        "pun_of": "Seifert surface",
+        "blurb": "Explains the local rules of a space, then makes Gyroid prove them with a continuous move instead of a shrug."
+      },
+      {
+        "name": "Chi Euler",
+        "role": "Map automaton",
+        "pun_of": "Leonhard Euler + Euler characteristic χ",
+        "blurb": "Renders basepoints, cell counts, loop words, and cover sheets. Will cheerfully announce χ after every build — and still cannot tell you π₁ by itself."
+      },
+      {
+        "name": "Van Campin'",
+        "role": "Wordsmith of wedges",
+        "pun_of": "van Kampen",
+        "blurb": "Runs the Free-Word Forge. Teaches concatenation, reduction, and why distinct generators refuse to commute."
+      }
+    ],
+    "villains": [
+      {
+        "name": "Nullhomotoe the Sphere",
+        "role": "Boss · simply connected bully",
+        "pun_of": "nullhomotopic + homotopy",
+        "blurb": "Falls when Gyroid produces a genuine contraction of a based loop — one clean continuous shrink to the basepoint.",
+        "defeat_rule": "1 successful contraction (game rule inspired by π₁(S²) = 0)"
+      },
+      {
+        "name": "Tori Dual-Circuit",
+        "role": "Boss · product-loop guardian",
+        "pun_of": "torus / Tori",
+        "blurb": "Needs two independent essential whip circuits; deforming the first loop never substitutes for the second.",
+        "defeat_rule": "2 independent essential circuits (game abstraction; not ‘χ = hits’)"
+      },
+      {
+        "name": "Genus Gerry",
+        "role": "Boss · higher-surface menace",
+        "pun_of": "genus g",
+        "blurb": "Stacks more generators and a surface relation from an attaching 2-cell. Cell counts alone will not humble him.",
+        "defeat_rule": "Trace generators and respect the attaching relation"
+      },
+      {
+        "name": "Covert Sheet",
+        "role": "Boss · covering-space warden",
+        "pun_of": "covering sheet / cover + covert",
+        "blurb": "Shields open only for loops whose lifts close on the chosen sheet. Change the cover, change the subgroup under test.",
+        "defeat_rule": "Lift closes at the starting sheet"
+      },
+      {
+        "name": "Boundary Barry",
+        "role": "Preview foe · homology",
+        "pun_of": "boundary operator ∂",
+        "blurb": "Laughs at cycles until Gyroid builds a filling chain. Oppositely oriented faces cancel; leftovers haunt the arena.",
+        "defeat_rule": "Exhibit a cycle as a boundary (or prove it isn’t)"
+      },
+      {
+        "name": "Cup Productrix",
+        "role": "Preview foe · cohomology",
+        "pun_of": "cup product",
+        "blurb": "Detects class interactions in the ring. Order-only loop tricks that abelianize away stop impressing her.",
+        "defeat_rule": "Combine classes under cup-product rules"
+      },
+      {
+        "name": "Hop Off",
+        "role": "Finale preview · higher homotopy",
+        "pun_of": "Hopf (Hopf invariant / Hopf fibration vibes)",
+        "blurb": "Forces Gyroid to treat the whip as a based sphere-map. π₁ was only the opening act.",
+        "defeat_rule": "Survive a higher-dimensional based-map challenge"
+      }
+    ],
+    "weapons": [
+      {
+        "name": "The Fundamental Lash",
+        "kind": "Primary whip",
+        "pun_of": "fundamental group π₁",
+        "blurb": "A topology-sensitive whip. Attacks are based loops: draw from the basepoint, return, then deform under the arena’s constraints."
+      },
+      {
+        "name": "Retractor Reel",
+        "kind": "Utility",
+        "pun_of": "deformation retraction",
+        "blurb": "Locks a subspace fixed while the rest of the arena shrinks onto it. Illegal if the fixed set wiggles."
+      },
+      {
+        "name": "Winding Cord",
+        "kind": "Circle-stage upgrade",
+        "pun_of": "winding number",
+        "blurb": "Shows the parallel lift on the unrolled line. Homotopy cannot fake the endpoint integer."
+      },
+      {
+        "name": "Concatenator",
+        "kind": "Combo tool",
+        "pun_of": "path/loop concatenation",
+        "blurb": "Joins compatible lashes end-to-end. Reverse a letter to cancel; order of distinct generators still matters."
+      },
+      {
+        "name": "Covering Coil",
+        "kind": "Lift gadget",
+        "pun_of": "covering spaces / path lifting",
+        "blurb": "Projects a base loop onto the sheet world. Closed downstairs, open upstairs — that’s the lesson."
+      }
+    ]
+  },
+  "main_characters": [
+    "Gyroid (hero): path-weaver named for the gyroid minimal surface.",
+    "Seifert (ally): route coach. (Seifert surface)",
+    "Chi Euler (ally): cell-counting map automaton. (Euler + χ)",
+    "Van Campin' (ally): free-word forge master. (van Kampen)",
+    "Nullhomotoe the Sphere / Tori Dual-Circuit / Genus Gerry / Covert Sheet / Boundary Barry / Cup Productrix / Hop Off (villains): Space-Born bosses whose defenses are loop structure."
+  ],
+  "core_mechanics": [
+    "Fundamental Lash tracing: aim from a marked basepoint, draw a continuous path, return to close a based loop. Obstacles cannot be crossed; a path that jumps is not a legal deformation.",
+    "Continuous deformation: reshape a drawn route while keeping its basepoint fixed. Routes that deform into each other share a class.",
+    "Concatenator + reversal: combine compatible loops; reverse to cancel inverses; in a wedge of circles, generator order stays meaningful.",
+    "Invariant-led combat: enemies expose contractible loops, persistent classes, and cell-attachment relations. Chi Euler may shout χ, but χ is never the attack button.",
+    "Covering Coil lift view: play a loop downstairs and upstairs at once; whether the lift closes tests subgroup membership in-play.",
+    "Boss rules (game translations): Nullhomotoe falls to one real contraction; Tori Dual-Circuit demands two independent essential circuits; Genus Gerry adds generators + relation. These are design rules inspired by π₁, not theorems that ‘hits = χ’.",
+    "Optional systems: Boundary Barry (homology chains), Cup Productrix (cohomology ring), Hop Off (higher homotopy / based sphere maps)."
+  ],
+  "how_math_is_gameplay": "Gyroid does not answer “what is χ?” to attack. They draw a route, preserve its basepoint, and attempt a continuous deformation under the arena’s constraints. A proposed simplification only succeeds if they actually supply a valid deformation or demonstrate its failure by tracing a lift whose endpoint cannot close. Against Tori Dual-Circuit, they must produce two loops that remain essential and are not deformable into one another; against Van Campin'’s wedge arenas, they must preserve and reduce generator order; against cell-attached spaces, the attaching loop supplies a relation that changes which words survive. Euler characteristic is Chi Euler’s structural check on constructed cell complexes, not a substitute for loop reasoning. Whip damage thresholds and boss phases are game-design translations; the topology used to justify route equivalence, group operations, and lift behavior follows the cited textbook material.",
+  "number_of_levels": 10,
+  "levels": [
+    {
+      "level_number": 1,
+      "title": "Retraction Junction",
+      "pun_of": "deformation retraction",
+      "boss_or_cast": "Tutorial guardian · Seifert coaching",
+      "chapter_or_section_ids": [
+        "0",
+        "0.homotopy-and-homotopy-type"
+      ],
+      "book_pages": "Chapter 0, pp. 1–4 (source summaries locate homotopy and deformation retraction at p. 1).",
+      "intent": "Teach Gyroid to distinguish continuous reshaping from an invalid jump, and to recognize a deformation retraction by its start, endpoint, and fixed target.",
+      "mechanic_focus": "Draw the Fundamental Lash around a flexible scaffold and guide the space through continuous frames. A valid Retractor Reel move must begin at the identity, end in the target subspace, and keep that subspace fixed throughout.",
+      "attribution_note": "Proposed allocation: 8% of the textbook-derived content pool for this level to Allen Hatcher’s *Algebraic Topology*, Chapter 0, pp. 1–4, especially “Some Underlying Geometric Notions” / “Homotopy and Homotopy Type” (source summary begins p. 1)."
+    },
+    {
+      "level_number": 2,
+      "title": "CW Complex Complex",
+      "pun_of": "CW complex",
+      "boss_or_cast": "Chi Euler’s first integrity audit",
+      "chapter_or_section_ids": [
+        "0.cell-complexes",
+        "0.two-criteria-for-homotopy-equivalence"
+      ],
+      "book_pages": "Chapter 0, pp. 5–13.",
+      "intent": "Use staged cell construction and eligible graph collapses to simplify without changing homotopy type; introduce χ as a cell-count invariant, not a combat answer.",
+      "mechanic_focus": "Assemble a graph-and-cell arena, collapse non-loop edges where allowed, reveal a bouquet of circles. Preserve loops while pruning contractible trees. Chi Euler’s alternating count is a post-build check only.",
+      "attribution_note": "Proposed allocation: 8% of the textbook-derived content pool to Hatcher, Chapter 0, “Cell Complexes,” p. 5 onward, and “Two Criteria for Homotopy Equivalence,” p. 10 onward (within pp. 5–13)."
+    },
+    {
+      "level_number": 3,
+      "title": "Base Point Blank",
+      "pun_of": "basepoint",
+      "boss_or_cast": "Nullhomotoe the Sphere",
+      "chapter_or_section_ids": [
+        "1",
+        "1.1"
+      ],
+      "book_pages": "Chapter 1, pp. 21–33; “Basic Constructions” begins p. 25.",
+      "intent": "Make based loops, fixed-endpoint path homotopy, and concatenation into combat skills.",
+      "mechanic_focus": "Every Fundamental Lash begins and ends at a visible basepoint. Deform without moving endpoints; Concatenator joins loops; reverse to cancel. Nullhomotoe yields only to a completed contraction that proves the loop nullhomotopic.",
+      "attribution_note": "Proposed allocation: 12% of the textbook-derived content pool to Hatcher, Chapter 1, “The Fundamental Group,” pp. 21–24, and “Basic Constructions” / path homotopy, pp. 25–33."
+    },
+    {
+      "level_number": 4,
+      "title": "Winding Road",
+      "pun_of": "winding number",
+      "boss_or_cast": "Circle arena · Winding Cord tutorial foe",
+      "chapter_or_section_ids": [
+        "1",
+        "1.1"
+      ],
+      "book_pages": "Chapter 1, “The Fundamental Group of the Circle,” pp. 29–33 (within the chapter opening at p. 21).",
+      "intent": "Teach winding number geometrically through lifting: the unwrapped endpoint records the class.",
+      "mechanic_focus": "Lash around a circular arena while the Winding Cord runs a parallel lift on the real line. Deform freely downstairs; the lift endpoint still tells the truth.",
+      "attribution_note": "Proposed allocation: 10% of the textbook-derived content pool to Hatcher, Chapter 1, “The Fundamental Group of the Circle,” pp. 29–33, including the covering map and lift-endpoint winding-number argument."
+    },
+    {
+      "level_number": 5,
+      "title": "Free Word Play",
+      "pun_of": "free product / free group words",
+      "boss_or_cast": "Van Campin'",
+      "chapter_or_section_ids": [
+        "1.2"
+      ],
+      "book_pages": "Chapter 1, “Van Kampen’s Theorem,” pp. 40–55; free products and wedge-of-circles applications are summarized at pp. 41–55.",
+      "intent": "Teach that loops in a wedge of circles form words; reduction is local; distinct generators need not commute.",
+      "mechanic_focus": "Corridor network of joined circle-loops. Each traversal writes a letter. Retrace inverses to reduce; keep generator order. An attached 2-cell later imposes a relation.",
+      "attribution_note": "Proposed allocation: 13% of the textbook-derived content pool to Hatcher, Chapter 1, “Van Kampen’s Theorem,” pp. 40–49, and “Applications to Cell Complexes,” p. 49 onward (within pp. 40–55)."
+    },
+    {
+      "level_number": 6,
+      "title": "Tori Story",
+      "pun_of": "torus / Tori",
+      "boss_or_cast": "Tori Dual-Circuit → Genus Gerry",
+      "chapter_or_section_ids": [
+        "1",
+        "1.1",
+        "1.2"
+      ],
+      "book_pages": "Chapter 1, pp. 34–55: induced maps and product-loop discussion, pp. 34–39; Van Kampen and cell-complex applications, pp. 40–55.",
+      "intent": "Pay off independent essential loops on a torus, then scale to higher genus. χ alone cannot defeat the guardian.",
+      "mechanic_focus": "Tori Dual-Circuit demands two whip circuits in distinct essential directions, verified in a two-coordinate lift. Genus Gerry adds generators and an attaching relation. Hit counts are explicit game abstractions.",
+      "attribution_note": "Proposed allocation: 14% of the textbook-derived content pool to Hatcher, Chapter 1, pp. 34–39 for induced maps and product-space loop behavior, and pp. 40–55 for Van Kampen, generators, and relations from cell attachments. The torus/higher-genus boss framing and hit count are design translations."
+    },
+    {
+      "level_number": 7,
+      "title": "Cover Story",
+      "pun_of": "covering spaces",
+      "boss_or_cast": "Covert Sheet",
+      "chapter_or_section_ids": [
+        "1.3"
+      ],
+      "book_pages": "Chapter 1, “Covering Spaces,” pp. 56–82 (covering-space classification begins p. 63; lifting properties begin p. 60).",
+      "intent": "Make covering spaces a practical test of loop classes via path lifting and closed lifts.",
+      "mechanic_focus": "Build and traverse a labeled cover with the Covering Coil. Local edge-matching at vertices; whip-trace a base loop; inspect where the lift ends. Shield opens only for closing lifts.",
+      "attribution_note": "Proposed allocation: 12% of the textbook-derived content pool to Hatcher, Chapter 1, “Covering Spaces,” pp. 56–59, “Lifting Properties,” pp. 60–62, and “The Classification of Covering Spaces,” pp. 63–82."
+    },
+    {
+      "level_number": 8,
+      "title": "Boundary Issues",
+      "pun_of": "boundaries in homology",
+      "boss_or_cast": "Boundary Barry",
+      "chapter_or_section_ids": [
+        "2",
+        "2.1"
+      ],
+      "book_pages": "Chapter 2, “Homology,” pp. 97–109; simplicial-chain material begins p. 102.",
+      "intent": "Preview homology: cycles survive; boundaries cancel — an extension of route play, not a claim that homology keeps every π₁ distinction.",
+      "mechanic_focus": "Lay oriented simplex tiles; send signed boundary tokens along faces. Cancel opposites; try to fill a whip-cycle with a chain. Optional encounter: homology forgets noncommuting word order.",
+      "attribution_note": "Proposed allocation: 8% of the textbook-derived content pool to Hatcher, Chapter 2, “Homology,” pp. 97–101 and “Simplicial and Singular Homology,” pp. 102–109. This is a continuation preview, not a full treatment of Chapter 2."
+    },
+    {
+      "level_number": 9,
+      "title": "Cup Runneth Over",
+      "pun_of": "cup product",
+      "boss_or_cast": "Cup Productrix",
+      "chapter_or_section_ids": [
+        "3",
+        "3.2",
+        "2.A"
+      ],
+      "book_pages": "Chapter 3, “Cohomology,” pp. 185–189 and “Cup Product,” pp. 206–213; Chapter 2.A, “Homology and Fundamental Group,” pp. 166–168.",
+      "intent": "Preview cohomology/cup products and the abelianization link H₁ ≅ π₁ ab.",
+      "mechanic_focus": "Combine degree-marked class tokens. Order-only loop tricks become invisible after abelianization; cup-product puzzles make interactions visible.",
+      "attribution_note": "Proposed allocation: 7% of the textbook-derived content pool to Hatcher, Chapter 2.A, pp. 166–168, and Chapter 3, “Cohomology,” pp. 185–189 and “Cup Product” / “The Cohomology Ring,” pp. 206–213."
+    },
+    {
+      "level_number": 10,
+      "title": "Hop Off the πₙ",
+      "pun_of": "Hopf + higher homotopy groups πₙ",
+      "boss_or_cast": "Hop Off",
+      "chapter_or_section_ids": [
+        "4",
+        "4.1",
+        "4.2"
+      ],
+      "book_pages": "Chapter 4, “Homotopy Theory,” pp. 337–338; “Homotopy Groups,” pp. 339–345; “Elementary Methods of Calculation,” pp. 360–365.",
+      "intent": "Finale preview: generalize loops to based sphere maps; π₁ was only dimension one.",
+      "mechanic_focus": "The Fundamental Lash becomes a deformable based map from a cube with boundary fixed at the basepoint. Concatenate; in dim ≥ 2, slide representatives. Suspension gate previews dimension shifts.",
+      "attribution_note": "Proposed allocation: 8% of the textbook-derived content pool to Hatcher, Chapter 4, “Homotopy Theory,” pp. 337–338, “Homotopy Groups,” pp. 339–345, and “Elementary Methods of Calculation,” pp. 360–365."
+    }
+  ],
+  "source_attribution": {
+    "book": "Allen Hatcher, *Algebraic Topology*.",
+    "author": "Allen Hatcher.",
+    "author_url": "https://pi.math.cornell.edu/~hatcher/",
+    "source_file_for_attribution": "books/Algebraic Topology.pdf",
+    "page_basis": "Page references and section names in this proposal follow the supplied section summaries. Where summaries provide only a section start page, ranges are presented as campaign mapping ranges and should be checked against the PDF before final production.",
+    "compensation_model_proposal": "The level percentages are a proposed allocation of a designated textbook-derived-content compensation pool, not a statement about legal ownership or a share of all game revenue. The percentages total 100% across the ten levels. Each level’s note names the Hatcher chapter/section and pages to support transparent accounting. Confirm licensing, edition metadata, and any contractual compensation terms before release."
+  },
+  "open_questions": [
+    "Combat translation for human review: Nullhomotoe’s one-hit contraction and Tori Dual-Circuit’s two independent-circuit requirement are game rules inspired by loop classes, not consequences of Euler characteristic. Approve, revise, or replace these rules so the fiction does not imply that χ alone determines combat behavior.",
+    "Surface-group precision: the supplied summaries support generators and relations via Van Kampen and 2-cell attachments, but do not state the closed orientable genus-g presentation explicitly. Genus Gerry’s relation should be checked against the relevant pages of the PDF or omitted until verified.",
+    "The torus description π₁(T²) ≅ ℤ × ℤ and the two-coordinate lift are standard mathematical targets for the encounter, but the summaries only say that product spaces split into factor loops. Verify the exact treatment and cite the precise PDF pages before production.",
+    "The proposed attribution shares are internal weights for the textbook-derived-content pool. Confirm whether a different author-compensation formula, licensing arrangement, or allocation by actual content use is required.",
+    "Confirm the edition and publication metadata from the PDF title page; none was supplied separately.",
+    "World framing: this game is a self-contained world (the Winding World). Do not tie story, levels, or UI fiction to the Arcade of Alexandria hub.",
+    "Cast naming: hero/allies prefer cool surface names (Gyroid, Seifert); keep textbook author attribution in metadata only — not as a playable character."
+  ],
+  "meta": {
+    "model": "openai-responses:gpt-6-luna",
+    "contents": "games/algebraic_topology/contents.json",
+    "summary_count": 100,
+    "seed": "whip / surface topology / fundamental group combat",
+    "naming": "surface-name hero + topology puns for cast, weapons, levels",
+    "world": "self-contained; no Arcade of Alexandria fiction inside the game"
+  }
+}

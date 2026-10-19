@@ -1,0 +1,65 @@
+{
+  "note": "World 1 · Level 2 Loop de Loop — Basepoint Beacon. Two ring districts meet at the main amber beacon; a causeway leads to a second beacon south.",
+  "bounds": { "minX": -18, "maxX": 18, "minZ": -28, "maxZ": 16 },
+  "causewayWidth": 1.5,
+  "start": [0, 12],
+  "sites": [
+    { "id": "landing", "name": "Wayfall Stairs", "kind": "start", "pos": [0, 12], "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 1.8 }] } },
+    {
+      "id": "home_base",
+      "name": "Home Base",
+      "stage": "station",
+      "pos": [-10, 4],
+      "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 5.4 }] },
+      "tracks": [{ "angle": 2.4, "length": 4.1 }],
+      "beacon": "main",
+      "emmy": [-3.4, 2.8],
+      "enemies": [["sphere", -2.8, -3.2]]
+    },
+    {
+      "id": "there_back",
+      "name": "There and Back",
+      "stage": "station",
+      "pos": [10, 4],
+      "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 5.4 }] },
+      "tracks": [{ "angle": 0.8, "length": 4.0 }],
+      "beacon": "main",
+      "emmy": [3.2, 2.6],
+      "enemies": [["sphere", 2.5, -3]]
+    },
+    {
+      "id": "brackets",
+      "name": "Brackets Deck",
+      "stage": "station",
+      "pos": [0, -6],
+      "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 5.6 }] },
+      "tracks": [
+        { "angle": 2.6, "length": 3.9 },
+        { "angle": 0.2, "length": 3.9 },
+        { "angle": 1.4, "length": 3.9 }
+      ],
+      "beacon": "main",
+      "emmy": [-3.6, 3.4],
+      "enemies": [["torus", -2.5, 3], ["torus", 2.5, -2.5]]
+    },
+    {
+      "id": "second_beacon",
+      "name": "Beacon B",
+      "stage": "station",
+      "pos": [0, -20],
+      "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 5.2 }] },
+      "tracks": [{ "angle": 1.5708, "length": 3.6 }],
+      "beacon": "south",
+      "emmy": [-3, 2.4],
+      "enemies": [["sphere", -3, 2], ["sphere", 3, 2]]
+    }
+  ],
+  "causeways": [
+    { "a": [0, 10.2], "b": [-6.2, 6.8] },
+    { "a": [0, 10.2], "b": [6.2, 6.8] },
+    { "a": [-6.2, 1.6], "b": [0, -0.4] },
+    { "a": [6.2, 1.6], "b": [0, -0.4] },
+    { "a": [0, -11.6], "b": [0, -14.8] }
+  ],
+  "exit": { "gate": [0, -25.8], "a": [0, -24.2], "b": [0, -27.5], "to": "winding_road" }
+}

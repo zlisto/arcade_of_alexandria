@@ -1,0 +1,503 @@
+{
+  "world": 3,
+  "world_art_prompt": {
+    "file": "cup-product-gardens.png",
+    "scene": "Key art of the fantasy world 'Cup Product Gardens' at twilight, high three-quarter aerial view: terraced signal gardens of blue-gray stone where rows of tall lantern posts stand beside the paths; the lanterns glow gold in pairs and their beams cross and multiply into brighter points where they meet. Pools reflect the paths backwards like mirror images. In the distance, a long coastal reach where the land mirrors itself across a glowing seam — 'Poincaré Reach' — with matched towers on opposite sides. Further still, a rail station with a fake façade of a torus, its back side showing a different structure. Gyroid walks a garden path with a glowing gold chalice of light. A tall violet-and-red masked figure hides behind the station façade."
+  },
+  "world_patch": {
+    "art": {
+      "image_path": "games/algebraic_topology/assets/locations/cup-product-gardens.png",
+      "generator": "gemini-2.5-flash-image, 16:9, style refs: cover.png + characters/gyroid.png",
+      "prompt": "Terraced signal gardens with paired gold lanterns whose beams multiply; mirror pools; Poincaré Reach mirrored across a seam; the Counterfeit Station's torus façade; Gyroid with a gold chalice."
+    },
+    "map": {
+      "note": "World 3 overworld layout (map units). Sites are places; paths are routes; gates need earlier tools.",
+      "size": [100, 60],
+      "regions": [
+        { "id": "cup_product_gardens", "name": "Cup Product Gardens", "location_id": "cup_product_gardens", "outline": [[3, 56], [3, 6], [58, 4], [62, 30], [58, 56]] },
+        { "id": "poincare_reach", "name": "Poincaré Reach", "location_id": "poincare_reach", "outline": [[64, 56], [64, 4], [97, 4], [97, 56]] }
+      ],
+      "sites": [
+        { "id": "garden_gate", "name": "Garden Gate", "kind": "start", "x": 8, "y": 50, "note": "Where the delta's canals end in a garden stair." },
+        { "id": "mirror_pools", "name": "Mirror Pools", "kind": "level", "level_id": "3-1", "x": 18, "y": 40 },
+        { "id": "torsion_terrace", "name": "Torsion Terrace", "kind": "level", "level_id": "3-2", "x": 12, "y": 22 },
+        { "id": "lantern_rows", "name": "Lantern Rows", "kind": "level", "level_id": "3-3", "x": 28, "y": 12 },
+        { "id": "twin_islands", "name": "Twin Islands", "kind": "level", "level_id": "3-4", "x": 38, "y": 30 },
+        { "id": "product_parterre", "name": "Product Parterre", "kind": "level", "level_id": "3-5", "x": 50, "y": 14 },
+        { "id": "polynomial_garden", "name": "Polynomial Garden", "kind": "level", "level_id": "3-6", "x": 48, "y": 46 },
+        { "id": "compass_cliffs", "name": "Compass Cliffs", "kind": "level", "level_id": "3-7", "x": 70, "y": 46 },
+        { "id": "the_seam", "name": "The Seam", "kind": "level", "level_id": "3-8", "x": 80, "y": 30 },
+        { "id": "pairing_pier", "name": "Pairing Pier", "kind": "level", "level_id": "3-9", "x": 90, "y": 46 },
+        { "id": "counterfeit_station", "name": "The Counterfeit Station", "kind": "castle", "castle_id": "castle-3", "x": 86, "y": 11 }
+      ],
+      "paths": [
+        { "from": "garden_gate", "to": "mirror_pools" },
+        { "from": "mirror_pools", "to": "torsion_terrace", "gate": { "needs": "boundary_blade", "from_level": "2-2", "note": "A hedge-wall of tiles: cut it to its boundary." } },
+        { "from": "torsion_terrace", "to": "lantern_rows" },
+        { "from": "lantern_rows", "to": "twin_islands" },
+        { "from": "twin_islands", "to": "product_parterre" },
+        { "from": "twin_islands", "to": "polynomial_garden" },
+        { "from": "polynomial_garden", "to": "compass_cliffs", "gate": { "needs": "cup_caster", "from_level": "3-3", "note": "A lantern lock: light two lanterns whose product is the key." } },
+        { "from": "compass_cliffs", "to": "the_seam", "gate": { "needs": "sheet_compass", "from_level": "1-8", "note": "The cliffs' stair lies on the orientation double cover: climb it with the Sheet Compass." } },
+        { "from": "the_seam", "to": "pairing_pier" },
+        { "from": "the_seam", "to": "counterfeit_station" }
+      ]
+    }
+  },
+  "levels": {
+    "3-1": {
+      "site": "Mirror Pools — still pools that reflect every garden path backwards.",
+      "story": "In the Gardens, the gardeners don't walk paths — they read them. A cochain is a reading: it assigns a value to every edge (or triangle). Its coboundary reads a triangle by reading its edges. The mirror pools show the delta's chains reversed: what was a boundary is now a coboundary.",
+      "objective": "Assign readings to edges and triangles and compute coboundaries.",
+      "mechanics": [
+        "Reading wand: set a value from a coefficient group G on every edge of a garden patch (a 1-cochain).",
+        "Coboundary: the pool shows the reading of each triangle as the signed sum of its edges' readings (δφ = φ∘∂).",
+        "δδ = 0 again, mirrored from 2-2.",
+        "Cocycles (δφ = 0) modulo coboundaries give cohomology classes."
+      ],
+      "math_check": "Cochains Cⁿ(X; G) = Hom(Cₙ(X), G), δ dual to ∂, δδ = 0, Hⁿ(X; G) = ker δ / im δ (Hatcher pp. 190–197).",
+      "stages": [
+        { "name": "Read an Edge", "beat": "teach", "description": "Give each edge a value; the pool reads triangles from their edges." },
+        { "name": "Balanced Readings", "beat": "practice", "description": "Find readings with every triangle reading zero: cocycles." },
+        { "name": "Readings from Points", "beat": "twist", "description": "Readings that come from vertex values (differences) are coboundaries — they don't count." },
+        { "name": "Around the Hole", "beat": "master", "description": "On an annulus, find a cocycle that isn't a coboundary: it reads 1 around the hole." }
+      ],
+      "enemies": [
+        { "name": "Echo", "description": "New: a violet reflection that mirrors Gyroid's moves with signs flipped; lash it in the pool, not on land." },
+        { "name": "Flipper", "description": "From 2-1." }
+      ],
+      "tools": "Unlocks the reading wand (part of the Boundary Blade's hilt).",
+      "music": "Cup Product Gardens theme: a gentle 76 bpm waltz in F major, celesta and soft strings — first statement, with the melody sometimes played retrograde.",
+      "visuals": "Twilight gardens of stone paths with still mirror pools reflecting them; gold values glowing on edges; reflected arrows pointing the opposite way.",
+      "movie": "level-3-1-intro “Reverse Engineering”."
+    },
+    "3-2": {
+      "site": "Torsion Terrace — a terrace where twisted vines climb from one level to the next.",
+      "story": "Cohomology is determined by homology — but torsion climbs up one floor. The projective plane's twisted loop (2-7) shows up in cohomology one dimension higher.",
+      "objective": "Predict cohomology from homology using the Universal Coefficient rule.",
+      "mechanics": [
+        "Terrace levels hold homology groups from Chain Delta.",
+        "Free parts stay on their own terrace; torsion vines climb to the next terrace (Ext).",
+        "Coefficient switch: with ℤ₂ readings the vines behave differently."
+      ],
+      "math_check": "The universal coefficient theorem Hⁿ(X; G) ≅ Hom(Hₙ(X), G) ⊕ Ext(Hₙ₋₁(X), G); cohomology of RP², lens spaces (Hatcher pp. 190–206).",
+      "stages": [
+        { "name": "Free Floors", "beat": "teach", "description": "Torus: cohomology matches homology terrace for terrace." },
+        { "name": "The Climbing Vine", "beat": "practice", "description": "RP²: H₁ = ℤ₂ climbs to H² = ℤ₂." },
+        { "name": "Change the Soil", "beat": "twist", "description": "With ℤ₂ coefficients RP² reads ℤ₂ on every terrace." },
+        { "name": "Plan the Terrace", "beat": "master", "description": "Predict cohomology for a lens space before reading it." }
+      ],
+      "enemies": [{ "name": "Vine choker", "description": "New: a violet vine that pulls torsion back down; two lashes." }],
+      "tools": "Uses the reading wand and the Mod Mill switch (2-9).",
+      "music": "Gardens theme with a rising sequence each time a vine climbs.",
+      "visuals": "Stacked stone terraces with twisted glowing gold vines climbing from each level to the next.",
+      "movie": "level-3-2-intro “Torsion Shift”."
+    },
+    "3-3": {
+      "site": "Lantern Rows — rows of lantern posts, each lantern lit by a reading.",
+      "story": "Two readings can multiply: read a triangle's front edge with one and its back edge with the other. Gyroid forges the Cup Caster, which pours two lanterns into one — and swapping their order may flip the sign.",
+      "objective": "Multiply cochains with the Cup Caster and learn the sign rule.",
+      "mechanics": [
+        "Cup Caster (new): pick two lit lanterns (cochains φ, ψ); on each triangle, the product reads φ on the front face and ψ on the back face.",
+        "Coboundary rule: δ(φ ⌣ ψ) = δφ ⌣ ψ ± φ ⌣ δψ — products of cocycles are cocycles; products with coboundaries are coboundaries.",
+        "Graded commutativity: swapping two degree-1 lanterns flips the sign."
+      ],
+      "math_check": "The cup product on simplicial/singular cochains, the coboundary formula, the induced product on cohomology, graded commutativity αβ = (−1)ᵏˡ βα (Hatcher pp. 206–212; graded commutativity p. 215).",
+      "stages": [
+        { "name": "Front and Back", "beat": "teach", "description": "Cup two edge readings on a single triangle." },
+        { "name": "Products of Cocycles", "beat": "practice", "description": "Cup two cocycles: the product is a cocycle." },
+        { "name": "Swap", "beat": "twist", "description": "Swap the order of two degree-1 lanterns: the light inverts." },
+        { "name": "Light the Row", "beat": "master", "description": "Light a target lantern on a torus as a product of two." }
+      ],
+      "enemies": [{ "name": "Echo", "description": "Flips signs." }, { "name": "Moth swarm", "description": "New: violet moths that put lanterns out; one lash each." }],
+      "tools": "Unlocks the Cup Caster (cup_caster).",
+      "music": "Gardens theme in two voices that multiply into chords when a cup is cast.",
+      "visuals": "Rows of tall stone lantern posts at twilight; two gold beams crossing and pooling into a brighter third lantern; a gold chalice in Gyroid's hands.",
+      "movie": "level-3-3-intro “Front Face, Back Face”."
+    },
+    "3-4": {
+      "site": "Twin Islands — Null's two islands from the end of World 2, the torus and the two-loops-plus-sphere, side by side.",
+      "story": "Null's World 2 claim: the torus and S¹ ∨ S¹ ∨ S² are the same place — their holes match. The Cup Caster tells them apart: on the torus, the two loop readings multiply to the top class. On the bouquet, their product is zero.",
+      "objective": "Refute Null's World 2 claim with a nonzero cup product.",
+      "mechanics": [
+        "Light the two degree-1 lanterns on each island.",
+        "Cup them: on the torus the top lantern lights; on the bouquet it stays dark.",
+        "Since cup products are preserved by homotopy equivalence, the islands aren't the same place."
+      ],
+      "math_check": "Cohomology rings of T² and S¹ ∨ S¹ ∨ S²: same groups, different products; the ring is a homotopy invariant (Hatcher pp. 212–214). Refutes the World 2 claim.",
+      "stages": [
+        { "name": "Same Holes", "beat": "teach", "description": "Confirm the meters match." },
+        { "name": "Cast on the Torus", "beat": "practice", "description": "a ⌣ b lights the top class." },
+        { "name": "Cast on the Bouquet", "beat": "twist", "description": "a ⌣ b is dark: the loops never meet in a surface." },
+        { "name": "Null's Answer", "beat": "master", "description": "Present the proof; the false island crumbles." }
+      ],
+      "enemies": [{ "name": "Mirror spawn", "description": "From 0-3: tries to make the islands look identical." }, { "name": "The Commutator (cameo)", "description": "Watches, then slips away toward the Station." }],
+      "tools": "Uses the Cup Caster.",
+      "music": "Gardens theme, then Null's motif dissolving when the top lantern lights.",
+      "visuals": "Two islands side by side: a torus island and a bouquet of two loops attached to a sphere island; on the torus a third bright lantern lights where two beams cross; on the other, the beams pass without meeting.",
+      "movie": "level-3-4-intro “A Cup of Counterexample”."
+    },
+    "3-5": {
+      "site": "Product Parterre — a formal garden laid out as a grid, each bed the product of a row and a column.",
+      "story": "The cohomology of a product is built from its factors: rows times columns. The torus is a circle times a circle (1-5), and its lanterns are products of the circles' lanterns.",
+      "objective": "Compute product cohomology from factors.",
+      "mechanics": [
+        "Row and column beds hold each factor's lanterns; a bed lights with their cross product.",
+        "Künneth: for nice coefficients, the product's lanterns are exactly the bed products."
+      ],
+      "math_check": "Cross product and the Künneth formula H*(X × Y; R) ≅ H*(X; R) ⊗ H*(Y; R) for H*(Y; R) free and finitely generated (Hatcher pp. 214–220).",
+      "stages": [
+        { "name": "Row Times Column", "beat": "teach", "description": "Circle times circle: four beds." },
+        { "name": "Sphere Times Sphere", "beat": "practice", "description": "S² × S²: lanterns in degrees 0, 2, 2, 4." },
+        { "name": "Torsion in the Soil", "beat": "twist", "description": "With torsion factors, the formula needs care; switch to field coefficients." },
+        { "name": "Design a Parterre", "beat": "master", "description": "Lay out the beds for a triple product." }
+      ],
+      "enemies": [{ "name": "Moth swarm", "description": "Puts out lanterns." }],
+      "tools": "Uses the Cup Caster and Suspension Sling.",
+      "music": "Gardens theme as a minuet in strict rows.",
+      "visuals": "A formal grid garden with lantern beds at row-column crossings; gold beams along rows and columns meeting in beds.",
+      "movie": "level-3-5-intro “Product Placement”."
+    },
+    "3-6": {
+      "site": "Polynomial Garden — a garden of nested lantern rings: one lantern, its square, its cube, until the top.",
+      "story": "On projective spaces, one lantern generates everything: its powers light the whole garden until they reach the top. With this, Borsuk–Ulam returns in every dimension.",
+      "objective": "Compute truncated polynomial rings and prove Borsuk–Ulam.",
+      "mechanics": [
+        "Power steps: cup a lantern with itself repeatedly; each power lights the next ring.",
+        "RPⁿ with ℤ₂: the powers of α light rings 0..n; αⁿ⁺¹ = 0. CPⁿ with ℤ: powers of a degree-2 class.",
+        "Borsuk–Ulam: a map commuting with antipodes would force αⁿ⁺¹ ≠ 0 in a smaller garden — impossible."
+      ],
+      "math_check": "H*(RPⁿ; ℤ₂) ≅ ℤ₂[α]/(αⁿ⁺¹), H*(CPⁿ; ℤ) ≅ ℤ[α]/(αⁿ⁺¹); Borsuk–Ulam (Hatcher pp. 220–229).",
+      "stages": [
+        { "name": "Square It", "beat": "teach", "description": "On RP², α ⌣ α lights the top." },
+        { "name": "Climb the Powers", "beat": "practice", "description": "Light RP³ and CP² ring by ring." },
+        { "name": "Stops at the Top", "beat": "twist", "description": "One more power: dark." },
+        { "name": "Antipodes", "beat": "master", "description": "Find matching antipodal stations on a sphere — then prove they must exist." }
+      ],
+      "enemies": [{ "name": "Whirl spawn", "description": "From 1-4." }],
+      "tools": "Uses the Cup Caster.",
+      "music": "Gardens theme as a round that adds a voice per power and stops abruptly at the top.",
+      "visuals": "Concentric rings of lanterns rising like a tiered fountain, each tier brighter, the top tier crowned; a sphere island with paired opposite stations.",
+      "movie": "level-3-6-intro “Polynomial Garden”."
+    },
+    "3-7": {
+      "site": "Compass Cliffs — sea cliffs on Poincaré Reach where small compasses spin at every point.",
+      "story": "A place is orientable if compasses can be set consistently everywhere. Every place has an orientation double cover — two sheets, one for each choice (1-8) — and it is connected exactly when the place can't be oriented.",
+      "objective": "Set local orientations and build the orientation double cover.",
+      "mechanics": [
+        "Local compass: at each point, choose one of two orientations (a local homology generator).",
+        "Carry the compass along paths; returning flipped means non-orientable.",
+        "Sheet Compass: the two choices make a two-sheet cover; on a Möbius cliff it is one connected strip."
+      ],
+      "math_check": "Local homology Hₙ(M, M − x) ≅ ℤ, orientations, the orientation double cover (Hatcher pp. 233–239).",
+      "stages": [
+        { "name": "Set the Compasses", "beat": "teach", "description": "Orient a torus cliff consistently." },
+        { "name": "The Flip", "beat": "practice", "description": "Walk a Möbius cliff; the compass returns flipped." },
+        { "name": "Two Sheets", "beat": "twist", "description": "Build the orientation double cover; it's connected on the Klein cliff." },
+        { "name": "Survey", "beat": "master", "description": "Sort cliffs by orientability." }
+      ],
+      "enemies": [{ "name": "Flipper", "description": "Flips compasses." }, { "name": "Liftling", "description": "From 1-8." }],
+      "tools": "Uses the Sheet Compass.",
+      "music": "Poincaré Reach theme: a broad 88 bpm seascape in D major, horns and harp — first statement.",
+      "visuals": "Tall sea cliffs on a reach of coast; small gold compasses spinning on posts; a cliff path twisting like a Möbius band.",
+      "movie": "level-3-7-intro “Which Way Is Up”."
+    },
+    "3-8": {
+      "site": "The Seam — a glowing seam down Poincaré Reach where the land mirrors itself; every tower on one side has a twin on the other.",
+      "story": "On a closed oriented manifold, holes in dimension k match readings in dimension n − k. Every tower has a twin across the seam. Without orientation, the match still works mod 2.",
+      "objective": "Pair holes with readings across the seam (Poincaré duality).",
+      "mechanics": [
+        "Dual cells: each k-cell has a dual (n−k)-cell crossing it once.",
+        "Seam mirror: holes on one side light their dual readings on the other.",
+        "Non-orientable: switch to ℤ₂ readings to restore the mirror."
+      ],
+      "math_check": "Poincaré duality Hᵏ(M; ℤ) ≅ Hₙ₋ₖ(M; ℤ) for closed orientable n-manifolds; with ℤ₂ for all closed manifolds; dual cell decompositions as intuition (Hatcher pp. 239–249).",
+      "stages": [
+        { "name": "Twin Towers", "beat": "teach", "description": "Torus: H¹ pairs with H₁." },
+        { "name": "Dual Cells", "beat": "practice", "description": "Draw dual cells on a surface." },
+        { "name": "Broken Mirror", "beat": "twist", "description": "On the Klein bottle the integer mirror fails; ℤ₂ fixes it." },
+        { "name": "Across the Seam", "beat": "master", "description": "Predict a 3-manifold's homology from half of it." }
+      ],
+      "enemies": [{ "name": "Echo", "description": "Mirrors with wrong signs." }, { "name": "Seam wraith", "description": "New: tears the seam; three lashes." }],
+      "tools": "Uses the Cup Caster and Sheet Compass.",
+      "music": "Poincaré Reach theme, its melody mirrored (inverted) in the bass.",
+      "visuals": "A long coast split by a glowing seam; towers on one side with identical twins mirrored on the other; dual grids overlapping.",
+      "movie": "level-3-8-intro “Both Sides of the Story”."
+    },
+    "3-9": {
+      "site": "Pairing Pier — a pier where lanterns from opposite sides are paired across the water.",
+      "story": "Duality and cup products together: every lantern has a partner whose product is the top lantern. CP² and S² ∨ S⁴ have the same holes, but only CP²'s middle lantern squares to the top.",
+      "objective": "Use the cup pairing to tell CP² from S² ∨ S⁴.",
+      "mechanics": [
+        "Pair lanterns across the pier; the pairing is perfect (nondegenerate) on a closed orientable manifold.",
+        "Square the middle lantern: on CP² it lights the top; on S² ∨ S⁴ it's dark — and S² ∨ S⁴ is not a manifold."
+      ],
+      "math_check": "The cup product pairing is nondegenerate mod torsion for closed orientable manifolds; H*(CP²) vs H*(S² ∨ S⁴) (Hatcher pp. 249–252).",
+      "stages": [
+        { "name": "Partners", "beat": "teach", "description": "Pair torus lanterns." },
+        { "name": "The Middle Lantern", "beat": "master", "description": "Square it on CP² and on S² ∨ S⁴." }
+      ],
+      "enemies": [{ "name": "Moth swarm", "description": "Snuffs lanterns." }],
+      "tools": "Uses the Cup Caster.",
+      "music": "Poincaré Reach theme and the Gardens theme played together.",
+      "visuals": "A long stone pier at night with lanterns on both sides paired by gold beams across the water.",
+      "movie": "level-3-9-intro “Perfect Pairing”."
+    }
+  },
+  "castle": {
+    "site": "The Counterfeit Station — a rail station at the end of Poincaré Reach with a perfect torus façade; behind it, a different place.",
+    "story": "The Commutator, now in disguise, runs a station that matches the torus group for group. Gyroid unmasks it with a cup product, polynomial powers and duality. Null retreats up his Spire into higher homotopy.",
+    "objective": "Unmask the counterfeit place.",
+    "phases": [
+      { "name": "The façade", "description": "The station reads like a torus on every meter. Cast a ⌣ b: the top lantern stays dark. Tests 3-4." },
+      { "name": "False powers", "description": "The Commutator projects a fake projective space; climb its powers and find where they stop too early. Tests 3-6." },
+      { "name": "No twin", "description": "A tower without a twin across the seam: no duality, so not a closed manifold. Tests 3-8. The disguise falls." }
+    ],
+    "enemies": [{ "name": "The Commutator", "description": "Boss, disguised as a station master." }, { "name": "Echoes and moths", "description": "Waves." }],
+    "tools": "Cup Caster, Sheet Compass, reading wand.",
+    "music": "A sly 3/4 version of the Commutator's fugue on station chimes; the Gardens theme returns in full when the disguise falls.",
+    "visuals": "A grand rail station with a torus-shaped façade; behind it, a bouquet and sphere structure; lantern beams crossing the platforms.",
+    "movie": "castle-3-intro “The Counterfeit Station” and castle-3-outro “Up the Spire”."
+  },
+  "level_art": {
+    "3-1": { "file": "3-1-reverse-engineering.png", "scene": "Level 'Reverse Engineering' at the Mirror Pools: twilight gardens with blue-gray stone paths and still mirror pools that reflect the paths; glowing gold values hover over path edges, and their reflections in the pools show arrows pointing the opposite way. Gyroid holds a slim gold wand. A violet reflection of a figure moves inside a pool." },
+    "3-2": { "file": "3-2-torsion-shift.png", "scene": "Level 'Torsion Shift' at the Torsion Terrace: stacked stone garden terraces at twilight; twisted glowing gold vines climb from each terrace up to the next. Gyroid climbs beside a vine. A violet vine strangles one." },
+    "3-3": { "file": "3-3-front-face-back-face.png", "scene": "Level 'Front Face, Back Face' in the Lantern Rows: rows of tall stone lantern posts at twilight; two gold lantern beams cross and pool into a brighter third lantern. Gyroid holds up a glowing gold chalice that the beams pour into. Violet moths swarm around one lantern." },
+    "3-4": { "file": "3-4-a-cup-of-counterexample.png", "scene": "Level 'A Cup of Counterexample' at the Twin Islands: two islands side by side at twilight — one shaped like a torus, the other made of two ring-shaped islands joined to a round dome-shaped sphere island. On the torus, two gold beams meet and a bright lantern lights at their crossing; on the other island the beams pass without meeting. Gyroid stands between them with a gold chalice; the Commutator watches from a boat." },
+    "3-5": { "file": "3-5-product-placement.png", "scene": "Level 'Product Placement' in the Product Parterre: a formal grid garden with hedge beds at row-column crossings; gold beams run along rows and columns and light lanterns where they meet. Gyroid walks a row. Violet moths flutter." },
+    "3-6": { "file": "3-6-polynomial-garden.png", "scene": "Level 'Polynomial Garden': concentric tiers of lantern rings rising like a tiered fountain, each tier brighter gold than the last, the top tier crowned with light; beside it a small sphere island with two opposite stations glowing. Gyroid climbs the tiers." },
+    "3-7": { "file": "3-7-which-way-is-up.png", "scene": "Level 'Which Way Is Up' at the Compass Cliffs: tall sea cliffs on a long coast at twilight; small gold compasses spin on posts along a cliff path that twists like a Möbius band. Gyroid holds a glowing compass. A violet frog flips a compass." },
+    "3-8": { "file": "3-8-both-sides-of-the-story.png", "scene": "Level 'Both Sides of the Story' at the Seam: a long coastline split down the middle by a glowing gold seam; stone towers on one side have identical mirrored twin towers on the other; a faint grid and its dual grid overlap across the land. Gyroid stands on the seam. A violet wraith tears at the seam." },
+    "3-9": { "file": "3-9-perfect-pairing.png", "scene": "Level 'Perfect Pairing' at Pairing Pier: a long stone pier at night with lanterns along both sides, each paired with one opposite by a gold beam across the water. Gyroid and Emmy Boundary walk the pier." }
+  },
+  "castle_art": {
+    "file": "castle-3-counterfeit-station.png",
+    "scene": "Castle 'The Counterfeit Station': a grand stone rail station at night whose front façade is shaped like a perfect torus, but seen from the side its back is a bouquet of two rings attached to a dome — a fake. Lantern beams cross the platforms. The Commutator (from the reference) in a station master's cloak over his loop-pauldron armor, mask half-raised. Gyroid confronts him holding a glowing gold chalice; Emmy Boundary beside him."
+  },
+  "videos": [
+    {
+      "id": "world-3-intro",
+      "title": "Into the Cup Product Gardens",
+      "plays": "After castle-2 (The Retractor), before World 3 · Level 1",
+      "world": 3,
+      "status": "scripted",
+      "story_start": 0,
+      "story_end": 44,
+      "pace": [[0, null, 0.85]],
+      "synopsis": "Null's ball-to-boundary retractor failed (H₂(B³) = 0 — Brouwer one dimension up). The Commutator shows up in disguise at a counterfeit station that matches the torus group for group. Gyroid enters the signal gardens, where cochains read chains backwards and classes multiply. Null's new claim: every map S³ → S² is trivial.",
+      "scenes": [
+        { "id": "A", "start": 0, "end": 8, "title": "The garden stair", "description": "Gyroid and Emmy climb from the delta's canals up a garden stair; lantern posts line the paths ahead." },
+        { "id": "B", "start": 8, "end": 16, "title": "Reading backwards", "description": "In a still pool, the garden path is reflected with its arrows reversed; values glow on its edges." },
+        { "id": "C", "start": 16, "end": 24, "title": "Lanterns multiply", "description": "Two lanterns' beams cross and a third, brighter lantern lights where they meet." },
+        { "id": "D", "start": 24, "end": 34, "title": "Null's new claim", "description": "At the edge of the gardens, Null holds a small 3-sphere of light in one hand and a 2-sphere in the other; he crushes a map between them to nothing. Far off, a station with a torus façade, a masked station master on its platform." },
+        { "id": "E", "start": 34, "end": 44, "title": "Title", "description": "Title card at 36: “World 3 — Cup Product Gardens” and “Level 1 — Reverse Engineering”." }
+      ],
+      "captions": [
+        { "t": 0.6, "end": 4.8, "speaker": "Narrator", "text": "Beyond the delta lay gardens where no one walked the paths — they read them." },
+        { "t": 8.4, "end": 12.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "A reading gives every edge a value. Read a triangle by its edges, and we see holes from the other side." },
+        { "t": 16.4, "end": 20.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "Two lanterns made a third. Readings multiply?" },
+        { "t": 20.8, "end": 24, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "And that's what Null's two islands can't fake." },
+        { "t": 24.4, "end": 29.4, "speaker": "Count Null", "portrait": "count-null", "text": "A three-sphere onto a two-sphere — your meters see nothing. Every such map is trivial." },
+        { "t": 29.6, "end": 33.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "And who's the station master? He stands like a fencer." }
+      ],
+      "title_card": { "t": 36, "end": 44 }
+    },
+    {
+      "id": "level-3-1-intro", "title": "Reverse Engineering", "plays": "Before World 3 · Level 1, at the Mirror Pools", "world": 3, "level_id": "3-1", "status": "scripted",
+      "story_start": 0, "story_end": 30, "pace": [[0, null, 0.85]],
+      "synopsis": "Cochains read chains: values on edges, triangles read through their edges. The pools show boundaries as coboundaries.",
+      "scenes": [
+        { "id": "A", "start": 0, "end": 8, "title": "The pools", "description": "Mirror pools beside garden paths." },
+        { "id": "B", "start": 8, "end": 16, "title": "Readings", "description": "Gyroid sets gold values on edges with a wand." },
+        { "id": "C", "start": 16, "end": 24, "title": "Around the hole", "description": "On an annular path, a reading glows 1 around the inner rim and won't come from vertex values." },
+        { "id": "D", "start": 24, "end": 26, "title": "Echoes", "description": "A violet reflection moves in a pool on its own." },
+        { "id": "E", "start": 26, "end": 30, "title": "Title", "description": "Title card at 26: “World 3 · Level 1 — Reverse Engineering”." }
+      ],
+      "captions": [
+        { "t": 0.6, "end": 4.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "In the delta we cut things to their edges. Here we read them." },
+        { "t": 8.4, "end": 12.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "Give every edge a value — the pool reads the triangles for me." },
+        { "t": 16.4, "end": 20.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "A reading that's balanced everywhere but can't come from points sees a hole." },
+        { "t": 24.2, "end": 25.8, "speaker": "Gyroid", "portrait": "gyroid", "text": "My reflection just waved." }
+      ],
+      "title_card": { "t": 26, "end": 30 }
+    },
+    {
+      "id": "level-3-2-intro", "title": "Torsion Shift", "plays": "Before World 3 · Level 2", "world": 3, "level_id": "3-2", "status": "scripted",
+      "story_start": 0, "story_end": 28, "pace": [[0, null, 0.85]],
+      "synopsis": "Readings are determined by holes — except twisted holes climb one terrace up.",
+      "scenes": [
+        { "id": "A", "start": 0, "end": 8, "title": "The terrace", "description": "Stone terraces; vines climb between them." },
+        { "id": "B", "start": 8, "end": 18, "title": "The vine climbs", "description": "The projective plane's twisted loop vine climbs from terrace 1 to terrace 2." },
+        { "id": "C", "start": 18, "end": 24, "title": "Choker", "description": "A violet vine wraps one and pulls." },
+        { "id": "D", "start": 24, "end": 28, "title": "Title", "description": "Title card at 24: “World 3 · Level 2 — Torsion Shift”." }
+      ],
+      "captions": [
+        { "t": 0.6, "end": 4.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "Readings mostly match the holes we counted in the delta. Mostly." },
+        { "t": 8.4, "end": 12.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "The doubled loop from Cell Block — it climbed a terrace." },
+        { "t": 12.8, "end": 17.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "Twisted holes show up one floor higher in readings. Plan for it." }
+      ],
+      "title_card": { "t": 24, "end": 28 }
+    },
+    {
+      "id": "level-3-3-intro", "title": "Front Face, Back Face", "plays": "Before World 3 · Level 3, in the Lantern Rows", "world": 3, "level_id": "3-3", "status": "scripted",
+      "story_start": 0, "story_end": 30, "pace": [[0, null, 0.85]],
+      "synopsis": "Emmy forges the Cup Caster: read the front edge with one reading and the back edge with another, and readings multiply.",
+      "scenes": [
+        { "id": "A", "start": 0, "end": 8, "title": "The rows", "description": "Rows of lantern posts, two lit." },
+        { "id": "B", "start": 8, "end": 16, "title": "The Caster", "description": "Emmy hands Gyroid a gold chalice; he holds it up between the two lanterns and their beams pour in." },
+        { "id": "C", "start": 16, "end": 24, "title": "A third light", "description": "A third lantern lights. He swaps the order; it flickers inverted." },
+        { "id": "D", "start": 24, "end": 26, "title": "Moths", "description": "Violet moths descend on the lanterns." },
+        { "id": "E", "start": 26, "end": 30, "title": "Title", "description": "Title card at 26: “World 3 · Level 3 — Front Face, Back Face”." }
+      ],
+      "captions": [
+        { "t": 0.6, "end": 4.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "Read a triangle's front edge with one reading and its back edge with another." },
+        { "t": 8.4, "end": 12.4, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "The Cup Caster does it for you. Two readings in, one out." },
+        { "t": 16.4, "end": 20.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "Swap the order and the light flips." },
+        { "t": 20.8, "end": 24, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "For two loop readings, yes. Signs matter here." }
+      ],
+      "title_card": { "t": 26, "end": 30 }
+    },
+    {
+      "id": "level-3-4-intro", "title": "A Cup of Counterexample", "plays": "Before World 3 · Level 4, at the Twin Islands", "world": 3, "level_id": "3-4", "status": "scripted",
+      "story_start": 0, "story_end": 32, "pace": [[0, null, 0.85]],
+      "synopsis": "Null's torus and bouquet-with-sphere share every hole count. The Cup Caster lights the top class on one and not the other.",
+      "scenes": [
+        { "id": "A", "start": 0, "end": 8, "title": "Twins", "description": "The two islands side by side; the meter shows identical beads." },
+        { "id": "B", "start": 8, "end": 16, "title": "Cast on the torus", "description": "Two beams meet across the torus; the top lantern blazes." },
+        { "id": "C", "start": 16, "end": 24, "title": "Cast on the bouquet", "description": "The beams pass each other on separate rings; the dome stays dark." },
+        { "id": "D", "start": 24, "end": 28, "title": "Watched", "description": "The Commutator, in a boat offshore, rows away." },
+        { "id": "E", "start": 28, "end": 32, "title": "Title", "description": "Title card at 28: “World 3 · Level 4 — A Cup of Counterexample”." }
+      ],
+      "captions": [
+        { "t": 0.6, "end": 4.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "Null's twins. Same holes in every dimension." },
+        { "t": 8.4, "end": 12.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "On the torus, the two loop readings multiply to the top." },
+        { "t": 16.4, "end": 20.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "On the bouquet, they never meet. Nothing lights." },
+        { "t": 20.8, "end": 24, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "Different products, different places. Null was wrong." },
+        { "t": 24.4, "end": 27.8, "speaker": "Gyroid", "portrait": "gyroid", "text": "That boatman again. Same fencer's stance." }
+      ],
+      "title_card": { "t": 28, "end": 32 }
+    },
+    {
+      "id": "level-3-5-intro", "title": "Product Placement", "plays": "Before World 3 · Level 5", "world": 3, "level_id": "3-5", "status": "scripted",
+      "story_start": 0, "story_end": 26, "pace": [[0, null, 0.85]],
+      "synopsis": "In the Parterre, rows times columns: a product's readings come from its factors.",
+      "scenes": [
+        { "id": "A", "start": 0, "end": 8, "title": "The grid", "description": "A formal grid garden; rows and columns of beds." },
+        { "id": "B", "start": 8, "end": 16, "title": "Crossings", "description": "Beams along a row and a column meet in a bed and light it." },
+        { "id": "C", "start": 16, "end": 22, "title": "Torus again", "description": "A small torus model sits where two circle beds cross." },
+        { "id": "D", "start": 22, "end": 26, "title": "Title", "description": "Title card at 22: “World 3 · Level 5 — Product Placement”." }
+      ],
+      "captions": [
+        { "t": 0.6, "end": 4.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "A product of places has products of readings. Rows times columns." },
+        { "t": 8.4, "end": 12.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "Circle times circle — that's the Torus Terraces." }
+      ],
+      "title_card": { "t": 22, "end": 26 }
+    },
+    {
+      "id": "level-3-6-intro", "title": "Polynomial Garden", "plays": "Before World 3 · Level 6", "world": 3, "level_id": "3-6", "status": "scripted",
+      "story_start": 0, "story_end": 28, "pace": [[0, null, 0.85]],
+      "synopsis": "On projective spaces one lantern's powers light the whole garden — then stop. Borsuk–Ulam follows.",
+      "scenes": [
+        { "id": "A", "start": 0, "end": 8, "title": "The fountain", "description": "Tiers of lantern rings rising like a fountain." },
+        { "id": "B", "start": 8, "end": 18, "title": "Powers", "description": "Gyroid casts a lantern with itself; tier after tier lights to the crown, then the next cast fizzles." },
+        { "id": "C", "start": 18, "end": 24, "title": "Antipodes", "description": "A sphere island's opposite stations glow in matching colors." },
+        { "id": "D", "start": 24, "end": 28, "title": "Title", "description": "Title card at 24: “World 3 · Level 6 — Polynomial Garden”." }
+      ],
+      "captions": [
+        { "t": 0.6, "end": 4.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "In this garden, one lantern makes all the others." },
+        { "t": 8.4, "end": 12.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "Square, cube… right to the top. And then nothing." },
+        { "t": 18.4, "end": 23.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "That stopping point is why two opposite stations must always match." }
+      ],
+      "title_card": { "t": 24, "end": 28 }
+    },
+    {
+      "id": "level-3-7-intro", "title": "Which Way Is Up", "plays": "Before World 3 · Level 7, at the Compass Cliffs", "world": 3, "level_id": "3-7", "status": "scripted",
+      "story_start": 0, "story_end": 30, "pace": [[0, null, 0.85]],
+      "synopsis": "On Poincaré Reach, compasses must agree everywhere — unless the land is twisted. Each place has a two-sheeted orientation cover.",
+      "scenes": [
+        { "id": "A", "start": 0, "end": 8, "title": "The Reach", "description": "First view of Poincaré Reach: cliffs, a glowing seam far off." },
+        { "id": "B", "start": 8, "end": 18, "title": "Compasses", "description": "Gyroid carries a compass along a cliff path that twists; he returns to the start and it points the other way." },
+        { "id": "C", "start": 18, "end": 26, "title": "Two sheets", "description": "The Sheet Compass shows two sheets over the cliff, joined into one strip." },
+        { "id": "D", "start": 26, "end": 30, "title": "Title", "description": "Title card at 26: “World 3 · Level 7 — Which Way Is Up”." }
+      ],
+      "captions": [
+        { "t": 0.6, "end": 4.6, "speaker": "Narrator", "text": "Past the gardens, the coast began to mirror itself." },
+        { "t": 8.4, "end": 12.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "I walked the loop and my compass came back flipped." },
+        { "t": 12.8, "end": 17.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "Then this cliff can't be oriented. Like the Möbius band." },
+        { "t": 18.4, "end": 23.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "The two choices make a cover — the Sheet Compass sees it." }
+      ],
+      "title_card": { "t": 26, "end": 30 }
+    },
+    {
+      "id": "level-3-8-intro", "title": "Both Sides of the Story", "plays": "Before World 3 · Level 8, at the Seam", "world": 3, "level_id": "3-8", "status": "scripted",
+      "story_start": 0, "story_end": 30, "pace": [[0, null, 0.85]],
+      "synopsis": "Across the Seam every tower has a twin: holes in dimension k match readings in dimension n − k.",
+      "scenes": [
+        { "id": "A", "start": 0, "end": 8, "title": "The Seam", "description": "A glowing seam runs down the coast; towers mirror across it." },
+        { "id": "B", "start": 8, "end": 18, "title": "Twins", "description": "A tower lights on one side; its twin lights on the other." },
+        { "id": "C", "start": 18, "end": 24, "title": "Wraith", "description": "A violet wraith claws at the seam." },
+        { "id": "D", "start": 24, "end": 26, "title": "Ready", "description": "Gyroid steps onto the seam." },
+        { "id": "E", "start": 26, "end": 30, "title": "Title", "description": "Title card at 26: “World 3 · Level 8 — Both Sides of the Story”." }
+      ],
+      "captions": [
+        { "t": 0.6, "end": 4.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "On a closed, oriented place, every hole has a twin reading on the other side." },
+        { "t": 8.4, "end": 12.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "Dimension k on this side, n minus k on that one." },
+        { "t": 18.4, "end": 23.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "If the place is twisted, count mod 2 and the mirror still works." }
+      ],
+      "title_card": { "t": 26, "end": 30 }
+    },
+    {
+      "id": "level-3-9-intro", "title": "Perfect Pairing", "plays": "Before World 3 · Level 9, at Pairing Pier", "world": 3, "level_id": "3-9", "status": "scripted",
+      "story_start": 0, "story_end": 26, "pace": [[0, null, 0.85]],
+      "synopsis": "Every lantern has a partner whose product is the top. CP²'s middle lantern squares to the top; S² ∨ S⁴'s doesn't.",
+      "scenes": [
+        { "id": "A", "start": 0, "end": 8, "title": "The pier", "description": "Lanterns paired across the water by beams." },
+        { "id": "B", "start": 8, "end": 18, "title": "The middle lantern", "description": "Gyroid squares the middle lantern of two models: one blazes, one stays dark." },
+        { "id": "C", "start": 18, "end": 22, "title": "The station", "description": "The Counterfeit Station's lights in the distance." },
+        { "id": "D", "start": 22, "end": 26, "title": "Title", "description": "Title card at 22: “World 3 · Level 9 — Perfect Pairing”." }
+      ],
+      "captions": [
+        { "t": 0.6, "end": 4.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "On a closed manifold, every lantern has a partner. Their product is the top." },
+        { "t": 8.4, "end": 12.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "Same holes — but only one middle lantern squares to the top." },
+        { "t": 18.4, "end": 21.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "Time to visit that station." }
+      ],
+      "title_card": { "t": 22, "end": 26 }
+    },
+    {
+      "id": "castle-3-intro", "title": "The Counterfeit Station", "plays": "Before castle-3", "world": 3, "status": "scripted",
+      "story_start": 0, "story_end": 30, "pace": [[0, null, 0.85]],
+      "synopsis": "A station with a perfect torus façade, matching every hole count. Its masked station master knows Gyroid's name.",
+      "scenes": [
+        { "id": "A", "start": 0, "end": 8, "title": "The façade", "description": "A grand station shaped like a torus; meters on its walls read like a torus." },
+        { "id": "B", "start": 8, "end": 18, "title": "The master", "description": "The station master steps out; under his cloak, loop pauldrons." },
+        { "id": "C", "start": 18, "end": 26, "title": "Unmasked", "description": "He throws back the cloak: the Commutator." },
+        { "id": "D", "start": 26, "end": 30, "title": "Title", "description": "Title card at 26: “World 3 · Castle — The Counterfeit Station”." }
+      ],
+      "captions": [
+        { "t": 0.6, "end": 4.6, "speaker": "The Commutator", "portrait": "commutator", "text": "Welcome to the torus, courier. Count my holes — you'll find them all in order." },
+        { "t": 8.4, "end": 12.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "The Commutator. You don't give up." },
+        { "t": 12.8, "end": 17.6, "speaker": "The Commutator", "portrait": "commutator", "text": "Your counting forgot order once. It will forget again." },
+        { "t": 18.4, "end": 23.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "We don't just count anymore. We multiply." }
+      ],
+      "title_card": { "t": 26, "end": 30 }
+    },
+    {
+      "id": "castle-3-outro", "title": "Up the Spire", "plays": "After castle-3 — the end of World 3", "world": 3, "status": "scripted",
+      "story_start": 0, "story_end": 34, "pace": [[0, null, 0.85]],
+      "synopsis": "The façade falls; the Commutator escapes again. Null retreats up the Postnikov Spire, where rooms unfold into higher dimensions and his Crown waits.",
+      "scenes": [
+        { "id": "A", "start": 0, "end": 8, "title": "The façade falls", "description": "The torus façade cracks and falls away, revealing two rings and a dome." },
+        { "id": "B", "start": 8, "end": 16, "title": "Escape", "description": "The Commutator leaps onto a departing train of violet light." },
+        { "id": "C", "start": 16, "end": 28, "title": "The Spire", "description": "On the horizon a tower rises into the clouds, each floor a room that unfolds into more dimensions; at the top, the Null Crown's violet glow." },
+        { "id": "D", "start": 28, "end": 34, "title": "World 3 complete", "description": "Card: “World 3 complete — Cup Product Gardens restored.”" }
+      ],
+      "captions": [
+        { "t": 0.6, "end": 4.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "No top lantern, no twin across the seam. Your station was never a torus." },
+        { "t": 8.4, "end": 12.6, "speaker": "The Commutator", "portrait": "commutator", "text": "Then I'll find somewhere your lanterns can't reach." },
+        { "t": 16.4, "end": 21, "speaker": "Count Null", "portrait": "count-null", "text": "Climb my Spire, courier. Up here, shapes have more than holes." },
+        { "t": 21.2, "end": 27.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "Then we climb. Every floor." }
+      ],
+      "title_card": { "t": 28, "end": 34 }
+    }
+  ]
+}

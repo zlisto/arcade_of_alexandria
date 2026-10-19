@@ -1,10 +1,28 @@
 import { useFrame } from '@react-three/fiber'
 import { Line } from '@react-three/drei'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { createElement, useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 import Gyroid from '../../characters/Gyroid'
-import { sfxCrack, sfxHammer, sfxHit, sfxHurt, sfxPop, sfxWhoosh } from '../../audio/chip'
-import { BeaconSpawn, ConerSpawn, LoopBiterSpawn, ShardSpawn, MirrorSpawn, SnapperSpawn, SphereSpawn, TorusSpawn, UnglueSpawn } from '../../characters/Spawn'
+import { sfxCrack, sfxHammer, sfxHit, sfxHurt, sfxPop, sfxRefuse, sfxRoot, sfxWhoosh } from '../../audio/chip'
+import {
+  BeaconSpawn,
+  ConerSpawn,
+  DeckGuardSpawn,
+  HedgeSpawn,
+  LiftlingSpawn,
+  LoopBiterSpawn,
+  PatrolSpawn,
+  ProjectorImpSpawn,
+  RetractorSpawn,
+  ShardSpawn,
+  MirrorSpawn,
+  SnapperSpawn,
+  SphereSpawn,
+  StackSentinelSpawn,
+  TorusSpawn,
+  UnglueSpawn,
+  WhirlSpawn,
+} from '../../characters/Spawn'
 import {
   ACTION_TOOLS,
   BladeProp,
@@ -57,6 +75,34 @@ const ENEMY = {
   biter: { hp: 2, speed: 1.15, radius: 0.36 },
   beacon: { hp: 1, speed: 0, radius: 0.6 }, // the castle's judgment beacons: they never move or bite
   shard: { hp: 1, speed: 2.1, radius: 0.3 },
+  // --- World 1 (one row per type, shared by every level that uses it)
+  hedge: { hp: 1, speed: 0.4, radius: 0.5, rootTime: 4.2 }, // 1-1: roots into a hedge unless lashed in time
+  retractor: { hp: 2, speed: 1.3, radius: 0.42 }, // 1-4: chases like a Torus
+  whirl: { hp: 1, speed: 1.9, radius: 0.38 }, // 1-4
+  projector_imp: { hp: 1, speed: 0.95, radius: 0.38 }, // 1-5
+  patrol: { hp: 2, speed: 0.85, radius: 0.42 }, // 1-6, 1-7, 1-8 (1-6 patrols get one hp per letter of their word)
+  liftling: { hp: 2, speed: 1.05, radius: 0.34 }, // 1-8, 1-9 (1-8: only hittable on its own sheet, via stage.canHit)
+  stack_sentinel: { hp: 2, speed: 0, radius: 0.55, harmless: true }, // 1-9: stands at the tower; lashing it swaps the start vertex (stage.onEnemyHit keeps it standing)
+  deck_guard: { hp: 1, speed: 0.85, radius: 0.38 }, // 1-10: one lash clears every linked copy, once stacked (stage.canHit)
+}
+
+/** Starting hit points: a definition may set `hp`; a 1-6 patrol gets one per letter of its word. */
+function enemyHp(type, def) {
+  if (def?.hp) return def.hp
+  if (type === 'patrol' && def?.word) return Math.max(1, def.word.trim().split(/\s+/).filter(Boolean).length)
+  return ENEMY[type].hp
+}
+
+/** Models for the World 1 spawn (Worlds 2–4 append here too). */
+const SPAWN_VIEW = {
+  hedge: HedgeSpawn,
+  retractor: RetractorSpawn,
+  whirl: WhirlSpawn,
+  projector_imp: ProjectorImpSpawn,
+  patrol: PatrolSpawn,
+  liftling: LiftlingSpawn,
+  stack_sentinel: StackSentinelSpawn,
+  deck_guard: DeckGuardSpawn,
 }
 
 /** The Fundamental Lash: an amber cord cracked from Gyroid's hand. */
@@ -110,7 +156,7 @@ function EnemyList({ enemies }) {
   return enemies.current
     .slice(0, n)
     .map((e, i) =>
-      e.type === 'torus' ? <TorusSpawn key={i} e={e} maxHp={ENEMY.torus.hp} /> : e.type === 'snapper' ? <SnapperSpawn key={i} e={e} /> : e.type === 'mirror' ? <MirrorSpawn key={i} e={e} /> : e.type === 'unglue' ? <UnglueSpawn key={i} e={e} /> : e.type === 'coner' ? <ConerSpawn key={i} e={e} /> : e.type === 'biter' ? <LoopBiterSpawn key={i} e={e} /> : e.type === 'beacon' ? <BeaconSpawn key={i} e={e} /> : e.type === 'shard' ? <ShardSpawn key={i} e={e} /> : <SphereSpawn key={i} e={e} />,
+      e.type === 'torus' ? <TorusSpawn key={i} e={e} maxHp={ENEMY.torus.hp} /> : e.type === 'snapper' ? <SnapperSpawn key={i} e={e} /> : e.type === 'mirror' ? <MirrorSpawn key={i} e={e} /> : e.type === 'unglue' ? <UnglueSpawn key={i} e={e} /> : e.type === 'coner' ? <ConerSpawn key={i} e={e} /> : e.type === 'biter' ? <LoopBiterSpawn key={i} e={e} /> : e.type === 'beacon' ? <BeaconSpawn key={i} e={e} /> : e.type === 'shard' ? <ShardSpawn key={i} e={e} /> : SPAWN_VIEW[e.type] ? createElement(SPAWN_VIEW[e.type], { key: i, e }) : <SphereSpawn key={i} e={e} />,
     )
 }
 
@@ -316,7 +362,13 @@ export default function ReefGame({
       z,
       hx: x, // home: spawn stay near where they were placed
       hz: z,
-      hp: ENEMY[type].hp,
+      hp: enemyHp(type, Array.isArray(def) ? undefined : def),
+      maxHp: enemyHp(type, Array.isArray(def) ? undefined : def),
+      word: Array.isArray(def) ? undefined : def.word, // 1-6 patrols: the word they walk, and how many letters are lashed so far
+      lashStep: Array.isArray(def) ? 0 : def.lashStep || 0,
+      sheet: Array.isArray(def) ? undefined : def.sheet, // 1-8 liftlings: the sheet they live on
+      linked: Array.isArray(def) ? false : !!def.linked, // 1-10 deck guards: one lash clears every linked copy at the site
+      rooting: 0,
       alive: true,
       dying: 0,
       stun: 0,
@@ -399,7 +451,7 @@ export default function ReefGame({
   useFrame(({ clock }, rawDt) => {
     const dt = Math.min(rawDt, 0.05)
     const s = state.current
-    const t = tRef.current
+    const t = tRef?.current ?? 0
 
     // ride the slide: Gyroid's own point is carried to the spine like every other
     if (sim && t > 0 && !onPier) {
@@ -510,17 +562,33 @@ export default function ReefGame({
           let da = Math.atan2(dx, dz) - s.face
           da = Math.atan2(Math.sin(da), Math.cos(da))
           if (d < WHIP_RANGE + ENEMY[e.type].radius && Math.abs(da) < WHIP_ARC) {
+            // levels can refuse a hit (1-8 liftlings on another sheet, 1-10 guards that haven't stacked)
+            if (stage.canHit && stage.canHit(e) === false) {
+              e.refused = 0.8
+              e.stun = 0.25
+              sfxRefuse()
+              stage.onRefused?.(e)
+              continue
+            }
+            // 1-6: a patrol only takes a hit if it is on the loop its word says to strike next
+            if (e.type === 'patrol' && ribbonApi?.current?.patrolLash && !ribbonApi.current.patrolLash(e)) continue
             e.hp--
             e.flash = 0.15
             sfxHit()
+            // a level can react to a hit, and can keep the target standing (1-9's Stack sentinel swaps the start vertex, again and again)
+            if (stage.onEnemyHit?.(e) === 'keep') e.hp++
             e.stun = 0.5
-            const kb = e.type === 'beacon' ? 0 : 0.55 / (d || 1)
+            const kb = e.type === 'beacon' || ENEMY[e.type].speed === 0 ? 0 : 0.55 / (d || 1)
             const kx = e.x + dx * kb
             const kz = e.z + dz * kb
             if (enemyInside(kx, kz)) (e.x = kx), (e.z = kz)
             if (e.hp <= 0) {
               e.alive = false
               e.dying = e.type === 'torus' ? 0.6 : 0.5
+              if (e.linked) {
+                // 1-10: the copies of a guard on every sheet fall together
+                for (const o of enemies.current) if (o.alive && o !== e && o.linked && o.type === e.type && o.site === e.site) (o.alive = false), (o.dying = 0.5)
+              }
               sfxPop()
               report()
             }
@@ -536,12 +604,27 @@ export default function ReefGame({
     for (const e of enemies.current) {
       e.flash = Math.max(0, e.flash - dt)
       e.snipping = Math.max(0, e.snipping - dt)
+      e.refused = Math.max(0, (e.refused || 0) - dt)
       if (e.dying > 0) {
         e.dying = Math.max(0, e.dying - dt)
         continue
       }
       if (!e.alive) continue
       if (e.type === 'beacon') continue // beacons just stand and wait to be judged
+      if (e.type === 'hedge' && playEnabled && !onPier) {
+        // 1-1: a hedge-sprout swells and takes root unless it is lashed first
+        e.rooting = Math.min(1, (e.rooting || 0) + dt / ENEMY.hedge.rootTime)
+        if (e.rooting >= 1) {
+          sfxRoot()
+          if (ribbonApi?.current?.sproutHedge?.(e.x, e.z)) {
+            e.alive = false
+            e.dying = 0.4
+            report()
+            continue
+          }
+          e.rooting = 0 // nowhere to take root here: it uproots and tries again
+        }
+      }
       if (e.stun > 0) {
         e.stun -= dt
         e.beam = 0 // a lashed Coner loses its beam
@@ -597,6 +680,8 @@ export default function ReefGame({
         }
         e.retarget = 2 + Math.random() * 2
       }
+      // levels can steer a spawn themselves (1-6 patrols walk their word, 1-10 guards stack): the hook sets e.x/e.z (and e.tx/e.tz)
+      stage.enemyAI?.(e, dt, s)
       const vx = e.tx - e.x
       const vz = e.tz - e.z
       const vl = Math.hypot(vx, vz)
@@ -609,7 +694,7 @@ export default function ReefGame({
         else e.retarget = 0
         e.face = Math.atan2(vx, vz)
       }
-      if (d < CONTACT + cfg.radius * 0.5 && s.hurt === 0 && playEnabled && !onPier) {
+      if (d < CONTACT + cfg.radius * 0.5 && s.hurt === 0 && playEnabled && !onPier && !cfg.harmless) {
         s.hurt = 1.3
         s.hearts = Math.max(0, s.hearts - 1)
         sfxHurt()

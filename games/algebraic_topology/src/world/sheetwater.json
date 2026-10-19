@@ -1,0 +1,64 @@
+{
+  "note": "World 1 · Level 8 Sheetwater Viaduct. Figure-eight causeway with four decks; glass sheets stack above each deck. x east, z south.",
+  "bounds": { "minX": -24, "maxX": 24, "minZ": -28, "maxZ": 22 },
+  "causewayWidth": 1.55,
+  "start": [0, 18],
+  "exit": { "gate": [0, -24], "a": [0, -20], "b": [0, -26] },
+  "sites": [
+    { "id": "viaduct_landing", "name": "Viaduct Gate", "kind": "start", "pos": [0, 18], "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 1.8 }] } },
+    {
+      "id": "two_floors",
+      "name": "Two Floors",
+      "stage": "station",
+      "pos": [0, 10],
+      "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 5.2 }] },
+      "tracks": [{ "angle": 1.5708, "length": 4.0, "label": "a" }],
+      "sheets": 2,
+      "emmy": [-3.4, 2.8],
+      "enemies": [["sphere", 2.8, -2.6]]
+    },
+    {
+      "id": "build_cover",
+      "name": "Build a Cover",
+      "stage": "station",
+      "pos": [-12, 0],
+      "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 5.4 }] },
+      "tracks": [{ "angle": 3.1416, "length": 4.2, "label": "a" }, { "angle": 0, "length": 4.2, "label": "b" }],
+      "sheets": 3,
+      "ports": [[0, 0, "a"], [0, 0, "b"]],
+      "emmy": [0.8, 4.0],
+      "enemies": [["sphere", -2.5, -3.2], ["torus", 2.5, 3.0], ["patrol", 3.2, -3.0]]
+    },
+    {
+      "id": "rescue",
+      "name": "Rescue on Sheet Two",
+      "stage": "station",
+      "pos": [12, 0],
+      "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 5.4 }] },
+      "tracks": [{ "angle": 3.1416, "length": 4.2, "label": "a" }, { "angle": 0, "length": 4.2, "label": "b" }],
+      "sheets": 3,
+      "emmySheet": 2,
+      "emmy": [0, 4.2],
+      "enemies": [["sphere", 0, -3.5], ["torus", -2.8, 2.8], ["liftling", 2.8, 2.2, 1], ["patrol", -3.4, -2.6]]
+    },
+    {
+      "id": "order_proved",
+      "name": "Order, Proved",
+      "stage": "station",
+      "pos": [0, -12],
+      "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 5.6 }] },
+      "tracks": [{ "angle": 3.1416, "length": 4.4, "label": "a" }, { "angle": 0, "length": 4.4, "label": "b" }],
+      "sheets": 3,
+      "ports": [[0, 0, "a"], [0, 0, "b"]],
+      "emmy": [-3.6, 3.0],
+      "enemies": [["sphere", 0, 3.2], ["liftling", -3.2, 0, 0], ["liftling", 3.2, -2.2, 1], ["torus", 3.2, 0.6], ["patrol", 0, -3.2]]
+    }
+  ],
+  "causeways": [
+    { "a": [0, 18], "b": [0, 10] },
+    { "a": [0, 10], "b": [-12, 0] },
+    { "a": [-12, 0], "b": [12, 0] },
+    { "a": [12, 0], "b": [0, -12] },
+    { "a": [0, -12], "b": [0, -20] }
+  ]
+}

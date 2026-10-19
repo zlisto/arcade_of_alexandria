@@ -1,0 +1,57 @@
+{
+  "note": "Free-Word Forge (World 1 · Level 6): red and violet loop districts meet at an amber beacon. x east, z south.",
+  "bounds": { "minX": -22, "maxX": 22, "minZ": -28, "maxZ": 20 },
+  "causewayWidth": 1.5,
+  "start": [0, 16],
+  "sites": [
+    { "id": "forge_landing", "name": "Forge Gate", "kind": "start", "pos": [0, 16], "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 1.7 }] } },
+    {
+      "id": "laps_letters",
+      "name": "Laps Are Letters",
+      "stage": "station",
+      "pos": [0, 8],
+      "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 5.4 }] },
+      "tracks": [{ "angle": 3.1416, "length": 4.2, "color": "red" }, { "angle": 0, "length": 4.2, "color": "violet" }],
+      "emmy": [-3.4, 2.8],
+      "enemies": [["sphere", -2.5, -2.8]]
+    },
+    {
+      "id": "cancel_deck",
+      "name": "Cancel",
+      "stage": "station",
+      "pos": [0, -2],
+      "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 5.4 }] },
+      "tracks": [{ "angle": 2.4, "length": 4.0, "color": "red" }, { "angle": -0.7, "length": 4.0, "color": "violet" }],
+      "emmy": [3.2, 3.0],
+      "enemies": [["torus", 2.8, -2.5]]
+    },
+    {
+      "id": "order_deck",
+      "name": "Order Matters",
+      "stage": "station",
+      "pos": [12, -2],
+      "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 5.4 }] },
+      "tracks": [{ "angle": 3.1416, "length": 4.1, "color": "red" }, { "angle": 0, "length": 4.1, "color": "violet" }],
+      "emmy": [-3.6, 2.6],
+      "enemies": [["sphere", -2, 3], ["sphere", 2.5, -3]]
+    },
+    {
+      "id": "patrol_yard",
+      "name": "The Patrol",
+      "stage": "station",
+      "pos": [0, -14],
+      "shape": { "add": [{ "type": "rect", "x0": -8.5, "x1": 8.5, "z0": -5.5, "z1": 5.5 }] },
+      "tracks": [{ "angle": 3.1416, "length": 4.5, "color": "red" }, { "angle": 0, "length": 4.5, "color": "violet" }],
+      "emmy": [-7, 4],
+      "enemies": [["torus", 5, -3]],
+      "wave": [["patrol", 0, 0, "a b a- b-"]]
+    }
+  ],
+  "causeways": [
+    { "a": [0, 14.2], "b": [0, 13.2] },
+    { "a": [0, 3.2], "b": [0, 2.8] },
+    { "a": [3.6, -2], "b": [8.2, -2] },
+    { "a": [0, -7.4], "b": [0, -8.6] }
+  ],
+  "exit": { "gate": [0, -20.5], "a": [0, -18.8], "b": [0, -24.2], "to": "glue_works" }
+}

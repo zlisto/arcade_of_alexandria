@@ -1,0 +1,634 @@
+{
+  "world": 2,
+  "world_art_prompt": {
+    "file": "chain-delta.png",
+    "scene": "Key art of the fantasy world 'Chain Delta' at dusk, high three-quarter aerial view: a vast annular wetland of floating triangular stone platforms over dark still water, each triangle's edges marked with small glowing amber arrows. At the very center, a conspicuous round hole of empty dark water that nothing covers. Beyond the wetland rises the 'Degree Dynamo', a hill of great brass spheres turning on axles with gold lightning between them, and in the far distance a domed fortress built around a hollow stone ball. Mist hangs between the triangles. Gyroid stands on a triangle at the edge holding a glowing gold blade of light. Small violet creatures lurk among the tiles."
+  },
+  "world_patch": {
+    "art": {
+      "image_path": "games/algebraic_topology/assets/locations/chain-delta.png",
+      "generator": "gemini-2.5-flash-image, 16:9, style refs: cover.png + characters/gyroid.png",
+      "prompt": "Annular wetland of oriented triangle platforms around an uncovered central hole; the Degree Dynamo's turning spheres beyond; a domed fortress around a hollow ball; Gyroid with a gold blade."
+    },
+    "map": {
+      "note": "World 2 overworld layout (map units). Sites are places; paths are routes; gates need earlier tools.",
+      "size": [100, 60],
+      "regions": [
+        { "id": "chain_delta", "name": "Chain Delta", "location_id": "chain_delta", "outline": [[3, 30], [8, 8], [30, 3], [52, 8], [58, 30], [52, 52], [30, 57], [8, 52]] },
+        { "id": "degree_dynamo", "name": "Degree Dynamo", "location_id": "degree_dynamo", "outline": [[60, 56], [60, 6], [97, 4], [98, 56]] }
+      ],
+      "sites": [
+        { "id": "delta_mouth", "name": "Delta Mouth", "kind": "start", "x": 8, "y": 46, "note": "Where the causeway from the Commutator's Keep descends into the wetland." },
+        { "id": "tile_yard", "name": "Tile Yard", "kind": "level", "level_id": "2-1", "x": 16, "y": 36 },
+        { "id": "cancel_marsh", "name": "Cancel Marsh", "kind": "level", "level_id": "2-2", "x": 14, "y": 18 },
+        { "id": "singular_shallows", "name": "Singular Shallows", "kind": "level", "level_id": "2-3", "x": 30, "y": 9 },
+        { "id": "chase_channels", "name": "Chase Channels", "kind": "level", "level_id": "2-4", "x": 47, "y": 16 },
+        { "id": "excision_cut", "name": "Excision Cut", "kind": "level", "level_id": "2-5", "x": 49, "y": 38 },
+        { "id": "the_empty_middle", "name": "The Empty Middle", "kind": "lost", "x": 30, "y": 30, "note": "The uncovered hole at the delta's center — no triangle fills it, so the cycle around it survives." },
+        { "id": "abelian_ford", "name": "Abelian Ford", "kind": "level", "level_id": "2-10", "x": 28, "y": 49 },
+        { "id": "dynamo_gate", "name": "Dynamo Gate", "kind": "level", "level_id": "2-6", "x": 66, "y": 44 },
+        { "id": "cell_block", "name": "Cell Block", "kind": "level", "level_id": "2-7", "x": 70, "y": 26 },
+        { "id": "patchwork_fields", "name": "Patchwork Fields", "kind": "level", "level_id": "2-8", "x": 83, "y": 40 },
+        { "id": "mod_mill", "name": "Mod Mill", "kind": "level", "level_id": "2-9", "x": 86, "y": 22 },
+        { "id": "jordan_ring", "name": "Jordan Ring", "kind": "bonus", "level_id": "2-B1", "x": 77, "y": 52 },
+        { "id": "lefschetz_lantern", "name": "Lefschetz Lantern", "kind": "bonus", "level_id": "2-B2", "x": 94, "y": 50 },
+        { "id": "retractor_dome", "name": "The Retractor", "kind": "castle", "castle_id": "castle-2", "x": 82, "y": 9 }
+      ],
+      "paths": [
+        { "from": "delta_mouth", "to": "tile_yard" },
+        { "from": "tile_yard", "to": "cancel_marsh" },
+        { "from": "cancel_marsh", "to": "singular_shallows", "gate": { "needs": "boundary_blade", "from_level": "2-2", "note": "A stone tile blocks the way: cut it to its boundary with the Boundary Blade — interior edges cancel and the passage opens." } },
+        { "from": "singular_shallows", "to": "chase_channels" },
+        { "from": "chase_channels", "to": "excision_cut" },
+        { "from": "tile_yard", "to": "abelian_ford" },
+        { "from": "abelian_ford", "to": "excision_cut", "gate": { "needs": "van_kampen_clasp", "from_level": "1-6", "note": "A rope bridge of tangled words: re-tie it with the Clasp." } },
+        { "from": "excision_cut", "to": "dynamo_gate", "gate": { "needs": "suspension_sling", "from_level": "0-5", "note": "The Dynamo sits on a raised plateau: sling up with the Suspension Sling." } },
+        { "from": "dynamo_gate", "to": "cell_block" },
+        { "from": "dynamo_gate", "to": "patchwork_fields" },
+        { "from": "cell_block", "to": "mod_mill" },
+        { "from": "patchwork_fields", "to": "mod_mill" },
+        { "from": "dynamo_gate", "to": "jordan_ring", "bonus": true },
+        { "from": "patchwork_fields", "to": "lefschetz_lantern", "bonus": true },
+        { "from": "mod_mill", "to": "retractor_dome", "gate": { "needs": "degree_dial", "from_level": "2-6", "note": "The dome's lock is a sphere: turn it to the right degree with the Degree Dial." } }
+      ]
+    }
+  },
+  "levels": {
+    "2-1": {
+      "site": "Tile Yard — the delta's edge, where triangle platforms are stacked, labeled with arrows and glued together.",
+      "story": "Chain Delta is built from triangles whose edges carry arrows. Before Gyroid can count holes of every dimension he must learn how places are built from ordered triangles: two triangles make a torus, a Klein bottle or a projective plane, depending only on how their arrows are matched.",
+      "objective": "Assemble surfaces from triangles by matching arrowed edges.",
+      "mechanics": [
+        "Triangle crane: pick triangles up and lower them so their edges meet; edges glue only if arrows agree (vertices are ordered, and every edge runs from lower to higher vertex).",
+        "Glue preview: after gluing, the crane shows the resulting surface floating above the yard.",
+        "Vertex count: identified corners fuse into one; the yard tallies vertices, edges and triangles (χ, from 0-4)."
+      ],
+      "math_check": "Δ-complexes: simplices with ordered vertices, faces glued by order-preserving identifications; the torus, Klein bottle and RP² each from two triangles (Hatcher pp. 102–104).",
+      "stages": [
+        { "name": "Two Triangles", "beat": "teach", "description": "Glue two triangles along one edge into a square." },
+        { "name": "The Torus", "beat": "practice", "description": "Glue the square's opposite edges with matching arrows: a torus — one vertex, three edges, two triangles." },
+        { "name": "Flip an Arrow", "beat": "twist", "description": "Same square, one pair reversed: a Klein bottle. Both pairs crossed: a projective plane." },
+        { "name": "Wrong Order", "beat": "master", "description": "Repair Null's sabotaged yard, where arrows were relabeled so that gluings no longer respect vertex order." }
+      ],
+      "enemies": [
+        { "name": "Flipper", "description": "New: a violet frog that hops onto an edge and reverses its arrow; one lash." },
+        { "name": "Unglue", "description": "From 0-4: tears freshly glued edges." }
+      ],
+      "tools": "Uses the Cell-Smith (gluing) and the Lash.",
+      "music": "Chain Delta theme: a hushed 84 bpm piece in E minor, marimba arpeggios over a low drone, water drips on the offbeat — first statement.",
+      "visuals": "Dusk wetland, floating stone triangle platforms with glowing amber arrows on their edges, a brass crane, a translucent torus forming overhead.",
+      "movie": "level-2-1-intro “Three Corners”."
+    },
+    "2-2": {
+      "site": "Cancel Marsh — a marsh of tiled triangles, some fused into larger plazas.",
+      "story": "Emmy forges the Boundary Blade: cut anything along its edge, with arrows, and shared interior edges cancel. Cut a boundary again and nothing is left — every time. A loop that is not the edge of anything is a cycle that survives: a hole.",
+      "objective": "Use the Boundary Blade to find cycles, boundaries, and the holes left between them.",
+      "mechanics": [
+        "Boundary Blade (new): strike a tile or a patch of tiles; its boundary lights as an arrowed loop, interior shared edges cancelling (one arrow each way).",
+        "Strike again: the boundary of a boundary is always empty — the blade passes through without a mark (∂∂ = 0).",
+        "Cycles: chains with no boundary. Boundaries: cycles that are edges of something. Holes: cycles that are not boundaries.",
+        "Hole meter: the meter counts surviving cycle classes in each dimension (cycles modulo boundaries)."
+      ],
+      "math_check": "Simplicial chains Cₙ, ∂ with alternating signs, ∂∂ = 0, Hₙ = ker ∂ₙ / im ∂ₙ₊₁ (Hatcher pp. 104–108).",
+      "stages": [
+        { "name": "First Cut", "beat": "teach", "description": "Strike one triangle: three arrowed edges light." },
+        { "name": "Shared Edges", "beat": "practice", "description": "Strike a plaza of triangles: the interior edges cancel and only the outer boundary remains." },
+        { "name": "Nothing Left", "beat": "twist", "description": "Strike the boundary itself: nothing — every vertex appears once with + and once with −." },
+        { "name": "The Missing Tile", "beat": "master", "description": "A ring of tiles around a missing one: its inner loop is a cycle but not a boundary. Count H₁." }
+      ],
+      "enemies": [
+        { "name": "Flipper", "description": "Reverses arrows so edges stop cancelling." },
+        { "name": "Bog spawn", "description": "New: a violet blob that fills in missing tiles, hiding holes; two lashes (it is 2-dimensional)." }
+      ],
+      "tools": "Unlocks the Boundary Blade (boundary_blade).",
+      "music": "Chain Delta theme with a soft bell for every cancelling edge pair.",
+      "visuals": "A marsh of triangle tiles; a glowing gold blade leaving arrowed outlines; pairs of opposite arrows dissolving into sparks; a dark gap where one tile is missing.",
+      "movie": "level-2-2-intro “The Boundary Blade”."
+    },
+    "2-3": {
+      "site": "Singular Shallows — misty shallows where triangles can be bent, crumpled and collapsed into any shape.",
+      "story": "Real places don't come with tidy triangles. In the Shallows, any map of a triangle counts — even crumpled ones. Homology built from all of them gives the same answer as the tidy count, and places that deform into each other (0-3) have the same homology.",
+      "objective": "Measure holes with crumpled triangles, and see that deforming a place never changes its homology.",
+      "mechanics": [
+        "Singular stamps: stamp a triangle into the shallows along any map — stretched, folded or squashed to a line.",
+        "The Boundary Blade works on stamps exactly as on tiles.",
+        "Deform test: slide a place with the Tide Glass (0-2) or retract it (0-1); the hole meter doesn't change.",
+        "Path components: the meter's H₀ counts separate pieces."
+      ],
+      "math_check": "Singular homology; H₀ counts path components; homotopy-equivalent spaces have isomorphic homology; it agrees with simplicial homology on Δ-complexes (Hatcher pp. 108–113; the agreement is proved on p. 128).",
+      "stages": [
+        { "name": "Any Triangle", "beat": "teach", "description": "Stamp crumpled triangles; the blade still cuts their edges." },
+        { "name": "Pieces", "beat": "practice", "description": "Count separate islands with H₀." },
+        { "name": "Bend, Don't Change", "beat": "twist", "description": "Retract a fat annulus to its core circle: the meter stays at one 1-dimensional hole." },
+        { "name": "Same Shape, Same Count", "beat": "master", "description": "Bring back the Mirror Couriers (0-3): equivalent places read identically on every meter." }
+      ],
+      "enemies": [
+        { "name": "Mirror spawn", "description": "From 0-3: copies a place in a lumpier shape." },
+        { "name": "Crumpler", "description": "New: a violet wad that stamps degenerate triangles to confuse the meter; one lash." }
+      ],
+      "tools": "Uses the Boundary Blade, Tide Glass and Spool.",
+      "music": "Chain Delta theme slowed and blurred with reverb, like hearing it through fog.",
+      "visuals": "Misty shallows; gold triangles crumpled, folded and stretched like cloth; the meter floating as a glowing abacus (no numerals).",
+      "movie": "level-2-3-intro “Any Simplex Will Do”."
+    },
+    "2-4": {
+      "site": "Chase Channels — canals arranged in long rows of locks, each lock feeding the next.",
+      "story": "Water flows from lock to lock; whatever leaves one is exactly what the next one drains — an exact sequence. Gyroid learns to chase a drop of water through the grid, and to read a place's homology from a pair: the place and a part of it.",
+      "objective": "Chase elements through lock diagrams and use the long exact sequence of a pair.",
+      "mechanics": [
+        "Locks are groups; sluices are maps. A row is exact where the water entering a lock is exactly what the next sluice discards.",
+        "Diagram chase: carry a drop down, across and back up the grid; each move must follow a sluice or reverse one where exactness allows.",
+        "The pair sequence: for a place X and a part A, locks for A, X and (X, A) link into one long chain, joined by the connecting sluice ∂.",
+        "Relative cycles: chains in X whose edge lies in A."
+      ],
+      "math_check": "Exact sequences, short exact sequences of chain complexes give long exact sequences, the long exact sequence of a pair, diagram chasing, the five lemma (Hatcher pp. 113–118).",
+      "stages": [
+        { "name": "Exact Locks", "beat": "teach", "description": "Check exactness lock by lock." },
+        { "name": "The Chase", "beat": "practice", "description": "Chase a drop to build the connecting sluice ∂." },
+        { "name": "A Place and a Part", "beat": "twist", "description": "Compute the homology of a disk relative to its rim from the pair sequence." },
+        { "name": "Five Locks", "beat": "master", "description": "Two rows joined by sluices; four are known to be perfect transfers: prove the middle one is too." }
+      ],
+      "enemies": [
+        { "name": "Leak sprite", "description": "New: punctures locks so water escapes and exactness breaks; seal the leak, then lash." },
+        { "name": "Flipper", "description": "Reverses sluices." }
+      ],
+      "tools": "Uses the Boundary Blade.",
+      "music": "A steady 96 bpm canal-boat groove; each lock adds an instrument as the chase passes through it.",
+      "visuals": "Rows of stone canal locks with glowing amber water, sluice gates in grids, a single gold drop tracing a path across the grid.",
+      "movie": "level-2-4-intro “Chase Scene”."
+    },
+    "2-5": {
+      "site": "Excision Cut — the delta's far bank, a quarry where pieces of land can be cut out and collapsed.",
+      "story": "Cut out a piece well inside a part and the relative count doesn't change. Collapse a part to a point (0-5) and the relative count becomes ordinary homology. With these, Gyroid finally computes the homology of spheres: a sphere has a hole in exactly one dimension.",
+      "objective": "Excise and collapse to compute homology, and find the hole in every sphere.",
+      "mechanics": [
+        "Excision saw: cut a region whose closure sits inside the interior of A; the relative meter stays the same.",
+        "Collapse press (0-5 Cone Zone): squash A to a point; for a good pair the relative homology equals the reduced homology of X/A.",
+        "Sphere ladder: Dⁿ with its rim collapsed is Sⁿ; climb the ladder using the pair sequence one dimension at a time."
+      ],
+      "math_check": "Excision; good pairs and H̃(X/A) ≅ H(X, A); H̃ₖ(Sⁿ) ≅ ℤ for k = n and 0 otherwise; Sᵐ ≇ Sⁿ, ℝᵐ ≇ ℝⁿ for m ≠ n; no retraction Dⁿ → Sⁿ⁻¹ (Hatcher pp. 118–128).",
+      "stages": [
+        { "name": "Cut Deep", "beat": "teach", "description": "Excise a region inside A; the relative meter doesn't flinch." },
+        { "name": "Collapse", "beat": "practice", "description": "Squash a disk's rim to a point: a sphere appears on the press." },
+        { "name": "The Ladder", "beat": "twist", "description": "Climb from S¹ to S³, carrying the single hole up one dimension each rung." },
+        { "name": "Too Close to the Edge", "beat": "master", "description": "Null's saw cuts a region touching A's edge; show why excision fails there, then fix the cut." }
+      ],
+      "enemies": [
+        { "name": "Coner", "description": "From 0-5: caps holes with cones." },
+        { "name": "Quarry golem", "description": "New: a violet stone hulk that welds excised pieces back; three lashes." }
+      ],
+      "tools": "Uses the Boundary Blade, Suspension Sling and Collapse press.",
+      "music": "Chain Delta theme with quarry percussion (stone clacks) and a rising figure on each rung of the ladder.",
+      "visuals": "A stone quarry on the far bank; glowing gold saw cuts; a press squashing a disk's rim into a point to form a sphere; a ladder of nested spheres.",
+      "movie": "level-2-5-intro “Cut and Paste”."
+    },
+    "2-6": {
+      "site": "Dynamo Gate — the base of the Degree Dynamo, where great brass spheres turn on axles and wrap around each other.",
+      "story": "Null's sphere claimed loops were blind to its hollow. Homology isn't: H₂ of the sphere is ℤ. Each dynamo maps a sphere onto a sphere; its degree counts how many times. The antipodal dynamo flips orientation in odd dimensions, and no wind can blow over a sphere without a calm spot.",
+      "objective": "Refute Null's World 1 claim, measure degrees of sphere maps, and comb the hairy ball.",
+      "mechanics": [
+        "Degree Dial (new): set on a dynamo, it shows how many times the source sphere wraps its target (via H_n).",
+        "Reflections have degree −1; compositions multiply degrees; maps that slide into each other have equal degree.",
+        "Antipodal dynamo: degree (−1)ⁿ⁺¹ on Sⁿ.",
+        "Wind comb: try to set wind arrows on every tile of a sphere island with no calm spot; on S² it can't be done."
+      ],
+      "math_check": "H₂(S²) ≅ ℤ (refutes the World 1 claim that S² has no hole); degree of maps Sⁿ → Sⁿ, properties, antipodal map has degree (−1)ⁿ⁺¹; Sⁿ has a nowhere-zero tangent vector field iff n is odd (Hatcher pp. 134–137).",
+      "stages": [
+        { "name": "The Hollow, Seen", "beat": "teach", "description": "Measure Null's sphere: H₂ = ℤ. The hollow is real." },
+        { "name": "Wrap Count", "beat": "practice", "description": "Set dynamos to wrap a sphere 0, 1, 2 and −1 times." },
+        { "name": "Through the Center", "beat": "twist", "description": "The antipodal dynamo on circle and sphere: degree +1 on S¹, −1 on S²." },
+        { "name": "The Hairy Ball", "beat": "master", "description": "Comb the sphere island: one calm spot always remains. Then comb the circle smoothly." }
+      ],
+      "enemies": [
+        { "name": "Winder", "description": "From 1-3: now wraps spheres, not just circles." },
+        { "name": "Gale spawn", "description": "New: violet wisps that blow wind across tiles; lash to calm them." }
+      ],
+      "tools": "Unlocks the Degree Dial (degree_dial).",
+      "music": "Degree Dynamo theme: an industrial 110 bpm march in A minor, brass stabs on each full wrap, a low turbine hum.",
+      "visuals": "Great brass spheres turning on axles, one wrapping a translucent skin around another, gold lightning arcing between them; a sphere island with arrows swirling around a single calm spot.",
+      "movie": "level-2-6-intro “The Third Degree”."
+    },
+    "2-7": {
+      "site": "Cell Block — a fortress-workshop where places are built cell by cell (0-4) and their homology read off the cells.",
+      "story": "With a cell structure, homology needs only the cells: one group per dimension, joined by maps whose entries are degrees. Torus, projective plane and Klein bottle reveal their holes in a few lines, and the Euler characteristic from the Timber Yard returns as the alternating count of holes.",
+      "objective": "Compute homology from cells and degrees, and check χ against the holes.",
+      "mechanics": [
+        "Cell chain: each dimension's cells are a stack of crates; the attaching maps' degrees (Degree Dial) become arrows between stacks.",
+        "Read holes: kernel over image at each stack, as in 2-2.",
+        "Torsion: on RP² the 1-cell's boundary runs around twice: H₁ = ℤ₂ — a loop that dies when doubled (1-7).",
+        "χ check: alternating sum of cells equals alternating sum of hole ranks."
+      ],
+      "math_check": "Cellular homology, the cellular boundary formula via degrees, homology of the torus, RP², Klein bottle and CPⁿ; χ = Σ(−1)ⁿ rank Hₙ (Hatcher pp. 137–149).",
+      "stages": [
+        { "name": "Crates", "beat": "teach", "description": "A sphere as one 0-cell and one 2-cell: holes in dimension 0 and 2." },
+        { "name": "The Torus", "beat": "practice", "description": "All boundary degrees zero: ℤ, ℤ², ℤ." },
+        { "name": "The Doubled Edge", "beat": "twist", "description": "RP²: the 2-cell wraps the edge twice: torsion ℤ₂ appears." },
+        { "name": "Census", "beat": "master", "description": "Verify χ for five places both ways." }
+      ],
+      "enemies": [
+        { "name": "Unglue", "description": "From 0-4." },
+        { "name": "Loop-biter", "description": "From 0-6." }
+      ],
+      "tools": "Uses the Cell-Smith, Degree Dial and Spool.",
+      "music": "Degree Dynamo theme with Foundry hammers from World 0.",
+      "visuals": "A stone fortress-workshop with stacked glowing crates by dimension, gold arrows between stacks, a projective plane forming from a disk with its rim doubled.",
+      "movie": "level-2-7-intro “Cell Block”."
+    },
+    "2-8": {
+      "site": "Patchwork Fields — fields covered by overlapping canvas patches.",
+      "story": "Cover a place with two overlapping patches. Their holes and the overlap's holes link in a long exact sequence: Mayer–Vietoris. It is the homology version of Van Kampen (1-7).",
+      "objective": "Compute homology from two overlapping patches.",
+      "mechanics": [
+        "Lay patches A and B over a place so their interiors cover it.",
+        "The Mayer–Vietoris locks: overlap → A ⊕ B → whole → (one dimension down) overlap…",
+        "Chase through it as in 2-4."
+      ],
+      "math_check": "The Mayer–Vietoris sequence; homology of Sⁿ by hemispheres; of the torus and Klein bottle by annuli (Hatcher pp. 149–153).",
+      "stages": [
+        { "name": "Two Hemispheres", "beat": "teach", "description": "Cover a sphere by two caps overlapping in a band." },
+        { "name": "Two Annuli", "beat": "practice", "description": "Cover the torus by two cylinders." },
+        { "name": "The Twisted Patch", "beat": "twist", "description": "Same for the Klein bottle: a twist in the overlap changes the answer." },
+        { "name": "Patch It Yourself", "beat": "master", "description": "Choose your own cover for a new place." }
+      ],
+      "enemies": [{ "name": "Unglue", "description": "Pulls patches apart." }, { "name": "Leak sprite", "description": "Breaks exactness." }],
+      "tools": "Uses the Boundary Blade and the Van Kampen Clasp (the patches clip together with it).",
+      "music": "Degree Dynamo theme as a folk reel — fiddle-like square wave.",
+      "visuals": "Rolling fields under great overlapping canvas patches, glowing gold seams where they overlap.",
+      "movie": "level-2-8-intro “Patchwork”."
+    },
+    "2-9": {
+      "site": "Mod Mill — a waterwheel mill that grinds counts down mod 2.",
+      "story": "Count holes with even-or-odd instead of whole numbers and some surfaces suddenly speak up: a Klein bottle or projective plane, invisible to ℤ in the top dimension, has a top hole mod 2. Arrows stop mattering.",
+      "objective": "Compute homology with coefficients and detect non-orientable surfaces.",
+      "mechanics": [
+        "The mill's wheel switches the meter's coefficients between ℤ and ℤ₂ (and ℤₙ).",
+        "Mod 2, edge directions don't matter: flipped arrows count the same.",
+        "Non-orientable test: H₂ with ℤ₂ is ℤ₂ while H₂ with ℤ is 0."
+      ],
+      "math_check": "Homology with coefficients; Hₙ(M; ℤ₂) ≅ ℤ₂ for closed connected n-manifolds; Hₙ(M; ℤ) = 0 for non-orientable ones (Hatcher pp. 153–160).",
+      "stages": [
+        { "name": "Even or Odd", "beat": "teach", "description": "Recount the torus mod 2." },
+        { "name": "The Projective Plane", "beat": "practice", "description": "H₂ mod 2 lights; H₂ with ℤ doesn't." },
+        { "name": "Flippers Lose", "beat": "twist", "description": "Mod 2, Flipper frogs can't disrupt anything." },
+        { "name": "Sort the Surfaces", "beat": "master", "description": "Sort surfaces into orientable and not." }
+      ],
+      "enemies": [{ "name": "Flipper", "description": "Harmless mod 2 — a comic beat." }, { "name": "Bog spawn", "description": "Hides holes." }],
+      "tools": "Uses the Boundary Blade.",
+      "music": "A two-beat waltz with the melody alternating between two notes, mod 2.",
+      "visuals": "A stone mill with a huge waterwheel, amber water, a Klein bottle sculpture in the millpond.",
+      "movie": "level-2-9-intro “Mod Squad”."
+    },
+    "2-10": {
+      "site": "Abelian Ford — a shallow ford where the Commutator's ribbon patrols try to cross into the delta.",
+      "story": "The Commutator follows Gyroid into the delta. But here H₁ is the abelianization of π₁: order is forgotten, and his word a b a⁻¹ b⁻¹ counts as nothing. His patrols can't pass.",
+      "objective": "Use homology to dissolve the Commutator's patrol words.",
+      "mechanics": [
+        "Ford meter: a patrol's word becomes a vector of letter totals (a counts minus a⁻¹ counts, and the same for b).",
+        "Commutators total zero: they are boundaries in the ford.",
+        "Patrols whose word totals zero dissolve when they enter the ford; others must be lashed."
+      ],
+      "math_check": "H₁(X) ≅ π₁(X)ᵃᵇ for path-connected X; commutators map to zero (Hatcher pp. 166–168).",
+      "stages": [
+        { "name": "Totals", "beat": "teach", "description": "Read patrol words as totals." },
+        { "name": "Dissolve", "beat": "practice", "description": "Lure commutator patrols into the ford." },
+        { "name": "Not Everything Dies", "beat": "twist", "description": "A patrol walking a a b survives: its totals are (2, 1)." },
+        { "name": "Hold the Ford", "beat": "master", "description": "Defend the ford against a mixed wave." }
+      ],
+      "enemies": [{ "name": "Ribbon patrol", "description": "From World 1: dissolves in the ford if its totals are zero." }, { "name": "The Commutator (cameo)", "description": "Watches from the far bank and withdraws." }],
+      "tools": "Uses the Van Kampen Clasp and Boundary Blade.",
+      "music": "The Commutator's fugue, collapsing into the Chain Delta theme as order is forgotten.",
+      "visuals": "A shallow ford with amber water, ribbon guards dissolving into ripples as they cross, the Commutator on the far bank.",
+      "movie": "level-2-10-intro “Forget the Order”."
+    },
+    "2-B1": {
+      "site": "Jordan Ring — an island ringed by a single closed wall.",
+      "story": "Classic results with Gyroid's new tools: any closed wall in the plane splits it into an inside and an outside; open sets of the same dimension can't be squeezed into different shapes; and only a few dimensions allow division.",
+      "objective": "Prove the wall has an inside, using homology.",
+      "mechanics": [
+        "Draw any closed wall (no self-crossing) with the Spool; the meter reports two regions.",
+        "Invariance of domain demo: a squeezed open patch remains open."
+      ],
+      "math_check": "Jordan curve theorem (via Sⁿ minus an embedded sphere), invariance of domain, a commutative division algebra structure on ℝⁿ exists only for n = 1, 2 (Hatcher pp. 169–177). Flag: the full 1, 2, 4, 8 theorem needs K-theory beyond Ch. 2; the game only mentions it.",
+      "stages": [
+        { "name": "Draw a Wall", "beat": "teach", "description": "Any wall: two sides." },
+        { "name": "Wild Walls", "beat": "master", "description": "Even a wildly wiggly wall splits the plane in two." }
+      ],
+      "enemies": [{ "name": "None", "description": "Puzzle bonus." }],
+      "tools": "Uses the Spool and Boundary Blade.",
+      "music": "Harpsichord variation of the Dynamo theme.",
+      "visuals": "A round island ringed by a single wiggly glowing wall, inside lit gold, outside dark.",
+      "movie": "level-2-b1-intro “Classic Moves”."
+    },
+    "2-B2": {
+      "site": "Lefschetz Lantern — a lighthouse whose beam maps the island onto itself.",
+      "story": "The lantern's beam maps a place to itself. Add up the traces of the induced maps on homology: if the total isn't zero, some point maps to itself — a generalization of Brouwer (1-4).",
+      "objective": "Compute Lefschetz numbers and find fixed points.",
+      "mechanics": [
+        "Lantern beam: a map f of the island to itself, shown as arrows.",
+        "Trace tally: the tally sums traces of f_* with alternating signs.",
+        "Nonzero tally guarantees a lit fixed point; zero tally allows a fixed-point-free map (e.g., rotating a circle)."
+      ],
+      "math_check": "Simplicial approximation; the Lefschetz fixed point theorem for finite simplicial complexes or their retracts (Hatcher pp. 177–184).",
+      "stages": [
+        { "name": "Trace", "beat": "teach", "description": "Rotate a circle: tally zero, no fixed point needed." },
+        { "name": "Always a Fixed Point", "beat": "master", "description": "Any map of a disk or projective plane has tally 1: find the point." }
+      ],
+      "enemies": [{ "name": "None", "description": "Puzzle bonus." }],
+      "tools": "Uses the Degree Dial.",
+      "music": "Music-box Dynamo theme.",
+      "visuals": "A stone lighthouse on a point, its gold beam sweeping arrows across the island, one arrow-free glowing spot.",
+      "movie": "level-2-b2-intro “Fixed Ideas”."
+    }
+  },
+  "castle": {
+    "site": "The Retractor — Null's dome built around a hollow stone ball; his engine tries to squash the solid ball onto its surface.",
+    "story": "Null rebuilds his Retractor, one dimension up: crush the whole ball onto its skin. If it worked, the sphere's hole would come from a ball that has none. Gyroid proves it can't work, and Null flees to the gardens.",
+    "objective": "Wreck the ball-to-sphere Retractor.",
+    "phases": [
+      { "name": "The ball", "description": "Null's engine squeezes the ball's interior toward its skin. Measure: H₂ of the ball is 0, H₂ of the sphere is ℤ. Tests 2-5." },
+      { "name": "The skin", "description": "Null's sphere-shields spin; set the Degree Dial to match and reverse each shield's degree to break it. Tests 2-6." },
+      { "name": "The cells", "description": "Null rebuilds the ball from cells to hide a hole; compute cellular homology to expose that it has none. Tests 2-7." },
+      { "name": "Seize", "description": "The engine would turn the sphere's hole into nothing and back: it seizes. Null escapes." }
+    ],
+    "enemies": [{ "name": "Count Null", "description": "Boss (escapes)." }, { "name": "Retractor drones", "description": "From 1-4, now 3D." }],
+    "tools": "Boundary Blade, Degree Dial, Cell-Smith, Suspension Sling.",
+    "music": "The Retractor's drone from 1-4, an octave lower, with Null's theme on organ; the delta theme breaks through when the engine seizes.",
+    "visuals": "A stone dome around a huge hollow ball, violet chains pulling at its surface, gold measurement rings orbiting.",
+    "movie": "castle-2-intro “The Retractor, Again” and castle-2-outro “Classes Multiply”."
+  },
+  "level_art": {
+    "2-1": { "file": "2-1-tile-and-error.png", "scene": "Level 'Tile and Error' in the Tile Yard: a dusk wetland where floating stone triangle platforms with glowing amber arrows along their edges are stacked and moved by a brass crane. Two triangles glued into a square hang from the crane; above them a translucent glowing torus forms. Gyroid guides the crane. A small violet frog sits on an edge." },
+    "2-2": { "file": "2-2-boundary-issues.png", "scene": "Level 'Boundary Issues' in Cancel Marsh: a marsh of stone triangle tiles over dark water. Gyroid swings a glowing gold blade of light; it leaves a glowing arrowed outline around a plaza of triangles, with sparks where interior opposite arrows cancel. In the middle of a ring of tiles, one tile is missing, leaving a dark gap. A violet blob oozes toward the gap." },
+    "2-3": { "file": "2-3-any-simplex-will-do.png", "scene": "Level 'Any Simplex Will Do' in the Singular Shallows: misty shallow water; glowing gold triangles are stretched, folded and crumpled like cloth over the water. A glowing abacus floats in the air. Gyroid stamps a triangle into the shallows. A violet crumpled wad creature lurks." },
+    "2-4": { "file": "2-4-chase-scene.png", "scene": "Level 'Chase Scene' in the Chase Channels: rows of stone canal locks arranged in a grid, glowing amber water in each, sluice gates between them. A single bright gold drop traces a path down, across and up the grid. Gyroid runs along a lock wall. A violet sprite punctures a lock." },
+    "2-5": { "file": "2-5-cut-and-paste.png", "scene": "Level 'Cut and Paste' at the Excision Cut: a stone quarry on a river bank; glowing gold saw cuts in the rock; a great press squashing the rim of a stone disk into a single point so it bulges into a sphere; a ladder of nested glowing spheres climbing up. Gyroid operates the press. A violet stone golem lurks." },
+    "2-6": { "file": "2-6-the-third-degree.png", "scene": "Level 'The Third Degree' at the Degree Dynamo: great brass spheres turning on axles, one wrapping a translucent skin twice around another, gold lightning arcing between them. In the foreground a small sphere island covered in glowing wind arrows swirling around a single calm spot. Gyroid holds a glowing dial. Count Null's pale sphere visible far away." },
+    "2-7": { "file": "2-7-cell-block.png", "scene": "Level 'Cell Block': a stone fortress-workshop with glowing crates stacked in three columns, gold arrows between the columns; in the center a disk whose rim is being wrapped around twice to form a projective plane. Gyroid works with a brass-and-indigo gauntlet." },
+    "2-8": { "file": "2-8-patchwork.png", "scene": "Level 'Patchwork' in Patchwork Fields: rolling fields under two great overlapping canvas patches held up on poles, glowing gold seams where they overlap; under them, a torus-shaped hill. Gyroid clips two patches together with a copper clasp." },
+    "2-9": { "file": "2-9-mod-squad.png", "scene": "Level 'Mod Squad' at the Mod Mill: a stone mill with a huge waterwheel turning in amber water; in the millpond, a glass Klein bottle sculpture glowing faintly. Gyroid stands on the mill bridge. A violet frog sits harmlessly on a lily pad." },
+    "2-10": { "file": "2-10-forget-the-order.png", "scene": "Level 'Forget the Order' at the Abelian Ford: a wide shallow river ford with amber-lit water; tall violet guards with loop-shaped pauldrons dissolve into ripples as they try to cross. On the far bank the Commutator watches. Gyroid stands mid-ford." },
+    "2-B1": { "file": "2-b1-classic-moves.png", "scene": "Bonus level 'Classic Moves' at the Jordan Ring: a round island ringed by a single wildly wiggly glowing gold wall; inside lit warm gold, outside dark blue. Gyroid stands on the wall." },
+    "2-B2": { "file": "2-b2-fixed-ideas.png", "scene": "Bonus level 'Fixed Ideas' at the Lefschetz Lantern: a stone lighthouse on a rocky point at night, its gold beam sweeping across an island covered with gold arrows, one arrow-free glowing spot where the beam rests. Gyroid at the lighthouse door." }
+  },
+  "castle_art": {
+    "file": "castle-2-the-retractor.png",
+    "scene": "Castle 'The Retractor': a stone dome built around a huge hollow stone ball; violet chains pull at the ball's surface from a hulking violet machine; glowing gold measurement rings orbit the ball. Count Null (from the reference) stands atop the machine. Gyroid faces him holding a glowing dial and a gold blade."
+  },
+  "videos": [
+    {
+      "id": "level-2-1-intro", "title": "Three Corners", "plays": "Before World 2 · Level 1, in the Tile Yard", "world": 2, "level_id": "2-1", "status": "scripted",
+      "story_start": 0, "story_end": 30, "pace": [[0, null, 0.85]],
+      "synopsis": "In the Tile Yard, places are built from triangles with arrowed edges. Two triangles become a torus, a Klein bottle or a projective plane depending on the arrows.",
+      "scenes": [
+        { "id": "A", "start": 0, "end": 7, "title": "The yard", "description": "Stacks of triangle platforms, amber arrows on their edges, a brass crane." },
+        { "id": "B", "start": 7, "end": 15, "title": "Two make a square", "description": "The crane lowers two triangles together into a square." },
+        { "id": "C", "start": 15, "end": 24, "title": "Fold", "description": "The square's matching edges curl together: a torus forms. Emmy flips one arrow; the shape twists into a Klein bottle." },
+        { "id": "D", "start": 24, "end": 26, "title": "Flippers", "description": "Violet frogs hop onto edges." },
+        { "id": "E", "start": 26, "end": 30, "title": "Title", "description": "Title card at 26: “World 2 · Level 1 — Tile and Error”." }
+      ],
+      "captions": [
+        { "t": 0.6, "end": 4.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "To count holes of every size, we need places built from pieces we can count." },
+        { "t": 7.4, "end": 11.4, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "Triangles, with arrows. Edges glue only when the arrows agree." },
+        { "t": 15.4, "end": 19.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "Two triangles… and it's a torus." },
+        { "t": 19.8, "end": 23.8, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "Flip one arrow and it's a Klein bottle. Same pieces, different gluing." },
+        { "t": 24.2, "end": 25.8, "speaker": "Gyroid", "portrait": "gyroid", "text": "Keep those frogs off my arrows." }
+      ],
+      "title_card": { "t": 26, "end": 30 }
+    },
+    {
+      "id": "level-2-2-intro", "title": "The Boundary Blade", "plays": "Before World 2 · Level 2, in Cancel Marsh", "world": 2, "level_id": "2-2", "status": "scripted",
+      "story_start": 0, "story_end": 32, "pace": [[0, null, 0.85]],
+      "synopsis": "Emmy forges the Boundary Blade. Cut a patch and shared edges cancel; cut a boundary and nothing is left. A cycle that bounds nothing is a hole.",
+      "scenes": [
+        { "id": "A", "start": 0, "end": 8, "title": "The forge", "description": "Emmy hammers a gold blade of light on a portable anvil at the marsh edge." },
+        { "id": "B", "start": 8, "end": 16, "title": "First cut", "description": "Gyroid strikes a plaza of triangles: inner arrows cancel in sparks, an outline glows." },
+        { "id": "C", "start": 16, "end": 24, "title": "Nothing left", "description": "He strikes the outline: the blade passes through with no mark." },
+        { "id": "D", "start": 24, "end": 28, "title": "The gap", "description": "A ring of tiles around a missing one; the inner loop glows and won't go out." },
+        { "id": "E", "start": 28, "end": 32, "title": "Title", "description": "Title card at 28: “World 2 · Level 2 — Boundary Issues”." }
+      ],
+      "captions": [
+        { "t": 0.6, "end": 4.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "My namesake. The Boundary Blade cuts anything down to its edge." },
+        { "t": 8.4, "end": 12.4, "speaker": "Gyroid", "portrait": "gyroid", "text": "The inside edges cancel — one arrow each way." },
+        { "t": 16.4, "end": 20.4, "speaker": "Gyroid", "portrait": "gyroid", "text": "Cut the edge again and… nothing." },
+        { "t": 20.6, "end": 24, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "An edge has no edge. Always." },
+        { "t": 24.4, "end": 27.8, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "But a loop that isn't the edge of anything — that's a hole." }
+      ],
+      "title_card": { "t": 28, "end": 32 }
+    },
+    {
+      "id": "level-2-3-intro", "title": "Any Simplex Will Do", "plays": "Before World 2 · Level 3, in the Singular Shallows", "world": 2, "level_id": "2-3", "status": "scripted",
+      "story_start": 0, "story_end": 30, "pace": [[0, null, 0.85]],
+      "synopsis": "Real places don't come in tidy triangles. Crumpled triangles work too, and places that deform into each other read the same.",
+      "scenes": [
+        { "id": "A", "start": 0, "end": 8, "title": "Fog", "description": "Misty shallows; no tidy tiles anywhere." },
+        { "id": "B", "start": 8, "end": 16, "title": "Crumpled", "description": "Gyroid stamps a triangle that folds like cloth onto the water; the blade still traces its edges." },
+        { "id": "C", "start": 16, "end": 24, "title": "Same count", "description": "A fat annulus slides down to a thin circle; the abacus beads don't move." },
+        { "id": "D", "start": 24, "end": 26, "title": "Crumplers", "description": "Violet wads tumble through the mist." },
+        { "id": "E", "start": 26, "end": 30, "title": "Title", "description": "Title card at 26: “World 2 · Level 3 — Any Simplex Will Do”." }
+      ],
+      "captions": [
+        { "t": 0.6, "end": 4.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "No tiles here. How do we count?" },
+        { "t": 8.4, "end": 12.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "Any triangle will do — bent, folded, squashed flat. The blade still cuts it." },
+        { "t": 16.4, "end": 20.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "And deforming the place doesn't change the count." },
+        { "t": 20.8, "end": 24, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "Same shape in the Mirror Shoals' sense, same holes." }
+      ],
+      "title_card": { "t": 26, "end": 30 }
+    },
+    {
+      "id": "level-2-4-intro", "title": "Chase Scene", "plays": "Before World 2 · Level 4, in the Chase Channels", "world": 2, "level_id": "2-4", "status": "scripted",
+      "story_start": 0, "story_end": 30, "pace": [[0, null, 0.85]],
+      "synopsis": "Canal locks pass water exactly from one to the next. Gyroid learns to chase a drop through the grid and read a place's holes from a pair.",
+      "scenes": [
+        { "id": "A", "start": 0, "end": 8, "title": "The locks", "description": "Rows of canal locks glowing amber, sluices between them." },
+        { "id": "B", "start": 8, "end": 16, "title": "Exact", "description": "Water leaves one lock and exactly fills the drain of the next." },
+        { "id": "C", "start": 16, "end": 24, "title": "The chase", "description": "Gyroid follows a gold drop down, across, and up the grid, arriving at a lock no sluice seemed to reach." },
+        { "id": "D", "start": 24, "end": 26, "title": "Leaks", "description": "A violet sprite punctures a lock." },
+        { "id": "E", "start": 26, "end": 30, "title": "Title", "description": "Title card at 26: “World 2 · Level 4 — Chase Scene”." }
+      ],
+      "captions": [
+        { "t": 0.6, "end": 4.6, "speaker": "Narrator", "text": "In the Chase Channels, nothing was lost between one lock and the next." },
+        { "t": 8.4, "end": 12.4, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "What one sluice sends is exactly what the next one drains. That's exact." },
+        { "t": 16.4, "end": 20.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "Down, across, back up — the drop found a new route." },
+        { "t": 20.8, "end": 24, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "That route links a place's holes to a part's holes. Chase it." }
+      ],
+      "title_card": { "t": 26, "end": 30 }
+    },
+    {
+      "id": "level-2-5-intro", "title": "Cut and Paste", "plays": "Before World 2 · Level 5, at the Excision Cut", "world": 2, "level_id": "2-5", "status": "scripted",
+      "story_start": 0, "story_end": 32, "pace": [[0, null, 0.85]],
+      "synopsis": "Excise deep inside a part and the relative count holds; collapse a part and it becomes ordinary homology. Climb the sphere ladder.",
+      "scenes": [
+        { "id": "A", "start": 0, "end": 8, "title": "The quarry", "description": "The far bank's quarry; saws and a great press." },
+        { "id": "B", "start": 8, "end": 16, "title": "Cut deep", "description": "A saw removes a block deep inside a marked region; the meter doesn't flinch." },
+        { "id": "C", "start": 16, "end": 26, "title": "The ladder", "description": "The press squashes a disk's rim to a point, making a sphere; spheres stack up a ladder, each with one glowing hole." },
+        { "id": "D", "start": 26, "end": 28, "title": "Golem", "description": "A violet stone golem lumbers out." },
+        { "id": "E", "start": 28, "end": 32, "title": "Title", "description": "Title card at 28: “World 2 · Level 5 — Cut and Paste”." }
+      ],
+      "captions": [
+        { "t": 0.6, "end": 4.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "Cut out what's deep inside the part, and nothing about the pair changes." },
+        { "t": 8.4, "end": 12.4, "speaker": "Gyroid", "portrait": "gyroid", "text": "Squash the rim to a point — that's the Cone Zone trick." },
+        { "t": 16.4, "end": 21, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "And a disk with its rim squashed is a sphere. Climb, and every sphere has exactly one hole." },
+        { "t": 21.2, "end": 25.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "One hole, in its own dimension. Null's sphere included." }
+      ],
+      "title_card": { "t": 28, "end": 32 }
+    },
+    {
+      "id": "level-2-6-intro", "title": "The Third Degree", "plays": "Before World 2 · Level 6, at the Dynamo Gate", "world": 2, "level_id": "2-6", "status": "scripted",
+      "story_start": 0, "story_end": 34, "pace": [[0, null, 0.85]],
+      "synopsis": "Gyroid measures Null's sphere and the hollow is seen. At the Degree Dynamo, maps of spheres wrap a whole number of times — and no wind can cover a sphere without a calm spot.",
+      "scenes": [
+        { "id": "A", "start": 0, "end": 8, "title": "The hollow", "description": "Gyroid points the meter at Null's pale sphere far off; one bead slides into the second row." },
+        { "id": "B", "start": 8, "end": 16, "title": "Null hears", "description": "Null's image flickers, irritated." },
+        { "id": "C", "start": 16, "end": 26, "title": "The Dynamo", "description": "Great brass spheres wrap skins around each other, once, twice, inside-out." },
+        { "id": "D", "start": 26, "end": 30, "title": "The calm spot", "description": "Wind arrows swirl across a sphere island, all but one point." },
+        { "id": "E", "start": 30, "end": 34, "title": "Title", "description": "Title card at 30: “World 2 · Level 6 — The Third Degree”." }
+      ],
+      "captions": [
+        { "t": 0.6, "end": 4.8, "speaker": "Gyroid", "portrait": "gyroid", "text": "Loops couldn't see it. The meter can. Your sphere has a hole, Null." },
+        { "t": 8.4, "end": 12.6, "speaker": "Count Null", "portrait": "count-null", "text": "A number on a dial. Spin it however you like." },
+        { "t": 16.4, "end": 20.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "The Degree Dial counts how many times one sphere wraps another." },
+        { "t": 20.8, "end": 25.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "Inside-out counts as minus one." },
+        { "t": 26.4, "end": 29.8, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "And wind can't cover a sphere without a calm spot. Try it." }
+      ],
+      "title_card": { "t": 30, "end": 34 }
+    },
+    {
+      "id": "level-2-7-intro", "title": "Cell Block", "plays": "Before World 2 · Level 7", "world": 2, "level_id": "2-7", "status": "scripted",
+      "story_start": 0, "story_end": 30, "pace": [[0, null, 0.85]],
+      "synopsis": "Build a place from cells and its holes come from the cells alone. A doubled edge makes a loop that dies when doubled: torsion.",
+      "scenes": [
+        { "id": "A", "start": 0, "end": 8, "title": "Crates", "description": "Glowing crates stacked by dimension; arrows between stacks." },
+        { "id": "B", "start": 8, "end": 16, "title": "Torus", "description": "Torus crates: every arrow reads zero, every crate survives." },
+        { "id": "C", "start": 16, "end": 24, "title": "Doubled", "description": "A disk's rim wraps twice around a loop; the loop glows half-bright." },
+        { "id": "D", "start": 24, "end": 26, "title": "Census", "description": "The Timber Yard census board lights." },
+        { "id": "E", "start": 26, "end": 30, "title": "Title", "description": "Title card at 26: “World 2 · Level 7 — Cell Block”." }
+      ],
+      "captions": [
+        { "t": 0.6, "end": 4.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "Built cell by cell, a place gives up its holes with almost no work." },
+        { "t": 8.4, "end": 12.4, "speaker": "Gyroid", "portrait": "gyroid", "text": "The arrows are just degrees. The Dial reads them." },
+        { "t": 16.4, "end": 20.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "The projective plane's disk wraps its edge twice. Go around twice and it's filled." },
+        { "t": 20.8, "end": 24, "speaker": "Gyroid", "portrait": "gyroid", "text": "Once, it's a hole. Twice, it's not. Weird." }
+      ],
+      "title_card": { "t": 26, "end": 30 }
+    },
+    {
+      "id": "level-2-8-intro", "title": "Patchwork", "plays": "Before World 2 · Level 8", "world": 2, "level_id": "2-8", "status": "scripted",
+      "story_start": 0, "story_end": 28, "pace": [[0, null, 0.85]],
+      "synopsis": "Cover a place with two overlapping patches; their holes and the overlap's link up — Mayer–Vietoris, Van Kampen's cousin.",
+      "scenes": [
+        { "id": "A", "start": 0, "end": 8, "title": "The fields", "description": "Canvas patches over rolling hills." },
+        { "id": "B", "start": 8, "end": 18, "title": "Two caps", "description": "Two caps cover a sphere-hill, overlapping in a band; the seam glows." },
+        { "id": "C", "start": 18, "end": 24, "title": "Clasp", "description": "Gyroid clips patches together with the Clasp." },
+        { "id": "D", "start": 24, "end": 28, "title": "Title", "description": "Title card at 24: “World 2 · Level 8 — Patchwork”." }
+      ],
+      "captions": [
+        { "t": 0.6, "end": 4.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "Two patches and their overlap tell you the whole place's holes." },
+        { "t": 8.4, "end": 12.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "Like Van Kampen at the Glue Works — but for holes." },
+        { "t": 18.4, "end": 23.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "Mind the overlap. That's where the surprises are." }
+      ],
+      "title_card": { "t": 24, "end": 28 }
+    },
+    {
+      "id": "level-2-9-intro", "title": "Mod Squad", "plays": "Before World 2 · Level 9", "world": 2, "level_id": "2-9", "status": "scripted",
+      "story_start": 0, "story_end": 28, "pace": [[0, null, 0.85]],
+      "synopsis": "Count holes mod 2 and arrows stop mattering — the top hole of a non-orientable surface appears.",
+      "scenes": [
+        { "id": "A", "start": 0, "end": 8, "title": "The mill", "description": "A waterwheel turns; Emmy throws a lever." },
+        { "id": "B", "start": 8, "end": 18, "title": "Even or odd", "description": "The Klein bottle in the pond lights from inside." },
+        { "id": "C", "start": 18, "end": 24, "title": "Frogs", "description": "A Flipper flips an arrow; nothing happens. It looks confused." },
+        { "id": "D", "start": 24, "end": 28, "title": "Title", "description": "Title card at 24: “World 2 · Level 9 — Mod Squad”." }
+      ],
+      "captions": [
+        { "t": 0.6, "end": 4.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "Count even or odd instead of whole numbers." },
+        { "t": 8.4, "end": 12.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "The Klein bottle lit up! It had a hole the whole time?" },
+        { "t": 12.8, "end": 17.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "Its top hole only shows when arrows don't matter. It has no consistent arrows." },
+        { "t": 18.4, "end": 23.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "Sorry, frog. Flipping does nothing here." }
+      ],
+      "title_card": { "t": 24, "end": 28 }
+    },
+    {
+      "id": "level-2-10-intro", "title": "Forget the Order", "plays": "Before World 2 · Level 10, at the Abelian Ford", "world": 2, "level_id": "2-10", "status": "scripted",
+      "story_start": 0, "story_end": 30, "pace": [[0, null, 0.85]],
+      "synopsis": "The Commutator's patrols follow Gyroid into the delta, but in homology order is forgotten and their word counts as nothing.",
+      "scenes": [
+        { "id": "A", "start": 0, "end": 8, "title": "The ford", "description": "Ribbon patrols arrive at a shallow ford." },
+        { "id": "B", "start": 8, "end": 18, "title": "Dissolve", "description": "The first guard steps in, walking a, b, a back, b back; its ribbons dissolve into ripples." },
+        { "id": "C", "start": 18, "end": 26, "title": "The marshal", "description": "The Commutator watches from the far bank, then withdraws." },
+        { "id": "D", "start": 26, "end": 30, "title": "Title", "description": "Title card at 26: “World 2 · Level 10 — Forget the Order”." }
+      ],
+      "captions": [
+        { "t": 0.6, "end": 4.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "The Commutator's patrols followed us." },
+        { "t": 8.4, "end": 12.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "Here only totals count. a, b, a back, b back totals nothing." },
+        { "t": 18.4, "end": 22.6, "speaker": "The Commutator", "portrait": "commutator", "text": "So your counting forgets order. I'll remember that." },
+        { "t": 22.8, "end": 25.8, "speaker": "Gyroid", "portrait": "gyroid", "text": "That sounded like a threat." }
+      ],
+      "title_card": { "t": 26, "end": 30 }
+    },
+    {
+      "id": "level-2-b1-intro", "title": "Classic Moves", "plays": "Before World 2 · Bonus 1, at the Jordan Ring", "world": 2, "level_id": "2-B1", "status": "scripted",
+      "story_start": 0, "story_end": 22, "pace": [[0, null, 0.85]],
+      "synopsis": "Any closed wall splits the plane into inside and outside — proved with homology.",
+      "scenes": [
+        { "id": "A", "start": 0, "end": 8, "title": "The wall", "description": "A wiggly wall circles an island." },
+        { "id": "B", "start": 8, "end": 16, "title": "Inside", "description": "The inside lights gold, the outside stays dark." },
+        { "id": "C", "start": 16, "end": 22, "title": "Title", "description": "Title card at 16: “World 2 · Bonus — Classic Moves”." }
+      ],
+      "captions": [
+        { "t": 0.6, "end": 4.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "Obviously a wall has an inside." },
+        { "t": 8.4, "end": 13.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "Obvious, and famously hard to prove. Now we have the tools." }
+      ],
+      "title_card": { "t": 16, "end": 22 }
+    },
+    {
+      "id": "level-2-b2-intro", "title": "Fixed Ideas", "plays": "Before World 2 · Bonus 2, at the Lefschetz Lantern", "world": 2, "level_id": "2-B2", "status": "scripted",
+      "story_start": 0, "story_end": 22, "pace": [[0, null, 0.85]],
+      "synopsis": "Add up traces on homology; if the total isn't zero, the lantern's map has a fixed point.",
+      "scenes": [
+        { "id": "A", "start": 0, "end": 8, "title": "The lantern", "description": "A lighthouse beam sweeps arrows over the island." },
+        { "id": "B", "start": 8, "end": 16, "title": "The still spot", "description": "The beam rests on one arrow-free spot." },
+        { "id": "C", "start": 16, "end": 22, "title": "Title", "description": "Title card at 16: “World 2 · Bonus — Fixed Ideas”." }
+      ],
+      "captions": [
+        { "t": 0.6, "end": 4.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "Brouwer's Basin, grown up: add the traces, find the still point." },
+        { "t": 8.4, "end": 13.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "Not zero — so somewhere, the beam lands where it started." }
+      ],
+      "title_card": { "t": 16, "end": 22 }
+    },
+    {
+      "id": "castle-2-intro", "title": "The Retractor, Again", "plays": "Before castle-2", "world": 2, "status": "scripted",
+      "story_start": 0, "story_end": 32, "pace": [[0, null, 0.85]],
+      "synopsis": "Null has rebuilt his Retractor one dimension up: crush a solid ball onto its sphere skin.",
+      "scenes": [
+        { "id": "A", "start": 0, "end": 8, "title": "The dome", "description": "A stone dome around a hollow ball; violet chains strain at its surface." },
+        { "id": "B", "start": 8, "end": 18, "title": "Null", "description": "Null stands atop the machine, Crown glowing." },
+        { "id": "C", "start": 18, "end": 28, "title": "Ready", "description": "Gyroid raises the Dial; Emmy the meter." },
+        { "id": "D", "start": 28, "end": 32, "title": "Title", "description": "Title card at 28: “World 2 · Castle — The Retractor”." }
+      ],
+      "captions": [
+        { "t": 0.6, "end": 4.6, "speaker": "Narrator", "text": "Null had learned nothing from the Basin — only to build bigger." },
+        { "t": 8.4, "end": 13, "speaker": "Count Null", "portrait": "count-null", "text": "A ball is just its skin, stuffed. I'll squeeze out the stuffing." },
+        { "t": 18.4, "end": 23, "speaker": "Gyroid", "portrait": "gyroid", "text": "Same trick as the Basin. The skin has a hole; the ball doesn't." },
+        { "t": 23.2, "end": 27.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "So the engine would have to make a hole out of nothing. Let's watch it try." }
+      ],
+      "title_card": { "t": 28, "end": 32 }
+    },
+    {
+      "id": "castle-2-outro", "title": "Classes Multiply", "plays": "After castle-2 — the end of World 2", "world": 2, "status": "scripted",
+      "story_start": 0, "story_end": 34, "pace": [[0, null, 0.85]],
+      "synopsis": "The Retractor seizes. Null escapes toward the gardens, laughing that the torus and a bouquet with a sphere attached have the same holes. Emmy realizes they need a sharper instrument: holes that multiply.",
+      "scenes": [
+        { "id": "A", "start": 0, "end": 8, "title": "Seize", "description": "The engine's gears grind and lock; chains go slack." },
+        { "id": "B", "start": 8, "end": 18, "title": "Two islands", "description": "Null, escaping, conjures a torus island and a two-loops-plus-sphere island side by side; the meter reads the same on both." },
+        { "id": "C", "start": 18, "end": 28, "title": "The gardens", "description": "Beyond, signal gardens glow with lanterns that light in pairs." },
+        { "id": "D", "start": 28, "end": 34, "title": "World 2 complete", "description": "Card: “World 2 complete — Chain Delta restored.”" }
+      ],
+      "captions": [
+        { "t": 0.6, "end": 4.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "It's seized. A hole can't come from nothing." },
+        { "t": 8.4, "end": 13, "speaker": "Count Null", "portrait": "count-null", "text": "Count these, then. Same holes, every dimension. Same place." },
+        { "t": 13.2, "end": 17.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "The meter agrees with him… but they can't be the same." },
+        { "t": 18.4, "end": 23.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "Counting holes isn't enough. We need to know how they multiply. To the Gardens." }
+      ],
+      "title_card": { "t": 28, "end": 34 }
+    }
+  ]
+}

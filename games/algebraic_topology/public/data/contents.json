@@ -1,0 +1,1603 @@
+{
+  "source": {
+    "title": "Algebraic Topology",
+    "author": "Allen Hatcher",
+    "author_url": "https://pi.math.cornell.edu/~hatcher/",
+    "pdf": "books/Algebraic Topology.pdf",
+    "pdf_path_note": "Path is relative to the repository root."
+  },
+  "front_matter": [
+    {
+      "id": "preface",
+      "title": "Preface",
+      "page": "ix",
+      "summary_error": "ValueError: Could not map page label 'ix' to a PDF page"
+    },
+    {
+      "id": "standard-notations",
+      "title": "Standard Notations",
+      "page": "xii",
+      "summary_error": "ValueError: Could not map page label 'xii' to a PDF page"
+    }
+  ],
+  "chapters": [
+    {
+      "id": "0",
+      "number": "0",
+      "title": "Some Underlying Geometric Notions",
+      "page": 1,
+      "sections": [
+        {
+          "id": "0.homotopy-and-homotopy-type",
+          "title": "Homotopy and Homotopy Type",
+          "page": 1,
+          "summary": "Homotopy describes a continuous change of maps, with the change varying continuously in both the point and time. A deformation retraction is a special homotopy that starts at the identity, ends with the space inside a subspace, and keeps that subspace fixed throughout; it lets us treat spaces with the same shape as equivalent even when they are not homeomorphic. Mapping cylinders provide a standard geometric way to build such a retraction by sliding points toward the target space.",
+          "learner_can_do": "Given a proposed deformation, check whether it starts at the identity, ends in the stated subspace, fixes that subspace at every time, and varies continuously with point and time.",
+          "game_hook": "Let players guide a flexible surface through a continuous sequence of reshaping moves, earning progress by reaching a simpler target while keeping designated anchor points fixed and avoiding discontinuous jumps.",
+          "summary_source_pages": {
+            "book_page": 1,
+            "pdf_indices": [
+              9,
+              10,
+              11
+            ]
+          }
+        },
+        {
+          "id": "0.cell-complexes",
+          "title": "Cell Complexes",
+          "page": 5,
+          "summary": "A cell (CW) complex is built in stages: begin with points (0-cells), then attach higher-dimensional open disks along their boundary maps to the lower-dimensional skeleton. Familiar constructions such as surfaces, graphs, and spheres fit this framework; for finite complexes, counting even- and odd-dimensional cells with alternating signs gives the Euler characteristic, which the excerpt notes depends only on homotopy type.",
+          "learner_can_do": "Given a staged construction, identify its cells and skeleta, and compute its Euler characteristic by alternating the counts of even- and odd-dimensional cells.",
+          "game_hook": "Players assemble spaces by attaching disks along chosen boundary maps, then compare different constructions of the same shape and use the cell-count balance as a consistency clue.",
+          "summary_source_pages": {
+            "book_page": 5,
+            "pdf_indices": [
+              13,
+              14,
+              15
+            ]
+          }
+        },
+        {
+          "id": "0.operations-on-spaces",
+          "title": "Operations on Spaces",
+          "page": 8,
+          "summary": "CW complexes support useful constructions: products have cells formed from products of cells, while collapsing a subcomplex to a point gives a quotient with the remaining cells plus a new 0-cell. Cones, suspensions, and joins can be understood as quotients of products; suspension also turns a map into a suspended map. For arbitrary CW complexes, product-cell topology can differ from the usual product topology, though common finiteness or countability conditions ensure they agree.",
+          "learner_can_do": "Given a construction, identify its basic quotient or product description and predict which cells it inherits or adds.",
+          "game_hook": "Let players assemble spaces from cell-shaped pieces, then perform product and collapse operations to transform a map or space into its cone, suspension, or join.",
+          "summary_source_pages": {
+            "book_page": 8,
+            "pdf_indices": [
+              16,
+              17,
+              18
+            ]
+          }
+        },
+        {
+          "id": "0.two-criteria-for-homotopy-equivalence",
+          "title": "Two Criteria for Homotopy Equivalence",
+          "page": 10,
+          "summary": "For a CW pair, collapsing a contractible subcomplex to a point preserves homotopy type. In finite graphs, this lets you collapse non-loop edges one at a time until each component is an isolated vertex or a bouquet of circles. Distinguishing bouquets with different numbers of circles requires a homotopy-invariant algebraic tool; the excerpt points to Euler characteristic as one such invariant.",
+          "learner_can_do": "Recognize when a graph edge has distinct endpoints and use the collapse criterion to simplify the graph without changing its homotopy type.",
+          "game_hook": "Have players simplify a network by collapsing eligible contractible subgraphs, then compare the resulting bouquets using an invariant rather than judging their drawings.",
+          "summary_source_pages": {
+            "book_page": 10,
+            "pdf_indices": [
+              18,
+              19,
+              20
+            ]
+          }
+        },
+        {
+          "id": "0.the-homotopy-extension-property",
+          "title": "The Homotopy Extension Property",
+          "page": 14,
+          "summary": "The homotopy extension property (HEP) says that a homotopy prescribed on a subspace A can be extended to all of X while keeping the given starting map fixed. It is equivalent to having a retraction of the cylinder X×I onto its bottom together with A×I; mapping-cylinder neighborhoods give a geometric route to HEP, and every CW pair has HEP, in fact by a deformation retraction built cell by cell.",
+          "learner_can_do": "Given a pair (X,A), recognize the HEP extension data as a map on X×{0}∪A×I and test whether a retraction from X×I onto that subspace would supply the extension.",
+          "game_hook": "Players extend a moving boundary pattern across a cylinder-shaped space, placing or earning retractions and cell-by-cell deformations to fill the interior without changing the prescribed start or boundary motion.",
+          "summary_source_pages": {
+            "book_page": 14,
+            "pdf_indices": [
+              22,
+              23,
+              24
+            ]
+          }
+        }
+      ],
+      "summary": "The excerpt introduces deformation retraction as a continuous process that shrinks a space onto a subspace while leaving that subspace fixed, and homotopy as a continuous family connecting maps. These ideas formalize when spaces or maps can be treated as having the same shape, beyond being exactly homeomorphic. Mapping cylinders provide a geometric model for certain such shrinkings, though not every deformation retraction comes from one.",
+      "learner_can_do": "Recognize whether a proposed continuous motion is a deformation retraction by checking that it starts at the identity, ends with image in the target subspace, and fixes that subspace throughout.",
+      "game_hook": "Players reshape flexible objects by guiding points along permitted paths, preserving a marked core, and decide whether the motion forms a valid continuous shrink or map-homotopy.",
+      "summary_source_pages": {
+        "book_page": 1,
+        "pdf_indices": [
+          9,
+          10,
+          11
+        ]
+      }
+    },
+    {
+      "id": "1",
+      "number": "1",
+      "title": "The Fundamental Group",
+      "page": 21,
+      "sections": [
+        {
+          "id": "1.1",
+          "number": "1.1",
+          "title": "Basic Constructions",
+          "page": 25,
+          "topics": [
+            {
+              "title": "Paths and Homotopy",
+              "page": 25,
+              "summary": "A path is a continuous journey through a space, and a path homotopy continuously deforms one journey into another while keeping both endpoints fixed. Homotopy is an equivalence relation, and concatenating paths gives a well-defined operation on their homotopy classes. For loops based at a point, this operation is the starting point for the fundamental group.",
+              "learner_can_do": "Given two paths with the same endpoints in ℝⁿ, construct the straight-line homotopy between them, and explain why fixed-endpoint homotopy classes of based loops can be concatenated.",
+              "game_hook": "Players steer paths through a changing landscape, deforming routes without moving their endpoints; equivalent routes merge into one token, while loop tokens at a basepoint can be joined in sequence.",
+              "summary_source_pages": {
+                "book_page": 25,
+                "pdf_indices": [
+                  33,
+                  34,
+                  35
+                ]
+              }
+            },
+            {
+              "title": "The Fundamental Group of the Circle",
+              "page": 29,
+              "summary": "The circle’s fundamental group is the infinite cyclic group: every based loop is homotopic to a unique integer number of turns around the circle. The proof tracks each loop by lifting it through the covering map from the real line to the circle; the lifted path’s integer endpoint records the winding number, and path/homotopy lifting makes that record invariant under homotopy.",
+              "learner_can_do": "Given a loop on the circle, lift it from 0 to the real line and identify its homotopy class from the integer endpoint of the lift.",
+              "game_hook": "Players guide a path around a circular world while its lift travels along an unwrapped track; homotopies may reshape the route, but the lift’s endpoint must remain fixed.",
+              "summary_source_pages": {
+                "book_page": 29,
+                "pdf_indices": [
+                  37,
+                  38,
+                  39
+                ]
+              }
+            },
+            {
+              "title": "Induced Homomorphisms",
+              "page": 34,
+              "summary": "A basepoint-preserving map sends loops to loops by composition and thereby defines a well-defined homomorphism on fundamental groups: homotopic loops remain homotopic, and loop concatenation is preserved. Induced maps respect composition, so a homeomorphism induces an isomorphism. The excerpt also illustrates how product spaces split into factor loops and uses subdivision and paths in overlapping sets to break loops into simpler pieces.",
+              "learner_can_do": "Given a basepoint-preserving map and a loop class, determine its induced loop class, and recognize why composition of maps yields composition of induced homomorphisms.",
+              "game_hook": "Players route loop tokens through maps and across overlapping regions, combining or subdividing paths while preserving their homotopy class; successful transformations reveal how the induced group operation behaves.",
+              "summary_source_pages": {
+                "book_page": 34,
+                "pdf_indices": [
+                  42,
+                  43,
+                  44
+                ]
+              }
+            }
+          ],
+          "summary": "A path is a continuous route through a space, and a path homotopy continuously deforms one route into another while keeping its endpoints fixed. Homotopy is an equivalence relation, so paths can be grouped into deformation classes; concatenation of paths respects those classes. For loops based at a fixed point, these classes form the fundamental group under concatenation, capturing how loops can differ up to deformation.",
+          "learner_can_do": "Given two paths with matching endpoints, identify what must remain fixed during a homotopy and determine how their concatenation is formed.",
+          "game_hook": "Have players reshape routes on a changing map without moving their endpoints, then combine compatible routes and track when distinct-looking loops represent the same class.",
+          "summary_source_pages": {
+            "book_page": 25,
+            "pdf_indices": [
+              33,
+              34,
+              35
+            ]
+          }
+        },
+        {
+          "id": "1.2",
+          "number": "1.2",
+          "title": "Van Kampen's Theorem",
+          "page": 40,
+          "topics": [
+            {
+              "title": "Free Products of Groups",
+              "page": 41,
+              "summary": "The free product combines groups without forcing elements from different groups to commute. Its elements are finite reduced words: nonidentity letters from the component groups, with neighboring letters from different groups; multiplication concatenates words and reduces at the boundary, with the empty word as identity. Learners should understand that each component group embeds naturally and that reduction gives a unique form; examples such as Z₂ * Z₂ show how alternating words encode group structure.",
+              "learner_can_do": "Given a concatenation of reduced words, reduce it by combining adjacent letters from the same factor and canceling identities, then identify the resulting unique reduced word.",
+              "game_hook": "Let players traverse a chain of factor-labeled gates, where crossing successive gates records a word and matching neighboring factor labels trigger combination or cancellation that changes the route.",
+              "summary_source_pages": {
+                "book_page": 41,
+                "pdf_indices": [
+                  49,
+                  50,
+                  51
+                ]
+              }
+            },
+            {
+              "title": "The van Kampen Theorem",
+              "page": 43,
+              "summary": "Van Kampen’s theorem builds the fundamental group of a space from the groups of path-connected open pieces: loops from the pieces generate the whole group, while overlap loops impose relations by identifying their images in each piece. When pairwise overlaps are path-connected—and triple overlaps too for the full kernel description—the result is a free product modulo those overlap relations. In a wedge of suitably based spaces, overlaps contribute no nontrivial relations, so the fundamental group is the free product of the pieces’ groups; a wedge of circles therefore gives a free group.",
+              "learner_can_do": "Given a suitable open cover and the fundamental groups of its pieces and overlaps, identify the generators and overlap relations needed to describe the fundamental group of the union.",
+              "game_hook": "Have players assemble a map from regions labeled by generators, then stitch regions together: paths in shared overlaps force matching words, while a wedge-like layout lets independent loops become freely composable generators.",
+              "summary_source_pages": {
+                "book_page": 43,
+                "pdf_indices": [
+                  51,
+                  52,
+                  53
+                ]
+              }
+            },
+            {
+              "title": "Applications to Cell Complexes",
+              "page": 49,
+              "summary": "The excerpt contrasts the shrinking wedge of circles with an ordinary countable wedge: loops can wrap around infinitely many shrinking circles while remaining continuous, so the fundamental group surjects onto a countable product of copies of ℤ and is uncountable. For cell complexes, attaching 2-cells imposes relations by killing the attaching loops (up to normal closure), while cells of dimension greater than 2 do not change the fundamental group; consequently, the 2-skeleton already determines π₁.",
+              "learner_can_do": "Given a cell complex and its attaching maps, identify which attaching loops become relations in π₁ and explain why cells of dimension above 2 leave π₁ unchanged.",
+              "game_hook": "Players navigate a shrinking-circle space, choosing loops that visit infinitely many ever-smaller circles, then build a cell complex by attaching cells and observe 2-cells erase selected loop relations while higher-dimensional cells leave the fundamental-group map unchanged.",
+              "summary_source_pages": {
+                "book_page": 49,
+                "pdf_indices": [
+                  57,
+                  58,
+                  59
+                ]
+              }
+            }
+          ],
+          "summary": "Van Kampen’s theorem lets us compute a space’s fundamental group by assembling information from simpler pieces. For two circles meeting at one basepoint, loops correspond to words in the two circle-generators, and the resulting group is the free product: adjacent letters from the same factor combine, and identities cancel until the word is reduced. Unlike a direct product, letters from different factors do not have to commute.",
+          "learner_can_do": "Given a loop-word in two circle-generators, reduce it by combining adjacent powers from the same circle and canceling identities.",
+          "game_hook": "Have players route a traveler through joined loops, then simplify the traveled path by merging consecutive trips around the same circle and erasing reversals, while preserving the order of trips between circles.",
+          "summary_source_pages": {
+            "book_page": 40,
+            "pdf_indices": [
+              48,
+              49,
+              50
+            ]
+          }
+        },
+        {
+          "id": "1.3",
+          "number": "1.3",
+          "title": "Covering Spaces",
+          "page": 56,
+          "topics": [
+            {
+              "title": "Lifting Properties",
+              "page": 60,
+              "summary": "Covering maps are distinguished by how maps and homotopies lift: a homotopy starting from a chosen lift has a unique lifted homotopy. This implies that the induced map on fundamental groups is injective, with image exactly the loop classes whose lifts from the chosen basepoint close up; for path-connected spaces, the cover’s number of sheets equals the index of that subgroup.",
+              "learner_can_do": "Given a based loop, determine whether its class belongs to the subgroup by checking whether its lift from the chosen point ends where it began, and relate the subgroup’s index to the number of sheets.",
+              "game_hook": "Have players trace loops through a labeled covering graph, use lifted homotopies to show endpoint stability, and match subgroup cosets to distinct points in the fiber.",
+              "summary_source_pages": {
+                "book_page": 60,
+                "pdf_indices": [
+                  68,
+                  69,
+                  70
+                ]
+              }
+            },
+            {
+              "title": "The Classification of Covering Spaces",
+              "page": 63,
+              "summary": "For a path-connected, locally path-connected space, connected covering spaces are organized by subgroups of its fundamental group: a based cover determines the subgroup induced by its fundamental group. A simply connected cover can exist only if the space is semilocally simply-connected; under the stated assumptions, the excerpt constructs it from endpoint-fixed homotopy classes of paths from a basepoint, using small path-connected neighborhoods whose loops become trivial in the whole space to define the topology.",
+              "learner_can_do": "Given a candidate simply connected covering, explain why each point must have a neighborhood whose loops become nullhomotopic in the whole space; when that condition holds, describe the path-class construction and its local neighborhoods.",
+              "game_hook": "Have players assemble a cover from path histories: local moves within a qualifying neighborhood merge histories that reach the same endpoint, while loops that remain nontrivial globally prevent a valid local patch.",
+              "summary_source_pages": {
+                "book_page": 63,
+                "pdf_indices": [
+                  71,
+                  72,
+                  73
+                ]
+              }
+            },
+            {
+              "title": "Deck Transformations and Group Actions",
+              "page": 70,
+              "summary": "Deck transformations are self-isomorphisms of a covering space, and they form a group under composition. For a path-connected cover, the deck group is determined by the subgroup H of the fundamental group: it is N(H)/H, and for a normal cover this becomes π₁(X)/H; the universal cover therefore has deck group π₁(X). More broadly, the excerpt connects covering-space isomorphisms with equivalences of fundamental-group actions on fibers.",
+              "learner_can_do": "Given a covering subgroup H, identify whether the cover is normal and determine its deck group as N(H)/H, simplifying to π₁(X)/H when H is normal.",
+              "game_hook": "Let players follow lifted loops to move between fiber points, then discover which loop classes yield deck transformations and organize them into the quotient N(H)/H.",
+              "summary_source_pages": {
+                "book_page": 70,
+                "pdf_indices": [
+                  78,
+                  79,
+                  80
+                ]
+              }
+            }
+          ],
+          "summary": "A covering space locally looks like several separate copies (“sheets”) of each sufficiently small neighborhood in the base; the number of sheets is locally constant and is constant when the base is connected. Coverings offer a geometric way to study fundamental groups: connected covers correspond to subgroups of the fundamental group. For the wedge of two circles, covers can be represented as graphs whose edges are labeled and oriented so every vertex locally matches the two labeled loops.",
+          "learner_can_do": "Given a proposed map of graphs to a wedge of two circles, check whether each vertex has exactly one incoming and one outgoing edge of each label, and use this local pattern to recognize a covering map.",
+          "game_hook": "Have players build and traverse labeled, oriented graph maps: local matching rules make a valid cover, while loops in the graph reveal how paths lift and how different sheets connect.",
+          "summary_source_pages": {
+            "book_page": 56,
+            "pdf_indices": [
+              64,
+              65,
+              66
+            ]
+          }
+        }
+      ],
+      "additional_topics": [
+        {
+          "id": "1.A",
+          "number": "1.A",
+          "title": "Graphs and Free Groups",
+          "page": 83,
+          "summary": "A graph is a 1-dimensional CW complex built from vertices and edges, with topology controlled edge by edge; this weak topology can fail to be metrizable when a vertex meets infinitely many edges. A tree is a contractible subgraph, and every connected graph contains a maximal tree; moreover, any chosen tree can be extended to one. The construction grows outward through adjacent edges, adding one connecting edge for each newly reached vertex.",
+          "learner_can_do": "Given a connected graph and a chosen tree, recognize that it can be extended to a spanning (maximal) tree by connecting each new vertex without adding cycles.",
+          "game_hook": "Have players explore an expanding network from a chosen seed tree, attaching each newly discovered vertex by one edge while avoiding loops, until every vertex is reached.",
+          "summary_source_pages": {
+            "book_page": 83,
+            "pdf_indices": [
+              91,
+              92,
+              93
+            ]
+          }
+        },
+        {
+          "id": "1.B",
+          "number": "1.B",
+          "title": "K(G,1) Spaces and Graphs of Groups",
+          "page": 87,
+          "summary": "The excerpt develops covering-space techniques for finitely generated free groups: finite-index subgroups are controlled by finite graph covers, and suitable finite covers can separate elements or subgroups. It then introduces a K(G,1) as a path-connected space with fundamental group G and contractible universal cover, illustrating that graphs, certain surfaces, projective and lens spaces, and products provide examples.",
+          "learner_can_do": "Use a finite graph cover to recognize how a nontrivial free-group element can be excluded from a finite-index normal subgroup, and relate that construction to residual finiteness.",
+          "game_hook": "Let players extend partial graph covers by adding edges and vertices under local covering rules, aiming to complete a finite cover that either separates a marked loop from the basepoint or preserves a chosen subgroup while excluding another loop.",
+          "summary_source_pages": {
+            "book_page": 87,
+            "pdf_indices": [
+              95,
+              96,
+              97
+            ]
+          }
+        }
+      ],
+      "summary": "Algebraic topology assigns algebraic structures to spaces and maps; here, the fundamental group captures information from loops based at a point. Loops can be combined by traversing one after another, and deformations that avoid a fixed obstacle can show when such loops represent the same behavior—for example, linking counts around a circle illustrate addition of integers.",
+      "learner_can_do": "Given based loops around an obstacle, concatenate them and recognize how their linking counts combine, while respecting the rule that the loops must not cross the obstacle.",
+      "game_hook": "Have players plan and concatenate paths around an untouchable obstacle, using allowed deformations to simplify routes and reveal which loop patterns remain distinct.",
+      "summary_source_pages": {
+        "book_page": 21,
+        "pdf_indices": [
+          29,
+          30,
+          31
+        ]
+      }
+    },
+    {
+      "id": "2",
+      "number": "2",
+      "title": "Homology",
+      "page": 97,
+      "sections": [
+        {
+          "id": "2.1",
+          "number": "2.1",
+          "title": "Simplicial and Singular Homology",
+          "page": 102,
+          "topics": [
+            {
+              "title": "Δ-Complexes",
+              "page": 102,
+              "summary": "Δ-complexes provide a geometric setting for introducing simplicial homology before the more general singular homology. They build spaces by gluing ordered simplices along faces; ordering vertices fixes face order and edge orientations, while each simplex interior maps injectively and interiors partition the space. This extends familiar triangle-based constructions of surfaces to higher dimensions and allows broader identifications than classical simplicial complexes.",
+              "learner_can_do": "Given an ordered simplex, identify its faces with the inherited vertex order and determine the induced orientation of its edges.",
+              "game_hook": "Have players assemble a space from labeled simplex tiles, matching faces under permitted gluings while tracking which tile interiors cover each point exactly once.",
+              "summary_source_pages": {
+                "book_page": 102,
+                "pdf_indices": [
+                  110,
+                  111,
+                  112
+                ]
+              }
+            },
+            {
+              "title": "Simplicial Homology",
+              "page": 104,
+              "summary": "A ∆-complex is assembled by gluing simplices along faces, with ordered vertices encoding the face identifications; this gives a combinatorial description of the space. Its n-chains are finite integer-weighted sums of n-simplices. The boundary operator takes an ordered simplex to its faces with alternating signs, and the paired cancellations in the next boundary ensure that applying boundary twice gives zero.",
+              "learner_can_do": "Compute the signed boundary of an ordered simplex and recognize why each codimension-two face appears twice with opposite signs, so ∂²=0.",
+              "game_hook": "Have players assemble spaces by matching labeled faces, then orient each simplex and send signed face tokens along its boundary; success requires all tokens to cancel when boundaries are applied a second time.",
+              "summary_source_pages": {
+                "book_page": 104,
+                "pdf_indices": [
+                  112,
+                  113,
+                  114
+                ]
+              }
+            },
+            {
+              "title": "Singular Homology",
+              "page": 108,
+              "summary": "A singular simplex is any continuous map from the standard simplex into a space, even if its image is distorted or overlaps itself; finite integer sums of these maps form chains. The alternating face boundary satisfies ∂² = 0, so homology consists of cycles modulo boundaries. Singular homology is invariant under homeomorphism, can be viewed through a singular Δ-complex, and its cycles often have geometric representatives such as loops or mapped oriented surfaces; homology also splits over path-components.",
+              "learner_can_do": "Compute the alternating boundary of a short singular chain and decide whether it is a cycle by checking whether its boundary vanishes.",
+              "game_hook": "Players assemble mapped simplices by matching and canceling oppositely oriented faces, then test which closed assemblies are themselves boundaries.",
+              "summary_source_pages": {
+                "book_page": 108,
+                "pdf_indices": [
+                  116,
+                  117,
+                  118
+                ]
+              }
+            },
+            {
+              "title": "Homotopy Invariance",
+              "page": 110,
+              "summary": "A continuous map induces a chain map on singular chains, and the chain-map relation ensures cycles and boundaries are preserved, so the map induces homomorphisms on homology. Homotopic maps induce the same homomorphism; therefore a homotopy equivalence induces isomorphisms on homology in every dimension.",
+              "learner_can_do": "Given maps related by a homotopy equivalence, recognize that they must produce isomorphic homology groups, even if the spaces look different.",
+              "game_hook": "Let players deform a space and its maps through a sequence of allowed homotopies while preserving labeled homology data, then use the resulting equivalence to transfer a challenge to a simpler space.",
+              "summary_source_pages": {
+                "book_page": 110,
+                "pdf_indices": [
+                  118,
+                  119,
+                  120
+                ]
+              }
+            },
+            {
+              "title": "Exact Sequences and Excision",
+              "page": 113,
+              "summary": "A chain homotopy gives a concrete reason two chain maps induce the same map on homology: on a cycle, their difference is a boundary. The section then motivates exact sequences as the right way to relate the homology of a space, a subspace, and its quotient; exactness encodes kernels and images, and the sequence can connect dimensions to help compute unknown groups. For the stated hypothesis on a closed subspace, the connecting map sends a quotient-space class to the class of the boundary of a representing chain in the subspace.",
+              "learner_can_do": "Given a cycle and a chain homotopy equation, recognize why the two induced homology classes agree; interpret exactness at a term as equality of the incoming image and outgoing kernel.",
+              "game_hook": "Have players route homology classes through a chain of spaces: each gate opens only when the incoming class accounts for the next map’s kernel, while a boundary operation transfers a quotient-space class into a lower-dimensional subspace class.",
+              "summary_source_pages": {
+                "book_page": 113,
+                "pdf_indices": [
+                  121,
+                  122,
+                  123
+                ]
+              }
+            },
+            {
+              "title": "The Equivalence of Simplicial and Singular Homology",
+              "page": 128,
+              "summary": "The section establishes that simplicial homology of a ∆-complex agrees naturally with singular homology, including for pairs. The proof builds from relative groups on successive skeleta: each new layer has one generator per simplex in its dimension, and exact sequences plus the Five-Lemma extend the isomorphism to the whole complex. The excerpt also signals a compactness argument for handling infinite-dimensional complexes.",
+              "learner_can_do": "Recognize when a comparison of homology theories can be proved skeleton by skeleton, using relative groups for each layer and the Five-Lemma to pass from known isomorphisms to the middle group.",
+              "game_hook": "Have players assemble a complex one skeletal layer at a time, matching simplex generators to singular cycles, then use exact-sequence links as routes that unlock the next layer once the surrounding comparison maps are verified.",
+              "summary_source_pages": {
+                "book_page": 128,
+                "pdf_indices": [
+                  136,
+                  137,
+                  138
+                ]
+              }
+            }
+          ],
+          "summary": "Simplicial homology is introduced as a simpler setting for learning some of the machinery before studying singular homology, the main theory of the section. A ∆-complex builds spaces by gluing simplices—generalizing how surfaces can be assembled from triangles—and orders each simplex’s vertices so faces and edge orientations are consistently specified. The excerpt begins defining the structure through maps from standard simplices, with interiors mapping injectively and partitioning the space.",
+          "learner_can_do": "Given an ordered simplex, identify its faces with the inherited vertex order and determine the induced direction of each edge.",
+          "game_hook": "Players assemble a space from simplex tiles by matching faces; consistent vertex labels and edge directions let them make valid gluings, including ones that produce familiar surfaces.",
+          "summary_source_pages": {
+            "book_page": 102,
+            "pdf_indices": [
+              110,
+              111,
+              112
+            ]
+          }
+        },
+        {
+          "id": "2.2",
+          "number": "2.2",
+          "title": "Computations and Applications",
+          "page": 134,
+          "topics": [
+            {
+              "title": "Degree",
+              "page": 134,
+              "summary": "Degree assigns an integer to each map from a positive-dimensional sphere to itself: it is the multiplier induced on the sphere’s top homology. It is homotopy-invariant and multiplicative under composition; missing a point forces degree zero, while homotopy equivalences have degree ±1. The excerpt uses degree to connect fixed-point-free maps and the antipodal map, then applies that connection to characterize when a sphere has a nowhere-zero tangent vector field and to constrain free group actions on even-dimensional spheres.",
+              "learner_can_do": "Given a sphere map or a geometric condition on it, use the listed degree rules to infer a necessary consequence—for example, show that a nowhere-zero tangent field on Sⁿ requires n odd by building a homotopy from the identity to the antipodal map.",
+              "game_hook": "Players manipulate sphere maps and tangent vectors as transformations that carry a signed homology charge, using allowed moves such as composition and homotopy to unlock or rule out geometric configurations.",
+              "summary_source_pages": {
+                "book_page": 134,
+                "pdf_indices": [
+                  142,
+                  143,
+                  144
+                ]
+              }
+            },
+            {
+              "title": "Cellular Homology",
+              "page": 137,
+              "summary": "The excerpt motivates cellular homology by showing how degree captures how maps act on spheres: power maps on the circle have degree k, and suspension preserves degree. For a CW complex, the relative homology of successive skeleta is concentrated in the cell dimension, with one free generator per cell; the skeleton inclusions then explain why homology in dimension k is determined by the k-skeleton and its neighboring dimensions. In infinite-dimensional complexes, compactness lets each singular chain be handled inside some finite skeleton.",
+              "learner_can_do": "Given a CW complex, identify the free generators of H_n(X^n,X^{n−1}) with its n-cells and explain why degree calculations are the key data for the cellular boundary maps.",
+              "game_hook": "Have players build a CW complex one skeleton at a time, assigning degree-weighted links from each cell to lower-dimensional cells and checking which cycles survive or become boundaries.",
+              "summary_source_pages": {
+                "book_page": 137,
+                "pdf_indices": [
+                  145,
+                  146,
+                  147
+                ]
+              }
+            },
+            {
+              "title": "Mayer-Vietoris Sequences",
+              "page": 149,
+              "summary": "For a space covered by two suitable pieces, the Mayer–Vietoris sequence relates the homology of their intersection, the two pieces, and the whole space; exactness lets information in some terms determine others. Its connecting map can be understood by splitting a cycle into chains in each piece: their boundaries match with opposite signs and give a cycle in the intersection. The sequence supports both computations and induction, and its first-homology content parallels the abelianized van Kampen theorem.",
+              "learner_can_do": "Given a cycle in a union, split it into chains in the two pieces and identify the resulting boundary cycle in their intersection, then use exactness to infer unknown homology.",
+              "game_hook": "Players explore a region by dividing it into overlapping zones, routing cycles through each zone, and repairing mismatched boundaries in the overlap to unlock deductions about the union.",
+              "summary_source_pages": {
+                "book_page": 149,
+                "pdf_indices": [
+                  157,
+                  158,
+                  159
+                ]
+              }
+            },
+            {
+              "title": "Homology with Coefficients",
+              "page": 153,
+              "summary": "Homology with coefficients replaces integer chain weights by elements of an abelian group G, while keeping the same boundary rule and chain-complex structure. This lets the coefficient group reveal features that integer homology may obscure: with Z₂, signs and orientations disappear, and changing coefficients can alter the homology, as the contrasting results for RPⁿ over fields of characteristic 2 and not 2 illustrate. Maps and degree calculations carry over naturally to these coefficient groups.",
+              "learner_can_do": "Given the cellular chain complex for RPⁿ with alternating zero and multiplication-by-2 boundaries, determine which homology groups survive over a field of characteristic 2 versus a field of other characteristic.",
+              "game_hook": "Let players choose a coefficient system that changes how boundary operations resolve—mod 2 merges orientation-opposite faces, while other fields preserve the effect of multiplication by 2—and use the resulting cycles to chart the space’s homology.",
+              "summary_source_pages": {
+                "book_page": 153,
+                "pdf_indices": [
+                  161,
+                  162,
+                  163
+                ]
+              }
+            }
+          ],
+          "summary": "For a map from a sphere to itself, degree is the integer by which its induced map multiplies the top-dimensional homology generator. Degree is homotopy-invariant and multiplicative under composition; it detects obstructions, including that a sphere has a continuous nowhere-zero tangent vector field exactly when its dimension is odd. The excerpt also uses degree to constrain free group actions on even-dimensional spheres.",
+          "learner_can_do": "Use the degree of the antipodal map, \u001b[?](-1)^{n+1}, to determine whether a nowhere-zero tangent vector field on S^n is possible.",
+          "game_hook": "Players manipulate sphere maps as oriented wraps, tracking degree through compositions and homotopies, then use the resulting invariant to unlock or rule out tangent-field and free-action challenges.",
+          "summary_source_pages": {
+            "book_page": 134,
+            "pdf_indices": [
+              142,
+              143,
+              144
+            ]
+          }
+        },
+        {
+          "id": "2.3",
+          "number": "2.3",
+          "title": "The Formal Viewpoint",
+          "page": 160,
+          "topics": [
+            {
+              "title": "Axioms for Homology",
+              "page": 160,
+              "summary": "A homology theory assigns graded abelian groups to CW complexes and compatible homomorphisms to maps, respecting identities and composition. Its core axioms say homotopic maps induce the same homomorphism, each CW pair has a natural long exact sequence, and homology of a wedge decomposes as the direct sum of the homologies of its pieces. The axioms allow negative-degree groups and do not require the groups of a point to vanish outside degree zero, so they encompass theories beyond ordinary singular homology.",
+              "learner_can_do": "Given a proposed homology theory or a space map, identify which axiom justifies homotopy invariance, exact-sequence reasoning, or splitting a wedge into summands.",
+              "game_hook": "Let players reshape spaces by homotopy, cut and reassemble them into CW pairs or wedges, and use the axioms as rules for transporting and decomposing homology information.",
+              "summary_source_pages": {
+                "book_page": 160,
+                "pdf_indices": [
+                  168,
+                  169,
+                  170
+                ]
+              }
+            },
+            {
+              "title": "Categories and Functors",
+              "page": 162,
+              "summary": "A category packages objects together with morphisms, identity morphisms, and associative composition; the morphisms matter as much as the objects. A functor maps objects and morphisms between categories while preserving identities and composition, which explains homology as a systematic assignment from spaces and maps to groups and homomorphisms. Categories can also encode structures such as groups, partial orders, chain complexes, and homotopy classes of maps.",
+              "learner_can_do": "Given a proposed collection of objects and morphisms, check whether identities and composition satisfy the category axioms, then verify whether an assignment is a functor by checking identity and composition preservation.",
+              "game_hook": "Players assemble a network of objects and composable arrows, then route it through a functoral “translator” that must preserve identity loops and every composite while changing the kinds of objects and arrows.",
+              "summary_source_pages": {
+                "book_page": 162,
+                "pdf_indices": [
+                  170,
+                  171,
+                  172
+                ]
+              }
+            }
+          ],
+          "summary": "A homology theory assigns graded abelian groups to spaces and compatible maps to continuous maps, with homotopy invariance, natural long exact sequences for pairs, and additivity over wedge sums. The axioms describe a common structure shared by different theories, not a recipe fixing the groups: in particular, the dimension axiom is optional, so some theories can have nonzero groups in negative degrees or nontrivial point coefficients. Reduced and unreduced versions can be converted into one another.",
+          "learner_can_do": "Given a proposed homology construction, identify which structural axioms it must satisfy and distinguish those axioms from optional normalization choices such as the dimension axiom.",
+          "game_hook": "Have players build a valid theory by routing graded group tokens through maps and exact sequences, then test whether their construction remains consistent under homotopies, quotient boundaries, and wedge decompositions.",
+          "summary_source_pages": {
+            "book_page": 160,
+            "pdf_indices": [
+              168,
+              169,
+              170
+            ]
+          }
+        }
+      ],
+      "additional_topics": [
+        {
+          "id": "2.A",
+          "number": "2.A",
+          "title": "Homology and Fundamental Group",
+          "page": 166,
+          "summary": "A loop determines a singular 1-cycle, and homotopic loops give the same homology class; path concatenation corresponds to addition of cycles. For path-connected spaces, every class in H₁(X) comes from a loop, and the resulting map identifies H₁(X) with the abelianization of π₁(X): homology retains loop information after commutators are made trivial.",
+          "learner_can_do": "Recognize that concatenating loops becomes addition in H₁, and state that H₁(X) is the abelianization of π₁(X) when X is path-connected.",
+          "game_hook": "Have players reroute and concatenate paths across a map, matching homotopic or homologous routes while tracking which distinctions disappear when loop order is made irrelevant.",
+          "summary_source_pages": {
+            "book_page": 166,
+            "pdf_indices": [
+              174,
+              175,
+              176
+            ]
+          }
+        },
+        {
+          "id": "2.B",
+          "number": "2.B",
+          "title": "Classical Applications",
+          "page": 169,
+          "summary": "Homology detects the broad shape of complements of embedded disks and spheres: a disk has a complement with trivial reduced homology, while an embedded k-sphere in a higher-dimensional sphere has the reduced homology of a sphere of dimension n−k−1. This recovers separation by codimension-one spheres, but homology alone does not reveal all topology: complements can have more complicated fundamental groups, and knotting can occur even for embeddings with the same homology-level signature.",
+          "learner_can_do": "Given the dimensions of an embedded sphere Sᵏ⊂Sⁿ, identify the one degree in which its complement has nonzero reduced homology, and distinguish this homological conclusion from claims about simple connectivity or standard embedding.",
+          "game_hook": "Players investigate a changing space by tracking cycles that survive or become boundaries as embedded disks and spheres are removed, then compare spaces with identical homology but different hidden knotting or connectivity.",
+          "summary_source_pages": {
+            "book_page": 169,
+            "pdf_indices": [
+              177,
+              178,
+              179
+            ]
+          }
+        },
+        {
+          "id": "2.C",
+          "number": "2.C",
+          "title": "Simplicial Approximation",
+          "page": 177,
+          "summary": "A simplicial map is determined by where it sends vertices, provided the images of each simplex’s vertices form a simplex. Continuous maps between simplicial complexes can be approximated, after subdividing the domain, by maps that are linear on simplices; subdivision matters because fixed triangulations allow only finitely many simplicial maps and thus may miss many possible degrees. The excerpt introduces open stars and their intersection property as tools in the approximation argument.",
+          "learner_can_do": "Given vertex assignments, decide whether they extend to a simplicial map by checking that every simplex’s vertices map into a single simplex.",
+          "game_hook": "Players refine a triangulated domain until each small simplex fits inside the inverse image of a target vertex’s open star, then assign vertices to produce a valid simplicial approximation.",
+          "summary_source_pages": {
+            "book_page": 177,
+            "pdf_indices": [
+              185,
+              186,
+              187
+            ]
+          }
+        }
+      ],
+      "summary": "Homology offers a more computable alternative to higher homotopy groups: it captures dimension-sensitive information (for spheres, matching homotopy in degrees up to the sphere’s dimension and vanishing above it) while remaining practical to calculate. The section’s path moves from motivating examples through simplicial to singular homology, then develops core properties and efficient tools such as cellular homology and Mayer–Vietoris, before presenting axioms and applications.",
+      "learner_can_do": "Choose a suitable homology-calculation strategy for a space—such as cellular homology or Mayer–Vietoris—and explain why homology is often more tractable than higher homotopy groups.",
+      "game_hook": "Have players explore a space by assembling local pieces and tracking boundary cancellations, then unlock increasingly efficient calculation tools as they compare what each method reveals.",
+      "summary_source_pages": {
+        "book_page": 97,
+        "pdf_indices": [
+          105,
+          106,
+          107
+        ]
+      }
+    },
+    {
+      "id": "3",
+      "number": "3",
+      "title": "Cohomology",
+      "page": 185,
+      "sections": [
+        {
+          "id": "3.1",
+          "number": "3.1",
+          "title": "Cohomology Groups",
+          "page": 190,
+          "topics": [
+            {
+              "title": "The Universal Coefficient Theorem",
+              "page": 190,
+              "summary": "Cohomology is formed by dualizing a chain complex: replace each chain group with homomorphisms into a coefficient group G and each boundary map with a coboundary map that runs in the opposite direction. Since the dual maps still compose to zero, their kernels modulo images define cohomology. Simple examples show that torsion in homology can reappear one degree higher in cohomology; the section aims to explain algebraically how cohomology is determined by homology together with G.",
+              "learner_can_do": "Given a chain map and a homomorphism into G, compute its dual by precomposition, track the reversed direction, and identify the resulting cohomology groups in an elementary example.",
+              "game_hook": "Have players turn a chain-complex network around into its dual by routing G-valued labels backward along each map, then compare where free and torsion features land in the resulting cohomology.",
+              "summary_source_pages": {
+                "book_page": 190,
+                "pdf_indices": [
+                  198,
+                  199,
+                  200
+                ]
+              }
+            },
+            {
+              "title": "Cohomology of Spaces",
+              "page": 197,
+              "summary": "Cohomology is built by dualizing the boundary maps of a chain complex: cocycles are cochains that vanish on boundaries, and classes identify cocycles differing by coboundaries. The universal coefficient theorem relates cohomology with coefficients in G to Hom of homology and an Ext contribution from the preceding homology group; in degree zero, cohomology records G-valued functions on path-components.",
+              "learner_can_do": "Given a cochain, test whether it is a cocycle by checking whether it vanishes on boundaries, then distinguish its class from changes by coboundaries.",
+              "game_hook": "Have players traverse a space and assign values to points, while path connections constrain which assignments are cocycles and boundary-based moves determine when two assignments count as the same cohomology class.",
+              "summary_source_pages": {
+                "book_page": 197,
+                "pdf_indices": [
+                  205,
+                  206,
+                  207
+                ]
+              }
+            }
+          ],
+          "summary": "Cohomology is built by dualizing a chain complex: replace each chain group by homomorphisms into a coefficient group G, and each boundary map by a coboundary map that runs in the opposite direction. Since consecutive boundaries compose to zero, the coboundaries do too, so cohomology is the kernel modulo image. The section aims to explain how cohomology depends algebraically on homology and G; the example shows torsion can appear one dimension higher in cohomology than in homology.",
+          "learner_can_do": "Given a chain map and a homomorphism into G, form its dual by precomposition, then identify the resulting coboundary direction and compute kernel modulo image.",
+          "game_hook": "Players transform a chain network into a reversed cochain network by routing test homomorphisms backward along each map, then resolve which cochains are cocycles and which are coboundaries.",
+          "summary_source_pages": {
+            "book_page": 190,
+            "pdf_indices": [
+              198,
+              199,
+              200
+            ]
+          }
+        },
+        {
+          "id": "3.2",
+          "number": "3.2",
+          "title": "Cup Product",
+          "page": 206,
+          "topics": [
+            {
+              "title": "The Cohomology Ring",
+              "page": 212,
+              "summary": "The cup product combines cohomology classes into a multiplication, making the direct sum of all cohomology groups a graded ring (and, with coefficients, an algebra). Its grading matters: products add degrees, and commutativity is governed by the sign rule for graded classes. Familiar ring forms compress the groups and products into generators and relations—for example, truncated polynomial rings describe projective spaces, while exterior algebras describe the torus examples presented.",
+              "learner_can_do": "Given graded generators and relations, identify the resulting cohomology ring and use the degree-sensitive commutativity rule to check whether proposed products are consistent.",
+              "game_hook": "Let players assemble a space’s ring from degree-marked generators: products create higher-degree tiles, while sign and truncation rules determine which arrangements are valid or vanish.",
+              "summary_source_pages": {
+                "book_page": 212,
+                "pdf_indices": [
+                  220,
+                  221,
+                  222
+                ]
+              }
+            },
+            {
+              "title": "A Künneth Formula",
+              "page": 214,
+              "summary": "Cup-product rings can distinguish spaces that have the same additive cohomology, as the contrast between CP² and S² ∨ S⁴ illustrates. The section then connects cohomology of product spaces to tensor products: bilinear cross products induce homomorphisms from tensor products, with coefficients balanced over the ring R. The excerpt introduces this setup but does not yet state the Künneth formula itself.",
+              "learner_can_do": "Recognize when a bilinear pairing of cohomology classes descends to a map from their tensor product over R.",
+              "game_hook": "Players combine classes from two spaces into paired product-space tokens, while matching coefficient rules and graded signs determine which combinations are valid and what ring information they reveal.",
+              "summary_source_pages": {
+                "book_page": 214,
+                "pdf_indices": [
+                  222,
+                  223,
+                  224
+                ]
+              }
+            },
+            {
+              "title": "Spaces with Polynomial Cohomology",
+              "page": 220,
+              "summary": "Projective spaces have cohomology rings generated by one class: for finite real or complex projective space, powers of the generator continue through the top dimension and the next power vanishes; for infinite projective space, all powers persist. The generator has degree 1 with Z₂ coefficients for RP and degree 2 with integer coefficients for CP. The excerpt’s geometric proof shows that complementary-dimensional classes multiply to a top-dimensional generator, reducing the key claim to a product on local Euclidean pieces and the Künneth formula.",
+              "learner_can_do": "Given the stated ring, identify the coefficient system and generator degree, then determine which powers are nonzero in RPⁿ or CPⁿ.",
+              "game_hook": "Have players assemble complementary-dimensional geometric pieces whose intersection is a point, then combine their cohomology tokens to create the top-dimensional class; finite spaces block powers beyond their dimension.",
+              "summary_source_pages": {
+                "book_page": 220,
+                "pdf_indices": [
+                  228,
+                  229,
+                  230
+                ]
+              }
+            }
+          ],
+          "summary": "The cup product combines degree-k and degree-ℓ cochains by evaluating them on the front and back faces of a simplex that meet at a shared vertex, then multiplying their values in the coefficient ring. Its coboundary rule, with the sign (−1)^k, ensures cocycles multiply to cocycles and products involving coboundaries remain coboundaries, so the operation is well-defined on cohomology. The resulting product is associative and distributive, has a unit when the coefficient ring has one, and can encode meaningful information about surfaces.",
+          "learner_can_do": "Given cochains on simplices, compute their cup product and use the coboundary identity to determine whether it defines a cohomology class.",
+          "game_hook": "Players assemble a simplex by joining a front face and a back face at their shared vertex, multiply the face labels, and use signed boundary moves to verify which products survive as cohomology classes.",
+          "summary_source_pages": {
+            "book_page": 206,
+            "pdf_indices": [
+              214,
+              215,
+              216
+            ]
+          }
+        },
+        {
+          "id": "3.3",
+          "number": "3.3",
+          "title": "Poincaré Duality",
+          "page": 230,
+          "topics": [
+            {
+              "title": "Orientations and Homology",
+              "page": 233,
+              "summary": "A local orientation at a point of an n-manifold is a choice of generator of its local homology group. A global orientation is a choice of these generators that agrees throughout small neighborhoods; when such choices cannot be made consistently, the collection of local choices forms an orientable two-sheeted cover. The excerpt also connects orientability to making cell-boundary and dual-cell coboundary signs agree in the integral version of Poincaré duality.",
+              "learner_can_do": "Given local orientation choices across overlapping neighborhoods, determine whether they can be made consistent, and recognize when the two choices form the sheets of an orientation cover.",
+              "game_hook": "Have players carry local orientation tokens across a map of neighborhoods: rotations preserve a token, reflections flip it, and a route that returns with a flipped token reveals the need to move to the other sheet of the orientation cover.",
+              "summary_source_pages": {
+                "book_page": 233,
+                "pdf_indices": [
+                  241,
+                  242,
+                  243
+                ]
+              }
+            },
+            {
+              "title": "The Duality Theorem",
+              "page": 239,
+              "summary": "Cap product combines a homology class with a cohomology class to produce a lower-dimensional homology class. The boundary identity ensures this operation is well-defined on (co)homology, including relative versions. The section introduces Poincaré duality as the claim that, for an orientable closed n-manifold, capping with a suitable class gives an isomorphism from degree k cohomology to degree n−k homology.",
+              "learner_can_do": "Given a cycle and cocycle, use the cap-product boundary identity to recognize why their cap product defines a homology class, and track its degree as k−ℓ.",
+              "game_hook": "Players navigate a triangulated manifold by laying down cohomology “sensors” that cap pieces of a global cycle into lower-dimensional chains, then test whether the resulting correspondence pairs every cohomology class with exactly one homology class.",
+              "summary_source_pages": {
+                "book_page": 239,
+                "pdf_indices": [
+                  247,
+                  248,
+                  249
+                ]
+              }
+            },
+            {
+              "title": "Connection with Cup Product",
+              "page": 249,
+              "summary": "The cup product pairs complementary-degree cohomology classes and, on a closed orientable manifold, Poincaré duality makes this pairing nonsingular under the stated coefficient conditions. Thus a class can be detected by a complementary class whose product evaluates nontrivially on the fundamental class; over a field, every nonzero class has such a partner. The excerpt also links cup and cap products via evaluation, while warning that torsion over the integers can obstruct their equivalence.",
+              "learner_can_do": "Given a cohomology class on a closed orientable manifold, identify the complementary degree and determine whether a partner can detect it through the top-dimensional cup product.",
+              "game_hook": "Players explore a manifold represented as a network of cohomology classes, matching each class with complementary-degree partners whose cup products score on the fundamental class, with coefficient and torsion rules changing which matches count.",
+              "summary_source_pages": {
+                "book_page": 249,
+                "pdf_indices": [
+                  257,
+                  258,
+                  259
+                ]
+              }
+            },
+            {
+              "title": "Other Forms of Duality",
+              "page": 252,
+              "summary": "For a closed orientable manifold of dimension 2n, the middle-dimensional cup product on cohomology modulo torsion gives a nonsingular integer-valued pairing: it is symmetric when n is even and skew-symmetric when n is odd. In the skew case, its standard block form forces the group’s rank to be even. The excerpt also characterizes manifold boundary points by local homology and states that compact manifolds with boundary have collar neighborhoods.",
+              "learner_can_do": "Given the dimension and parity, identify the pairing’s symmetry type and, in the skew case, infer that the middle-dimensional free rank is even.",
+              "game_hook": "Have players assemble a manifold’s middle-dimensional cohomology tokens into a valid pairing matrix, then build a collar around its boundary while preserving the manifold’s topology.",
+              "summary_source_pages": {
+                "book_page": 252,
+                "pdf_indices": [
+                  260,
+                  261,
+                  262
+                ]
+              }
+            }
+          ],
+          "summary": "A manifold is a space that looks locally like Euclidean space, and its dimension can be detected by the homology around a point. For a closed orientable n-manifold, Poincaré duality pairs homology in degree k with cohomology in degree n−k; without orientability, the corresponding duality holds with coefficients in Z₂. Thus these global groups are constrained to degrees 0 through n, and the homology groups are finitely generated.",
+          "learner_can_do": "Given the dimension and orientability of a closed manifold, identify the coefficient system and complementary degree in the stated duality relation.",
+          "game_hook": "Explore a manifold by collecting local dimension clues, then route each homology degree across the dimension midpoint to its dual cohomology degree, switching to Z₂ when orientation cannot be maintained.",
+          "summary_source_pages": {
+            "book_page": 230,
+            "pdf_indices": [
+              238,
+              239,
+              240
+            ]
+          }
+        }
+      ],
+      "additional_topics": [
+        {
+          "id": "3.A",
+          "number": "3.A",
+          "title": "Universal Coefficients for Homology",
+          "page": 261,
+          "summary": "Homology with coefficients in an abelian group G can be studied by tensoring the integer chain complex with G. Comparing cycles, boundaries, and chains yields a short exact sequence: one part is Hₙ(C) ⊗ G, while the other comes from the kernel of the inclusion of boundaries into cycles after tensoring. The section’s strategy is to use this algebraic structure to relate homology with arbitrary coefficients to integer-coefficient homology.",
+          "learner_can_do": "Given a chain complex, identify its cycles and boundaries and explain how tensoring can produce both a tensor-product contribution and a kernel contribution to homology.",
+          "game_hook": "Players route tokens through a chain-complex network, separating cycles from boundaries, then observe which relations survive or fail after the coefficients are changed.",
+          "summary_source_pages": {
+            "book_page": 261,
+            "pdf_indices": [
+              269,
+              270,
+              271
+            ]
+          }
+        },
+        {
+          "id": "3.B",
+          "number": "3.B",
+          "title": "The General Künneth Formula",
+          "page": 268,
+          "summary": "The general Künneth formula describes product-space homology using the homology of its factors; unlike simpler cases, the general result needs an additional Tor term. Its construction begins with a cross product of classes, whose chain-level behavior follows the signed boundary rule: d(a×b)=da×b+(−1)^i a×db when a has degree i. This rule ensures cycles pair to cycles and makes products involving a boundary and a cycle become boundaries; orientations of cells determine the associated signs.",
+          "learner_can_do": "Given cellular chains a and b, apply the signed boundary rule to determine whether their cross product is a cycle or a boundary.",
+          "game_hook": "Players combine oriented cells from two spaces to build product cells, tracking how boundary pieces and degree-dependent signs interact before assembling the product’s homology.",
+          "summary_source_pages": {
+            "book_page": 268,
+            "pdf_indices": [
+              276,
+              277,
+              278
+            ]
+          }
+        },
+        {
+          "id": "3.C",
+          "number": "3.C",
+          "title": "H–Spaces and Hopf Algebras",
+          "page": 281,
+          "summary": "An H-space is a pointed space with a continuous multiplication whose left and right identity laws hold up to basepoint-preserving homotopy; this flexible definition is preserved by pointed homotopy equivalence. Topological groups are examples, but H-spaces need not have inverses or be associative. The excerpt illustrates the range with spheres, polynomial multiplication on CP∞ and lens spaces, and concatenation on J(X).",
+          "learner_can_do": "Given a proposed space and multiplication, recognize whether the excerpt’s H-space conditions are met, distinguishing homotopy identity from a strict identity and noting that inverses are not required.",
+          "game_hook": "Players build a multiplication rule from pieces, then navigate homotopies that deform left- and right-identity outputs back to the original pointed space; optional challenges test whether inverses or associativity are actually needed.",
+          "summary_source_pages": {
+            "book_page": 281,
+            "pdf_indices": [
+              289,
+              290,
+              291
+            ]
+          }
+        },
+        {
+          "id": "3.D",
+          "number": "3.D",
+          "title": "The Cohomology of SO(n)",
+          "page": 292,
+          "summary": "The section turns from general H-space theory to computing the homology and cohomology of orthogonal groups, especially SO(n), using CW structures. SO(n) is the determinant-one subgroup of O(n); it is path-connected, a topological group, and a closed orientable manifold of dimension n(n−1)/2. The excerpt sets up these structural facts but does not yet give the cohomology computation.",
+          "learner_can_do": "Explain why every element of SO(n) can be joined to the identity by continuously reducing the angles of its constituent plane rotations, and state its dimension n(n−1)/2.",
+          "game_hook": "Have players assemble a target rotation from moves in orthogonal planes, then continuously unwind those angles to reach the identity while tracking the dimension contributed by the available rotation planes.",
+          "summary_source_pages": {
+            "book_page": 292,
+            "pdf_indices": [
+              300,
+              301,
+              302
+            ]
+          }
+        },
+        {
+          "id": "3.E",
+          "number": "3.E",
+          "title": "Bockstein Homomorphisms",
+          "page": 303,
+          "summary": "Bockstein maps arise as connecting homomorphisms in long exact cohomology sequences from short exact coefficient sequences. They add structure to mod-m cohomology and can sometimes recover information obscured by reducing integer coefficients; the mod-m Bockstein is related to the integral connecting map by reduction. It also obeys a graded derivation rule for cup products, which lets us infer product structure from known cohomology rings.",
+          "learner_can_do": "Given classes a and b, compute β(a⌣b) from β(a)⌣b + (−1)^|a|a⌣β(b), and recognize β as the connecting map associated with a coefficient sequence.",
+          "game_hook": "Players transport cohomology classes through a sequence of coefficient gates, using the Bockstein to reveal hidden torsion clues and applying its signed product rule to assemble valid cup-product combinations.",
+          "summary_source_pages": {
+            "book_page": 303,
+            "pdf_indices": [
+              311,
+              312,
+              313
+            ]
+          }
+        },
+        {
+          "id": "3.F",
+          "number": "3.F",
+          "title": "Limits and Ext",
+          "page": 311,
+          "summary": "For an increasing union of subcomplexes, homology is recovered as the direct limit of the homologies of the stages: classes appear at some stage, and are identified if they agree at a later one. Mapping telescopes realize sequences of maps topologically, making this principle concrete; the excerpt also warns that cohomology limits are more subtle and that limits can produce groups that are not finitely generated.",
+          "learner_can_do": "Given a sequence of groups and maps, determine when two stage-level elements represent the same element in the direct limit, and recognize the direct limit as a union when all maps are inclusions.",
+          "game_hook": "Have players move homology classes along a chain of evolving spaces, merging tokens when their images agree at a later stage and building a telescope-like path that represents the whole limit.",
+          "summary_source_pages": {
+            "book_page": 311,
+            "pdf_indices": [
+              319,
+              320,
+              321
+            ]
+          }
+        },
+        {
+          "id": "3.G",
+          "number": "3.G",
+          "title": "Transfer Homomorphisms",
+          "page": 321,
+          "summary": "For a finite-sheeted cover, transfer sends each simplex to the sum of all its lifts and induces maps on homology and cohomology. The key composition gives multiplication by the number of sheets, controlling the kernel; when that number is invertible in the coefficient field, pullback identifies the base cohomology with the deck-group-invariant part upstairs. Examples show that this invariant-image description can fail with integral or characteristic-dividing coefficients.",
+          "learner_can_do": "Given a finite cover and suitable coefficients, use transfer and deck transformations to determine whether pullback is injective and characterize its image as the invariant classes.",
+          "game_hook": "Players route cohomology tokens through a cover and back: summing lifts scales tokens by the sheet count, while deck transformations shuffle them; players identify which upstairs patterns are invariant and when coefficient arithmetic makes them descend.",
+          "summary_source_pages": {
+            "book_page": 321,
+            "pdf_indices": [
+              329,
+              330,
+              331
+            ]
+          }
+        },
+        {
+          "id": "3.H",
+          "number": "3.H",
+          "title": "Local Coefficients",
+          "page": 327,
+          "summary": "Local coefficients extend ordinary homology and cohomology to spaces that are not simply connected, capturing how coefficients vary as one moves around loops; they are essential, for example, for expressing Poincaré duality on nonorientable manifolds. The excerpt sketches an algebraic construction: use chains on the universal cover, with the fundamental group acting by deck transformations, then tensor over the group ring with a module to impose the desired coefficient behavior. The goal is an intuitive framework, not a full technical treatment.",
+          "learner_can_do": "Explain how the fundamental group action on chains of the universal cover and a chosen group-ring module together encode local coefficients.",
+          "game_hook": "Have players carry coefficient tokens through a space’s loops: each loop applies the fundamental-group action, and players assemble chains whose coefficients reflect the resulting changes.",
+          "summary_source_pages": {
+            "book_page": 327,
+            "pdf_indices": [
+              335,
+              336,
+              337
+            ]
+          }
+        }
+      ],
+      "summary": "Cohomology is obtained by dualizing homology, so maps induce homomorphisms in the reverse direction; although it often carries much the same underlying information, this contravariance enables extra algebraic structure. The cup product combines classes in degrees i and j into one in degree i+j, using the cross product followed by the diagonal map X→X×X. This added structure, along with cohomology’s role in topics such as duality and obstruction theory, makes cohomology a powerful way to connect algebra with topology.",
+      "learner_can_do": "Given the cross product and a map X→X×X, recognize why contravariance lets the diagonal induce a product on cohomology, unlike the analogous construction for general spaces in homology.",
+      "game_hook": "Players collect cohomology classes on a space, combine them through a cross-product gate, then route them back along the diagonal to build higher-degree ring structure; homology’s reversed routing is available only when the space has a suitable multiplication.",
+      "summary_source_pages": {
+        "book_page": 185,
+        "pdf_indices": [
+          193,
+          194,
+          195
+        ]
+      }
+    },
+    {
+      "id": "4",
+      "number": "4",
+      "title": "Homotopy Theory",
+      "page": 337,
+      "sections": [
+        {
+          "id": "4.1",
+          "number": "4.1",
+          "title": "Homotopy Groups",
+          "page": 339,
+          "topics": [
+            {
+              "title": "Definitions and Basic Constructions",
+              "page": 340,
+              "summary": "An element of πₙ(X,x₀) is a homotopy class of maps from the n-cube that send its boundary to the basepoint; for n=0 this records path-components. For n≥1, classes have a group operation given by concatenating in one coordinate, and for n≥2 the extra room lets representatives slide past each other, making the group abelian. Moving the basepoint along a path gives an isomorphism of homotopy groups, so in a path-connected space the choice of basepoint does not change the group up to isomorphism.",
+              "learner_can_do": "Recognize how cube maps define homotopy classes and explain why the ability to slide two subcubes past each other makes πₙ abelian for n≥2.",
+              "game_hook": "Have players manipulate map-filled cubes: concatenate them, use a second coordinate to swap their positions, and escort the basepoint along a path to transport a class between locations.",
+              "summary_source_pages": {
+                "book_page": 340,
+                "pdf_indices": [
+                  348,
+                  349,
+                  350
+                ]
+              }
+            },
+            {
+              "title": "Whitehead's Theorem",
+              "page": 346,
+              "summary": "Connectivity can be recognized in three equivalent ways: spheres map null-homotopically, extend over disks, or have vanishing homotopy groups; the relative version says disk maps can be pushed into the subspace. Whitehead’s theorem turns this local-to-dimension-by-dimension information into a global conclusion: a map between connected CW complexes inducing isomorphisms on all homotopy groups is a homotopy equivalence. For an inclusion of a subcomplex, it yields the stronger result that the larger complex deformation retracts onto the smaller one; the compression lemma explains the mechanism by pushing cells into a target subspace one skeleton at a time.",
+              "learner_can_do": "Given a map or pair of spaces, recognize which connectivity criterion applies, and use vanishing relative homotopy groups to predict when cells can be compressed into a subspace.",
+              "game_hook": "Have players guide a map across a CW complex by resolving one cell at a time—each cell can be moved into the target only when its relative homotopy obstruction vanishes—until they can determine whether the whole map is a homotopy equivalence or a deformation retraction.",
+              "summary_source_pages": {
+                "book_page": 346,
+                "pdf_indices": [
+                  354,
+                  355,
+                  356
+                ]
+              }
+            },
+            {
+              "title": "Cellular Approximation",
+              "page": 348,
+              "summary": "Cellular approximation says any map between CW complexes can be homotoped to a cellular map, with the homotopy fixed on a subcomplex where the map is already cellular. Cellular maps preserve the skeleton dimension, so this gives a quick way to show that maps from lower-dimensional spheres into higher-dimensional spheres are nullhomotopic. The excerpt also emphasizes that matching homotopy groups alone does not generally determine a CW complex’s homotopy type.",
+              "learner_can_do": "Recognize how cellular approximation turns a map from an n-dimensional complex into one whose image lies in the n-skeleton, and use this to see why every based map Sⁿ → Sᵏ is nullhomotopic when n < k.",
+              "game_hook": "Players reshape maps one cell at a time, keeping already-correct subcomplexes fixed while pushing image pieces out of cells that are too high-dimensional.",
+              "summary_source_pages": {
+                "book_page": 348,
+                "pdf_indices": [
+                  356,
+                  357,
+                  358
+                ]
+              }
+            },
+            {
+              "title": "CW Approximation",
+              "page": 352,
+              "summary": "A CW approximation replaces any space by a CW complex mapping to it that matches all homotopy groups, including path components. The construction proceeds by attaching cells dimension by dimension: kill kernels to obtain injectivity and add cells to obtain surjectivity, while preserving lower-dimensional results. This makes CW complexes useful models for general spaces, and any two such approximations are homotopy equivalent.",
+              "learner_can_do": "Given a map from a partial CW complex to a space, identify whether the next cells should kill a homotopy-group kernel or supply missing classes to make the map surjective.",
+              "game_hook": "Players build a CW model in successive dimensions, attaching a cell either to fill a kernel class or to represent a target class, while protecting the homotopy-group matches already secured below.",
+              "summary_source_pages": {
+                "book_page": 352,
+                "pdf_indices": [
+                  360,
+                  361,
+                  362
+                ]
+              }
+            }
+          ],
+          "summary": "Homotopy groups classify based maps from spheres (equivalently, cubes with boundary sent to the basepoint), up to homotopy. For dimensions at least two, concatenation gives an abelian group. The sphere calculations show both structure and irregularity: groups vanish below the sphere dimension, the first nonzero group reflects homology, and groups eventually stabilize along diagonals; the excerpt also flags special patterns and exceptions without deriving them here.",
+          "learner_can_do": "Given a based map of a cube with its boundary fixed at the basepoint, identify its homotopy class as an element of a homotopy group and explain why the group is abelian when the dimension is at least two.",
+          "game_hook": "Players reshape and slide disjoint labeled subcubes inside a higher-dimensional cube to enact concatenation and commutativity, while matching sphere-dimension clues to vanishing, first-nonzero, and eventual-stability patterns.",
+          "summary_source_pages": {
+            "book_page": 339,
+            "pdf_indices": [
+              347,
+              348,
+              349
+            ]
+          }
+        },
+        {
+          "id": "4.2",
+          "number": "4.2",
+          "title": "Elementary Methods of Calculation",
+          "page": 360,
+          "topics": [
+            {
+              "title": "Excision for Homotopy Groups",
+              "page": 360,
+              "summary": "Homotopy-group excision is not generally available as it is for homology, but it holds in a controlled range: if the two pieces meet in a connected subcomplex and are sufficiently connected relative to that intersection, inclusion identifies the relevant relative homotopy groups below the sum of the connectivities and is surjective at the boundary. Applied to the two cones forming a suspension, this gives the Freudenthal suspension range; iterating it, together with degree, yields πₙ(Sⁿ) ≅ ℤ generated by the identity.",
+              "learner_can_do": "Given the relative connectivities m and n of two pieces along their intersection, determine the degrees where πᵢ(A,C) → πᵢ(X,B) is an isomorphism (i < m+n) or a surjection (i = m+n), and use the suspension decomposition to infer a stable-range conclusion.",
+              "game_hook": "Have players build a space by joining two regions along a shared interface, then route homotopy data through the join; their connectivity upgrades unlock isomorphism-level moves below the threshold and only surjective moves at the threshold.",
+              "summary_source_pages": {
+                "book_page": 360,
+                "pdf_indices": [
+                  368,
+                  369,
+                  370
+                ]
+              }
+            },
+            {
+              "title": "The Hurewicz Theorem",
+              "page": 366,
+              "summary": "In the basic Hurewicz theorem case, when a space has no homotopy below dimension n, its first potentially nonzero homotopy group πₙ corresponds to its homology group Hₙ. The excerpt’s proof reduces the comparison to an n-dimensional wedge of spheres with (n+1)-cells attached: the attaching maps impose the same relations in πₙ as the cellular boundary map imposes in homology. This is a bridge between homotopy and homology, not a claim that the two theories agree in all dimensions.",
+              "learner_can_do": "Recognize when the stated connectivity hypotheses let you identify πₙ(X) with Hₙ(X), and explain how attaching-map degrees encode the relations in both groups.",
+              "game_hook": "Have players build a space from sphere tiles and attach higher-cell “relation” pieces; they must translate each attaching map’s degrees into matching moves in a homotopy ledger and a cellular-boundary ledger, then check that both produce the same group.",
+              "summary_source_pages": {
+                "book_page": 366,
+                "pdf_indices": [
+                  374,
+                  375,
+                  376
+                ]
+              }
+            },
+            {
+              "title": "Fiber Bundles",
+              "page": 375,
+              "summary": "A fiber bundle is a map whose fibers are all homeomorphic, like a product with possible twisting; its homotopy lifting property yields a long exact sequence relating the homotopy groups of the fiber, total space, and base. The Hopf bundle S¹ → S³ → S² illustrates how this sequence can compute homotopy groups, including π₂(S²) ≅ ℤ and πᵢ(S³) ≅ πᵢ(S²) for i ≥ 3. The excerpt also explains that lifting over disks suffices to obtain lifting over CW pairs, the key condition behind the stated exact sequence.",
+              "learner_can_do": "Use the long exact sequence of a fiber bundle and vanishing adjacent homotopy groups to infer an isomorphism between selected homotopy groups.",
+              "game_hook": "Have players guide a map or homotopy from the base upward through a bundle’s fibers, resolving each lift constraint; then use the resulting exact-sequence links to transfer known homotopy information between spaces.",
+              "summary_source_pages": {
+                "book_page": 375,
+                "pdf_indices": [
+                  383,
+                  384,
+                  385
+                ]
+              }
+            },
+            {
+              "title": "Stable Homotopy Groups",
+              "page": 384,
+              "summary": "Repeated suspension eventually makes the homotopy groups of any space stabilize; the resulting groups are the stable homotopy groups, and for spheres these are the stable stems. Positive stable stems are finite, with patterns becoming clearer after separating them into prime components. Composition gives the stems a graded ring structure with a signed commutativity rule, while diagrams encode group summands and multiplication/composition relations.",
+              "learner_can_do": "Recognize when iterated suspension has reached the stable range, and interpret a stem diagram’s vertical chains as prime-power summands and its connecting lines as composition products.",
+              "game_hook": "Have players navigate a sequence of increasingly suspended spaces until their data stop changing, then assemble a prime-colored stem diagram by linking classes whose compositions produce other classes.",
+              "summary_source_pages": {
+                "book_page": 384,
+                "pdf_indices": [
+                  392,
+                  393,
+                  394
+                ]
+              }
+            }
+          ],
+          "summary": "Homotopy excision is not unrestricted like homology excision: it gives an isomorphism only in a range controlled by the connectivities of the two pieces, and a surjection at the range boundary. Applied to a suspension, this yields the Freudenthal suspension theorem; repeated suspension then gives πₙ(Sⁿ) ≅ ℤ, with the identity as generator and degree recording the integer.",
+          "learner_can_do": "Given connectivity assumptions for a decomposition, identify the dimensions where the relative homotopy map is guaranteed to be an isomorphism or only a surjection, and use suspension to relate homotopy groups across dimensions.",
+          "game_hook": "Have players build a space by joining two regions along a shared core, then route dimension-labeled homotopy probes through it; stronger connectivity unlocks reliable transfers, and suspension stages let them carry a sphere class forward while tracking its degree.",
+          "summary_source_pages": {
+            "book_page": 360,
+            "pdf_indices": [
+              368,
+              369,
+              370
+            ]
+          }
+        },
+        {
+          "id": "4.3",
+          "number": "4.3",
+          "title": "Connections with Cohomology",
+          "page": 393,
+          "topics": [
+            {
+              "title": "The Homotopy Construction of Cohomology",
+              "page": 393,
+              "summary": "The section’s central result identifies cohomology classes in Hⁿ(X; G) naturally with based homotopy classes of maps X → K(G,n), and gives those map classes a group structure compatible with the identification. It then frames this result through reduced cohomology theory and points toward Postnikov towers: sequences of fibrations with Eilenberg–MacLane fibers, whose k-invariants encode how the stages are assembled using cohomology classes.",
+              "learner_can_do": "Given a cohomology class, recognize it as represented by a map to K(G,n), and explain at a high level how Postnikov k-invariants use cohomology to record the twisting between stages.",
+              "game_hook": "Have players build a space in stages by choosing maps to Eilenberg–MacLane targets, then use cohomology-class tokens as k-invariants that determine which fibrations successfully assemble the next stage.",
+              "summary_source_pages": {
+                "book_page": 393,
+                "pdf_indices": [
+                  401,
+                  402,
+                  403
+                ]
+              }
+            },
+            {
+              "title": "Fibrations",
+              "page": 405,
+              "summary": "A fibration need not have literally identical fibers, but path lifting makes fibers over points in the same path component homotopy equivalent. Pullbacks let us compare fibrations over a common base, and homotopic maps into the base induce fiber-homotopy-equivalent pullback fibrations. These ideas support the view that over locally contractible bases, fibrations behave locally like product projections up to fiber homotopy.",
+              "learner_can_do": "Given a path in the base, explain how lifting it produces a homotopy equivalence between its endpoint fibers, with the reverse path providing an inverse up to homotopy.",
+              "game_hook": "Let players guide a path through a base space while transporting a fiber’s contents via lifts; returning along the reversed path should restore the original contents up to allowed homotopy moves.",
+              "summary_source_pages": {
+                "book_page": 405,
+                "pdf_indices": [
+                  413,
+                  414,
+                  415
+                ]
+              }
+            },
+            {
+              "title": "Postnikov Towers",
+              "page": 410,
+              "summary": "A Postnikov tower approximates a connected space stage by stage: the nth stage preserves homotopy groups through dimension n and has none above n. Each map between successive stages can be modeled as a fibration with fiber K(πₙX,n), so the stages assemble Eilenberg–MacLane spaces in a potentially twisted way. Finite stages often suffice for questions in a bounded dimension range, while recovering the full homotopy type involves an inverse limit; for a sequence of fibrations, homotopy groups of that limit map onto the inverse limit of the stagewise homotopy groups, with a possible kernel measured by a lim¹ term.",
+              "learner_can_do": "Given a Postnikov stage or tower, identify which homotopy groups it captures, describe the next fiber as K(πₙX,n), and explain why an inverse-limit comparison may have a lim¹ kernel.",
+              "game_hook": "Have players build a space one dimension at a time by attaching stages through fiber-gates labeled K(πₙ,n), then test which homotopy data survives in finite views and what extra obstruction may appear when assembling the infinite tower.",
+              "summary_source_pages": {
+                "book_page": 410,
+                "pdf_indices": [
+                  418,
+                  419,
+                  420
+                ]
+              }
+            },
+            {
+              "title": "Obstruction Theory",
+              "page": 415,
+              "summary": "Obstruction theory turns extension and lifting questions into a sequence of cohomological tests. For a CW pair, one can build a solution across successive skeleta; equivalently, Postnikov towers organize extension tests and Moore–Postnikov towers organize lifting tests. Vanishing obstructions in the relevant cohomology groups can ensure a solution, while nonzero classes identify where and why construction is blocked.",
+              "learner_can_do": "Given an extension or relative lifting problem, identify which setup applies and interpret obstruction classes as successive tests for extending or lifting the map.",
+              "game_hook": "Players advance a map cell by cell through a layered tower, resolving each cohomological obstruction to unlock the next stage.",
+              "summary_source_pages": {
+                "book_page": 415,
+                "pdf_indices": [
+                  423,
+                  424,
+                  425
+                ]
+              }
+            }
+          ],
+          "summary": "For a CW complex X, degree-n cohomology with coefficients G is naturally represented by basepoint-preserving homotopy classes of maps X → K(G,n), with a group structure matching cohomology. The section then connects this representation to Postnikov towers: these are built from fibrations with Eilenberg–MacLane fibers, and cohomology classes called k-invariants encode how the stages fit together. These ideas also help break extension and lifting problems into smaller steps.",
+          "learner_can_do": "Given a map X → K(G,n), recognize its homotopy class as a cohomology class in Hⁿ(X;G), and explain the role of k-invariants in describing Postnikov stages.",
+          "game_hook": "Have players build a space stage by stage using fibration links, choosing cohomology-class “twists” to fit each Eilenberg–MacLane fiber and unlock the next extension or lifting step.",
+          "summary_source_pages": {
+            "book_page": 393,
+            "pdf_indices": [
+              401,
+              402,
+              403
+            ]
+          }
+        }
+      ],
+      "additional_topics": [
+        {
+          "id": "4.A",
+          "number": "4.A",
+          "title": "Basepoints and Homotopy",
+          "page": 421,
+          "summary": "A basepoint-preserving homotopy class of maps (Z,z₀)→(X,x₀) carries a right action of π₁(X,x₀): moving the image of z₀ around a loop changes the class by that loop. When X is path-connected, forgetting the basepoint identifies unrestricted homotopy classes [Z,X] with the orbits of this action; in particular, the two sets agree if X is simply connected. The action can be trivial in H-spaces, and the orbit set need not retain the group structure of homotopy groups.",
+          "learner_can_do": "Given a basepoint-preserving map and a loop in X, determine how its class changes under the right π₁-action, and use the orbit correspondence to decide when forgetting basepoints identifies classes.",
+          "game_hook": "Players guide a marked point around loops to shift a map’s class, then discover which marked configurations become equivalent when the marker is allowed to move freely.",
+          "summary_source_pages": {
+            "book_page": 421,
+            "pdf_indices": [
+              429,
+              430,
+              431
+            ]
+          }
+        },
+        {
+          "id": "4.B",
+          "number": "4.B",
+          "title": "The Hopf Invariant",
+          "page": 427,
+          "summary": "For a map f: S^(2n−1) → S^n, attaching a 2n-cell to S^n produces a space whose cup product records the Hopf invariant: the square of the degree-n cohomology generator is H(f) times the top-dimensional generator. This invariant depends only on the homotopy class, vanishes for constant maps and for odd n, and is additive under addition of maps. In even dimensions, examples attain invariant 2, so additivity yields maps with every even Hopf invariant.",
+          "learner_can_do": "Given the cup-square relation in the cohomology of an attached-cell space, identify H(f), and use additivity to determine how it changes when maps are added.",
+          "game_hook": "Have players build attached-cell spaces from map tokens, then combine maps and track how their cup-square coefficients add, while odd-dimensional rules force the coefficient to vanish.",
+          "summary_source_pages": {
+            "book_page": 427,
+            "pdf_indices": [
+              435,
+              436,
+              437
+            ]
+          }
+        },
+        {
+          "id": "4.C",
+          "number": "4.C",
+          "title": "Minimal Cell Structures",
+          "page": 429,
+          "summary": "For simply connected CW complexes with finitely generated homology, the homology groups dictate a minimal cell pattern: each free cyclic generator is represented by a cycle cell, while each finite-order generator needs a cell one dimension higher whose boundary is the corresponding multiple. This construction can fail without simple connectivity. In the stated case where only two adjacent homology groups are nonzero and the higher one is free, the resulting homotopy type is determined by the homology groups.",
+          "learner_can_do": "Given a finitely generated homology group decomposition, identify the required generator cells and, for each finite-order summand, the relator cell and its boundary multiple.",
+          "game_hook": "Have players assemble a cell structure from homology data, placing generator cells and attaching relator cells with the correct boundary multiples, then test why dropping simple connectivity can break the recipe.",
+          "summary_source_pages": {
+            "book_page": 429,
+            "pdf_indices": [
+              437,
+              438,
+              439
+            ]
+          }
+        },
+        {
+          "id": "4.D",
+          "number": "4.D",
+          "title": "Cohomology of Fiber Bundles",
+          "page": 431,
+          "summary": "Leray–Hirsch gives a practical criterion for a fiber bundle’s cohomology: if the fiber has finitely generated free cohomology over the chosen coefficient ring and classes on the total space restrict to a basis on each fiber, then the total-space cohomology is a free module over the base cohomology with those classes as basis. This identifies additive and base-module structure, but does not generally identify the cup-product ring with a tensor-product ring; the Klein bottle example warns against that inference, while the Hopf bundle illustrates failure when suitable classes do not exist.",
+          "learner_can_do": "Given a bundle and proposed cohomology classes on its total space, check the freeness and fiber-restriction conditions, then state the resulting module structure while distinguishing it from a ring isomorphism.",
+          "game_hook": "Have players explore a bundle by placing candidate classes over its total space and testing whether their restrictions form a fiber basis; successful placements unlock module generators, while a separate challenge tests whether they can avoid incorrectly claiming the ring structure is a product.",
+          "summary_source_pages": {
+            "book_page": 431,
+            "pdf_indices": [
+              439,
+              440,
+              441
+            ]
+          }
+        },
+        {
+          "id": "4.E",
+          "number": "4.E",
+          "title": "The Brown Representability Theorem",
+          "page": 448,
+          "summary": "The section establishes the converse to the fact that Ω-spectra define cohomology theories: every reduced cohomology theory on based CW complexes is represented by an Ω-spectrum, with representing spaces unique up to homotopy equivalence. It introduces Brown representability for a contravariant functor on connected based CW complexes: homotopy invariance, a wedge-to-product property, and Mayer–Vietoris gluing ensure that the functor is naturally modeled by maps into a universal space.",
+          "learner_can_do": "Given a functor and its behavior on homotopies, wedges, and compatible data on two subcomplexes, recognize the conditions that support a universal representing space.",
+          "game_hook": "Have players assemble a target space from local regions: matching labels on overlaps must glue, while wedge components act independently; completing the structure reveals a universal space that represents all functor values.",
+          "summary_source_pages": {
+            "book_page": 448,
+            "pdf_indices": [
+              456,
+              457,
+              458
+            ]
+          }
+        },
+        {
+          "id": "4.F",
+          "number": "4.F",
+          "title": "Spectra and Homology Theories",
+          "page": 452,
+          "summary": "Stable homotopy groups form a reduced homology theory: suspension gives the required degree shift, while homotopy invariance, exactness, and the wedge axiom follow from ordinary homotopy theory and stabilization. Smashing spaces with a fixed complex produces further homology theories, whose coefficients are the stable homotopy groups of that complex; for Eilenberg–MacLane spaces, a suitable degree shift recovers ordinary homology coefficients in the stated low dimensions.",
+          "learner_can_do": "Recognize how suspension, exactness, and wedge decompositions establish that stable homotopy groups satisfy the homology-theory axioms.",
+          "game_hook": "Have players stabilize a space by repeated suspension, then assemble or split wedge-shaped regions and track how their stable homotopy data obeys the homology rules.",
+          "summary_source_pages": {
+            "book_page": 452,
+            "pdf_indices": [
+              460,
+              461,
+              462
+            ]
+          }
+        },
+        {
+          "id": "4.G",
+          "number": "4.G",
+          "title": "Gluing Constructions",
+          "page": 456,
+          "summary": "A diagram of spaces assigns spaces to vertices and maps to oriented edges; its ordinary amalgamation glues by identifying each point with its image, but this can collapse away important structure. The realization instead inserts mapping cylinders, giving a homotopy-friendlier way to glue. Familiar constructions appear as special cases, including mapping cylinders, mapping cones, mapping tori, joins, and mapping telescopes.",
+          "learner_can_do": "Given a small diagram of spaces, distinguish its quotient-style amalgamation from its mapping-cylinder realization and identify a familiar construction represented by the latter.",
+          "game_hook": "Have players route pieces of space along diagram edges: direct identification may collapse regions, while building cylinder bridges preserves paths and reveals the resulting construction.",
+          "summary_source_pages": {
+            "book_page": 456,
+            "pdf_indices": [
+              464,
+              465,
+              466
+            ]
+          }
+        },
+        {
+          "id": "4.H",
+          "number": "4.H",
+          "title": "Eckmann-Hilton Duality",
+          "page": 460,
+          "summary": "Eckmann–Hilton duality starts from reversing arrows in homotopy-theoretic constructions: the homotopy lifting property for fibrations has a dual extension property for cofibrations. The excerpt illustrates related pairs—pullback versus pushout, product versus coproduct, subobject versus quotient—and shows how mapping cylinders and cones support the cofiber-side constructions. The learner should see duality as a way to transfer patterns between constructions, while checking what the reversed definitions actually require.",
+          "learner_can_do": "Given a familiar construction such as a pullback or fibration, identify its stated dual counterpart (pushout or cofibation) and describe the corresponding universal property.",
+          "game_hook": "Players transform a network of spaces by reversing arrows and replacing each construction with its dual, then test the new diagram by completing the required lift or extension.",
+          "summary_source_pages": {
+            "book_page": 460,
+            "pdf_indices": [
+              468,
+              469,
+              470
+            ]
+          }
+        },
+        {
+          "id": "4.I",
+          "number": "4.I",
+          "title": "Stable Splittings of Spaces",
+          "page": 466,
+          "summary": "A stable splitting is a homotopy decomposition that appears after suspension, even when the original space cannot split because its cup products or attaching maps link its pieces. For CW complexes, the suspension of a product splits into the suspensions of the factors together with the suspension of their smash product; this extends inductively to products of several spaces. The geometric idea is to collapse suitable contractible cones in a reduced join, turning the space into a wedge.",
+          "learner_can_do": "Recognize and use the equivalence Σ(X×Y) ≃ ΣX ∨ ΣY ∨ Σ(X∧Y), and explain why a splitting may only emerge after suspension.",
+          "game_hook": "Have players manipulate a joined pair of spaces by collapsing designated cones, then assemble the resulting wedge pieces and compare the suspended product with its unsuspended, still-linked form.",
+          "summary_source_pages": {
+            "book_page": 466,
+            "pdf_indices": [
+              474,
+              475,
+              476
+            ]
+          }
+        },
+        {
+          "id": "4.J",
+          "number": "4.J",
+          "title": "The Loopspace of a Suspension",
+          "page": 470,
+          "summary": "For connected CW complexes X, the James reduced product J(X) has the weak homotopy type of the loopspace ΩΣX; in particular, ΩSⁿ⁺¹ can be modeled by J(Sⁿ). The excerpt motivates this equivalence by comparing their homology, and points to its use in understanding when suspension preserves homotopy groups and how it can fail beyond that range.",
+          "learner_can_do": "Recognize ΩΣX as a loopspace that can be replaced, up to weak homotopy type, by the more structured space J(X), and identify the sphere case ΩSⁿ⁺¹ ≃ J(Sⁿ).",
+          "game_hook": "Have players build and concatenate point-words in J(X), while matching each word to a continuously parametrized loop in ΣX; shrinking a letter toward the basepoint makes its loop fade away rather than vanish abruptly.",
+          "summary_source_pages": {
+            "book_page": 470,
+            "pdf_indices": [
+              478,
+              479,
+              480
+            ]
+          }
+        },
+        {
+          "id": "4.K",
+          "number": "4.K",
+          "title": "The Dold-Thom Theorem",
+          "page": 475,
+          "summary": "The infinite symmetric product SP(X) is the free commutative-monoid construction on a space, and the Dold–Thom theorem identifies its homotopy groups with ordinary integral homology: πₖSP(X) ≅ Hₖ(X; ℤ) for connected CW complexes. The proof strategy is to show these homotopy groups satisfy the properties of a homology theory, using quasi-fibrations and a Mayer–Vietoris argument, then determine the theory from its values on spheres.",
+          "learner_can_do": "Explain why computing πₖSP(Sⁿ) and establishing homology-theory properties lets one identify πₖSP(X) with Hₖ(X; ℤ).",
+          "game_hook": "Let players combine points into order-independent multisets and deform those configurations, using the surviving deformation classes to build and compare homology-like classes of the underlying space.",
+          "summary_source_pages": {
+            "book_page": 475,
+            "pdf_indices": [
+              483,
+              484,
+              485
+            ]
+          }
+        },
+        {
+          "id": "4.L",
+          "number": "4.L",
+          "title": "Steenrod Squares and Powers",
+          "page": 487,
+          "summary": "Steenrod squares and powers are natural cohomology operations that resemble self-cup-powers but, unlike cup products, are stable under suspension. Their operations (together with Bocksteins at odd primes) form Steenrod algebras acting on cohomology, so they impose constraints on spaces and maps. More generally, a cohomology operation is determined by its value on the fundamental class of an Eilenberg–Mac Lane space, connecting operations to cohomology of that space.",
+          "learner_can_do": "Recognize why Steenrod operations can constrain a space’s possible cohomology, and distinguish their suspension-stable behavior from ordinary cup powers.",
+          "game_hook": "Give players a space’s cohomology profile and let them use stable operation rules as compatibility tests, ruling out profiles or maps that violate the resulting constraints.",
+          "summary_source_pages": {
+            "book_page": 487,
+            "pdf_indices": [
+              495,
+              496,
+              497
+            ]
+          }
+        }
+      ],
+      "summary": "Homotopy groups extend the fundamental group to higher dimensions: they share formal tools with homology, but are generally harder to compute because key decomposition theorems fail. They are powerful for detecting homotopy equivalences and connect to homology through the Hurewicz theorem; Eilenberg–MacLane spaces encode cohomology classes as homotopy classes of maps. The section also previews fibrations and Postnikov towers, where homotopy groups plus extra cohomological data (the k-invariants) describe a space’s homotopy type.",
+      "learner_can_do": "Given a simply connected space with a first nonzero homotopy group in degree n, identify the Hurewicz theorem as the bridge relating it to the first nonzero homology group in that degree.",
+      "game_hook": "Have players assemble a space’s homotopy profile in stages: use homotopy-group clues to build a Postnikov tower, then add or omit k-invariant cards to determine whether the result behaves like a product of Eilenberg–MacLane spaces.",
+      "summary_source_pages": {
+        "book_page": 337,
+        "pdf_indices": [
+          345,
+          346,
+          347
+        ]
+      }
+    }
+  ],
+  "back_matter": [
+    {
+      "id": "appendix",
+      "title": "Appendix",
+      "page": 519,
+      "sections": [
+        {
+          "title": "Topology of Cell Complexes",
+          "page": 519,
+          "summary": "A CW complex is built in stages by attaching cells along their boundaries, with its topology controlled by how sets pull back under the characteristic maps. Subcomplexes inherit the CW structure and are closed; finite CW complexes are compact, and any compact subset of a CW complex lies inside a finite subcomplex. The excerpt also begins a criterion for recognizing CW structures, but the conditions are truncated.",
+          "learner_can_do": "Given a cell-attachment description, identify the skeleta and use characteristic maps to test whether a set is open or closed; recognize why compact subsets involve only finitely many cells.",
+          "game_hook": "Have players explore a complex cell by cell, testing candidate regions through their pullbacks to each characteristic disk, then compress any compactly contained region into a finite subcomplex.",
+          "summary_source_pages": {
+            "book_page": 519,
+            "pdf_indices": [
+              527,
+              528,
+              529
+            ]
+          }
+        },
+        {
+          "title": "The Compact-Open Topology",
+          "page": 529,
+          "summary": "The compact-open topology organizes maps by requiring compact subsets of the domain to land inside chosen open subsets of the target. For compact domains and metric targets, this agrees with uniform convergence; when the domain is locally compact, evaluation is continuous and continuous maps into a function space correspond exactly to continuous maps on the product. These facts make the topology a foundation for treating path spaces and adjoint maps in algebraic topology.",
+          "learner_can_do": "Given a compact domain, recognize or verify that a compact-open neighborhood of a map can be chosen inside a specified uniform-distance neighborhood, and vice versa.",
+          "game_hook": "Players steer a whole family of maps by placing compact “sensors” on the domain and assigning target regions, learning how local constraints on those sensors control global behavior such as uniform closeness.",
+          "summary_source_pages": {
+            "book_page": 529,
+            "pdf_indices": [
+              537,
+              538,
+              539
+            ]
+          }
+        },
+        {
+          "title": "The Homotopy Extension Property",
+          "page": 533,
+          "summary": "The homotopy extension property for a pair (X,A) is equivalent to the existence of a retraction from X×I onto X×{0}∪A×I. The hard direction is showing that this retraction works without assuming A is closed: the proof establishes that openness on the two pieces X and A×I determines openness in their union, so continuous data on those pieces can be extended via the retraction. The example warns that the subspace topology on this union matters and need not match the mapping-cylinder topology.",
+          "learner_can_do": "Given a retraction onto X×{0}∪A×I and compatible continuous data on X×{0} and A×I, explain why composing with the retraction yields a continuous extension over X×I.",
+          "game_hook": "Players route a partially specified homotopy across a space-time board: they must verify local openness at points near A before a retraction can carry the boundary data through the full cylinder.",
+          "summary_source_pages": {
+            "book_page": 533,
+            "pdf_indices": [
+              541,
+              542,
+              543
+            ]
+          }
+        },
+        {
+          "title": "Simplicial CW Structures",
+          "page": 534,
+          "summary": "An ordered Δ-complex equips each cell’s simplex with ordered vertices, with every face restriction matching the distinguished map of a lower-dimensional cell; forgetting order gives a more flexible but less product-friendly unordered version. Regular CW complexes admit Δ-complex structures, while barycentric subdivision makes an unordered Δ-complex regular, and doing it twice yields a simplicial complex. A key limitation is that Δ-complexes are generally not preserved by quotienting or attaching along simplicial maps.",
+          "learner_can_do": "Given a described cell structure, distinguish ordered Δ-complexes, unordered Δ-complexes, and simplicial complexes, and predict when barycentric subdivision is needed to reach a simplicial complex.",
+          "game_hook": "Have players repair a cell complex by choosing vertex orderings and subdivision moves, while navigating constraints that products favor orderings and quotient/attachment moves may break the Δ-complex structure.",
+          "summary_source_pages": {
+            "book_page": 534,
+            "pdf_indices": [
+              542,
+              543,
+              544
+            ]
+          }
+        }
+      ],
+      "summary": "A CW complex is built skeletally by attaching cells, with its topology controlled by characteristic maps from disks. Subcomplexes inherit the same topology and are closed; finite CW complexes are compact, and any compact subset lies inside a finite subcomplex. The excerpt also begins characterizing CW structures through conditions on their cells and attaching maps, but that characterization is cut off.",
+      "learner_can_do": "Given a compact subset of a CW complex, recognize that it can be contained in a finite subcomplex, and explain how characteristic maps determine the topology.",
+      "game_hook": "Have players explore a cell-built world through disk-shaped portals, testing whether local observations determine openness and gathering every region touched by a compact expedition into a finite network of cells.",
+      "summary_source_pages": {
+        "book_page": 519,
+        "pdf_indices": [
+          527,
+          528,
+          529
+        ]
+      }
+    },
+    {
+      "id": "bibliography",
+      "title": "Bibliography",
+      "page": 540,
+      "summary": "This excerpt is a bibliography, not a presentation of mathematical results. It points readers toward books spanning algebraic topology and homotopy theory, alongside related areas such as cohomology, homological algebra, differential forms, bundles, manifolds, and topology’s history; titles and publication details can help match a topic or level to a source.",
+      "learner_can_do": "Given a topic or learning goal, identify relevant bibliography entries by their titles and distinguish introductory texts from specialized references where the title makes that scope clear.",
+      "game_hook": "Make the bibliography a research-map level: players follow topic clues through clusters of book titles to assemble a useful reading route for a chosen mathematical question.",
+      "summary_source_pages": {
+        "book_page": 540,
+        "pdf_indices": [
+          548,
+          549,
+          550
+        ]
+      }
+    },
+    {
+      "id": "index",
+      "title": "Index",
+      "page": 546,
+      "summary": "This excerpt is an alphabetical index, not an explanatory passage: it maps topology terms to the pages where they are developed. Its entries span foundational tools—CW complexes, chains, homology and cohomology, coverings, and homotopy—as well as later topics such as bundles, characteristic classes, and homotopy-theoretic constructions. The useful takeaway is how to navigate among concepts and recognize the breadth and connections of the subject, not a new result to prove.",
+      "learner_can_do": "Given a topology concept, use an index entry to locate its discussion and identify nearby related topics or tools.",
+      "game_hook": "Make a research-navigation challenge: players receive a mathematical question and race to assemble a route through index entries that points to the relevant concepts and page locations.",
+      "summary_source_pages": {
+        "book_page": 546,
+        "pdf_indices": [
+          554,
+          555,
+          556
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,619 @@
+{
+  "world": 4,
+  "world_art_prompt": {
+    "file": "postnikov-spire.png",
+    "scene": "Key art of the fantasy world 'Postnikov Spire' at night: a colossal stone tower rising from the sea into the clouds, each floor a different room that seems to unfold into more dimensions (cube-shaped rooms opening into nested cubes, spheres wrapping spheres, a ring of interlinked glowing circles like the Hopf fibration around one floor). A spiral ascent road, 'Freudenthal Ascent', winds up the lower floors. At the very top, a violet crown-shaped structure glows ominously. A single small Gyroid (only one hero in the scene) climbs the ascent road with a gold lasso. Small violet guardians on the ledges. The stone walls are plain, with no carved writing or inscriptions."
+  },
+  "world_patch": {
+    "art": {
+      "image_path": "games/algebraic_topology/assets/locations/postnikov-spire.png",
+      "generator": "gemini-2.5-flash-image, 16:9, style refs: cover.png + characters/gyroid.png",
+      "prompt": "A colossal tower whose floors unfold into higher dimensions, a Hopf ring of linked circles around one floor, the Freudenthal Ascent spiral road, the violet Null Crown at the top; Gyroid and Emmy climbing."
+    },
+    "map": {
+      "note": "World 4 overworld layout (map units). The Spire is drawn as a side view: y is height. Sites are floors; paths are stairs; gates need earlier tools.",
+      "size": [100, 60],
+      "regions": [
+        { "id": "freudenthal_ascent", "name": "Freudenthal Ascent", "location_id": "freudenthal_ascent", "outline": [[10, 58], [10, 34], [90, 34], [90, 58]] },
+        { "id": "postnikov_spire", "name": "Postnikov Spire", "location_id": "postnikov_spire", "outline": [[22, 34], [22, 4], [78, 4], [78, 34]] }
+      ],
+      "sites": [
+        { "id": "spire_foot", "name": "Spire Foot", "kind": "start", "x": 14, "y": 54, "note": "Where the Reach's seam ends at the Spire's base." },
+        { "id": "cube_hall", "name": "Cube Hall", "kind": "level", "level_id": "4-1", "x": 28, "y": 52 },
+        { "id": "grid_gallery", "name": "Grid Gallery", "kind": "level", "level_id": "4-2", "x": 46, "y": 50 },
+        { "id": "weak_spot", "name": "The Weak Spot", "kind": "level", "level_id": "4-3", "x": 64, "y": 52 },
+        { "id": "sling_landing", "name": "Sling Landing", "kind": "level", "level_id": "4-4", "x": 82, "y": 42 },
+        { "id": "one_group_floors", "name": "One-Group Floors", "kind": "level", "level_id": "4-5", "x": 66, "y": 30 },
+        { "id": "hurewicz_hall", "name": "Hurewicz Hall", "kind": "level", "level_id": "4-6", "x": 34, "y": 30 },
+        { "id": "hopf_ring", "name": "The Hopf Ring", "kind": "level", "level_id": "4-7", "x": 30, "y": 22 },
+        { "id": "stable_ground", "name": "Stable Ground", "kind": "level", "level_id": "4-8", "x": 70, "y": 22 },
+        { "id": "classing_room", "name": "The Classing Room", "kind": "level", "level_id": "4-9", "x": 64, "y": 14 },
+        { "id": "fibration_station", "name": "Fibration Station", "kind": "level", "level_id": "4-10", "x": 36, "y": 14 },
+        { "id": "twist_floor", "name": "The Twist", "kind": "level", "level_id": "4-11", "x": 42, "y": 8 },
+        { "id": "obstruction_course", "name": "Obstruction Course", "kind": "level", "level_id": "4-12", "x": 58, "y": 8 },
+        { "id": "null_crown", "name": "The Null Crown", "kind": "castle", "castle_id": "castle-4", "x": 50, "y": 3 }
+      ],
+      "paths": [
+        { "from": "spire_foot", "to": "cube_hall" },
+        { "from": "cube_hall", "to": "grid_gallery" },
+        { "from": "grid_gallery", "to": "weak_spot" },
+        { "from": "weak_spot", "to": "sling_landing" },
+        { "from": "sling_landing", "to": "one_group_floors", "gate": { "needs": "suspension_sling", "from_level": "4-4", "note": "A shaft with no stair: the Sling's Freudenthal upgrade lifts Gyroid a whole dimension." } },
+        { "from": "one_group_floors", "to": "hurewicz_hall" },
+        { "from": "hurewicz_hall", "to": "hopf_ring" },
+        { "from": "one_group_floors", "to": "stable_ground" },
+        { "from": "stable_ground", "to": "classing_room" },
+        { "from": "hopf_ring", "to": "fibration_station" },
+        { "from": "fibration_station", "to": "twist_floor" },
+        { "from": "classing_room", "to": "twist_floor" },
+        { "from": "twist_floor", "to": "obstruction_course" },
+        { "from": "obstruction_course", "to": "null_crown", "gate": { "needs": "every_tool", "from_level": "4-12", "note": "The Crown's door has one lock per world: Spool, Winding Cord, Boundary Blade, Cup Caster and the Sling." } }
+      ]
+    }
+  },
+  "levels": {
+    "4-1": {
+      "site": "Cube Hall — the Spire's first floor: a hall of cubes whose faces all fold onto one point.",
+      "story": "Loops were maps of an interval with both ends at the beacon. Now: maps of a cube with its whole surface at the beacon. These are the higher homotopy groups. In two or more dimensions, there's room to slide one cube past another — so order no longer matters.",
+      "objective": "Combine cube-maps and show that higher homotopy groups are abelian.",
+      "mechanics": [
+        "Cube maps: an n-cube whose entire boundary is pinned to the basepoint (an element of πₙ).",
+        "Stack: glue two cubes side by side along one direction (the group operation).",
+        "Slide: shrink each into a small subcube, slide them around each other in the second direction, and regrow — f + g slides into g + f.",
+        "Contrast: in one dimension (World 1) there's no room to pass, which is why the Commutator's word mattered."
+      ],
+      "math_check": "πₙ(X, x₀) as homotopy classes of maps (Iⁿ, ∂Iⁿ) → (X, x₀); πₙ is abelian for n ≥ 2 (Hatcher pp. 339–346).",
+      "stages": [
+        { "name": "Pinned Cubes", "beat": "teach", "description": "A square with its whole edge at the beacon is a map of a sphere." },
+        { "name": "Stack", "beat": "practice", "description": "Stack squares left-to-right; undo with a reversed square." },
+        { "name": "Pass Each Other", "beat": "twist", "description": "Shrink, slide past, regrow: order doesn't matter in two dimensions." },
+        { "name": "One Dimension Down", "beat": "master", "description": "Try the same slide on intervals and fail — revisit the Commutator's patrol." }
+      ],
+      "enemies": [
+        { "name": "Cube sentry", "description": "New: a violet cube that pins Gyroid's boundary; lash each face (six lashes, or fewer once faces are pinned together)." },
+        { "name": "Ribbon patrol", "description": "From World 1: its word cancels up here." }
+      ],
+      "tools": "Uses the Loop Lash (upgraded to square maps) and the Tide Glass.",
+      "music": "Postnikov Spire theme: a solemn 72 bpm piece in C minor, pipe-organ chords building up a floor at a time — first statement.",
+      "visuals": "A stone hall filled with cubes whose faces glow and fold toward a single gold point; two small glowing subcubes sliding past each other.",
+      "movie": "level-4-1-intro “Cube Root”."
+    },
+    "4-2": {
+      "site": "Grid Gallery — a gallery where everything snaps to its cell grid.",
+      "story": "Any map between cell-built places can be slid to respect the cells: the k-dimensional part lands in the k-dimensional skeleton. So small spheres can't wrap big ones: πᵢ(Sⁿ) = 0 for i < n.",
+      "objective": "Snap maps to cells and show small spheres slip off big spheres.",
+      "mechanics": [
+        "Snap: slide a map so each k-cell lands in the k-skeleton.",
+        "Sphere test: a circle on a 2-sphere snaps into the 0-skeleton — a point — so it shrinks.",
+        "CW approximation: replace a strange place by a cell-built one with the same homotopy groups."
+      ],
+      "math_check": "Cellular approximation theorem; πᵢ(Sⁿ) = 0 for i < n; CW approximation (Hatcher pp. 348–356).",
+      "stages": [
+        { "name": "Snap", "beat": "teach", "description": "Snap a path to a graph's edges." },
+        { "name": "Slip Off", "beat": "practice", "description": "A circle on a sphere snaps to a point." },
+        { "name": "Too Small to Wrap", "beat": "twist", "description": "Any 2-sphere on a 3-sphere slips off." },
+        { "name": "Approximate", "beat": "master", "description": "Build a cell model of a strange gallery piece." }
+      ],
+      "enemies": [{ "name": "Unglue", "description": "From 0-4." }, { "name": "Glitch", "description": "New: a violet static sprite that knocks maps off the grid; one lash." }],
+      "tools": "Uses the Cell-Smith.",
+      "music": "Spire theme on a grid-stepped arpeggio.",
+      "visuals": "A gallery with glowing grid lines on every surface; a gold map snapping onto the grid; a circle slipping off a sphere.",
+      "movie": "level-4-2-intro “Snap to Grid”."
+    },
+    "4-3": {
+      "site": "The Weak Spot — a floor where two rooms agree on every homotopy group.",
+      "story": "If a map between cell-built places matches all homotopy groups, it is a full equivalence (0-3 Mirror Couriers return). But beware: matching groups abstractly isn't enough — the map must induce them.",
+      "objective": "Use Whitehead's theorem — and learn what it does not say.",
+      "mechanics": [
+        "Equivalence test: a map that induces isomorphisms on every πₙ between CW complexes is a homotopy equivalence — the Mirror Couriers can be built.",
+        "Fake twins: two places with isomorphic groups but no map inducing them (S² × RP³ vs RP² × S³) — not covered by the theorem."
+      ],
+      "math_check": "Whitehead's theorem; the need for a map inducing the isomorphisms (Hatcher pp. 346–348, example p. 348).",
+      "stages": [
+        { "name": "A Map That Matches", "beat": "teach", "description": "Check groups under a map; build the couriers." },
+        { "name": "Weakly Equal", "beat": "practice", "description": "Upgrade weak equivalences to equivalences." },
+        { "name": "No Map", "beat": "twist", "description": "Two rooms, same groups, no matching map." },
+        { "name": "Spot the Weakness", "beat": "master", "description": "Sort pairs into equivalent and not proven." }
+      ],
+      "enemies": [{ "name": "Mirror spawn", "description": "From 0-3." }],
+      "tools": "Uses the Mirror Couriers (0-3).",
+      "music": "Spire theme in a hesitant rubato.",
+      "visuals": "Two identical-looking rooms facing each other across a floor, gold couriers running between them.",
+      "movie": "level-4-3-intro “Weak Spot”."
+    },
+    "4-4": {
+      "site": "Sling Landing — a balcony at the top of the Ascent, open to a vertical shaft.",
+      "story": "Suspending (0-5) shifts homotopy groups up one dimension, and in a range it changes nothing (Freudenthal). The Sling gets its upgrade: lift a whole map up a dimension. And πₙ(Sⁿ) is ℤ, counted by degree (2-6).",
+      "objective": "Suspend maps up the shaft and compute πₙ(Sⁿ).",
+      "mechanics": [
+        "Freudenthal Sling (upgrade of the 0-5 Suspension Sling): suspend a map of spheres; it climbs the shaft.",
+        "Stable range: πᵢ(Sⁿ) → πᵢ₊₁(Sⁿ⁺¹) is an isomorphism for i < 2n − 1 and onto for i = 2n − 1.",
+        "Degree Dial: maps Sⁿ → Sⁿ are classified by degree."
+      ],
+      "math_check": "Homotopy excision, the Freudenthal suspension theorem, πₙ(Sⁿ) ≅ ℤ via degree (Hatcher pp. 360–366).",
+      "stages": [
+        { "name": "Up One", "beat": "teach", "description": "Suspend a circle map into a sphere map." },
+        { "name": "Degree Is All", "beat": "practice", "description": "Classify sphere maps by the Dial." },
+        { "name": "The Stable Range", "beat": "twist", "description": "Suspension stops changing anything past the range." },
+        { "name": "Climb the Shaft", "beat": "master", "description": "Sling up the shaft dimension by dimension." }
+      ],
+      "enemies": [{ "name": "Coner", "description": "From 0-5." }, { "name": "Gale spawn", "description": "From 2-6." }],
+      "tools": "Upgrades the Suspension Sling (suspension_sling).",
+      "music": "Spire theme, modulating up a step with each suspension.",
+      "visuals": "A balcony over a vast vertical shaft; Gyroid slung upward on a gold double-cone of light; spheres stacked up the shaft.",
+      "movie": "level-4-4-intro “Suspension of Disbelief”."
+    },
+    "4-5": {
+      "site": "One-Group Floors — floors with exactly one nonzero homotopy group each.",
+      "story": "The One-Group Tower from World 1 had loops only. These floors generalize it: one group, in one dimension n — the Eilenberg–MacLane spaces K(G, n), the building blocks of the Spire.",
+      "objective": "Build K(G, n) floors by attaching cells to kill higher groups.",
+      "mechanics": [
+        "Start with a bouquet of n-spheres; attach (n+1)-cells for relations.",
+        "Kill: attach higher cells to fill every higher group, floor by floor."
+      ],
+      "math_check": "Existence and uniqueness of K(G, n) CW complexes (Hatcher pp. 365–366).",
+      "stages": [
+        { "name": "Recall", "beat": "teach", "description": "Revisit the K(G,1) floors." },
+        { "name": "Kill Above", "beat": "master", "description": "Build K(ℤ, 2) by killing higher groups of S²: an endless climb (CP^∞)." }
+      ],
+      "enemies": [{ "name": "Cube sentry", "description": "Higher-dimensional." }],
+      "tools": "Uses the Cell-Smith.",
+      "music": "Music-box Sheetwater theme from World 1, now on organ.",
+      "visuals": "Stacked floors each lit by a single color; Gyroid attaching glowing cells to fill openings above.",
+      "movie": "level-4-5-intro “One Group Per Floor”."
+    },
+    "4-6": {
+      "site": "Hurewicz Hall — a hall where homotopy and homology meters stand side by side.",
+      "story": "The first nonzero homotopy group equals the first nonzero homology group (World 2) — and in dimension one, homology is π₁ made abelian (2-10).",
+      "objective": "Use the Hurewicz map to read homotopy from homology.",
+      "mechanics": [
+        "Hurewicz needle: send a sphere map to the homology class of its image.",
+        "If all lower groups vanish, the needle is an isomorphism in the first nonzero dimension."
+      ],
+      "math_check": "The Hurewicz theorem: for (n−1)-connected X with n ≥ 2, πₙ(X) ≅ Hₙ(X); for n = 1, abelianization (Hatcher pp. 366–375).",
+      "stages": [
+        { "name": "Two Meters", "beat": "teach", "description": "Compare π and H on a sphere." },
+        { "name": "First Nonzero", "beat": "practice", "description": "Read πₙ from Hₙ for connected places." },
+        { "name": "Dimension One", "beat": "twist", "description": "Revisit the Abelian Ford: H₁ = π₁ abelianized." },
+        { "name": "Beyond the First", "beat": "master", "description": "Show the needle can fail above the first nonzero group." }
+      ],
+      "enemies": [{ "name": "Ribbon patrol", "description": "Dissolves in dimension one, as in 2-10." }],
+      "tools": "Uses the Degree Dial and Boundary Blade.",
+      "music": "Spire theme with the Chain Delta theme as a countermelody.",
+      "visuals": "A hall with two great meters, a brass dial and a glowing abacus, joined by a gold needle.",
+      "movie": "level-4-6-intro “Hurewicz Hurrah”."
+    },
+    "4-7": {
+      "site": "The Hopf Ring — a floor encircled by a ring of interlinked glowing circles: every circle links every other.",
+      "story": "Null's World 3 claim: every map S³ → S² is trivial. The Hopf Ring refutes it. The 3-sphere is a bundle of circles over the 2-sphere, every pair linked. Its long exact sequence shows π₃(S²) = ℤ, and the Hopf map is its generator.",
+      "objective": "Refute Null's World 3 claim with the Hopf fibration.",
+      "mechanics": [
+        "Fiber walk: each point of a small sphere island has a whole circle above it in the Ring; any two circles link.",
+        "Bundle sequence: the circle, the 3-sphere and the 2-sphere link into a long exact sequence of homotopy groups.",
+        "Since π₃(S¹) and π₂(S¹) vanish, π₃(S³) ≅ π₃(S²): the Hopf map counts as 1 — it is not trivial."
+      ],
+      "math_check": "Fiber bundles, the long exact sequence of homotopy groups, the Hopf fibration S¹ → S³ → S², π₃(S²) ≅ ℤ (Hatcher pp. 375–384). Refutes the World 3 claim.",
+      "stages": [
+        { "name": "A Circle per Point", "beat": "teach", "description": "Walk the sphere; watch circles above each point." },
+        { "name": "Linked", "beat": "practice", "description": "Any two circles link once." },
+        { "name": "The Sequence", "beat": "twist", "description": "Run the bundle sequence to π₃(S²) ≅ ℤ." },
+        { "name": "Null's Answer", "beat": "master", "description": "Present the Hopf map; Null's claim breaks." }
+      ],
+      "enemies": [{ "name": "Fiber wraith", "description": "New: a violet wraith that slips between fibers; lash it on its own circle." }],
+      "tools": "Uses the Sheet Compass (fibers generalize sheets) and the Degree Dial.",
+      "music": "Spire theme as a circular canon in which every voice is linked to every other.",
+      "visuals": "A floor encircled by glowing gold interlinked circles arranged like the Hopf fibration, a small sphere island beneath.",
+      "movie": "level-4-7-intro “Hop Off”."
+    },
+    "4-8": {
+      "site": "Stable Ground — a terrace far up the Spire where suspension no longer changes anything.",
+      "story": "Suspend enough times and homotopy groups of spheres settle down: the stable stems. Gyroid charts the first few.",
+      "objective": "Chart stable homotopy groups.",
+      "mechanics": [
+        "Stability: keep slinging until groups stop changing (from 4-4).",
+        "The first stems: ℤ, ℤ₂, ℤ₂, ℤ₂₄ — given by the book's table; the game shows them rather than computing all of them."
+      ],
+      "math_check": "Stable homotopy groups πₖˢ; the first values from Hatcher's table (pp. 384–392). Flag: the game does not compute stems beyond what the text explains.",
+      "stages": [
+        { "name": "Settle", "beat": "teach", "description": "Watch π₄(S³), π₅(S⁴)… settle." },
+        { "name": "The Table", "beat": "master", "description": "Fill a chart of stable stems from the book's table." }
+      ],
+      "enemies": [{ "name": "Glitch", "description": "Scrambles the chart." }],
+      "tools": "Uses the Suspension Sling.",
+      "music": "Spire theme over a steady pedal note that never changes.",
+      "visuals": "A calm stone terrace above the clouds; a chart carved into a wall (no text) of glowing beads.",
+      "movie": "level-4-8-intro “Stable Ground”."
+    },
+    "4-9": {
+      "site": "The Classing Room — a room where readings (World 3) become maps into the One-Group Floors.",
+      "story": "A cohomology class is the same as a map into a K(G, n) floor, up to sliding. Readings are maps.",
+      "objective": "Turn readings into maps and back.",
+      "mechanics": [
+        "Pull-back: map a place into K(G, n) and pull back the floor's fundamental reading.",
+        "Every reading arises this way, uniquely up to homotopy."
+      ],
+      "math_check": "Hⁿ(X; G) ≅ ⟨X, K(G, n)⟩ for CW complexes (Hatcher pp. 393–405).",
+      "stages": [
+        { "name": "Pull Back", "beat": "teach", "description": "Map a circle into K(ℤ,1) = S¹; get its reading." },
+        { "name": "Readings Are Maps", "beat": "master", "description": "Turn a torus reading into a map and back." }
+      ],
+      "enemies": [{ "name": "Moth swarm", "description": "From World 3." }],
+      "tools": "Uses the Cup Caster.",
+      "music": "Gardens theme from World 3 in the Spire's organ registration.",
+      "visuals": "A room where lantern beams (World 3) bend into gold rails leading up to a single-color floor above.",
+      "movie": "level-4-9-intro “Maps Are Classes”."
+    },
+    "4-10": {
+      "site": "Fibration Station — a station where every track lifts: the homotopy lifting property, for any path and any deformation.",
+      "story": "Covers (World 1) lifted paths. Fibrations lift every deformation — and give long exact sequences. Any map can be turned into one.",
+      "objective": "Lift deformations through fibrations and use their exact sequence.",
+      "mechanics": [
+        "Lift: given a deformation below and a start above, the station builds the lift (homotopy lifting).",
+        "Path fibration: turn any map into a fibration by adding path tracks.",
+        "Loop space: the fiber of the path fibration is the loop space."
+      ],
+      "math_check": "Fibrations, the homotopy lifting property, the long exact sequence, path-space fibrations and loop spaces (Hatcher pp. 405–410).",
+      "stages": [
+        { "name": "Lift", "beat": "teach", "description": "Lift deformations through a product." },
+        { "name": "Make It Fibre", "beat": "practice", "description": "Convert a map into a fibration." },
+        { "name": "The Loop Space", "beat": "master", "description": "Find the fiber of the path fibration." }
+      ],
+      "enemies": [{ "name": "Liftling", "description": "From 1-8." }, { "name": "Fiber wraith", "description": "From 4-7." }],
+      "tools": "Uses the Sheet Compass.",
+      "music": "The Sheetwater theme from World 1 re-scored for the Spire.",
+      "visuals": "A station of layered tracks, trains on upper tracks shadowing every move on the lower tracks.",
+      "movie": "level-4-10-intro “Fibration Station”."
+    },
+    "4-11": {
+      "site": "The Twist — a floor where the Spire's stages are joined by twisted brackets.",
+      "story": "Every place is built as a tower of One-Group Floors joined by twists — the k-invariants. Null's final claim is that the twists don't matter. Here Gyroid sees that the same floors with different twists make different places.",
+      "objective": "Build Postnikov towers and see that k-invariants change the space.",
+      "mechanics": [
+        "Tower: stack stages Xₙ, each obtained from the one below with a K(πₙ, n) fiber.",
+        "Twist bracket: each stage is attached by a k-invariant (a cohomology class, 4-9).",
+        "Same groups, different twists: a two-stage tower with groups G (dimension m) and H (dimension n) is the product K(G,m) × K(H,n) when its k-invariant is zero, and a different, twisted place when it isn't."
+      ],
+      "math_check": "Postnikov towers and k-invariants; spaces with the same homotopy groups can differ (Hatcher pp. 410–415).",
+      "stages": [
+        { "name": "Stack the Floors", "beat": "teach", "description": "Build a two-stage tower." },
+        { "name": "The Twist", "beat": "practice", "description": "Read each stage's k-invariant." },
+        { "name": "Untwisted", "beat": "twist", "description": "Untwist it and get a different place." },
+        { "name": "Rebuild", "beat": "master", "description": "Rebuild a damaged tower with its k-invariants." }
+      ],
+      "enemies": [{ "name": "Twist thief", "description": "New: a violet hand that steals brackets; two lashes." }],
+      "tools": "Uses the Cup Caster and Cell-Smith.",
+      "music": "Spire theme with a dissonant twist chord between stages.",
+      "visuals": "Stacked floors of the Spire joined by twisted glowing gold brackets; violet hands prying at them.",
+      "movie": "level-4-11-intro “A Twist in the Tower”."
+    },
+    "4-12": {
+      "site": "Obstruction Course — the last floor before the Crown: extend a map cell by cell, climbing as you go.",
+      "story": "Extending a map over a cell-built place, one cell at a time: each step either succeeds or meets an obstruction — a cohomology class. The Extension Cord from World 0 (0-B) returns at full power.",
+      "objective": "Extend maps cell by cell and read the obstructions.",
+      "mechanics": [
+        "Climb: extend a map over the k-skeleton, then try each (k+1)-cell.",
+        "Obstruction: the map on a cell's boundary gives an element of πₖ; together they form a cohomology class.",
+        "Zero class: change the map on lower cells and continue."
+      ],
+      "math_check": "Obstruction theory for extending maps; obstruction classes in Hᵏ⁺¹(X; πₖ(Y)) (Hatcher pp. 415–420).",
+      "stages": [
+        { "name": "Cell by Cell", "beat": "teach", "description": "Extend a map over a disk's cells." },
+        { "name": "Blocked", "beat": "practice", "description": "A cell whose boundary wraps a sphere nontrivially blocks the climb." },
+        { "name": "Reroute", "beat": "twist", "description": "When the class is zero, change lower choices and continue." },
+        { "name": "The Summit", "beat": "master", "description": "Climb to the Crown's door." }
+      ],
+      "enemies": [{ "name": "Twist thief", "description": "Steals brackets." }, { "name": "Cube sentry", "description": "Higher-dimensional." }],
+      "tools": "Uses the Extension Cord (0-B) and Cell-Smith.",
+      "music": "Every world's theme in turn, climbing toward the Crown.",
+      "visuals": "A climbing course of cell-shaped platforms up the Spire's top, a gold cord extending from platform to platform, the Crown's violet glow above.",
+      "movie": "level-4-12-intro “Obstruction Course”."
+    }
+  },
+  "castle": {
+    "site": "The Null Crown — the top of the Spire, where Null has thrown away every k-invariant and is collapsing the whole Winding Way to a point.",
+    "story": "Null argues that the homotopy groups are enough and the twists can be thrown away. Gyroid uses every tool he has collected to rebuild the tower stage by stage, putting back each k-invariant. The collapse stops, and every hole returns.",
+    "objective": "Rebuild the Crown's tower and stop the collapse.",
+    "phases": [
+      { "name": "The first floor", "description": "Null's Crown flattens loops into homology; use the Hurewicz needle to restore the first nonzero group. Tests 4-6." },
+      { "name": "The Hopf storm", "description": "Null hurls linked circles; prove the Hopf map essential to shatter his shield. Tests 4-7." },
+      { "name": "The twists", "description": "Install the k-invariants Null discarded, stage by stage. Tests 4-11." },
+      { "name": "The summit", "description": "Extend the restoring map over the last cells; every obstruction class is zero once the twists are in place. Tests 4-12." },
+      { "name": "The ring", "description": "Echo of World 0: the Ringed Isle returns, hole and all." }
+    ],
+    "enemies": [{ "name": "Count Null", "description": "Final boss." }, { "name": "The Commutator", "description": "Appears in phase 2 and turns on Null." }],
+    "tools": "Every tool: Lash, Spool, Tide Glass, Winding Cord, Clasp, Sheet Compass, Boundary Blade, Degree Dial, Cup Caster, Sling, Extension Cord.",
+    "music": "Null's theme on full organ, with every world's theme answering it in turn; the World 0 reef theme returns in the final phase.",
+    "visuals": "A colossal violet crown at the top of the Spire above the clouds, its points collapsing toward a single dark dot; gold brackets reinstalled one by one.",
+    "movie": "castle-4-intro “The Null Crown” and castle-4-outro / ending “The Crown Unwound”."
+  },
+  "level_art": {
+    "4-1": { "file": "4-1-cube-root.png", "scene": "Level 'Cube Root' in Cube Hall: a stone hall filled with glowing cubes whose faces fold toward a single bright gold point; in the center two small glowing subcubes slide past each other. Gyroid stands among the cubes. A violet cube sentry hovers." },
+    "4-2": { "file": "4-2-snap-to-grid.png", "scene": "Level 'Snap to Grid' in the Grid Gallery: a gallery hall whose every surface carries glowing grid lines; a gold line snaps onto the grid; a glowing circle slips off a large sphere sculpture. Gyroid walks the gallery. A violet static sprite crackles." },
+    "4-3": { "file": "4-3-weak-spot.png", "scene": "Level 'Weak Spot': two identical-looking rooms facing each other across a stone floor in a tall tower, small gold courier figures running between them. Gyroid stands in the middle, looking from one to the other." },
+    "4-4": { "file": "4-4-suspension-of-disbelief.png", "scene": "Level 'Suspension of Disbelief' at Sling Landing: a balcony over a vast vertical shaft inside a stone tower; Gyroid is slung upward inside a glowing gold double-cone of light; glowing spheres are stacked up the shaft." },
+    "4-5": { "file": "4-5-one-group-per-floor.png", "scene": "Level 'One Group Per Floor': stacked floors inside a stone tower, each lit by a single color; Gyroid attaches glowing gold cells to fill openings in the ceiling above." },
+    "4-6": { "file": "4-6-hurewicz-hurrah.png", "scene": "Level 'Hurewicz Hurrah' in Hurewicz Hall: a hall with two great instruments side by side — a brass dial and a glowing abacus — joined by a gold needle. Gyroid reads them. Emmy Boundary takes notes." },
+    "4-7": { "file": "4-7-hop-off.png", "scene": "Level 'Hop Off' at the Hopf Ring: a tower floor encircled by many glowing gold circles, every one linked through every other like the Hopf fibration, forming a nested torus pattern; a small sphere island floats beneath. Gyroid stands at the center. A violet wraith slips between the circles." },
+    "4-8": { "file": "4-8-stable-ground.png", "scene": "Level 'Stable Ground': a calm stone terrace high above the clouds on a tower; a wall chart of glowing beads (no text). Gyroid and Emmy Boundary rest, looking out." },
+    "4-9": { "file": "4-9-maps-are-classes.png", "scene": "Level 'Maps Are Classes' in the Classing Room: lantern beams bend into gold rails that lead up to a single-colored floor above. Gyroid follows a rail with a gold chalice." },
+    "4-10": { "file": "4-10-fibration-station.png", "scene": "Level 'Fibration Station': a station inside the tower with layered tracks, trains on the upper tracks shadowing every move of trains on lower tracks. Gyroid on a platform with a glowing compass. Violet sprites ride the upper tracks." },
+    "4-11": { "file": "4-11-a-twist-in-the-tower.png", "scene": "Level 'A Twist in the Tower': stacked tower floors joined by twisted glowing gold brackets; violet hands pry at one bracket. Gyroid lashes the hands away." },
+    "4-12": { "file": "4-12-obstruction-course.png", "scene": "Level 'Obstruction Course': a climbing course of cube- and disk-shaped platforms up the very top of a stone tower, a gold cord extending from platform to platform; a violet crown's glow above in the clouds. Gyroid climbs." }
+  },
+  "castle_art": {
+    "file": "castle-4-the-null-crown.png",
+    "scene": "Castle 'The Null Crown': a colossal violet crown structure at the top of a tower above the clouds, its points bending inward toward a single dark dot. Count Null (from the reference) stands at the center, arms raised. Gyroid faces him with a gold lasso, gold brackets of light orbiting him; Emmy Boundary beside him; the Commutator stands apart, turning toward Null."
+  },
+  "videos": [
+    {
+      "id": "world-4-intro",
+      "title": "Up the Postnikov Spire",
+      "plays": "After castle-3 (The Counterfeit Station), before World 4 · Level 1",
+      "world": 4,
+      "status": "scripted",
+      "story_start": 0,
+      "story_end": 46,
+      "pace": [[0, null, 0.85]],
+      "synopsis": "Unmasked by a nonzero cup product, the Commutator's station falls and Null retreats up his tower into higher homotopy. The ascent: rooms that unfold into higher dimensions, the Null Crown waiting at the top. Null's final claim: give him the homotopy groups and he can rebuild any space — the twists don't matter.",
+      "scenes": [
+        { "id": "A", "start": 0, "end": 8, "title": "The Spire", "description": "Gyroid and Emmy at the foot of a tower rising into the clouds; the seam of Poincaré Reach ends at its door." },
+        { "id": "B", "start": 8, "end": 18, "title": "Rooms that unfold", "description": "The camera rises past floors: cubes opening into cubes, spheres wrapping spheres, a ring of linked circles." },
+        { "id": "C", "start": 18, "end": 28, "title": "The Crown", "description": "At the top, the Null Crown pulses; through it, the whole Winding Way seen far below, slowly drawn inward." },
+        { "id": "D", "start": 28, "end": 36, "title": "Null's claim", "description": "Null drops glowing brackets from the Crown; they tumble away into the clouds." },
+        { "id": "E", "start": 36, "end": 46, "title": "Title", "description": "Title card at 38: “World 4 — Postnikov Spire” and “Level 1 — Cube Root”." }
+      ],
+      "captions": [
+        { "t": 0.6, "end": 4.8, "speaker": "Narrator", "text": "The last province was not land at all, but a tower — and every floor had more dimensions than the last." },
+        { "t": 8.4, "end": 12.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "Up here, loops become spheres. Holes of every dimension, wrapping each other." },
+        { "t": 18.4, "end": 23, "speaker": "Gyroid", "portrait": "gyroid", "text": "He's pulling the whole Winding Way in. Everything we restored." },
+        { "t": 28.4, "end": 33.6, "speaker": "Count Null", "portrait": "count-null", "text": "Give me the groups and I'll rebuild any space. These twists? Ornament." },
+        { "t": 33.8, "end": 37.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "Those twists hold the tower together. Let's go up and prove it." }
+      ],
+      "title_card": { "t": 38, "end": 46 }
+    },
+    {
+      "id": "level-4-1-intro", "title": "Cube Root", "plays": "Before World 4 · Level 1, in Cube Hall", "world": 4, "level_id": "4-1", "status": "scripted",
+      "story_start": 0, "story_end": 30, "pace": [[0, null, 0.85]],
+      "synopsis": "Loops become cubes pinned at the beacon. In two dimensions there's room to pass, so order stops mattering.",
+      "scenes": [
+        { "id": "A", "start": 0, "end": 8, "title": "The hall", "description": "Cubes whose faces fold to one point." },
+        { "id": "B", "start": 8, "end": 18, "title": "Room to pass", "description": "Two subcubes shrink, slide around each other, and regrow in the other order." },
+        { "id": "C", "start": 18, "end": 26, "title": "A patrol", "description": "A ribbon patrol stumbles in; its word cancels and it dissolves." },
+        { "id": "D", "start": 26, "end": 30, "title": "Title", "description": "Title card at 26: “World 4 · Level 1 — Cube Root”." }
+      ],
+      "captions": [
+        { "t": 0.6, "end": 4.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "A loop pins two ends at the beacon. A square pins its whole edge." },
+        { "t": 8.4, "end": 12.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "In a square there's room to slide past each other." },
+        { "t": 12.8, "end": 17.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "So up here, order never matters. The Commutator has no power on these floors." }
+      ],
+      "title_card": { "t": 26, "end": 30 }
+    },
+    {
+      "id": "level-4-2-intro", "title": "Snap to Grid", "plays": "Before World 4 · Level 2", "world": 4, "level_id": "4-2", "status": "scripted",
+      "story_start": 0, "story_end": 26, "pace": [[0, null, 0.85]],
+      "synopsis": "Every map snaps to the cell grid — so small spheres slip off big ones.",
+      "scenes": [
+        { "id": "A", "start": 0, "end": 8, "title": "The gallery", "description": "Grid lines on every surface." },
+        { "id": "B", "start": 8, "end": 18, "title": "Slip", "description": "A circle on a sphere snaps down to a point." },
+        { "id": "C", "start": 18, "end": 22, "title": "Glitch", "description": "A violet static sprite knocks a map off-grid." },
+        { "id": "D", "start": 22, "end": 26, "title": "Title", "description": "Title card at 22: “World 4 · Level 2 — Snap to Grid”." }
+      ],
+      "captions": [
+        { "t": 0.6, "end": 4.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "Any map can be slid onto the cells — dimension by dimension." },
+        { "t": 8.4, "end": 12.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "So a circle on a sphere snaps to a point. Small spheres can't wrap big ones." }
+      ],
+      "title_card": { "t": 22, "end": 26 }
+    },
+    {
+      "id": "level-4-3-intro", "title": "Weak Spot", "plays": "Before World 4 · Level 3", "world": 4, "level_id": "4-3", "status": "scripted",
+      "story_start": 0, "story_end": 26, "pace": [[0, null, 0.85]],
+      "synopsis": "A map that matches every homotopy group is a full equivalence — but matching groups without a map proves nothing.",
+      "scenes": [
+        { "id": "A", "start": 0, "end": 8, "title": "Two rooms", "description": "Two rooms face each other." },
+        { "id": "B", "start": 8, "end": 18, "title": "Couriers", "description": "The Mirror Couriers run between them along a map." },
+        { "id": "C", "start": 18, "end": 22, "title": "No map", "description": "Another pair: same groups, no courier route." },
+        { "id": "D", "start": 22, "end": 26, "title": "Title", "description": "Title card at 22: “World 4 · Level 3 — Weak Spot”." }
+      ],
+      "captions": [
+        { "t": 0.6, "end": 4.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "If a map matches every group, the rooms are truly the same shape." },
+        { "t": 8.4, "end": 12.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "And if there's no map? Just matching numbers?" },
+        { "t": 12.8, "end": 17.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "Then we know nothing. Remember that when Null talks." }
+      ],
+      "title_card": { "t": 22, "end": 26 }
+    },
+    {
+      "id": "level-4-4-intro", "title": "Suspension of Disbelief", "plays": "Before World 4 · Level 4, at Sling Landing", "world": 4, "level_id": "4-4", "status": "scripted",
+      "story_start": 0, "story_end": 28, "pace": [[0, null, 0.85]],
+      "synopsis": "The Sling's Freudenthal upgrade lifts whole maps up a dimension; πₙ(Sⁿ) is counted by degree.",
+      "scenes": [
+        { "id": "A", "start": 0, "end": 8, "title": "The shaft", "description": "A balcony over a shaft with no stair." },
+        { "id": "B", "start": 8, "end": 18, "title": "Upgrade", "description": "Emmy retunes the Sling; its double cone widens." },
+        { "id": "C", "start": 18, "end": 24, "title": "Up", "description": "Gyroid is slung up the shaft past stacked spheres." },
+        { "id": "D", "start": 24, "end": 28, "title": "Title", "description": "Title card at 24: “World 4 · Level 4 — Suspension of Disbelief”." }
+      ],
+      "captions": [
+        { "t": 0.6, "end": 4.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "No stairs. Just a shaft." },
+        { "t": 8.4, "end": 12.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "Your Sling from the Cone Zone — I've upgraded it. It lifts whole maps up a dimension." },
+        { "t": 18.4, "end": 23.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "And past a point, lifting changes nothing. Stable ground." }
+      ],
+      "title_card": { "t": 24, "end": 28 }
+    },
+    {
+      "id": "level-4-5-intro", "title": "One Group Per Floor", "plays": "Before World 4 · Level 5", "world": 4, "level_id": "4-5", "status": "scripted",
+      "story_start": 0, "story_end": 24, "pace": [[0, null, 0.85]],
+      "synopsis": "Floors with a single homotopy group — the Spire's building blocks.",
+      "scenes": [
+        { "id": "A", "start": 0, "end": 10, "title": "Single colors", "description": "Floors each lit a single color." },
+        { "id": "B", "start": 10, "end": 18, "title": "Kill above", "description": "Gyroid fills openings above with cells." },
+        { "id": "C", "start": 18, "end": 24, "title": "Title", "description": "Title card at 18: “World 4 · Level 5 — One Group Per Floor”." }
+      ],
+      "captions": [
+        { "t": 0.6, "end": 4.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "Like the One-Group Tower — but now the group can live in any dimension." },
+        { "t": 10.4, "end": 15.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "Fill everything above, keep one group. Got it." }
+      ],
+      "title_card": { "t": 18, "end": 24 }
+    },
+    {
+      "id": "level-4-6-intro", "title": "Hurewicz Hurrah", "plays": "Before World 4 · Level 6", "world": 4, "level_id": "4-6", "status": "scripted",
+      "story_start": 0, "story_end": 26, "pace": [[0, null, 0.85]],
+      "synopsis": "The first nonzero homotopy group equals the first nonzero homology group.",
+      "scenes": [
+        { "id": "A", "start": 0, "end": 10, "title": "Two meters", "description": "The dial and the abacus side by side." },
+        { "id": "B", "start": 10, "end": 20, "title": "The needle", "description": "A gold needle links them; both read the same." },
+        { "id": "C", "start": 20, "end": 26, "title": "Title", "description": "Title card at 20: “World 4 · Level 6 — Hurewicz Hurrah”." }
+      ],
+      "captions": [
+        { "t": 0.6, "end": 4.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "Homotopy on one meter, homology on the other." },
+        { "t": 10.4, "end": 15.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "At the first floor where anything happens, they agree. In dimension one, up to order." }
+      ],
+      "title_card": { "t": 20, "end": 26 }
+    },
+    {
+      "id": "level-4-7-intro", "title": "Hop Off", "plays": "Before World 4 · Level 7, at the Hopf Ring", "world": 4, "level_id": "4-7", "status": "scripted",
+      "story_start": 0, "story_end": 34, "pace": [[0, null, 0.85]],
+      "synopsis": "Null claimed every map S³ → S² is trivial. The Hopf Ring — circles over a sphere, every pair linked — proves him wrong.",
+      "scenes": [
+        { "id": "A", "start": 0, "end": 8, "title": "The Ring", "description": "Linked gold circles encircle the floor." },
+        { "id": "B", "start": 8, "end": 16, "title": "A circle per point", "description": "Gyroid touches points of a small sphere; a circle lights above each." },
+        { "id": "C", "start": 16, "end": 26, "title": "Linked", "description": "Two lit circles pass through each other exactly once." },
+        { "id": "D", "start": 26, "end": 30, "title": "Null", "description": "Null's image flickers, angry." },
+        { "id": "E", "start": 30, "end": 34, "title": "Title", "description": "Title card at 30: “World 4 · Level 7 — Hop Off”." }
+      ],
+      "captions": [
+        { "t": 0.6, "end": 4.6, "speaker": "Narrator", "text": "Around this floor ran a ring of circles, every one linked through every other." },
+        { "t": 8.4, "end": 12.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "A whole circle above each point of the sphere. Together they make a three-sphere." },
+        { "t": 16.4, "end": 20.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "And every two circles link. You can't pull that apart." },
+        { "t": 20.8, "end": 25.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "So the map from three-sphere to sphere isn't trivial. Null's claim falls." },
+        { "t": 26.4, "end": 29.8, "speaker": "Count Null", "portrait": "count-null", "text": "One map. A curiosity." }
+      ],
+      "title_card": { "t": 30, "end": 34 }
+    },
+    {
+      "id": "level-4-8-intro", "title": "Stable Ground", "plays": "Before World 4 · Level 8", "world": 4, "level_id": "4-8", "status": "scripted",
+      "story_start": 0, "story_end": 24, "pace": [[0, null, 0.85]],
+      "synopsis": "Suspend enough and sphere groups settle: the stable stems.",
+      "scenes": [
+        { "id": "A", "start": 0, "end": 10, "title": "Above the clouds", "description": "A calm terrace; the chart wall glows." },
+        { "id": "B", "start": 10, "end": 18, "title": "Rest", "description": "Gyroid and Emmy sit for a moment." },
+        { "id": "C", "start": 18, "end": 24, "title": "Title", "description": "Title card at 18: “World 4 · Level 8 — Stable Ground”." }
+      ],
+      "captions": [
+        { "t": 0.6, "end": 4.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "Up here nothing changes when you suspend. The numbers settle." },
+        { "t": 10.4, "end": 15.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "First calm place in four worlds." }
+      ],
+      "title_card": { "t": 18, "end": 24 }
+    },
+    {
+      "id": "level-4-9-intro", "title": "Maps Are Classes", "plays": "Before World 4 · Level 9", "world": 4, "level_id": "4-9", "status": "scripted",
+      "story_start": 0, "story_end": 24, "pace": [[0, null, 0.85]],
+      "synopsis": "A reading is the same as a map into a One-Group Floor.",
+      "scenes": [
+        { "id": "A", "start": 0, "end": 10, "title": "Beams bend", "description": "Lantern beams bend into rails leading upward." },
+        { "id": "B", "start": 10, "end": 18, "title": "Up the rail", "description": "Gyroid follows a rail to a single-colored floor." },
+        { "id": "C", "start": 18, "end": 24, "title": "Title", "description": "Title card at 18: “World 4 · Level 9 — Maps Are Classes”." }
+      ],
+      "captions": [
+        { "t": 0.6, "end": 4.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "Every reading from the Gardens is a map into one of these floors." },
+        { "t": 10.4, "end": 15.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "Lanterns were maps all along." }
+      ],
+      "title_card": { "t": 18, "end": 24 }
+    },
+    {
+      "id": "level-4-10-intro", "title": "Fibration Station", "plays": "Before World 4 · Level 10", "world": 4, "level_id": "4-10", "status": "scripted",
+      "story_start": 0, "story_end": 26, "pace": [[0, null, 0.85]],
+      "synopsis": "Covers lifted paths; fibrations lift every deformation.",
+      "scenes": [
+        { "id": "A", "start": 0, "end": 10, "title": "Layered tracks", "description": "Trains on upper tracks shadow every lower train." },
+        { "id": "B", "start": 10, "end": 20, "title": "Lift", "description": "A lower train swerves; its upper twin swerves in step." },
+        { "id": "C", "start": 20, "end": 26, "title": "Title", "description": "Title card at 20: “World 4 · Level 10 — Fibration Station”." }
+      ],
+      "captions": [
+        { "t": 0.6, "end": 4.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "The Sheetwater Viaduct lifted paths. This station lifts any deformation." },
+        { "t": 10.4, "end": 15.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "Whatever moves down there, something up here moves with it." }
+      ],
+      "title_card": { "t": 20, "end": 26 }
+    },
+    {
+      "id": "level-4-11-intro", "title": "A Twist in the Tower", "plays": "Before World 4 · Level 11, on the Twist", "world": 4, "level_id": "4-11", "status": "scripted",
+      "story_start": 0, "story_end": 30, "pace": [[0, null, 0.85]],
+      "synopsis": "Every place is a tower of one-group floors joined by twists. Same floors, different twists: different places.",
+      "scenes": [
+        { "id": "A", "start": 0, "end": 8, "title": "Brackets", "description": "Twisted gold brackets join the floors." },
+        { "id": "B", "start": 8, "end": 18, "title": "Untwist", "description": "Emmy removes a bracket's twist; the floor above changes shape." },
+        { "id": "C", "start": 18, "end": 26, "title": "Thieves", "description": "Violet hands reach for the brackets." },
+        { "id": "D", "start": 26, "end": 30, "title": "Title", "description": "Title card at 26: “World 4 · Level 11 — A Twist in the Tower”." }
+      ],
+      "captions": [
+        { "t": 0.6, "end": 4.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "Each floor holds one group. The twists between them hold the place together." },
+        { "t": 8.4, "end": 12.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "Same floors, no twist — and it's a different tower." },
+        { "t": 12.8, "end": 17.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "That's what Null threw away. He's going to get it wrong." }
+      ],
+      "title_card": { "t": 26, "end": 30 }
+    },
+    {
+      "id": "level-4-12-intro", "title": "Obstruction Course", "plays": "Before World 4 · Level 12", "world": 4, "level_id": "4-12", "status": "scripted",
+      "story_start": 0, "story_end": 28, "pace": [[0, null, 0.85]],
+      "synopsis": "Extend a map cell by cell to the summit; each blockage is a cohomology class.",
+      "scenes": [
+        { "id": "A", "start": 0, "end": 8, "title": "The course", "description": "Cell-shaped platforms climb toward the Crown." },
+        { "id": "B", "start": 8, "end": 18, "title": "Extension Cord", "description": "Gyroid unspools the Extension Cord from World 0, platform to platform." },
+        { "id": "C", "start": 18, "end": 24, "title": "Blocked", "description": "A platform refuses the cord; a violet class glows on it." },
+        { "id": "D", "start": 24, "end": 28, "title": "Title", "description": "Title card at 24: “World 4 · Level 12 — Obstruction Course”." }
+      ],
+      "captions": [
+        { "t": 0.6, "end": 4.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "The Extension Cord. Feels like years since the Cylinder Works." },
+        { "t": 8.4, "end": 12.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "Extend over each cell. When a cell blocks you, the block is a reading." },
+        { "t": 18.4, "end": 23.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "Then I change what's below and try again." }
+      ],
+      "title_card": { "t": 24, "end": 28 }
+    },
+    {
+      "id": "castle-4-intro", "title": "The Null Crown", "plays": "Before castle-4", "world": 4, "status": "scripted",
+      "story_start": 0, "story_end": 36, "pace": [[0, null, 0.85]],
+      "synopsis": "At the top of the Spire, Null is collapsing the Winding Way. The Commutator arrives — and stands with Gyroid.",
+      "scenes": [
+        { "id": "A", "start": 0, "end": 8, "title": "The summit", "description": "The Crown pulses; through it the Winding Way contracts below." },
+        { "id": "B", "start": 8, "end": 18, "title": "Null", "description": "Null turns, Crown blazing, brackets falling away around him." },
+        { "id": "C", "start": 18, "end": 28, "title": "An ally", "description": "The Commutator steps out of a violet ribbon beside Gyroid and lowers his blade toward Null." },
+        { "id": "D", "start": 28, "end": 32, "title": "Ready", "description": "Gyroid's tools glow at once." },
+        { "id": "E", "start": 32, "end": 36, "title": "Title", "description": "Title card at 32: “World 4 · Castle — The Null Crown”." }
+      ],
+      "captions": [
+        { "t": 0.6, "end": 4.6, "speaker": "Count Null", "portrait": "count-null", "text": "Every hole you saved, courier. I'm folding them all to a point." },
+        { "t": 8.4, "end": 12.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "You threw away the twists. Your tower can't stand." },
+        { "t": 18.4, "end": 23, "speaker": "The Commutator", "portrait": "commutator", "text": "Order matters, Null. So does structure. I won't be folded." },
+        { "t": 23.2, "end": 27.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "Every tool, Gyroid. Every world." }
+      ],
+      "title_card": { "t": 32, "end": 36 }
+    },
+    {
+      "id": "ending",
+      "title": "The Crown Unwound",
+      "plays": "After castle-4 (The Null Crown) — the game is won",
+      "world": null,
+      "status": "scripted",
+      "story_start": 0,
+      "story_end": 60,
+      "pace": [[0, null, 0.85]],
+      "synopsis": "Gyroid rebuilds the Crown's tower stage by stage, installing the k-invariants Null threw away, and disconnects its collapse drive. The ringed island returns — hole and all — and every province is restored without erasing a single hole. Callback to the opening: shape changed, topology didn't. Null is not destroyed but reshaped, and Emmy's last line names the theme. Credits carry Hatcher's Algebraic Topology attribution.",
+      "scenes": [
+        { "id": "A", "start": 0, "end": 8, "title": "Rebuilt", "description": "The last gold bracket clicks into place; the Crown's points straighten; its collapse drive gutters out." },
+        { "id": "B", "start": 8, "end": 18, "title": "Null, reshaped", "description": "Null's cloak unravels into a ring of violet light around him; he is smaller, unmasked, holding a small torus in his hands and staring at its hole." },
+        { "id": "C", "start": 18, "end": 30, "title": "The Way returns", "description": "From the Spire's top, the camera sweeps down over every province expanding back: Retract Reef, Bouquet Bastion's two districts, Chain Delta's empty middle, the Gardens' lanterns, the Reach's seam." },
+        { "id": "D", "start": 30, "end": 42, "title": "The Ringed Isle", "description": "Back at Retract Reef: the Ringed Isle rises from the sea, hole and all, exactly as in the opening — but now Callimachus's library lanterns line its rim. Gyroid, Emmy and the Commutator stand on it." },
+        { "id": "E", "start": 42, "end": 52, "title": "Last line", "description": "Gyroid coils his lasso into a loop around his arm; Emmy looks out at the restored Way." },
+        { "id": "F", "start": 52, "end": 60, "title": "Credits", "description": "Title card at 52: “Winding World” — “Based on Algebraic Topology by Allen Hatcher (Cambridge University Press, 2002)”." }
+      ],
+      "captions": [
+        { "t": 0.6, "end": 4.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "Every twist back where it belongs. The tower stands." },
+        { "t": 8.4, "end": 12.6, "speaker": "Count Null", "portrait": "count-null", "text": "I only wanted it simple. A point is so… simple." },
+        { "t": 12.8, "end": 17.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "Keep the torus. Look at its hole for a while. It's not going anywhere." },
+        { "t": 18.4, "end": 23, "speaker": "Narrator", "text": "The Winding Way unrolled, province by province — every shape a little different, every hole exactly where it had been." },
+        { "t": 30.4, "end": 34.6, "speaker": "Gyroid", "portrait": "gyroid", "text": "The ring's back. Same hole. We never had to erase anything." },
+        { "t": 34.8, "end": 39.6, "speaker": "The Commutator", "portrait": "commutator", "text": "In order, I hope." },
+        { "t": 42.4, "end": 48.6, "speaker": "Emmy Boundary", "portrait": "emmy-boundary", "text": "Shapes change, Gyroid. What can't be undone is what makes them themselves." }
+      ],
+      "title_card": { "t": 52, "end": 60 }
+    }
+  ]
+}

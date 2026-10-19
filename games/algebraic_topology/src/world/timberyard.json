@@ -1,0 +1,604 @@
+{
+  "note": "The Timber Yard (World 0 · Level 6) in level-local units (x east, z south). Each deck carries one or more tangles: graphs of small platforms (nodes) joined by narrow walkways (edges), in deck-local units. Gyroid marks a spanning tree with the Spool and fells it with the Cell-Smith at the root platform. The unbuilt bridge to the Hollow Throne leaves the Census deck to the north.",
+  "bounds": {
+    "minX": -22,
+    "maxX": 22,
+    "minZ": -28,
+    "maxZ": 22
+  },
+  "causewayWidth": 1.5,
+  "start": [
+    0,
+    18
+  ],
+  "throne": [
+    0,
+    -52
+  ],
+  "sites": [
+    {
+      "id": "timber_landing",
+      "name": "Yard Gate",
+      "kind": "start",
+      "pos": [
+        0,
+        18
+      ],
+      "shape": {
+        "add": [
+          {
+            "type": "circle",
+            "cx": 0,
+            "cz": 0,
+            "r": 1.7
+          }
+        ]
+      }
+    },
+    {
+      "id": "one_edge",
+      "name": "The Sapling Deck",
+      "stage": "station",
+      "pos": [
+        0,
+        10
+      ],
+      "shape": {
+        "add": [
+          {
+            "type": "circle",
+            "cx": 0,
+            "cz": 0,
+            "r": 5
+          }
+        ]
+      },
+      "emmy": [
+        -3.4,
+        2.6
+      ],
+      "enemies": [
+        [
+          "sphere",
+          -2.6,
+          -2.8
+        ]
+      ],
+      "graphs": [
+        {
+          "label": "",
+          "nodes": [
+            [
+              -1.7,
+              0.2
+            ],
+            [
+              1.7,
+              0.2
+            ]
+          ],
+          "edges": [
+            {
+              "a": 0,
+              "b": 1
+            }
+          ],
+          "root": 0
+        },
+        {
+          "label": "",
+          "nodes": [
+            [
+              0,
+              -1.7
+            ],
+            [
+              -1.9,
+              1.5
+            ],
+            [
+              1.9,
+              1.5
+            ]
+          ],
+          "edges": [
+            {
+              "a": 0,
+              "b": 1
+            },
+            {
+              "a": 1,
+              "b": 2
+            },
+            {
+              "a": 2,
+              "b": 0
+            }
+          ],
+          "root": 0
+        }
+      ]
+    },
+    {
+      "id": "spanning_tree",
+      "name": "The Thicket",
+      "stage": "station",
+      "pos": [
+        -11,
+        1
+      ],
+      "shape": {
+        "add": [
+          {
+            "type": "circle",
+            "cx": 0,
+            "cz": 0,
+            "r": 5.6
+          }
+        ]
+      },
+      "emmy": [
+        -4.2,
+        2.8
+      ],
+      "enemies": [
+        [
+          "sphere",
+          3.4,
+          3.2
+        ],
+        [
+          "unglue",
+          3.2,
+          -3.4
+        ]
+      ],
+      "graphs": [
+        {
+          "label": "",
+          "nodes": [
+            [
+              0,
+              -2.7
+            ],
+            [
+              -2.7,
+              -0.6
+            ],
+            [
+              2.7,
+              -0.6
+            ],
+            [
+              -1.6,
+              2.5
+            ],
+            [
+              1.6,
+              2.5
+            ]
+          ],
+          "edges": [
+            {
+              "a": 0,
+              "b": 1
+            },
+            {
+              "a": 0,
+              "b": 2
+            },
+            {
+              "a": 1,
+              "b": 3
+            },
+            {
+              "a": 2,
+              "b": 4
+            },
+            {
+              "a": 3,
+              "b": 4
+            },
+            {
+              "a": 1,
+              "b": 2
+            },
+            {
+              "a": 3,
+              "b": 4,
+              "bend": 0.32
+            }
+          ],
+          "root": 0
+        }
+      ]
+    },
+    {
+      "id": "wrong_cut",
+      "name": "The Wrong Cut",
+      "stage": "station",
+      "pos": [
+        11,
+        1
+      ],
+      "shape": {
+        "add": [
+          {
+            "type": "circle",
+            "cx": 0,
+            "cz": 0,
+            "r": 5.6
+          }
+        ]
+      },
+      "emmy": [
+        -4.2,
+        2.6
+      ],
+      "enemies": [
+        [
+          "sphere",
+          3.6,
+          -3.2
+        ]
+      ],
+      "wave": [
+        [
+          "biter",
+          -3.6,
+          -3.2
+        ],
+        [
+          "biter",
+          3.8,
+          3.2
+        ],
+        [
+          "biter",
+          -3.4,
+          3.4
+        ]
+      ],
+      "graphs": [
+        {
+          "label": "",
+          "nodes": [
+            [
+              0,
+              -2.5
+            ],
+            [
+              -2.5,
+              0.2
+            ],
+            [
+              2.5,
+              0.2
+            ],
+            [
+              0,
+              2.4
+            ]
+          ],
+          "edges": [
+            {
+              "a": 0,
+              "b": 1
+            },
+            {
+              "a": 0,
+              "b": 2
+            },
+            {
+              "a": 1,
+              "b": 3
+            },
+            {
+              "a": 2,
+              "b": 3
+            },
+            {
+              "a": 1,
+              "b": 2
+            },
+            {
+              "a": 3,
+              "b": 3,
+              "dir": 1.5708
+            }
+          ],
+          "root": 0
+        }
+      ]
+    },
+    {
+      "id": "census",
+      "name": "The Census Deck",
+      "stage": "station",
+      "pos": [
+        0,
+        -13
+      ],
+      "shape": {
+        "add": [
+          {
+            "type": "rect",
+            "x0": -8.6,
+            "x1": 8.6,
+            "z0": -3.9,
+            "z1": 3.9
+          }
+        ]
+      },
+      "emmy": [
+        -7.6,
+        3.0
+      ],
+      "enemies": [
+        [
+          "unglue",
+          -3,
+          3.2
+        ],
+        [
+          "sphere",
+          3,
+          3.3
+        ]
+      ],
+      "graphs": [
+        {
+          "label": "A",
+          "offset": [
+            -5.7,
+            0
+          ],
+          "nodes": [
+            [
+              -1.5,
+              -1.5
+            ],
+            [
+              1.5,
+              -1.5
+            ],
+            [
+              1.5,
+              1.5
+            ],
+            [
+              -1.5,
+              1.5
+            ]
+          ],
+          "edges": [
+            {
+              "a": 0,
+              "b": 1
+            },
+            {
+              "a": 1,
+              "b": 2
+            },
+            {
+              "a": 2,
+              "b": 3
+            },
+            {
+              "a": 3,
+              "b": 0
+            },
+            {
+              "a": 0,
+              "b": 2
+            }
+          ],
+          "root": 0
+        },
+        {
+          "label": "B",
+          "offset": [
+            0,
+            0
+          ],
+          "nodes": [
+            [
+              0,
+              -2.0
+            ],
+            [
+              1.9,
+              -0.6
+            ],
+            [
+              1.2,
+              1.7
+            ],
+            [
+              -1.2,
+              1.7
+            ],
+            [
+              -1.9,
+              -0.6
+            ],
+            [
+              0,
+              0.1
+            ]
+          ],
+          "edges": [
+            {
+              "a": 0,
+              "b": 1
+            },
+            {
+              "a": 1,
+              "b": 2
+            },
+            {
+              "a": 2,
+              "b": 3
+            },
+            {
+              "a": 3,
+              "b": 4
+            },
+            {
+              "a": 4,
+              "b": 0
+            },
+            {
+              "a": 5,
+              "b": 0
+            },
+            {
+              "a": 5,
+              "b": 2
+            }
+          ],
+          "root": 0
+        },
+        {
+          "label": "C",
+          "offset": [
+            5.7,
+            0
+          ],
+          "nodes": [
+            [
+              0,
+              -1.7
+            ],
+            [
+              -1.5,
+              0.6
+            ],
+            [
+              1.5,
+              0.6
+            ],
+            [
+              0,
+              -3.1
+            ]
+          ],
+          "edges": [
+            {
+              "a": 0,
+              "b": 1
+            },
+            {
+              "a": 1,
+              "b": 2
+            },
+            {
+              "a": 2,
+              "b": 0
+            },
+            {
+              "a": 1,
+              "b": 2,
+              "bend": 0.35
+            },
+            {
+              "a": 0,
+              "b": 3
+            },
+            {
+              "a": 3,
+              "b": 3,
+              "dir": 0
+            }
+          ],
+          "root": 0
+        }
+      ]
+    }
+  ],
+  "causeways": [
+    {
+      "a": [
+        0,
+        16.3
+      ],
+      "b": [
+        0,
+        14.6
+      ]
+    },
+    {
+      "a": [
+        -3.5,
+        7
+      ],
+      "b": [
+        -6.6,
+        3.5
+      ]
+    },
+    {
+      "a": [
+        3.5,
+        7
+      ],
+      "b": [
+        6.6,
+        3.5
+      ]
+    },
+    {
+      "a": [
+        -9.2,
+        -4.2
+      ],
+      "b": [
+        -7,
+        -9.6
+      ]
+    },
+    {
+      "a": [
+        9.2,
+        -4.2
+      ],
+      "b": [
+        7,
+        -9.6
+      ]
+    }
+  ],
+  "bridge": {
+    "foot": [
+      0,
+      -16.4
+    ],
+    "a": [
+      0,
+      -16.6
+    ],
+    "b": [
+      0,
+      -27
+    ],
+    "gate": [
+      0,
+      -19.2
+    ]
+  },
+  "exit": {
+    "gate": [
+      0,
+      -19.2
+    ],
+    "a": [
+      0,
+      -16.6
+    ],
+    "b": [
+      0,
+      -27
+    ],
+    "to": "hollow_throne"
+  }
+}

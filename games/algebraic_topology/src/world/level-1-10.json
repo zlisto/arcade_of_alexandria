@@ -1,0 +1,79 @@
+{
+  "note": "World 1 · Level 10 Deck the Halls — deck shifts and antipodal hall.",
+  "bounds": { "minX": -18, "maxX": 18, "minZ": -8, "maxZ": 52 },
+  "causewayWidth": 1.5,
+  "start": [0, 44],
+  "exit": { "gate": [0, -28], "a": [0, -18.5], "b": [0, -26] },
+  "sites": [
+    {
+      "id": "landing",
+      "name": "Hall Gate",
+      "kind": "start",
+      "pos": [0, 44],
+      "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 1.8 }] }
+    },
+    {
+      "id": "shift_deck",
+      "name": "Shift the Deck",
+      "stage": "station",
+      "pos": [0, 32],
+      "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 5.4 }] },
+      "emmy": [-3.2, 2.4],
+      "cover": "cyclic3",
+      "wheel": [0, 0],
+      "enemies": [],
+      "wave": [["deck_guard", 2.2, -1.8], ["deck_guard", -2.0, 1.6], ["deck_guard", 0.3, 2.4]]
+    },
+    {
+      "id": "lopsided",
+      "name": "Lopsided",
+      "stage": "station",
+      "pos": [0, 18],
+      "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 5.2 }] },
+      "emmy": [-3.0, 2.2],
+      "cover": "lopsided",
+      "enemies": [["sphere", 1.8, -2.0]]
+    },
+    {
+      "id": "quotient",
+      "name": "Divide by a Group",
+      "stage": "station",
+      "pos": [0, 4],
+      "shape": { "add": [{ "type": "rect", "x0": -5.5, "x1": 5.5, "z0": -4, "z1": 4 }] },
+      "emmy": [-4.2, 2.0],
+      "cover": "quotient",
+      "wheel": [0, 0],
+      "enemies": [["sphere", -2.2, -1.5]]
+    },
+    {
+      "id": "antipodal",
+      "name": "The Antipodal Hall",
+      "stage": "station",
+      "pos": [0, -12],
+      "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 6.2 }] },
+      "emmy": [-3.6, 3.0],
+      "loops": ["rim", "meridian", "half"],
+      "doors": [[0, -5.8], [0, 5.8]],
+      "enemies": [["sphere", 3.5, 0], ["sphere", -3.5, 0]]
+    },
+    {
+      "id": "exit_path",
+      "name": "Exit Causeway",
+      "pos": [0, -22],
+      "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 2.2 }] }
+    },
+    {
+      "id": "north_gate",
+      "name": "North Gate",
+      "pos": [0, -30],
+      "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 2.5 }] }
+    }
+  ],
+  "causeways": [
+    { "a": [0, 42.2], "b": [0, 37.4] },
+    { "a": [0, 26.6], "b": [0, 23.2] },
+    { "a": [0, 12.8], "b": [0, 9.2] },
+    { "a": [0, -0.2], "b": [0, -5.8] },
+    { "a": [0, -18.2], "b": [0, -20.5] }
+  ]
+}

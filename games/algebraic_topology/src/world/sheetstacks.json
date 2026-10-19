@@ -1,0 +1,76 @@
+{
+  "note": "World 1 · Level 9 Sheet Music — Sheet Stacks (x east, z south). Glass-sheet towers over the Bouquet Bastion sea.",
+  "bounds": { "minX": -24, "maxX": 24, "minZ": -26, "maxZ": 22 },
+  "causewayWidth": 1.55,
+  "start": [0, 18],
+  "exit": { "gate": [0, -22], "a": [-1.2, -20], "b": [1.2, -20] },
+  "causeways": [
+    { "a": [0, 18], "b": [0, 10] },
+    { "a": [0, 10], "b": [-14, 2] },
+    { "a": [0, 10], "b": [14, 2] },
+    { "a": [-14, 2], "b": [0, -6] },
+    { "a": [14, 2], "b": [0, -6] },
+    { "a": [0, -6], "b": [0, -14] }
+  ],
+  "sites": [
+    {
+      "id": "stacks_landing",
+      "name": "Stack Gate",
+      "kind": "start",
+      "pos": [0, 18],
+      "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 1.8 }] }
+    },
+    {
+      "id": "to_order",
+      "name": "To Order",
+      "stage": "station",
+      "pos": [0, 10],
+      "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 5.4 }] },
+      "emmy": [-3.6, 2.4],
+      "enemies": [["sphere", -2.2, -2.6], ["liftling", 2.8, -2.4]],
+      "cover": { "sheets": 2, "ports": [[-2.2, 0.4], [2.2, 0.4]], "start": 0 }
+    },
+    {
+      "id": "moving_start",
+      "name": "Moving the Start",
+      "stage": "station",
+      "pos": [-14, 2],
+      "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 5.2 }] },
+      "emmy": [-3.2, 2.2],
+      "enemies": [["stack_sentinel", 0, 0.6], ["torus", 3.4, -2.6]],
+      "cover": { "preset": "two_sheet_aa", "start": 0 }
+    },
+    {
+      "id": "endless_tree",
+      "name": "The Endless Tree",
+      "stage": "station",
+      "pos": [14, 2],
+      "shape": { "add": [{ "type": "rect", "x0": -8, "x1": 8, "z0": -5.5, "z1": 5.5 }] },
+      "emmy": [-6.5, 3.8],
+      "enemies": [["snapper", 5.5, -3.2], ["sphere", 6.2, 2.8], ["liftling", -5.5, -3.4]],
+      "treeWords": ["a", "b", "ab", "ba"]
+    },
+    {
+      "id": "plane_torus",
+      "name": "Plane over Torus",
+      "stage": "station",
+      "pos": [0, -6],
+      "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 5.6 }] },
+      "emmy": [-3.8, 2.6],
+      "enemies": [["torus", 2.4, -2.2]],
+      "torusLoops": [
+        { "word": "ab", "answer": [1, 1] },
+        { "word": "aAbB", "answer": [0, 0] }
+      ]
+    },
+    {
+      "id": "stacks_exit",
+      "name": "Stack Outflow",
+      "stage": "station",
+      "pos": [0, -14],
+      "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 4.2 }] },
+      "emmy": [2.8, 2.2],
+      "enemies": []
+    }
+  ]
+}

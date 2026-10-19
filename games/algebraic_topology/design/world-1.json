@@ -1,0 +1,3297 @@
+{
+  "world": 1,
+  "world_art_prompt": {
+    "file": "bouquet-bastion.png",
+    "scene": "Key art of the fantasy world 'Bouquet Bastion' at night, high three-quarter aerial view: two huge ring-shaped districts of blue-gray stone causeways (one trimmed with red lanterns, one with violet-steel lanterns) meet at a single tall glowing amber beacon in the middle, like a figure-eight seen from above. A spiral helix ramp of stone rises into the sky above a circular island to one side. In the distance, a layered viaduct of translucent glass sheets stacked one above another, with glowing labeled-looking (but text-free) ports, stretches toward a fortress whose towers are shaped like two interlocking loops. Small violet ribbon-patrol guards march along the causeways in order. Gyroid stands on the causeway near the beacon with a glowing gold lasso. Moonlit, dark luminous sea."
+  },
+  "world_patch": {
+    "art": {
+      "image_path": "games/algebraic_topology/assets/locations/bouquet-bastion.png",
+      "generator": "gemini-2.5-flash-image, 16:9, style refs: cover.png + characters/gyroid.png",
+      "prompt": "Two ring districts meeting at a beacon (a figure-eight from above), a helix ramp over a round island, a glass sheet viaduct toward a two-loop fortress; ribbon patrols; Gyroid at the beacon."
+    },
+    "map": {
+      "note": "World 1 overworld layout (map units). Sites are places; paths are routes; gates need earlier tools.",
+      "size": [
+        100,
+        60
+      ],
+      "regions": [
+        {
+          "id": "bouquet_bastion",
+          "name": "Bouquet Bastion",
+          "location_id": "bouquet_bastion",
+          "outline": [
+            [
+              4,
+              54
+            ],
+            [
+              3,
+              20
+            ],
+            [
+              10,
+              5
+            ],
+            [
+              30,
+              4
+            ],
+            [
+              58,
+              8
+            ],
+            [
+              62,
+              30
+            ],
+            [
+              60,
+              54
+            ],
+            [
+              30,
+              58
+            ]
+          ]
+        },
+        {
+          "id": "sheetwater_viaduct",
+          "name": "Sheetwater Viaduct",
+          "location_id": "sheetwater_viaduct",
+          "outline": [
+            [
+              63,
+              56
+            ],
+            [
+              63,
+              24
+            ],
+            [
+              72,
+              8
+            ],
+            [
+              97,
+              8
+            ],
+            [
+              98,
+              56
+            ]
+          ]
+        }
+      ],
+      "sites": [
+        {
+          "id": "wayfall_landing",
+          "name": "Wayfall Landing",
+          "kind": "start",
+          "x": 9,
+          "y": 50,
+          "note": "Where the re-knit Winding Way comes ashore from Retract Reef."
+        },
+        {
+          "id": "endpoint_gardens",
+          "name": "Endpoint Gardens",
+          "kind": "level",
+          "level_id": "1-1",
+          "x": 20,
+          "y": 43
+        },
+        {
+          "id": "basepoint_beacon",
+          "name": "Basepoint Beacon",
+          "kind": "level",
+          "level_id": "1-2",
+          "x": 32,
+          "y": 32
+        },
+        {
+          "id": "winding_road",
+          "name": "The Winding Road",
+          "kind": "level",
+          "level_id": "1-3",
+          "x": 16,
+          "y": 24
+        },
+        {
+          "id": "brouwers_basin",
+          "name": "Brouwer's Basin",
+          "kind": "level",
+          "level_id": "1-4",
+          "x": 11,
+          "y": 10
+        },
+        {
+          "id": "torus_terraces",
+          "name": "Torus Terraces",
+          "kind": "level",
+          "level_id": "1-5",
+          "x": 33,
+          "y": 12
+        },
+        {
+          "id": "free_word_forge",
+          "name": "Free-Word Forge",
+          "kind": "level",
+          "level_id": "1-6",
+          "x": 47,
+          "y": 28
+        },
+        {
+          "id": "glue_works",
+          "name": "Glue Works",
+          "kind": "level",
+          "level_id": "1-7",
+          "x": 52,
+          "y": 46
+        },
+        {
+          "id": "sheetwater",
+          "name": "Sheetwater Viaduct",
+          "kind": "level",
+          "level_id": "1-8",
+          "x": 69,
+          "y": 40
+        },
+        {
+          "id": "sheet_stacks",
+          "name": "Sheet Stacks",
+          "kind": "level",
+          "level_id": "1-9",
+          "x": 80,
+          "y": 28
+        },
+        {
+          "id": "deck_halls",
+          "name": "Deck Halls",
+          "kind": "level",
+          "level_id": "1-10",
+          "x": 89,
+          "y": 44
+        },
+        {
+          "id": "free_agents_grove",
+          "name": "Free Agents' Grove",
+          "kind": "bonus",
+          "level_id": "1-B1",
+          "x": 77,
+          "y": 52
+        },
+        {
+          "id": "one_group_tower",
+          "name": "One-Group Tower",
+          "kind": "bonus",
+          "level_id": "1-B2",
+          "x": 92,
+          "y": 16
+        },
+        {
+          "id": "commutators_keep",
+          "name": "The Commutator's Keep",
+          "kind": "castle",
+          "castle_id": "castle-1",
+          "x": 66,
+          "y": 13
+        }
+      ],
+      "paths": [
+        {
+          "from": "wayfall_landing",
+          "to": "endpoint_gardens",
+          "gate": {
+            "needs": "anchor_spool",
+            "from_level": "0-1",
+            "note": "Collapsed landing stair: lay a spine with the Spool and slide the rubble onto it."
+          }
+        },
+        {
+          "from": "endpoint_gardens",
+          "to": "basepoint_beacon"
+        },
+        {
+          "from": "basepoint_beacon",
+          "to": "winding_road"
+        },
+        {
+          "from": "winding_road",
+          "to": "brouwers_basin",
+          "gate": {
+            "needs": "winding_cord",
+            "from_level": "1-3",
+            "note": "Coiled gate: opens for a loop of exactly the winding number shown on it (Winding Cord)."
+          }
+        },
+        {
+          "from": "basepoint_beacon",
+          "to": "torus_terraces"
+        },
+        {
+          "from": "basepoint_beacon",
+          "to": "free_word_forge"
+        },
+        {
+          "from": "free_word_forge",
+          "to": "glue_works"
+        },
+        {
+          "from": "glue_works",
+          "to": "sheetwater",
+          "gate": {
+            "needs": "cell_smith",
+            "from_level": "0-4",
+            "note": "Missing span: forge a disk with the Cell-Smith to bridge it."
+          }
+        },
+        {
+          "from": "sheetwater",
+          "to": "sheet_stacks"
+        },
+        {
+          "from": "sheet_stacks",
+          "to": "deck_halls"
+        },
+        {
+          "from": "sheetwater",
+          "to": "free_agents_grove",
+          "bonus": true
+        },
+        {
+          "from": "deck_halls",
+          "to": "one_group_tower",
+          "bonus": true
+        },
+        {
+          "from": "sheet_stacks",
+          "to": "commutators_keep",
+          "gate": {
+            "needs": "sheet_compass",
+            "from_level": "1-8",
+            "note": "The Keep's door sits on the second sheet: reach it with the Sheet Compass."
+          }
+        }
+      ]
+    }
+  },
+  "levels": {
+    "1-1": {
+      "site": "Endpoint Gardens — formal gardens of hedged lawns between gatehouses, just past Wayfall Landing.",
+      "story": "Bouquet Bastion's couriers deliver along garden paths between gatehouses. Two routes count as 'the same delivery' if one can slide into the other while both ends stay at their gates. Gyroid learns to sort routes into classes — the first step toward counting holes.",
+      "objective": "Sort the gardeners' routes into delivery classes and chain deliveries together.",
+      "mechanics": [
+        "Routes are paths between two gatehouses. Gyroid walks a route with the Spool; the Tide Glass (0-2) slides it, ends held fixed.",
+        "Delivery ledger: routes that slide into each other land in the same class (path homotopy rel endpoints).",
+        "Open lawns are convex: any two routes slide straight into each other (the straight-line homotopy).",
+        "Hedge beds are holes: routes going around different sides of a hedge may not slide together.",
+        "Chaining: a route A→B followed by B→C is a route A→C; its class depends only on the classes of the pieces."
+      ],
+      "math_check": "Path homotopy rel endpoints is an equivalence relation; straight-line homotopy in convex sets; concatenation is well defined on classes.",
+      "stages": [
+        {
+          "name": "Open Lawn",
+          "beat": "teach",
+          "description": "Every route across a hedge-free lawn slides straight onto every other: one class."
+        },
+        {
+          "name": "Hedges",
+          "beat": "practice",
+          "description": "Sort six routes around a hedge bed into classes in the ledger."
+        },
+        {
+          "name": "Faster Isn't Different",
+          "beat": "twist",
+          "description": "Walk the same route at a different pace: same class (reparametrizing is a homotopy)."
+        },
+        {
+          "name": "Chained Deliveries",
+          "beat": "master",
+          "description": "Chain routes through three gatehouses; swapping a piece for another in its class never changes the chain's class."
+        }
+      ],
+      "enemies": [
+        {
+          "name": "Snapper",
+          "description": "From 0-2: clips routes; a clipped route must be re-tied."
+        },
+        {
+          "name": "Hedge spawn",
+          "description": "New: violet shrubs that sprout new hedge beds mid-route, changing which routes slide together. One lash before they root."
+        }
+      ],
+      "tools": "Uses the Lash, Spool and Tide Glass.",
+      "music": "Bouquet Bastion theme: a stately 104 bpm march in G major, recorder-like square lead, plucked bass — first statement.",
+      "visuals": "Moonlit formal gardens: blue-gray stone paths, dark hedge beds, gatehouses with gold lanterns, gold route threads with translucent ghost copies.",
+      "movie": "level-1-1-intro “The Couriers' Ledger”."
+    },
+    "1-2": {
+      "site": "Basepoint Beacon — the tall amber beacon where the Bastion's two loop districts meet.",
+      "story": "At the beacon, routes that start and end at the same place become loops — and loops can be combined, undone and compared. Gyroid's Lash learns to close loops, turning every lap around the beacon into a move in a group.",
+      "objective": "Learn the loop moves — combine, reverse, cancel — and carry loops to a new beacon.",
+      "mechanics": [
+        "Loop Lash (upgrade): any route that leaves the beacon and returns is recorded as a loop token.",
+        "Combine: run one loop, then another (concatenation).",
+        "Reverse: run a loop backwards; a loop followed by its reverse slides down to standing still.",
+        "Associativity: (α then β) then γ slides into α then (β then γ).",
+        "Change of beacon: carry loops to a second beacon along a path h; every loop γ becomes h, γ, h reversed — nothing is gained or lost."
+      ],
+      "math_check": "π₁(X, x₀): concatenation of based loops up to homotopy is a group (identity, inverses, associativity); a path h gives an isomorphism π₁(X,x₀) ≅ π₁(X,x₁).",
+      "stages": [
+        {
+          "name": "Home Base",
+          "beat": "teach",
+          "description": "A loop must start and end at the beacon; the standing-still loop is the identity."
+        },
+        {
+          "name": "There and Back",
+          "beat": "practice",
+          "description": "Run a loop then its reverse; slide the result down to the identity."
+        },
+        {
+          "name": "Brackets Don't Matter",
+          "beat": "twist",
+          "description": "Three loops combined two ways slide into each other."
+        },
+        {
+          "name": "A Second Beacon",
+          "beat": "master",
+          "description": "Carry the whole loop collection to a second beacon along a path and back."
+        }
+      ],
+      "enemies": [
+        {
+          "name": "Torus spawn",
+          "description": "Two lashes, one loop each — now Gyroid can see the loops the lashes light."
+        },
+        {
+          "name": "Ribbon patrol (scout)",
+          "description": "First sight of the Commutator's guards: they run loops in a fixed order. They flee for now."
+        }
+      ],
+      "tools": "Unlocks the Loop Lash upgrade.",
+      "music": "The Bastion march over a bell that tolls once each time a loop closes at the beacon.",
+      "visuals": "A towering amber beacon at the junction of two stone ring districts, gold loop trails circling out and back, a second smaller beacon down a causeway.",
+      "movie": "level-1-2-intro “Every Road Comes Home”."
+    },
+    "1-3": {
+      "site": "The Winding Road — a round island with a stone helix ramp spiralling up into the sky above it.",
+      "story": "Above a ring-shaped island rises a helix: every lap around the ring below is a full turn up the ramp above. Gyroid's shadow climbs the helix as he runs, and the floor it ends on is a number no sliding can change. Loops on a circle are counted by integers.",
+      "objective": "Use the helix to count how many times loops wind, and show that sliding never changes the count.",
+      "mechanics": [
+        "Winding Cord (new): as Gyroid walks the ring, a shadow lift climbs the helix above; when the loop closes, the cord shows the floor reached — the winding number.",
+        "Tide Glass slides on the ring never change the floor (homotopy lifting).",
+        "Combining loops adds their floors; reversing a loop negates it.",
+        "Winders spin around pillars a set number of times; Gyroid unwinds one by running a loop with the opposite winding, then lashes it."
+      ],
+      "math_check": "π₁(S¹) ≅ ℤ via the covering ℝ → S¹ (the helix): unique path lifting, homotopy lifting, the endpoint of the lift is the winding number, concatenation ↦ addition.",
+      "stages": [
+        {
+          "name": "The Helix",
+          "beat": "teach",
+          "description": "One lap around the ring = one floor up the helix."
+        },
+        {
+          "name": "Sliding Doesn't Count",
+          "beat": "practice",
+          "description": "Deform a loop wildly with the Tide Glass: the floor never changes."
+        },
+        {
+          "name": "Unwind",
+          "beat": "twist",
+          "description": "Winders: combine loops so the floors cancel (2 + (−2) = 0), then lash."
+        },
+        {
+          "name": "The Number Line",
+          "beat": "master",
+          "description": "Gates demand exact winding numbers built from given loops; every integer is reachable, and nothing else."
+        }
+      ],
+      "enemies": [
+        {
+          "name": "Winder",
+          "description": "New: a violet coil wrapped n times around a pillar; immune until unwound by a loop of winding −n, then one lash."
+        },
+        {
+          "name": "Sphere spawn",
+          "description": "One lash."
+        }
+      ],
+      "tools": "Unlocks the Winding Cord.",
+      "music": "A rising ostinato that climbs a step each lap, resetting with a chime at each full floor.",
+      "visuals": "A round stone island, a spectacular helix ramp of basalt spiralling up overhead, a glowing shadow-Gyroid climbing it, gold floor markers (no text).",
+      "movie": "level-1-3-intro “The Winding Road”."
+    },
+    "1-4": {
+      "site": "Brouwer's Basin — a wide round basin of stone at the Bastion's edge, rimmed by a raised ring road; Null's Retractor engine stands at its center.",
+      "story": "Null's engineers built a Retractor to squash the whole basin onto its rim road. Gyroid finally has the tool to prove it can't work: the rim's loop winds once, but in the basin every loop shrinks — a retraction would have to unwind it. The same idea finds still points, roots and matching antipodes. And it answers World 0: a ring is not a point.",
+      "objective": "Wreck the Retractor with a proof, then use winding to hunt still points and roots.",
+      "mechanics": [
+        "The Retractor's proof-check: run the rim loop (winding 1); shrink it inside the basin; the Retractor would carry that shrinking onto the rim — the Winding Cord shows 1 can't become 0, and the engine seizes.",
+        "Arrow fields: every tile of the basin carries an arrow (a map D² → D², or a vector field). Walk the rim with the Winding Cord measuring how often the arrows turn; a nonzero count guarantees a still point inside.",
+        "Root whirlpools: a polynomial's arrows on a big circle wind n times — dive in and find its n roots.",
+        "Antipodal stations on a small sphere island: find two opposite stations reading the same two numbers."
+      ],
+      "math_check": "No retraction D² → S¹ (π₁(D²) = 0, π₁(S¹) = ℤ); Brouwer fixed point theorem in dimension 2; the fundamental theorem of algebra via winding; Borsuk–Ulam for S²; S¹ is not contractible.",
+      "stages": [
+        {
+          "name": "The Retractor",
+          "beat": "teach",
+          "description": "Show the rim loop can't be unwound by any retraction; the engine stalls."
+        },
+        {
+          "name": "The Still Point",
+          "beat": "practice",
+          "description": "Walk the rim of arrow fields; where the count isn't zero, find the tile whose arrow points nowhere."
+        },
+        {
+          "name": "Roots",
+          "beat": "twist",
+          "description": "A whirlpool winding three times on its rim hides three roots."
+        },
+        {
+          "name": "Antipodes",
+          "beat": "master",
+          "description": "On a sphere island, find the matching pair of opposite stations."
+        }
+      ],
+      "enemies": [
+        {
+          "name": "Retractor drones",
+          "description": "New: violet drones that tug Gyroid toward the rim; two lashes."
+        },
+        {
+          "name": "Whirl spawn",
+          "description": "New: spinning violet tops that scramble nearby arrows; one lash."
+        }
+      ],
+      "tools": "Uses the Winding Cord and Loop Lash.",
+      "music": "Low drone of the Retractor, the Bastion march breaking through triumphantly when the engine seizes.",
+      "visuals": "A huge round stone basin with a glowing rim road, a fields of gold arrows on its tiles swirling toward a still point, a hulking violet Retractor engine at the center.",
+      "movie": "level-1-4-intro “No Way Out”."
+    },
+    "1-5": {
+      "site": "Torus Terraces — a terraced island shaped like a torus, with one belt road around its tube and one through its hole.",
+      "story": "Maps between places push loops forward. On the Torus Terraces, two belt roads give two independent kinds of loop — and on a torus, going around one then the other is the same as the other then the one. Loops here need two numbers.",
+      "objective": "Use the map projectors to push loops between islands, and chart loops on the torus by two winding numbers.",
+      "mechanics": [
+        "Map Projector: a machine maps one island onto another; any loop on the source projects to a loop on the target, and its winding is read off (the induced homomorphism f_*).",
+        "Retract check: when an island retracts onto a part of itself, distinct loops in the part stay distinct (the inclusion's f_* is injective).",
+        "Grid lift: on the torus, the lift lives on an endless square grid; a loop's endpoint (m, n) counts laps of each belt road.",
+        "Swap test: around-the-tube then through-the-hole slides into the other order (ab = ba on the torus)."
+      ],
+      "math_check": "Induced homomorphisms are functorial; retractions induce injections on π₁ of the subspace; π₁(X × Y) ≅ π₁(X) × π₁(Y), so π₁(T²) ≅ ℤ².",
+      "stages": [
+        {
+          "name": "The Projector",
+          "beat": "teach",
+          "description": "Map a circle around another circle k times: winding numbers multiply by k."
+        },
+        {
+          "name": "Retract Check",
+          "beat": "practice",
+          "description": "An island retracts onto its ring road; loops on the road stay distinct."
+        },
+        {
+          "name": "Two Roads",
+          "beat": "twist",
+          "description": "Chart torus loops as (m, n) on the grid lift; tube-then-hole slides into hole-then-tube."
+        },
+        {
+          "name": "Shadows",
+          "beat": "master",
+          "description": "Split torus loops into their two circle shadows and rebuild them."
+        }
+      ],
+      "enemies": [
+        {
+          "name": "Torus spawn",
+          "description": "Two lashes — now the arena itself is a torus."
+        },
+        {
+          "name": "Projector imp",
+          "description": "New: a violet imp that hijacks a projector, scrambling where loops land; one lash."
+        }
+      ],
+      "tools": "Uses the Winding Cord; the Suspension Sling (0-5) reaches the upper terraces.",
+      "music": "The march in a rolling 6/8, two interlocking arpeggios (one per belt road).",
+      "visuals": "A terraced torus-shaped island of stone, two glowing gold belt roads, a translucent square grid floating overhead with Gyroid's shadow walking it.",
+      "movie": "level-1-5-intro “Two Roads”."
+    },
+    "1-6": {
+      "site": "Free-Word Forge — the beacon junction where the red district (loop a) and the violet district (loop b) meet; the Commutator's patrols march here.",
+      "story": "In the two loop districts every lap writes a letter: a for the red loop, b for the violet, and inverses for laps run backwards. Adjacent opposites cancel; nothing else does. The Commutator's patrols march a, b, a⁻¹, b⁻¹ — a word that never cancels. Gyroid forges the Van Kampen Clasp to work with words.",
+      "objective": "Reduce loop words, learn why order matters, and intercept the Commutator's patrol.",
+      "mechanics": [
+        "Word tape: each lap of a district prints a letter (a, a⁻¹, b, b⁻¹) on the tape over Gyroid's head.",
+        "Cancel: an adjacent pair like a a⁻¹ snaps off the tape (reduction).",
+        "Reduced words are unique: two different reduced words are different loops (proved in 1-8 with a cover).",
+        "Van Kampen Clasp (new): join word tapes at the beacon; keeps generator order visible as colored beads.",
+        "Ribbon patrols walk a fixed word; they dissolve only when lashed in the reverse order of their word."
+      ],
+      "math_check": "π₁(S¹ ∨ S¹) is the free group on a, b: reduced words, unique normal form, ab ≠ ba.",
+      "stages": [
+        {
+          "name": "Laps Are Letters",
+          "beat": "teach",
+          "description": "Run laps and watch the tape."
+        },
+        {
+          "name": "Cancel",
+          "beat": "practice",
+          "description": "Reduce long patrol words to their shortest form."
+        },
+        {
+          "name": "Order Matters",
+          "beat": "twist",
+          "description": "Walk a then b, and b then a: no slide turns one into the other. Emmy promises a proof at the Viaduct."
+        },
+        {
+          "name": "The Patrol",
+          "beat": "master",
+          "description": "Intercept a patrol walking a b a⁻¹ b⁻¹; its word doesn't reduce, so its guard can't be talked down — lash it in reverse order."
+        }
+      ],
+      "enemies": [
+        {
+          "name": "Ribbon patrol",
+          "description": "New: the Commutator's guards; each walks a word and dissolves only when lashed in reverse word order."
+        },
+        {
+          "name": "Torus spawn",
+          "description": "Two lashes."
+        }
+      ],
+      "tools": "Unlocks the Van Kampen Clasp (van_kampen_clasp).",
+      "music": "A two-voice canon (red voice, violet voice) that never quite lines up — order matters.",
+      "visuals": "Red-lantern and violet-lantern ring districts meeting at the amber beacon, a floating tape of colored beads over Gyroid, ribbon guards in tall pauldrons marching.",
+      "movie": "level-1-6-intro “Laps Are Letters”."
+    },
+    "1-7": {
+      "site": "Glue Works — a workshop where disks are pressed onto loop districts.",
+      "story": "Glue a disk onto a loop and that loop can slide across the disk and vanish. Glue a disk along a b a⁻¹ b⁻¹ and the figure-eight becomes a torus — the Commutator's favorite word dies. Glue along a a and walking the loop twice means nothing, but once still counts.",
+      "objective": "Attach disks to change which words survive, and compute groups of glued places.",
+      "mechanics": [
+        "Cell-Smith + Clasp: walk a word along the districts; the press glues a disk onto exactly that loop.",
+        "After gluing, the word on the disk's edge slides across the disk to nothing — it becomes a relation.",
+        "Van Kampen: an island made of two overlapping pieces gets its words from both pieces, with the shared part's words identified."
+      ],
+      "math_check": "Van Kampen's theorem; attaching a 2-cell along a loop adds that word as a relation: ⟨a, b | aba⁻¹b⁻¹⟩ = ℤ² for the torus, ⟨a | a²⟩ = ℤ₂ for RP², trivial for the sphere.",
+      "stages": [
+        {
+          "name": "Glue a Disk",
+          "beat": "teach",
+          "description": "A disk on a circle: its loop vanishes (the disk is contractible)."
+        },
+        {
+          "name": "The Torus",
+          "beat": "practice",
+          "description": "Glue along a b a⁻¹ b⁻¹: now a then b slides into b then a."
+        },
+        {
+          "name": "Half Turn",
+          "beat": "twist",
+          "description": "Glue along a a: walking the loop twice slides away; once doesn't — RP², two classes."
+        },
+        {
+          "name": "Two Pieces",
+          "beat": "master",
+          "description": "Compute an island's group from two overlapping pieces (Van Kampen)."
+        }
+      ],
+      "enemies": [
+        {
+          "name": "Unglue",
+          "description": "From 0-4: tears disks off — re-glue before the relation is lost."
+        },
+        {
+          "name": "Ribbon patrol",
+          "description": "Its word may die on a glued district — then it can be dissolved with a single lash."
+        }
+      ],
+      "tools": "Uses the Cell-Smith and the Van Kampen Clasp.",
+      "music": "Forge percussion from World 0 under the Bastion march — the two worlds' tools working together.",
+      "visuals": "A workshop over the loop districts: presses lowering translucent gold disks onto glowing loops, a square sheet folding into a torus.",
+      "movie": "level-1-7-intro “Glue Job”."
+    },
+    "1-8": {
+      "site": "Sheetwater Viaduct — a three-layer viaduct of glass sheets above a figure-eight causeway; each sheet repeats the causeway with labeled ports.",
+      "story": "Above the figure-eight, three glass sheets copy it, and every step below moves a lift along the matching edge above. A loop below can end on a different sheet above — its lift doesn't close. With the Sheet Compass, Gyroid finally proves what 1-6 only suspected: a then b and b then a are different loops.",
+      "objective": "Build covers that obey the local rules, lift routes to reach sheets, and use closed lifts to tell loops apart.",
+      "mechanics": [
+        "Sheet Compass (new): shows which sheet the lift is on; every step in the base moves the lift along the matching labeled edge.",
+        "Local rule: at every vertex of a cover, exactly one incoming and one outgoing edge of each label.",
+        "A base loop's lift closes exactly when the loop belongs to the cover's subgroup; the number of sheets is its index.",
+        "Proof by cover: find a cover where a b lifts to a closed loop and b a doesn't — so they can't be the same loop."
+      ],
+      "math_check": "Covering spaces: unique path and homotopy lifting; p_* is injective; a loop's class is in p_*π₁ iff its lift closes; sheets = index; ab ≠ ba in F₂.",
+      "stages": [
+        {
+          "name": "Two Floors",
+          "beat": "teach",
+          "description": "A two-sheet cover of a circle: a single lap opens the lift; two laps close it."
+        },
+        {
+          "name": "Build a Cover",
+          "beat": "practice",
+          "description": "Wire a three-sheet cover of the figure-eight obeying the local rule."
+        },
+        {
+          "name": "Rescue on Sheet Two",
+          "beat": "twist",
+          "description": "Lift a given route to reach Emmy, trapped on sheet two."
+        },
+        {
+          "name": "Order, Proved",
+          "beat": "master",
+          "description": "Build a cover where a b closes and b a doesn't."
+        }
+      ],
+      "enemies": [
+        {
+          "name": "Liftling",
+          "description": "New: violet sprites that live on one sheet; only Gyroid's lift on that sheet can lash them."
+        },
+        {
+          "name": "Ribbon patrol",
+          "description": "Patrols the base causeway."
+        }
+      ],
+      "tools": "Unlocks the Sheet Compass (sheet_compass).",
+      "music": "Sheetwater theme: three layered pads, one per sheet, entering and dropping as the lift changes sheets; glassy harp arpeggios.",
+      "visuals": "Three stacked translucent glass sheets over a figure-eight causeway, glowing ports at each vertex, Gyroid below and a luminous lift-Gyroid above.",
+      "movie": "level-1-8-intro “Under Cover”."
+    },
+    "1-9": {
+      "site": "Sheet Stacks — towers of glass sheets of every size, built to order.",
+      "story": "Every connected cover of the figure-eight matches a choice of which loops should close — a subgroup. The Stacks build covers to order, including the endless one where no loop closes but the trivial one: a tree. Over a torus, the endless cover is a plane.",
+      "objective": "Build covers to order, see how moving the start changes the order, and walk the universal covers.",
+      "mechanics": [
+        "Orders: a request lists loops that must close and loops that must not; build the cover.",
+        "Moving the start vertex changes the subgroup to a conjugate one.",
+        "The endless tree: a four-way branching viaduct over the figure-eight; each reduced word ends at a different vertex.",
+        "The plane over the torus: an endless grid; loops (m, n) end at lattice points."
+      ],
+      "math_check": "Classification of covering spaces: connected covers ↔ conjugacy classes of subgroups of π₁; the universal cover (a tree for S¹ ∨ S¹, the plane for T²).",
+      "stages": [
+        {
+          "name": "To Order",
+          "beat": "teach",
+          "description": "Request: a a closes, a doesn't — build a two-sheet cover."
+        },
+        {
+          "name": "Moving the Start",
+          "beat": "practice",
+          "description": "Same cover, different start: a conjugate order."
+        },
+        {
+          "name": "The Endless Tree",
+          "beat": "twist",
+          "description": "Walk the universal cover: every reduced word ends somewhere new."
+        },
+        {
+          "name": "Plane over Torus",
+          "beat": "master",
+          "description": "Lift torus loops to the endless grid and read their (m, n)."
+        }
+      ],
+      "enemies": [
+        {
+          "name": "Liftling",
+          "description": "Live on specific sheets."
+        },
+        {
+          "name": "Stack sentinel",
+          "description": "New: guards a cover's start vertex and swaps it when struck wrong; two lashes."
+        }
+      ],
+      "tools": "Uses the Sheet Compass and Van Kampen Clasp.",
+      "music": "Sheetwater theme in canon at different octaves — one voice per sheet.",
+      "visuals": "Towers of stacked glass sheets of varying heights, an infinitely branching glowing tree viaduct receding into fog, an endless grid plane over a small torus island.",
+      "movie": "level-1-9-intro “Sheet Music”."
+    },
+    "1-10": {
+      "site": "Deck Halls — vaulted halls where whole sheets of a cover can be shifted at once.",
+      "story": "Some covers are perfectly symmetric: shift every sheet at once and nothing changes. These deck shifts form a group. A sphere hall where opposite points are the same room is a two-sheet cover of the projective plane.",
+      "objective": "Find the deck shifts of covers, tell symmetric (normal) covers from lopsided ones, and walk the antipodal hall.",
+      "mechanics": [
+        "Deck Shift: rotate or swap all sheets of a cover at once; allowed only if every labeled edge still matches.",
+        "Normal covers: a shift can carry any sheet to any other over a point.",
+        "Quotients: a cover built as a space divided by a free group action.",
+        "Antipodal Hall: a sphere where opposite doors open into the same room; a loop below can lift to a path between opposite points."
+      ],
+      "math_check": "Deck transformations, normal covers (deck group transitive on fibers), covering spaces from free properly discontinuous actions, S² → RP².",
+      "stages": [
+        {
+          "name": "Shift the Deck",
+          "beat": "teach",
+          "description": "A three-sheet cyclic cover: rotating the sheets changes nothing."
+        },
+        {
+          "name": "Lopsided",
+          "beat": "practice",
+          "description": "A cover with no shift between some sheets: not normal."
+        },
+        {
+          "name": "Divide by a Group",
+          "beat": "twist",
+          "description": "Build a cover as a quotient of a free action."
+        },
+        {
+          "name": "The Antipodal Hall",
+          "beat": "master",
+          "description": "Walk S² over RP²: find the loop that lifts to a path between opposite doors."
+        }
+      ],
+      "enemies": [
+        {
+          "name": "Deck guard",
+          "description": "New: violet guards copied on every sheet; lash all copies with one well-chosen deck shift."
+        },
+        {
+          "name": "Liftling",
+          "description": "Sheet-bound."
+        }
+      ],
+      "tools": "Uses the Sheet Compass.",
+      "music": "A rotating round: the same phrase passed between three voices (one per sheet) in cycle.",
+      "visuals": "Vaulted glass halls with stacked floors shifting in unison, a spherical hall with paired opposite doors glowing gold.",
+      "movie": "level-1-10-intro “Deck the Halls”."
+    },
+    "1-B1": {
+      "site": "Free Agents' Grove — a quiet grove of glass-sheet trees off the Viaduct.",
+      "story": "A cover of a graph is a graph. Fell its spanning tree (0-6) and count petals: every subgroup of a free group is free, and Gyroid can count its generators.",
+      "objective": "Take covers of the figure-eight, collapse their trees, and count petals.",
+      "mechanics": [
+        "Pick a cover; mark and fell a spanning tree with the Spool (0-6).",
+        "Count petals: an n-sheet cover of the figure-eight leaves n + 1 petals."
+      ],
+      "math_check": "Subgroups of free groups are free (Nielsen–Schreier via covers); an index-n subgroup of F₂ has rank n + 1 (χ multiplies by n).",
+      "stages": [
+        {
+          "name": "Fell a Cover",
+          "beat": "teach",
+          "description": "A two-sheet cover collapses to three petals."
+        },
+        {
+          "name": "Count",
+          "beat": "master",
+          "description": "Predict petals from sheets before felling."
+        }
+      ],
+      "enemies": [
+        {
+          "name": "Loop-biter",
+          "description": "From 0-6: protect the petals."
+        }
+      ],
+      "tools": "Uses the Spool, Sheet Compass.",
+      "music": "Woodwind theme from the Timber Yard, transposed into the Bastion key.",
+      "visuals": "Glass-sheet trees whose branches are covering graphs, amber trees folding into bouquets.",
+      "movie": "level-1-b1-intro “Free Agents”."
+    },
+    "1-B2": {
+      "site": "One-Group Tower — a tower whose every floor is a space with a contractible universal cover.",
+      "story": "Some places are completely described by their loops: everything above dimension one is filled. These are K(G,1) spaces, and the tower collects them.",
+      "objective": "Recognize spaces whose universal cover is contractible.",
+      "mechanics": [
+        "Walk each floor's universal cover (tree, plane): if it shrinks to a point, the floor is a K(G,1).",
+        "Graphs of groups: glue floors along shared loops."
+      ],
+      "math_check": "K(G,1) spaces: contractible universal cover; graphs are K(F,1); the torus is K(ℤ²,1).",
+      "stages": [
+        {
+          "name": "Contractible Above",
+          "beat": "teach",
+          "description": "The endless tree and the endless plane both shrink."
+        },
+        {
+          "name": "Stacked Floors",
+          "beat": "master",
+          "description": "Glue floors along loops and keep the property."
+        }
+      ],
+      "enemies": [
+        {
+          "name": "None",
+          "description": "A contemplative bonus."
+        }
+      ],
+      "tools": "Uses the Sheet Compass.",
+      "music": "Music-box variation of the Sheetwater theme.",
+      "visuals": "A tall tower of glass floors, each showing a tree or plane receding into fog.",
+      "movie": "level-1-b2-intro “One Group to Rule”."
+    }
+  },
+  "castle": {
+    "site": "The Commutator's Keep — a fortress of two interlocking loop towers, its door on the second sheet of the Viaduct.",
+    "story": "Null's route marshal holds the Keep, his ribbon patrols marching a, b, a⁻¹, b⁻¹ forever. Gyroid proves the patrol can't be undone in the figure-eight — then Emmy glues a disk and turns the arena into a torus, where the patrol's word dies. The Commutator falls back; Null retreats to a sphere, where every loop shrinks.",
+    "objective": "Defeat the Commutator by breaking the meaning of his patrol word.",
+    "phases": [
+      {
+        "name": "The patrol",
+        "description": "In a figure-eight arena the Commutator dashes his word a b a⁻¹ b⁻¹. Build a cover on the arena where his lift doesn't close; lash him on the sheet where it ends. Tests 1-6 and 1-8."
+      },
+      {
+        "name": "Ribbon storm",
+        "description": "He splits into ribbon copies on several sheets; one deck shift lines them up for a single lash. Tests 1-9 and 1-10."
+      },
+      {
+        "name": "The glued arena",
+        "description": "Emmy presses a disk onto the arena along his word; the arena becomes a torus and his patrol slides to nothing. His armor dims — finish with the Lash. Tests 1-7."
+      }
+    ],
+    "enemies": [
+      {
+        "name": "The Commutator",
+        "description": "Boss: two loop pauldrons (red copper, violet steel), four ordered ribbon trails, a fencer's stance."
+      },
+      {
+        "name": "Ribbon patrols",
+        "description": "Waves between phases."
+      }
+    ],
+    "tools": "Loop Lash, Winding Cord, Van Kampen Clasp, Sheet Compass, Cell-Smith.",
+    "music": "The Commutator's theme: a harpsichord-like square fugue on a b a⁻¹ b⁻¹ as a four-note motif, collapsing into silence when the disk is glued.",
+    "visuals": "Two interlocking stone loop towers, a figure-eight arena with stacked glass sheets overhead, crimson and violet ribbon trails.",
+    "movie": "castle-1-intro “The Commutator's Keep” and castle-1-outro “Loops Go Blind”."
+  },
+  "level_art": {
+    "1-1": {
+      "file": "1-1-fixed-endpoints.png",
+      "scene": "Level 'Fixed Endpoints' in Endpoint Gardens: moonlit formal gardens with blue-gray stone paths, dark hedge beds and two stone gatehouses with gold lanterns. Several glowing gold route threads run from one gatehouse to the other, some around the left of a hedge bed and some around the right, with faint translucent copies showing them sliding. Gyroid walks one route holding a thick gold ring (the Spool). A small violet crab creature snips at a thread."
+    },
+    "1-2": {
+      "file": "1-2-loop-de-loop.png",
+      "scene": "Level 'Loop de Loop' at the Basepoint Beacon: a towering amber beacon stands where two great ring-shaped stone causeway districts meet (one with red lanterns, one with violet). Glowing gold loop trails leave the beacon and return, overlapping. Gyroid stands at the beacon's base, a gold lasso closing into a loop. Far down one causeway a second smaller beacon glows."
+    },
+    "1-3": {
+      "file": "1-3-winding-road.png",
+      "scene": "Level 'Winding Road': a round ring-shaped stone island over a dark sea, and rising above it a spectacular stone helix ramp spiralling up into the night sky. Gyroid runs around the ring below while a glowing translucent copy of him climbs the helix above, connected by a glowing gold cord. A violet coil creature is wrapped several times around a stone pillar."
+    },
+    "1-4": {
+      "file": "1-4-no-way-out.png",
+      "scene": "Level 'No Way Out' at Brouwer's Basin: a vast round stone basin rimmed by a raised glowing ring road. Its tiles carry glowing gold arrows that swirl around and converge on a single still glowing point. A hulking violet machine (the Retractor) at the edge strains with chains toward the rim, sparking and seizing. Gyroid walks the rim with a gold cord."
+    },
+    "1-5": {
+      "file": "1-5-push-it-forward.png",
+      "scene": "Level 'Push It Forward' at the Torus Terraces: a terraced island shaped like a giant torus (a ring doughnut) of stone, with one glowing gold belt road wrapping around its tube and another running around through its central hole. Above it floats a translucent square grid with a glowing shadow of Gyroid walking it. Gyroid stands on a terrace beside a brass projector machine casting a beam onto a smaller island."
+    },
+    "1-6": {
+      "file": "1-6-free-word-play.png",
+      "scene": "Level 'Free Word Play' at the Free-Word Forge: two ring-shaped stone districts meet at an amber beacon, one lined with red lanterns and one with violet-steel lanterns. A floating ribbon of colored beads (red and violet) hovers over Gyroid like a tape. Tall violet guards with big asymmetrical loop-shaped pauldrons march in a line along the causeways, trailing ribbons."
+    },
+    "1-7": {
+      "file": "1-7-glue-job.png",
+      "scene": "Level 'Glue Job' in the Glue Works: an industrial stone workshop above ring causeways; great presses lower translucent glowing gold disks onto glowing loop roads. In the center, a flat glowing square sheet with arrow-marked edges folds into a torus. Gyroid wears a brass-and-indigo gauntlet and holds a copper clasp joining red and violet cords."
+    },
+    "1-8": {
+      "file": "1-8-under-cover.png",
+      "scene": "Level 'Under Cover' at the Sheetwater Viaduct: three stacked translucent glass sheets float one above another over a figure-eight stone causeway on the sea; each sheet repeats the causeway's shape, with glowing ports at the junctions. Gyroid walks the causeway below while a luminous translucent copy of him walks the second glass sheet above. Emmy Boundary stands trapped on a higher sheet, waving."
+    },
+    "1-9": {
+      "file": "1-9-sheet-music.png",
+      "scene": "Level 'Sheet Music' at the Sheet Stacks: towers of stacked glass sheets of different heights; in the background an endlessly branching glowing gold tree-shaped viaduct recedes into fog, and beside it an endless glowing square grid plane floats over a small torus island. Gyroid stands on a glass sheet holding a glowing compass."
+    },
+    "1-10": {
+      "file": "1-10-deck-the-halls.png",
+      "scene": "Level 'Deck the Halls' in the Deck Halls: vaulted halls of glass with stacked floors rotating in unison like a carousel, and a great spherical hall with pairs of glowing gold doors placed exactly opposite each other. Gyroid stands at the center of the sphere hall. Violet guards appear copied identically on every floor."
+    },
+    "1-B1": {
+      "file": "1-b1-free-agents.png",
+      "scene": "Bonus level 'Free Agents' in a quiet grove: glass trees whose branches form glowing graph networks; amber highlighted branches fold inward, leaving a bouquet of glowing loops around a single node. Gyroid sits beneath one tree with a thick gold ring."
+    },
+    "1-B2": {
+      "file": "1-b2-one-group-to-rule.png",
+      "scene": "Bonus level 'One Group to Rule': a tall tower of glass floors at night; through each floor you see an endless branching tree or an endless grid plane receding into fog. Gyroid climbs a spiral stair inside."
+    }
+  },
+  "castle_art": {
+    "file": "castle-1-commutators-keep.png",
+    "scene": "Castle 'The Commutator's Keep': a fortress made of two huge interlocking stone loop towers on the sea. Inside, a figure-eight shaped arena floor with three translucent glass sheets stacked above it. The Commutator (from the reference: elegant geometric armored marshal with two enormous asymmetrical loop pauldrons, one red copper one violet steel, ribbon trails, black mask) lunges in a fencing stance, four ribbon trails behind him. Gyroid faces him with a gold lasso. Emmy Boundary stands at a press lowering a glowing gold disk over the arena."
+  },
+  "videos": [
+    {
+      "id": "world-1-intro",
+      "title": "Into Bouquet Bastion",
+      "plays": "After castle-0 (The Hollow Throne), before World 1 · Level 1",
+      "world": 1,
+      "status": "scripted",
+      "story_start": 0,
+      "story_end": 44,
+      "pace": [
+        [
+          0,
+          null,
+          0.85
+        ]
+      ],
+      "synopsis": "Null escaped the Hollow Throne still insisting a ring is just a point. Gyroid and Emmy follow the re-knit Winding Way into Bouquet Bastion, where two loop districts meet at a single beacon and the Commutator's ribbon patrols keep travel order. Emmy names the goal: a tool that counts loops, so a hole can be proven.",
+      "scenes": [
+        {
+          "id": "A",
+          "start": 0,
+          "end": 8,
+          "title": "The Way, re-knit",
+          "description": "Dawn. A long glowing causeway stretches north from Retract Reef across open sea. Gyroid and Emmy walk it; behind them the Foundry smokes gently."
+        },
+        {
+          "id": "B",
+          "start": 8,
+          "end": 16,
+          "title": "Two districts, one beacon",
+          "description": "The Bastion comes into view from above: two ring-shaped districts, red-lit and violet-lit, meeting at a single amber beacon like a figure-eight."
+        },
+        {
+          "id": "C",
+          "start": 16,
+          "end": 24,
+          "title": "The patrols",
+          "description": "On the causeways, tall guards in loop pauldrons march in strict order: red ring, violet ring, red backwards, violet backwards. Ribbons trail behind them."
+        },
+        {
+          "id": "D",
+          "start": 24,
+          "end": 34,
+          "title": "The Commutator",
+          "description": "On a balcony of the two-loop Keep in the distance, the Commutator watches, fencing blade lowered, then turns away. A violet ribbon of light — Null's trail — leads past the Keep and beyond."
+        },
+        {
+          "id": "E",
+          "start": 34,
+          "end": 44,
+          "title": "Title",
+          "description": "Gyroid steps off the causeway at Wayfall Landing. Title card at 38: “World 1 — Bouquet Bastion” and “Level 1 — Fixed Endpoints”."
+        }
+      ],
+      "captions": [
+        {
+          "t": 0.6,
+          "end": 5,
+          "speaker": "Narrator",
+          "text": "The Winding Way was whole again as far as the next province — and Null's trail ran straight along it."
+        },
+        {
+          "t": 8.4,
+          "end": 13,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Bouquet Bastion. Two loop districts, one beacon. Every road here comes home."
+        },
+        {
+          "t": 16.4,
+          "end": 20.4,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "Those guards — they always walk the same order. Red, violet, red back, violet back."
+        },
+        {
+          "t": 20.6,
+          "end": 24,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "The Commutator's patrols. He thinks order is everything. Here he might be right."
+        },
+        {
+          "t": 24.4,
+          "end": 29,
+          "speaker": "Count Null",
+          "portrait": "count-null",
+          "text": "Count your loops, courier. You'll find they all come to nothing in the end."
+        },
+        {
+          "t": 29.4,
+          "end": 33.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Bending couldn't prove the ring was a ring. Counting loops can. That's what we learn here."
+        },
+        {
+          "t": 34.4,
+          "end": 37.6,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "Then let's start counting."
+        }
+      ],
+      "title_card": {
+        "t": 38,
+        "end": 44
+      }
+    },
+    {
+      "id": "level-1-1-intro",
+      "title": "The Couriers' Ledger",
+      "plays": "Before World 1 · Level 1, entering Endpoint Gardens",
+      "world": 1,
+      "level_id": "1-1",
+      "status": "scripted",
+      "story_start": 0,
+      "story_end": 30,
+      "pace": [
+        [
+          0,
+          null,
+          0.85
+        ]
+      ],
+      "synopsis": "Bastion couriers keep a ledger of routes between gatehouses. Emmy explains: two routes are the same delivery if one slides into the other with both ends held at their gates.",
+      "scenes": [
+        {
+          "id": "A",
+          "start": 0,
+          "end": 7,
+          "title": "The gardens",
+          "description": "Hedged lawns between two gatehouses; a gardener-courier's ledger lies open on a lectern with glowing route sketches (no text)."
+        },
+        {
+          "id": "B",
+          "start": 7,
+          "end": 15,
+          "title": "Same delivery",
+          "description": "Two gold routes across an open lawn; one slides onto the other while the ends stay pinned at the gates."
+        },
+        {
+          "id": "C",
+          "start": 15,
+          "end": 23,
+          "title": "The hedge",
+          "description": "A route around the left of a hedge bed and one around the right; they slide toward each other and stop at the hedge."
+        },
+        {
+          "id": "D",
+          "start": 23,
+          "end": 26,
+          "title": "Snappers",
+          "description": "Violet crabs scuttle out to clip the threads."
+        },
+        {
+          "id": "E",
+          "start": 26,
+          "end": 30,
+          "title": "Title",
+          "description": "Title card at 26: “World 1 · Level 1 — Fixed Endpoints”."
+        }
+      ],
+      "captions": [
+        {
+          "t": 0.6,
+          "end": 4.6,
+          "speaker": "Narrator",
+          "text": "In Bouquet Bastion, couriers kept a ledger — not of parcels, but of routes."
+        },
+        {
+          "t": 7.4,
+          "end": 11.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Two routes are the same delivery if one slides into the other — and both ends stay at their gates the whole time."
+        },
+        {
+          "t": 15.4,
+          "end": 19.4,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "Left of the hedge and right of the hedge won't slide together."
+        },
+        {
+          "t": 19.6,
+          "end": 22.8,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Not by any slide we can find. Sort them, and keep that hedge in mind."
+        },
+        {
+          "t": 23.2,
+          "end": 25.8,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "Snappers. Of course."
+        }
+      ],
+      "title_card": {
+        "t": 26,
+        "end": 30
+      }
+    },
+    {
+      "id": "level-1-2-intro",
+      "title": "Every Road Comes Home",
+      "plays": "Before World 1 · Level 2, at the Basepoint Beacon",
+      "world": 1,
+      "level_id": "1-2",
+      "status": "scripted",
+      "story_start": 0,
+      "story_end": 30,
+      "pace": [
+        [
+          0,
+          null,
+          0.85
+        ]
+      ],
+      "synopsis": "At the beacon, routes that return home become loops, and loops combine, undo and compare. The Lash learns to close loops.",
+      "scenes": [
+        {
+          "id": "A",
+          "start": 0,
+          "end": 7,
+          "title": "The beacon",
+          "description": "The amber beacon towers where the two districts meet; its light pulses each time someone returns."
+        },
+        {
+          "id": "B",
+          "start": 7,
+          "end": 15,
+          "title": "Loop Lash",
+          "description": "Emmy taps Gyroid's lasso; its gold cord now closes into a ring as he spins it."
+        },
+        {
+          "id": "C",
+          "start": 15,
+          "end": 23,
+          "title": "There and back",
+          "description": "Gyroid runs a loop out and back, then runs it backwards; the two trails pull together into nothing at the beacon's foot."
+        },
+        {
+          "id": "D",
+          "start": 23,
+          "end": 26,
+          "title": "Scouts",
+          "description": "A ribbon patrol watches from a bridge, then withdraws in strict order."
+        },
+        {
+          "id": "E",
+          "start": 26,
+          "end": 30,
+          "title": "Title",
+          "description": "Title card at 26: “World 1 · Level 2 — Loop de Loop”."
+        }
+      ],
+      "captions": [
+        {
+          "t": 0.6,
+          "end": 4.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "A route that leaves the beacon and comes back is a loop. Loops are what we'll count."
+        },
+        {
+          "t": 7.4,
+          "end": 11,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Your Lash can close them now. Every loop you run, it remembers."
+        },
+        {
+          "t": 15.4,
+          "end": 19.8,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "Out and back, then the same loop backwards… it all slides down to standing still."
+        },
+        {
+          "t": 20,
+          "end": 23,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Every loop has an undo. That's what makes them a group."
+        },
+        {
+          "t": 23.2,
+          "end": 25.8,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "We're being watched."
+        }
+      ],
+      "title_card": {
+        "t": 26,
+        "end": 30
+      }
+    },
+    {
+      "id": "level-1-3-intro",
+      "title": "The Winding Road",
+      "plays": "Before World 1 · Level 3",
+      "world": 1,
+      "level_id": "1-3",
+      "status": "scripted",
+      "story_start": 0,
+      "story_end": 32,
+      "pace": [
+        [
+          0,
+          null,
+          0.85
+        ]
+      ],
+      "synopsis": "Above a ring island rises a helix: each lap below is a turn up the ramp above. The floor Gyroid's shadow ends on can't be changed by sliding — winding numbers are integers.",
+      "scenes": [
+        {
+          "id": "A",
+          "start": 0,
+          "end": 8,
+          "title": "The helix",
+          "description": "A round ring island; above it, a stone helix ramp spirals into the clouds."
+        },
+        {
+          "id": "B",
+          "start": 8,
+          "end": 16,
+          "title": "The shadow climbs",
+          "description": "Gyroid jogs around the ring; a luminous copy of him climbs the helix in step. One lap, one floor."
+        },
+        {
+          "id": "C",
+          "start": 16,
+          "end": 24,
+          "title": "Wiggle",
+          "description": "Gyroid weaves a wild path around the ring; the shadow wobbles but ends on the same floor."
+        },
+        {
+          "id": "D",
+          "start": 24,
+          "end": 28,
+          "title": "Winders",
+          "description": "Violet coils wrap around pillars two and three times."
+        },
+        {
+          "id": "E",
+          "start": 28,
+          "end": 32,
+          "title": "Title",
+          "description": "Title card at 28: “World 1 · Level 3 — Winding Road”."
+        }
+      ],
+      "captions": [
+        {
+          "t": 0.6,
+          "end": 5,
+          "speaker": "Narrator",
+          "text": "Above the ring rose a road that never stopped climbing."
+        },
+        {
+          "t": 8.4,
+          "end": 12.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Each lap down here is one turn up there. Your Winding Cord reads the floor."
+        },
+        {
+          "t": 16.4,
+          "end": 20.6,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "However I wiggle, I end up on the same floor."
+        },
+        {
+          "t": 20.8,
+          "end": 24,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Sliding can't change it. That number belongs to the loop."
+        },
+        {
+          "t": 24.4,
+          "end": 27.8,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Winders. Unwind them first — then lash."
+        }
+      ],
+      "title_card": {
+        "t": 28,
+        "end": 32
+      }
+    },
+    {
+      "id": "level-1-4-intro",
+      "title": "No Way Out",
+      "plays": "Before World 1 · Level 4, at Brouwer's Basin",
+      "world": 1,
+      "level_id": "1-4",
+      "status": "scripted",
+      "story_start": 0,
+      "story_end": 34,
+      "pace": [
+        [
+          0,
+          null,
+          0.85
+        ]
+      ],
+      "synopsis": "Null's Retractor tries to squash Brouwer's Basin onto its rim. With the Winding Cord, Gyroid can prove it impossible — and finally answer Null's claim that a ring is a point.",
+      "scenes": [
+        {
+          "id": "A",
+          "start": 0,
+          "end": 8,
+          "title": "The basin",
+          "description": "A vast round basin; the Retractor engine strains at its center, chains hooked to the rim road."
+        },
+        {
+          "id": "B",
+          "start": 8,
+          "end": 16,
+          "title": "Null's boast",
+          "description": "Null's image flickers over the engine."
+        },
+        {
+          "id": "C",
+          "start": 16,
+          "end": 26,
+          "title": "The proof",
+          "description": "Gyroid runs the rim: the cord reads one floor. He shrinks the loop inside the basin to nothing; the engine would have to turn that nothing back into one lap on the rim. Gears grind and seize."
+        },
+        {
+          "id": "D",
+          "start": 26,
+          "end": 30,
+          "title": "Still points",
+          "description": "Gold arrows on the basin tiles swirl toward one still tile."
+        },
+        {
+          "id": "E",
+          "start": 30,
+          "end": 34,
+          "title": "Title",
+          "description": "Title card at 30: “World 1 · Level 4 — No Way Out”."
+        }
+      ],
+      "captions": [
+        {
+          "t": 0.6,
+          "end": 4.8,
+          "speaker": "Narrator",
+          "text": "Null's Retractor had one job: squash the whole basin onto its rim."
+        },
+        {
+          "t": 8.4,
+          "end": 12.4,
+          "speaker": "Count Null",
+          "portrait": "count-null",
+          "text": "A basin is just its edge with filling. Squeeze out the filling."
+        },
+        {
+          "t": 16.4,
+          "end": 20.6,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "The rim loop winds once. In the basin it shrinks to nothing."
+        },
+        {
+          "t": 20.8,
+          "end": 25.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "So the Retractor would have to turn nothing back into one lap. It can't. And that settles the ring, too."
+        },
+        {
+          "t": 26.4,
+          "end": 29.8,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "A ring winds once. A point winds zero. They were never the same."
+        }
+      ],
+      "title_card": {
+        "t": 30,
+        "end": 34
+      }
+    },
+    {
+      "id": "level-1-5-intro",
+      "title": "Two Roads",
+      "plays": "Before World 1 · Level 5, at the Torus Terraces",
+      "world": 1,
+      "level_id": "1-5",
+      "status": "scripted",
+      "story_start": 0,
+      "story_end": 30,
+      "pace": [
+        [
+          0,
+          null,
+          0.85
+        ]
+      ],
+      "synopsis": "On the Torus Terraces two belt roads give two independent loops; projectors push loops between islands. On a torus, one-then-the-other equals the-other-then-one.",
+      "scenes": [
+        {
+          "id": "A",
+          "start": 0,
+          "end": 8,
+          "title": "The terraces",
+          "description": "A torus-shaped terraced island; one gold road wraps the tube, another runs through the hole."
+        },
+        {
+          "id": "B",
+          "start": 8,
+          "end": 15,
+          "title": "The projector",
+          "description": "A brass projector beams a loop from one island onto another; the projected loop winds twice."
+        },
+        {
+          "id": "C",
+          "start": 15,
+          "end": 24,
+          "title": "The grid",
+          "description": "A translucent square grid unrolls above the torus; Gyroid's shadow walks it, tube-then-hole and hole-then-tube reaching the same corner."
+        },
+        {
+          "id": "D",
+          "start": 24,
+          "end": 26,
+          "title": "Imps",
+          "description": "A violet imp hijacks a projector."
+        },
+        {
+          "id": "E",
+          "start": 26,
+          "end": 30,
+          "title": "Title",
+          "description": "Title card at 26: “World 1 · Level 5 — Push It Forward”."
+        }
+      ],
+      "captions": [
+        {
+          "t": 0.6,
+          "end": 4.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Two roads: one around the tube, one through the hole. Two kinds of loop."
+        },
+        {
+          "t": 8.4,
+          "end": 12.4,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "The projector maps my loop onto that island — and it winds twice there."
+        },
+        {
+          "t": 15.4,
+          "end": 19.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "On a torus, a loop needs two numbers. And the order you walk the roads doesn't matter."
+        },
+        {
+          "t": 19.8,
+          "end": 23.6,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "Tube then hole, hole then tube — same corner of the grid."
+        },
+        {
+          "t": 24,
+          "end": 25.8,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "Hey — get off that projector!"
+        }
+      ],
+      "title_card": {
+        "t": 26,
+        "end": 30
+      }
+    },
+    {
+      "id": "level-1-6-intro",
+      "title": "Laps Are Letters",
+      "plays": "Before World 1 · Level 6, at the Free-Word Forge",
+      "world": 1,
+      "level_id": "1-6",
+      "status": "scripted",
+      "story_start": 0,
+      "story_end": 32,
+      "pace": [
+        [
+          0,
+          null,
+          0.85
+        ]
+      ],
+      "synopsis": "In the two loop districts every lap writes a letter. Opposites cancel; nothing else does. The Commutator's patrol word a b a⁻¹ b⁻¹ never cancels. Gyroid forges the Van Kampen Clasp.",
+      "scenes": [
+        {
+          "id": "A",
+          "start": 0,
+          "end": 8,
+          "title": "Red and violet",
+          "description": "The red and violet districts meet at the beacon; a bead tape hovers over Gyroid."
+        },
+        {
+          "id": "B",
+          "start": 8,
+          "end": 16,
+          "title": "Writing",
+          "description": "Gyroid laps red, then violet backwards: beads appear. A red lap then a red lap backwards: the pair snaps off."
+        },
+        {
+          "id": "C",
+          "start": 16,
+          "end": 24,
+          "title": "The patrol word",
+          "description": "A ribbon patrol marches red, violet, red back, violet back; its tape never shrinks."
+        },
+        {
+          "id": "D",
+          "start": 24,
+          "end": 28,
+          "title": "The Clasp",
+          "description": "Emmy forges a copper clasp joining red and violet cords at an amber bead."
+        },
+        {
+          "id": "E",
+          "start": 28,
+          "end": 32,
+          "title": "Title",
+          "description": "Title card at 28: “World 1 · Level 6 — Free Word Play”."
+        }
+      ],
+      "captions": [
+        {
+          "t": 0.6,
+          "end": 4.6,
+          "speaker": "Narrator",
+          "text": "Here, every lap left a mark — a letter in a word only the loop could spell."
+        },
+        {
+          "t": 8.4,
+          "end": 12.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Red is a, violet is b. Backwards is the inverse. Opposites side by side cancel."
+        },
+        {
+          "t": 16.4,
+          "end": 20.4,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "The patrol walks a, b, a back, b back. Nothing cancels."
+        },
+        {
+          "t": 20.6,
+          "end": 24,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "And here, nothing ever will. Order matters in a bouquet."
+        },
+        {
+          "t": 24.4,
+          "end": 27.8,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Take the Clasp. It keeps your letters in order."
+        }
+      ],
+      "title_card": {
+        "t": 28,
+        "end": 32
+      }
+    },
+    {
+      "id": "level-1-7-intro",
+      "title": "Glue Job",
+      "plays": "Before World 1 · Level 7, at the Glue Works",
+      "world": 1,
+      "level_id": "1-7",
+      "status": "scripted",
+      "story_start": 0,
+      "story_end": 30,
+      "pace": [
+        [
+          0,
+          null,
+          0.85
+        ]
+      ],
+      "synopsis": "Glue a disk onto a loop and that loop vanishes. Glue along a b a⁻¹ b⁻¹ and the bouquet becomes a torus — the patrol word dies.",
+      "scenes": [
+        {
+          "id": "A",
+          "start": 0,
+          "end": 7,
+          "title": "The Works",
+          "description": "Presses hang over the loop districts; translucent gold disks wait in racks."
+        },
+        {
+          "id": "B",
+          "start": 7,
+          "end": 15,
+          "title": "One disk",
+          "description": "A disk is pressed onto a single loop; Gyroid's loop slides across it and vanishes."
+        },
+        {
+          "id": "C",
+          "start": 15,
+          "end": 24,
+          "title": "The commutator disk",
+          "description": "Emmy walks the patrol word; the press glues a disk along it; the bouquet folds into a torus."
+        },
+        {
+          "id": "D",
+          "start": 24,
+          "end": 26,
+          "title": "Unglue",
+          "description": "Violet sprites tug at the disk's edge."
+        },
+        {
+          "id": "E",
+          "start": 26,
+          "end": 30,
+          "title": "Title",
+          "description": "Title card at 26: “World 1 · Level 7 — Glue Job”."
+        }
+      ],
+      "captions": [
+        {
+          "t": 0.6,
+          "end": 4.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Glue a disk onto a loop, and the loop can slide across it and vanish."
+        },
+        {
+          "t": 7.4,
+          "end": 11,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "So a disk is a way to make a word mean nothing."
+        },
+        {
+          "t": 15.4,
+          "end": 20,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Glue one along a, b, a back, b back — the bouquet becomes a torus. Now a then b is b then a."
+        },
+        {
+          "t": 20.2,
+          "end": 23.8,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "The Commutator's word just died."
+        },
+        {
+          "t": 24.2,
+          "end": 25.8,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Unless they unglue it."
+        }
+      ],
+      "title_card": {
+        "t": 26,
+        "end": 30
+      }
+    },
+    {
+      "id": "level-1-8-intro",
+      "title": "Under Cover",
+      "plays": "Before World 1 · Level 8, at the Sheetwater Viaduct",
+      "world": 1,
+      "level_id": "1-8",
+      "status": "scripted",
+      "story_start": 0,
+      "story_end": 34,
+      "pace": [
+        [
+          0,
+          null,
+          0.85
+        ]
+      ],
+      "synopsis": "Three glass sheets copy the figure-eight; each step below moves a lift above. A loop can end on another sheet. Emmy is stranded on sheet two — and the Sheet Compass will prove a b ≠ b a.",
+      "scenes": [
+        {
+          "id": "A",
+          "start": 0,
+          "end": 8,
+          "title": "The viaduct",
+          "description": "Three glass sheets stacked over the figure-eight causeway, ports glowing at every junction."
+        },
+        {
+          "id": "B",
+          "start": 8,
+          "end": 16,
+          "title": "Stranded",
+          "description": "A sheet shifts and Emmy is carried up to sheet two, out of reach."
+        },
+        {
+          "id": "C",
+          "start": 16,
+          "end": 26,
+          "title": "The Compass",
+          "description": "Gyroid picks up a glowing compass; as he walks below, a luminous lift of him walks the sheets, changing sheet at certain ports."
+        },
+        {
+          "id": "D",
+          "start": 26,
+          "end": 30,
+          "title": "Liftlings",
+          "description": "Violet sprites appear on single sheets."
+        },
+        {
+          "id": "E",
+          "start": 30,
+          "end": 34,
+          "title": "Title",
+          "description": "Title card at 30: “World 1 · Level 8 — Under Cover”."
+        }
+      ],
+      "captions": [
+        {
+          "t": 0.6,
+          "end": 4.8,
+          "speaker": "Narrator",
+          "text": "Above the figure-eight hung three glass copies of it — and every step below echoed above."
+        },
+        {
+          "t": 8.4,
+          "end": 12.4,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Gyroid! The sheet moved — I'm on sheet two. Find a route that lifts to me!"
+        },
+        {
+          "t": 16.4,
+          "end": 20.6,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "The Compass shows my lift. A loop down here can end on a different sheet up there."
+        },
+        {
+          "t": 20.8,
+          "end": 25.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Then build me a cover where a then b closes and b then a doesn't — and you've proved they differ."
+        },
+        {
+          "t": 26.4,
+          "end": 29.8,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "Hold on. I'm coming up."
+        }
+      ],
+      "title_card": {
+        "t": 30,
+        "end": 34
+      }
+    },
+    {
+      "id": "level-1-8-lesson",
+      "title": "Covers and Lifts",
+      "plays": "Lesson for World 1 · Level 8 (replayable in level)",
+      "world": 1,
+      "level_id": "1-8",
+      "status": "scripted",
+      "story_start": 0,
+      "story_end": 68,
+      "pace": [
+        [
+          0,
+          null,
+          0.85
+        ]
+      ],
+      "synopsis": "Two-sheet circle cover; wiring the figure-eight; ab closes but ba does not; Cord and Compass controls demo.",
+      "scenes": [
+        {
+          "id": "A",
+          "start": 0,
+          "end": 12,
+          "title": "Two floors",
+          "description": "One lap on a opens the lift; two laps close it."
+        },
+        {
+          "id": "B",
+          "start": 12,
+          "end": 24,
+          "title": "Local rule",
+          "description": "Ports at the beacon; three connected sheets."
+        },
+        {
+          "id": "C",
+          "start": 24,
+          "end": 38,
+          "title": "Order",
+          "description": "ab closes upstairs; ba does not."
+        },
+        {
+          "id": "D",
+          "start": 38,
+          "end": 52,
+          "title": "Controls",
+          "description": "Gyroid walks loops with the Cord; Compass wires and tests."
+        },
+        {
+          "id": "E",
+          "start": 52,
+          "end": 68,
+          "title": "Summary",
+          "description": "Card: covers separate words."
+        }
+      ],
+      "captions": [
+        {
+          "t": 0.8,
+          "end": 5.2,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "A cover copies the space upstairs. Each lap downstairs moves your lift along the matching labeled edge."
+        },
+        {
+          "t": 12.4,
+          "end": 16.8,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "At every junction, exactly one incoming and one outgoing edge per label — click a port to rewire."
+        },
+        {
+          "t": 24.4,
+          "end": 29.2,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Find a cover where a then b closes and b then a does not. That proves the loops differ in the free group."
+        },
+        {
+          "t": 38.4,
+          "end": 43.2,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "Cord to walk the loops. Compass to wire ports and test words at the beacon."
+        },
+        {
+          "t": 52.4,
+          "end": 57.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Covers are the geometric proof — what we suspected in Free Word Play, shown without gluing a torus."
+        }
+      ],
+      "title_card": {
+        "t": 62,
+        "end": 68
+      }
+    },
+    {
+      "id": "level-1-9-intro",
+      "title": "Sheet Music",
+      "plays": "Before World 1 · Level 9, at the Sheet Stacks",
+      "world": 1,
+      "level_id": "1-9",
+      "status": "scripted",
+      "story_start": 0,
+      "story_end": 30,
+      "pace": [
+        [
+          0,
+          null,
+          0.85
+        ]
+      ],
+      "synopsis": "The Stacks build covers to order — any choice of which loops close. The endless cover is a tree; over a torus it's a plane.",
+      "scenes": [
+        {
+          "id": "A",
+          "start": 0,
+          "end": 8,
+          "title": "The Stacks",
+          "description": "Towers of glass sheets of every height; a sentinel guards each tower's start."
+        },
+        {
+          "id": "B",
+          "start": 8,
+          "end": 15,
+          "title": "An order",
+          "description": "Emmy reads an order off a slate (no text visible): a loop that must close twice but not once; a two-sheet tower rises."
+        },
+        {
+          "id": "C",
+          "start": 15,
+          "end": 24,
+          "title": "The endless tree",
+          "description": "A branching viaduct recedes forever into fog; Gyroid's lift wanders it and never returns to the same vertex unless he retraces."
+        },
+        {
+          "id": "D",
+          "start": 24,
+          "end": 26,
+          "title": "The plane",
+          "description": "An endless grid shimmers over a torus island."
+        },
+        {
+          "id": "E",
+          "start": 26,
+          "end": 30,
+          "title": "Title",
+          "description": "Title card at 26: “World 1 · Level 9 — Sheet Music”."
+        }
+      ],
+      "captions": [
+        {
+          "t": 0.6,
+          "end": 4.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Tell the Stacks which loops should close, and they'll build you a cover for it."
+        },
+        {
+          "t": 8.4,
+          "end": 12.4,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "Twice around closes, once doesn't — two sheets."
+        },
+        {
+          "t": 15.4,
+          "end": 20,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "And if nothing should close at all, you get the endless tree. Every word ends somewhere new."
+        },
+        {
+          "t": 20.2,
+          "end": 23.8,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "It goes on forever."
+        },
+        {
+          "t": 24.2,
+          "end": 25.8,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "So does the plane over a torus."
+        }
+      ],
+      "title_card": {
+        "t": 26,
+        "end": 30
+      }
+    },
+    {
+      "id": "level-1-10-intro",
+      "title": "Deck the Halls",
+      "plays": "Before World 1 · Level 10, in the Deck Halls",
+      "world": 1,
+      "level_id": "1-10",
+      "status": "scripted",
+      "story_start": 0,
+      "story_end": 30,
+      "pace": [
+        [
+          0,
+          null,
+          0.85
+        ]
+      ],
+      "synopsis": "Some covers are symmetric: shift every sheet at once and nothing changes. A sphere where opposite doors open into the same room covers the projective plane.",
+      "scenes": [
+        {
+          "id": "A",
+          "start": 0,
+          "end": 8,
+          "title": "The halls",
+          "description": "Vaulted glass halls; three stacked floors rotate in unison like a carousel."
+        },
+        {
+          "id": "B",
+          "start": 8,
+          "end": 15,
+          "title": "A shift",
+          "description": "Gyroid turns a great wheel; every floor shifts one place and every port still lines up."
+        },
+        {
+          "id": "C",
+          "start": 15,
+          "end": 24,
+          "title": "The sphere hall",
+          "description": "A round hall with paired golden doors exactly opposite each other; Gyroid walks through one and out its opposite."
+        },
+        {
+          "id": "D",
+          "start": 24,
+          "end": 26,
+          "title": "Deck guards",
+          "description": "Identical violet guards appear on every floor at once."
+        },
+        {
+          "id": "E",
+          "start": 26,
+          "end": 30,
+          "title": "Title",
+          "description": "Title card at 26: “World 1 · Level 10 — Deck the Halls”."
+        }
+      ],
+      "captions": [
+        {
+          "t": 0.6,
+          "end": 4.6,
+          "speaker": "Narrator",
+          "text": "In the Deck Halls, whole floors moved together — and nothing changed."
+        },
+        {
+          "t": 8.4,
+          "end": 12.4,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "A shift that keeps every edge matched is a symmetry of the cover. They form a group too."
+        },
+        {
+          "t": 15.4,
+          "end": 19.8,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "Opposite doors, same room. This sphere is folded in half."
+        },
+        {
+          "t": 20,
+          "end": 23.8,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "The sphere covers the projective plane, twice. Every point down there is two points up here."
+        },
+        {
+          "t": 24.2,
+          "end": 25.8,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "One lash, every floor."
+        }
+      ],
+      "title_card": {
+        "t": 26,
+        "end": 30
+      }
+    },
+    {
+      "id": "level-1-b1-intro",
+      "title": "Free Agents",
+      "plays": "Before World 1 · Bonus 1, in Free Agents' Grove",
+      "world": 1,
+      "level_id": "1-B1",
+      "status": "scripted",
+      "story_start": 0,
+      "story_end": 24,
+      "pace": [
+        [
+          0,
+          null,
+          0.85
+        ]
+      ],
+      "synopsis": "A cover of a graph is a graph: fell its tree and count petals. Every subgroup of a free group is free.",
+      "scenes": [
+        {
+          "id": "A",
+          "start": 0,
+          "end": 8,
+          "title": "The grove",
+          "description": "Glass trees whose branches are covering graphs."
+        },
+        {
+          "id": "B",
+          "start": 8,
+          "end": 18,
+          "title": "Felling",
+          "description": "Gyroid marks a tree in amber on a two-sheet cover and fells it; three petals remain."
+        },
+        {
+          "id": "C",
+          "start": 18,
+          "end": 24,
+          "title": "Title",
+          "description": "Title card at 18: “World 1 · Bonus — Free Agents”."
+        }
+      ],
+      "captions": [
+        {
+          "t": 0.6,
+          "end": 4.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Remember the Timber Yard? A cover of a graph is still a graph."
+        },
+        {
+          "t": 8.4,
+          "end": 12.6,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "Fell the tree… three petals. Two sheets, three petals."
+        },
+        {
+          "t": 12.8,
+          "end": 17.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Every subgroup of a free group is free. And now you can count its generators."
+        }
+      ],
+      "title_card": {
+        "t": 18,
+        "end": 24
+      }
+    },
+    {
+      "id": "level-1-b2-intro",
+      "title": "One Group to Rule",
+      "plays": "Before World 1 · Bonus 2, at the One-Group Tower",
+      "world": 1,
+      "level_id": "1-B2",
+      "status": "scripted",
+      "story_start": 0,
+      "story_end": 24,
+      "pace": [
+        [
+          0,
+          null,
+          0.85
+        ]
+      ],
+      "synopsis": "Some places are entirely described by their loops: their universal cover shrinks to a point. The tower collects them.",
+      "scenes": [
+        {
+          "id": "A",
+          "start": 0,
+          "end": 8,
+          "title": "The tower",
+          "description": "A glass tower; each floor shows an endless tree or plane below."
+        },
+        {
+          "id": "B",
+          "start": 8,
+          "end": 18,
+          "title": "Shrinking above",
+          "description": "On each floor, the endless cover visibly shrinks to a point."
+        },
+        {
+          "id": "C",
+          "start": 18,
+          "end": 24,
+          "title": "Title",
+          "description": "Title card at 18: “World 1 · Bonus — One Group to Rule”."
+        }
+      ],
+      "captions": [
+        {
+          "t": 0.6,
+          "end": 4.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Every floor here has an endless cover that shrinks to a point."
+        },
+        {
+          "t": 8.4,
+          "end": 12.6,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "So nothing above loops matters. The loops are the whole story."
+        },
+        {
+          "t": 12.8,
+          "end": 17.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "One group, one space. Mathematicians call them K of G, one."
+        }
+      ],
+      "title_card": {
+        "t": 18,
+        "end": 24
+      }
+    },
+    {
+      "id": "castle-1-intro",
+      "title": "The Commutator's Keep",
+      "plays": "Before castle-1",
+      "world": 1,
+      "status": "scripted",
+      "story_start": 0,
+      "story_end": 34,
+      "pace": [
+        [
+          0,
+          null,
+          0.85
+        ]
+      ],
+      "synopsis": "The Keep's door hangs on the Viaduct's second sheet. Inside, the Commutator salutes with his blade and starts his patrol.",
+      "scenes": [
+        {
+          "id": "A",
+          "start": 0,
+          "end": 8,
+          "title": "The door on sheet two",
+          "description": "Gyroid's lift climbs to the second sheet; a door in mid-air opens into the two-loop Keep."
+        },
+        {
+          "id": "B",
+          "start": 8,
+          "end": 16,
+          "title": "The arena",
+          "description": "A figure-eight arena under stacked glass sheets; crimson and violet ribbons hang from the vaults."
+        },
+        {
+          "id": "C",
+          "start": 16,
+          "end": 26,
+          "title": "The marshal",
+          "description": "The Commutator steps down, pauldrons blazing, and salutes with his fencing blade."
+        },
+        {
+          "id": "D",
+          "start": 26,
+          "end": 30,
+          "title": "En garde",
+          "description": "He dashes the first lap of his word; four ribbons stream behind him."
+        },
+        {
+          "id": "E",
+          "start": 30,
+          "end": 34,
+          "title": "Title",
+          "description": "Title card at 30: “World 1 · Castle — The Commutator's Keep”."
+        }
+      ],
+      "captions": [
+        {
+          "t": 0.6,
+          "end": 4.6,
+          "speaker": "Narrator",
+          "text": "The Keep's door hung on the second sheet — reachable only by a courier who could lift."
+        },
+        {
+          "t": 16.4,
+          "end": 21,
+          "speaker": "The Commutator",
+          "portrait": "commutator",
+          "text": "Order, courier. A, then b, then back, then back. Undo me if you can."
+        },
+        {
+          "t": 21.2,
+          "end": 25.6,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "In this arena? Your word doesn't cancel. I'll have to prove it."
+        },
+        {
+          "t": 26.4,
+          "end": 29.8,
+          "speaker": "The Commutator",
+          "portrait": "commutator",
+          "text": "Prove it at the point of my blade."
+        }
+      ],
+      "title_card": {
+        "t": 30,
+        "end": 34
+      }
+    },
+    {
+      "id": "castle-1-outro",
+      "title": "Loops Go Blind",
+      "plays": "After castle-1 — the end of World 1",
+      "world": 1,
+      "status": "scripted",
+      "story_start": 0,
+      "story_end": 36,
+      "pace": [
+        [
+          0,
+          null,
+          0.85
+        ]
+      ],
+      "synopsis": "With the arena glued into a torus, the Commutator's word slides to nothing and he yields, retreating. Null appears on a pale sphere-island and shows every loop shrinking: loops can't see a sphere's hollow.",
+      "scenes": [
+        {
+          "id": "A",
+          "start": 0,
+          "end": 8,
+          "title": "The word dies",
+          "description": "The arena folds into a torus; the Commutator's ribbons slacken and fall."
+        },
+        {
+          "id": "B",
+          "start": 8,
+          "end": 16,
+          "title": "Retreat",
+          "description": "The Commutator bows stiffly and vanishes into a ribbon of violet light."
+        },
+        {
+          "id": "C",
+          "start": 16,
+          "end": 26,
+          "title": "The sphere",
+          "description": "Far off, Null stands on a pale sphere-island, drawing loops that shrink to points one after another."
+        },
+        {
+          "id": "D",
+          "start": 26,
+          "end": 32,
+          "title": "Emmy",
+          "description": "Emmy looks at the sphere through her goggles."
+        },
+        {
+          "id": "E",
+          "start": 32,
+          "end": 36,
+          "title": "World 1 complete",
+          "description": "Card: “World 1 complete — Bouquet Bastion restored.”"
+        }
+      ],
+      "captions": [
+        {
+          "t": 0.6,
+          "end": 4.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "On a torus, your word means nothing, marshal."
+        },
+        {
+          "t": 8.4,
+          "end": 12.6,
+          "speaker": "The Commutator",
+          "portrait": "commutator",
+          "text": "Order isn't everything, then. Noted. We will meet again."
+        },
+        {
+          "t": 16.4,
+          "end": 20.8,
+          "speaker": "Count Null",
+          "portrait": "count-null",
+          "text": "Draw a loop on my sphere. Watch it shrink. There is nothing here for your counting to find."
+        },
+        {
+          "t": 21,
+          "end": 25.6,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "Every loop shrinks… but the sphere's hollow. I can feel it."
+        },
+        {
+          "t": 26.4,
+          "end": 31.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Loops can't see it. We need to count what they enclose. That means the Delta."
+        }
+      ],
+      "title_card": {
+        "t": 32,
+        "end": 36
+      }
+    },
+    {
+      "id": "level-1-1-lesson",
+      "title": "Fixed Endpoints",
+      "plays": "Replay from Endpoint Gardens · ? How it works",
+      "world": 1,
+      "level_id": "1-1",
+      "status": "scripted",
+      "story_start": 0,
+      "story_end": 68,
+      "pace": [
+        [
+          0,
+          null,
+          0.85
+        ]
+      ],
+      "synopsis": "Path homotopy rel endpoints: routes between gatehouses, Tide Glass slide, ledger classes, hedge obstruction.",
+      "scenes": [
+        {
+          "id": "A",
+          "start": 0,
+          "end": 18,
+          "title": "Routes",
+          "description": "Gold thread between two gatehouses; endpoints pinned."
+        },
+        {
+          "id": "B",
+          "start": 18,
+          "end": 38,
+          "title": "Homotopy",
+          "description": "Ghost copies slide one route onto another; posts fixed."
+        },
+        {
+          "id": "C",
+          "start": 38,
+          "end": 58,
+          "title": "Controls",
+          "description": "Gyroid with Spool and Tide Glass on the lawn."
+        },
+        {
+          "id": "D",
+          "start": 58,
+          "end": 68,
+          "title": "Summary",
+          "description": "Ledger bins and hedge left/right."
+        }
+      ],
+      "captions": [
+        {
+          "t": 1,
+          "end": 6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Fix two gates $A$ and $B$. A route is a path from $A$ to $B$."
+        },
+        {
+          "t": 18.5,
+          "end": 24,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Two routes are the same delivery if one slides into the other — a path homotopy rel the gates. At every moment the endpoints stay put: $F(a,t)=F(a,0)$ for $a\\in A$."
+        },
+        {
+          "t": 39,
+          "end": 44,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Spool (2) to walk a route. Tide Glass (3) scrubs the slide time $t$."
+        },
+        {
+          "t": 58.5,
+          "end": 64,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "Left of the hedge and right of the hedge — different bins. Got it."
+        }
+      ],
+      "title_card": {
+        "t": 64,
+        "end": 68
+      }
+    },
+    {
+      "id": "level-1-2-lesson",
+      "title": "Loops at a Point",
+      "plays": "World 1 · Level 2 lesson",
+      "world": 1,
+      "level_id": "1-2",
+      "status": "scripted",
+      "story_start": 0,
+      "story_end": 72,
+      "pace": [
+        [
+          0,
+          null,
+          0.85
+        ]
+      ],
+      "scenes": [
+        {
+          "id": "A",
+          "start": 0,
+          "end": 12,
+          "title": "Based loops",
+          "description": "Loop at basepoint x₀."
+        },
+        {
+          "id": "B",
+          "start": 12,
+          "end": 28,
+          "title": "Group law",
+          "description": "Concatenate, identity, inverses."
+        },
+        {
+          "id": "C",
+          "start": 28,
+          "end": 44,
+          "title": "Change of base",
+          "description": "h γ h⁻¹."
+        },
+        {
+          "id": "D",
+          "start": 44,
+          "end": 52,
+          "title": "Loop Lash",
+          "description": "Tool intro."
+        },
+        {
+          "id": "E",
+          "start": 52,
+          "end": 66,
+          "title": "Demo",
+          "description": "Gyroid closes a loop on the ring."
+        },
+        {
+          "id": "F",
+          "start": 66,
+          "end": 72,
+          "title": "Summary",
+          "description": "Summary card."
+        }
+      ],
+      "captions": [
+        {
+          "t": 0.8,
+          "end": 5,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Fix a basepoint. A based loop leaves it and returns — same point the whole time."
+        },
+        {
+          "t": 12.4,
+          "end": 16.8,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Run one loop, then another: that’s concatenation. The group law."
+        },
+        {
+          "t": 17,
+          "end": 21,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Standing still is the identity. Run a loop backwards — that’s the inverse."
+        },
+        {
+          "t": 28.4,
+          "end": 32.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Walk a path h to a new beacon. Every loop γ becomes h γ h⁻¹ — nothing lost."
+        },
+        {
+          "t": 44.4,
+          "end": 48,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Your Lash closes loops now. Leave the beacon, round a ring, come home."
+        },
+        {
+          "t": 52.4,
+          "end": 56,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "Out… round… and home. The ledger got it."
+        },
+        {
+          "t": 66.4,
+          "end": 70,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "That’s π₁ at a point. Now go practice on the Bastion rings."
+        }
+      ],
+      "title_card": {
+        "t": 66,
+        "end": 72
+      }
+    },
+    {
+      "id": "level-1-3-lesson",
+      "title": "The Winding Number",
+      "plays": "Replay from Level 3 · ? How it works",
+      "world": 1,
+      "level_id": "1-3",
+      "status": "scripted",
+      "story_start": 0,
+      "story_end": 68,
+      "pace": [
+        [
+          0,
+          null,
+          0.85
+        ]
+      ],
+      "synopsis": "The helix cover ℝ → S¹: path lifting, homotopy lifting, winding numbers in ℤ, and the in-game Cord and Tide Glass.",
+      "scenes": [
+        {
+          "id": "A",
+          "start": 0,
+          "end": 12,
+          "title": "Cover",
+          "description": "Helix over the ring; one lap lifts one floor."
+        },
+        {
+          "id": "B",
+          "start": 12,
+          "end": 28,
+          "title": "Winding",
+          "description": "Endpoint of the lift is the winding number n."
+        },
+        {
+          "id": "C",
+          "start": 28,
+          "end": 48,
+          "title": "Homotopy",
+          "description": "Deform the loop; the floor stays."
+        },
+        {
+          "id": "D",
+          "start": 48,
+          "end": 58,
+          "title": "Controls",
+          "description": "Gyroid runs the ring with the Winding Cord; Tide Glass slides."
+        },
+        {
+          "id": "E",
+          "start": 58,
+          "end": 68,
+          "title": "Summary",
+          "description": "Summary card and title."
+        }
+      ],
+      "captions": [
+        {
+          "t": 0.8,
+          "end": 5.2,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "The circle’s universal cover is a helix. Each lap downstairs is one turn upstairs."
+        },
+        {
+          "t": 12.4,
+          "end": 17,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Close a loop downstairs and the lift ends on a floor — that integer is the winding number."
+        },
+        {
+          "t": 28.4,
+          "end": 33,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Slide the loop with a homotopy. Homotopy lifting keeps the same floor."
+        },
+        {
+          "t": 48.4,
+          "end": 52.4,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "Cord counts laps. Glass wiggles without changing the count."
+        },
+        {
+          "t": 58.4,
+          "end": 62,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Bank laps at the beacon — they add. Reverse a lap and the count negates."
+        }
+      ],
+      "title_card": {
+        "t": 64,
+        "end": 68
+      }
+    },
+    {
+      "id": "level-1-4-lesson",
+      "title": "No Way Out",
+      "plays": "Lesson · World 1 · Level 4",
+      "world": 1,
+      "level_id": "1-4",
+      "status": "scripted",
+      "story_start": 0,
+      "story_end": 70,
+      "pace": [
+        [
+          0,
+          null,
+          0.85
+        ]
+      ],
+      "synopsis": "Rim winding vs disk; no retraction; still points; roots; antipodes.",
+      "scenes": [
+        {
+          "id": "A",
+          "start": 0,
+          "end": 12,
+          "title": "Rim",
+          "description": "Gyroid walks the rim; cord reads one."
+        },
+        {
+          "id": "B",
+          "start": 12,
+          "end": 28,
+          "title": "Shrink",
+          "description": "Inner loop shrinks; Retractor would rewind 0 to 1."
+        },
+        {
+          "id": "C",
+          "start": 28,
+          "end": 44,
+          "title": "Still point",
+          "description": "Arrow field; boundary index 1."
+        },
+        {
+          "id": "D",
+          "start": 44,
+          "end": 56,
+          "title": "Roots",
+          "description": "Winding 3 on the pool rim."
+        },
+        {
+          "id": "E",
+          "start": 56,
+          "end": 64,
+          "title": "Controls",
+          "description": "Cord on loops; click stills and roots."
+        },
+        {
+          "id": "F",
+          "start": 64,
+          "end": 70,
+          "title": "Summary",
+          "description": "Summary card."
+        }
+      ],
+      "captions": [
+        {
+          "t": 0.8,
+          "end": 5,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "The rim loop winds once. Every loop in the filled basin shrinks to a point."
+        },
+        {
+          "t": 12.4,
+          "end": 17,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "A retraction would carry that shrink onto the rim — turning winding zero back into one. Impossible."
+        },
+        {
+          "t": 28.4,
+          "end": 33,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Walk the rim of an arrow field. If the arrows spin once around you, a still tile waits inside."
+        },
+        {
+          "t": 44.4,
+          "end": 49,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Winding three on a big circle means three roots inside — like $z^3 - 1$."
+        },
+        {
+          "t": 56.4,
+          "end": 61,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "Cord on the loop, click the still tile, lash the drones. Got it."
+        }
+      ],
+      "title_card": {
+        "t": 64,
+        "end": 70
+      }
+    },
+    {
+      "id": "level-1-5-lesson",
+      "title": "Push It Forward",
+      "plays": "Replay from Level 5 · ? How it works",
+      "world": 1,
+      "level_id": "1-5",
+      "status": "scripted",
+      "story_start": 0,
+      "story_end": 66,
+      "pace": [
+        [
+          0,
+          null,
+          0.85
+        ]
+      ],
+      "synopsis": "Induced homomorphisms on S¹, retractions and injectivity, π₁(T²) ≅ ℤ², grid lift, and in-game Cord / projector / Sling.",
+      "scenes": [
+        {
+          "id": "A",
+          "start": 0,
+          "end": 18,
+          "title": "Induced map",
+          "description": "Projector doubles winding on the target circle."
+        },
+        {
+          "id": "B",
+          "start": 18,
+          "end": 40,
+          "title": "Grid lift",
+          "description": "Two belt roads; endpoint (m,n); commute."
+        },
+        {
+          "id": "C",
+          "start": 40,
+          "end": 58,
+          "title": "Controls",
+          "description": "Gyroid walks the source road with the Cord; clicks projector."
+        },
+        {
+          "id": "D",
+          "start": 58,
+          "end": 66,
+          "title": "Summary",
+          "description": "Summary card."
+        }
+      ],
+      "captions": [
+        {
+          "t": 0.8,
+          "end": 5.4,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "A map between spaces pushes loops forward. On the circle, winding numbers multiply."
+        },
+        {
+          "t": 18.4,
+          "end": 23.2,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "The torus is two circles. A loop needs two integers — and the two roads commute."
+        },
+        {
+          "t": 40.4,
+          "end": 44.8,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "Cord on the road, click the projector — Sling if I need the upper terrace."
+        },
+        {
+          "t": 58.4,
+          "end": 62,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Split a torus loop into its two shadows; rebuild from the factors."
+        }
+      ],
+      "title_card": {
+        "t": 62,
+        "end": 66
+      }
+    },
+    {
+      "id": "level-1-6-lesson",
+      "title": "Free Words",
+      "plays": "Replay in World 1 · Level 6",
+      "world": 1,
+      "level_id": "1-6",
+      "status": "scripted",
+      "story_start": 0,
+      "story_end": 68,
+      "pace": [
+        [
+          0,
+          null,
+          0.85
+        ]
+      ],
+      "synopsis": "Laps print letters; adjacent inverses cancel; ab ≠ ba; demo laps and the Clasp.",
+      "scenes": [
+        {
+          "id": "A",
+          "start": 0,
+          "end": 12,
+          "title": "Free group",
+          "description": "Diagram: reduced words on a bouquet."
+        },
+        {
+          "id": "B",
+          "start": 12,
+          "end": 28,
+          "title": "Cancel",
+          "description": "a next to a⁻¹ vanishes; aba⁻¹b⁻¹ does not."
+        },
+        {
+          "id": "C",
+          "start": 28,
+          "end": 44,
+          "title": "Order",
+          "description": "ab vs ba side by side."
+        },
+        {
+          "id": "D",
+          "start": 44,
+          "end": 52,
+          "title": "Patrol",
+          "description": "Ribbon guard and reverse lash order."
+        },
+        {
+          "id": "E",
+          "start": 52,
+          "end": 66,
+          "title": "Demo",
+          "description": "Gyroid walks laps; tape updates; Clasp at hub."
+        },
+        {
+          "id": "F",
+          "start": 66,
+          "end": 68,
+          "title": "Summary",
+          "description": "Summary card."
+        }
+      ],
+      "captions": [
+        {
+          "t": 0.6,
+          "end": 4.8,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "On a bouquet, every loop is a word in $a$ and $b$. Only adjacent inverses cancel."
+        },
+        {
+          "t": 12.4,
+          "end": 16.4,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Reduce by stripping $aa^{-1}$ pairs. The patrol word $aba^{-1}b^{-1}$ never shrinks."
+        },
+        {
+          "t": 28.4,
+          "end": 32.4,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "$a$ then $b$… and $b$ then $a$. Different tapes."
+        },
+        {
+          "t": 32.6,
+          "end": 36.6,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "In the free group, $ab \\neq ba$. We'll prove it with covers at the Viaduct."
+        },
+        {
+          "t": 44.4,
+          "end": 48.4,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Lash the patrol in reverse word order — one strike per letter."
+        },
+        {
+          "t": 52.4,
+          "end": 56.4,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "Lap, lap — the tape fills. Clasp at the beacon."
+        },
+        {
+          "t": 64,
+          "end": 67.6,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "Got it. Letters, cancel, order."
+        }
+      ],
+      "title_card": {
+        "t": 66,
+        "end": 68
+      }
+    },
+    {
+      "id": "level-1-7-lesson",
+      "title": "Glue and Van Kampen",
+      "plays": "Replay from Glue Job — ? How it works",
+      "world": 1,
+      "level_id": "1-7",
+      "status": "scripted",
+      "story_start": 0,
+      "story_end": 72,
+      "pace": [
+        [
+          0,
+          null,
+          0.85
+        ]
+      ],
+      "scenes": [
+        {
+          "id": "A",
+          "start": 0,
+          "end": 12,
+          "title": "Relations",
+          "description": "Disk along a; a becomes trivial."
+        },
+        {
+          "id": "B",
+          "start": 12,
+          "end": 34,
+          "title": "Torus",
+          "description": "Attach a b a⁻¹ b⁻¹; commutator dies."
+        },
+        {
+          "id": "C",
+          "start": 34,
+          "end": 50,
+          "title": "Half turn",
+          "description": "Attach a a; ℤ₂."
+        },
+        {
+          "id": "D",
+          "start": 50,
+          "end": 66,
+          "title": "Van Kampen",
+          "description": "Two pieces, overlap clasp."
+        },
+        {
+          "id": "E",
+          "start": 66,
+          "end": 72,
+          "title": "Demo",
+          "description": "Gyroid walks a, presses disk."
+        }
+      ],
+      "captions": [
+        {
+          "t": 0.6,
+          "end": 5,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Glue a disk along a loop, and that word becomes a relation."
+        },
+        {
+          "t": 12.4,
+          "end": 17,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Along a b a⁻¹ b⁻¹, the bouquet becomes a torus — and a b equals b a."
+        },
+        {
+          "t": 34.4,
+          "end": 39,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Along a a, twice slides away. The group is ℤ₂."
+        },
+        {
+          "t": 50.4,
+          "end": 55,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Two pieces overlap: identify their words on the shared loop — Van Kampen."
+        },
+        {
+          "t": 66.4,
+          "end": 70,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "Walk the word, press the furnace. Got it."
+        }
+      ],
+      "title_card": {
+        "t": 68,
+        "end": 72
+      }
+    },
+    {
+      "id": "level-1-9-lesson",
+      "title": "Sheet Music",
+      "plays": "After the 1-9 intro; replayable from “How it works”",
+      "world": 1,
+      "level_id": "1-9",
+      "status": "scripted",
+      "kind": "lesson",
+      "story_start": 0,
+      "story_end": 66,
+      "pace": [
+        [
+          0,
+          null,
+          0.85
+        ]
+      ],
+      "synopsis": "Connected covers ↔ subgroups; build a two-sheet order; conjugate by moving the start; walk the universal tree and the plane over a torus; then Clasp and Compass controls.",
+      "scenes": [
+        {
+          "id": "A",
+          "start": 0,
+          "end": 14,
+          "title": "To order",
+          "description": "Clasp cycles glues until a² closes, a does not, b closes — two sheets."
+        },
+        {
+          "id": "B",
+          "start": 14,
+          "end": 26,
+          "title": "Conjugate",
+          "description": "Moving the start vertex relabels the order; same cover."
+        },
+        {
+          "id": "C",
+          "start": 26,
+          "end": 40,
+          "title": "Tree",
+          "description": "Reduced words are vertices on the Cayley tree."
+        },
+        {
+          "id": "D",
+          "start": 40,
+          "end": 50,
+          "title": "Plane",
+          "description": "Torus loops lift to (m,n) on ℤ²."
+        },
+        {
+          "id": "E",
+          "start": 50,
+          "end": 58,
+          "title": "Controls",
+          "description": "Gyroid demos Clasp on ports and Compass on branches."
+        },
+        {
+          "id": "F",
+          "start": 58,
+          "end": 66,
+          "title": "Summary",
+          "description": "Summary card: orders, conjugacy, tree, plane."
+        }
+      ],
+      "captions": [
+        {
+          "t": 0.8,
+          "end": 5.2,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "A connected cover is a subgroup: tell the Stacks which loops should close."
+        },
+        {
+          "t": 8.4,
+          "end": 12.8,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "Twice $a$ closes, once doesn’t — two sheets."
+        },
+        {
+          "t": 15.2,
+          "end": 20,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Move the start vertex and the order conjugates — same glass, different words."
+        },
+        {
+          "t": 27.4,
+          "end": 32,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "The universal cover is a tree: every reduced word is its own vertex."
+        },
+        {
+          "t": 41.2,
+          "end": 46,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Over a torus, the universal cover is a plane. $a$ and $b$ are grid steps."
+        },
+        {
+          "t": 51.2,
+          "end": 55.6,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "Clasp (5) glues sheets. Compass (6) reads lifts."
+        },
+        {
+          "t": 59.2,
+          "end": 63.8,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Build to order, move the start, walk the tree and the grid — that’s sheet music."
+        }
+      ],
+      "title_card": {
+        "t": 63,
+        "end": 66
+      }
+    },
+    {
+      "id": "level-1-10-lesson",
+      "title": "Deck Shifts",
+      "plays": "Replay in World 1 · Level 10",
+      "world": 1,
+      "level_id": "1-10",
+      "status": "scripted",
+      "story_start": 0,
+      "story_end": 62,
+      "pace": [
+        [
+          0,
+          null,
+          0.85
+        ]
+      ],
+      "synopsis": "Deck transformations, normal covers, and the antipodal sphere over RP².",
+      "scenes": [
+        {
+          "id": "A",
+          "start": 0,
+          "end": 12,
+          "title": "Rotate",
+          "description": "Three sheets rotate; ports stay matched."
+        },
+        {
+          "id": "B",
+          "start": 12,
+          "end": 28,
+          "title": "Normal",
+          "description": "Transitive vs lopsided fibers."
+        },
+        {
+          "id": "C",
+          "start": 28,
+          "end": 44,
+          "title": "Antipode",
+          "description": "Half-loop lift between opposite doors."
+        },
+        {
+          "id": "D",
+          "start": 44,
+          "end": 58,
+          "title": "Controls",
+          "description": "Compass on the wheel; lash stacked guards."
+        },
+        {
+          "id": "E",
+          "start": 58,
+          "end": 62,
+          "title": "Summary",
+          "description": "Summary card."
+        }
+      ],
+      "captions": [
+        {
+          "t": 0.8,
+          "end": 5,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "A deck transformation rotates every sheet at once — but only if every port label still agrees."
+        },
+        {
+          "t": 12.4,
+          "end": 17,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Normal covers: the deck group can send any sheet to any other over a point."
+        },
+        {
+          "t": 28.4,
+          "end": 33,
+          "speaker": "Emmy Boundary",
+          "portrait": "emmy-boundary",
+          "text": "Antipodal doors on the sphere: the same room downstairs in the projective plane."
+        },
+        {
+          "t": 44.4,
+          "end": 49,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "Six — Compass on the wheel. One — Lash when every guard stacks."
+        },
+        {
+          "t": 58.2,
+          "end": 61,
+          "speaker": "Gyroid",
+          "portrait": "gyroid",
+          "text": "Shift the deck. Line them up. One strike."
+        }
+      ],
+      "title_card": {
+        "t": 58,
+        "end": 62
+      }
+    }
+  ]
+}

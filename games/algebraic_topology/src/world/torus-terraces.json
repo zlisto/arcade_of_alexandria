@@ -1,0 +1,65 @@
+{
+  "note": "World 1 · Level 5 — Torus Terraces (level-local units: x east, z south). Four terrace stations along a causeway; the torus deck has tube and hole belt roads. Gyroid arrives from the south; exit north toward Free-Word Forge.",
+  "bounds": { "minX": -22, "maxX": 22, "minZ": -28, "maxZ": 18 },
+  "causewayWidth": 1.5,
+  "start": [0, 14],
+  "sites": [
+    { "id": "landing", "name": "Terrace Landing", "kind": "start", "pos": [0, 14], "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 1.8 }] } },
+    {
+      "id": "projector_deck",
+      "name": "The Projector",
+      "stage": "station",
+      "pos": [0, 4],
+      "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 5.4 }] },
+      "emmy": [-3.8, -1.6],
+      "enemies": [["sphere", -2.8, 2.4], ["projector_imp", 3.2, -2.6]],
+      "projector": { "at": [1.8, 0.6], "degree": 2, "source": { "cx": -2.2, "cz": 1.4, "r": 2.6 }, "target": { "cx": 2.4, "cz": -1.8, "r": 2.6 } },
+      "lift": { "at": [-3.6, 2.8], "to": [0, 3.2] }
+    },
+    {
+      "id": "retract_deck",
+      "name": "Retract Check",
+      "stage": "station",
+      "pos": [-12, -4],
+      "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 5.4 }] },
+      "emmy": [-3.6, -1.4],
+      "enemies": [["torus", -2.4, 2.8], ["sphere", 3, 2.2]],
+      "ring": { "cx": 0, "cz": 0, "r": 3.8 },
+      "markers": [{ "w": 1, "at": [3.8, 0] }, { "w": 2, "at": [0, 3.8] }]
+    },
+    {
+      "id": "two_roads",
+      "name": "Two Roads",
+      "stage": "station",
+      "pos": [12, -4],
+      "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 5.6 }] },
+      "emmy": [-4, -1.6],
+      "enemies": [["torus", 0, 3.4], ["projector_imp", 3.6, -2.8]],
+      "tube": { "cx": 0, "cz": 0, "r": 4.6 },
+      "hole": { "cx": 0, "cz": 0, "r": 2.3 },
+      "gridOrigin": [12, -9.5]
+    },
+    {
+      "id": "shadows_deck",
+      "name": "Shadows",
+      "stage": "station",
+      "pos": [0, -14],
+      "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 5.4 }] },
+      "emmy": [-3.8, -1.8],
+      "enemies": [["torus", -2.6, 2.6], ["torus", 2.8, 2.4]],
+      "wave": [["projector_imp", -3.8, -3], ["projector_imp", 3.6, -3.2]],
+      "tube": { "cx": -2.2, "cz": 0.8, "r": 2.4 },
+      "hole": { "cx": 2.2, "cz": 0.8, "r": 2.4 },
+      "puzzle": { "given": [2, 3] }
+    }
+  ],
+  "causeways": [
+    { "a": [0, 12.4], "b": [0, 9.4] },
+    { "a": [-3.4, 2.8], "b": [-9.4, -1.2] },
+    { "a": [3.4, 2.8], "b": [9.4, -1.2] },
+    { "a": [-9.4, -6.8], "b": [-3.2, -10.8] },
+    { "a": [9.4, -6.8], "b": [3.2, -10.8] },
+    { "a": [0, -8.6], "b": [0, -11.6] }
+  ],
+  "exit": { "gate": [0, -19.2], "a": [0, -17.4], "b": [0, -21] }
+}

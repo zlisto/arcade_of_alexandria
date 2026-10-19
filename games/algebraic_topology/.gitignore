@@ -1,0 +1,6 @@
+node_modules
+dist
+.DS_Store
+*.local
+.vite
+# docs/ is the GitHub Pages build output — commit it after npm run build

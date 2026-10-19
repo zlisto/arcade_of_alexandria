@@ -1,0 +1,471 @@
+{
+  "note": "World 0 (Retract Reef) layout in world units (x east, z south, y up). One source of truth for the playable overworld (Level 0-1), the intro cinematic, and — via scripts/sync-map — the bible's overworld map. Site shapes are in site-local coordinates; a site sits at `pos`. The intro's anchors: the Ringed Isle at the origin, the long Walkway along z = 10, Null's Hollow Throne spire at (-16, -14).",
+  "bounds": {
+    "minX": -31,
+    "maxX": 32,
+    "minZ": -30,
+    "maxZ": 13
+  },
+  "ringedIsle": {
+    "pos": [
+      0,
+      0
+    ],
+    "R": 3,
+    "r": 0.7
+  },
+  "sites": [
+    {
+      "id": "landing_pier",
+      "name": "Landing Pier",
+      "kind": "start",
+      "pos": [
+        7.7,
+        10
+      ],
+      "shape": {
+        "add": [
+          {
+            "type": "circle",
+            "cx": 0,
+            "cz": 0,
+            "r": 1.6
+          }
+        ]
+      },
+      "playable": false
+    },
+    {
+      "id": "the_walkway",
+      "name": "The Walkway",
+      "kind": "level",
+      "level_id": "0-1",
+      "stage": "walkway",
+      "pos": [
+        -4,
+        10
+      ],
+      "shape": {
+        "add": [
+          {
+            "type": "rect",
+            "x0": -10,
+            "x1": 10,
+            "z0": -0.85,
+            "z1": 0.85
+          }
+        ]
+      },
+      "beacons": [
+        [
+          -9.6,
+          0
+        ],
+        [
+          9.6,
+          0
+        ]
+      ],
+      "givenSpine": [
+        [
+          [
+            -9.6,
+            0
+          ],
+          [
+            9.6,
+            0
+          ]
+        ]
+      ],
+      "enemies": [
+        [
+          "sphere",
+          -2,
+          0.3
+        ],
+        [
+          "sphere",
+          3.5,
+          -0.4
+        ]
+      ],
+      "playable": true
+    },
+    {
+      "id": "the_fork",
+      "name": "The Fork",
+      "kind": "level",
+      "level_id": "0-1",
+      "stage": "fork",
+      "pos": [
+        -20,
+        3
+      ],
+      "shape": {
+        "add": [
+          {
+            "type": "rect",
+            "x0": -3,
+            "x1": 3,
+            "z0": -2.1,
+            "z1": -0.75
+          },
+          {
+            "type": "rect",
+            "x0": -0.7,
+            "x1": 0.7,
+            "z0": -2.1,
+            "z1": 2.3
+          }
+        ]
+      },
+      "beacons": [
+        [
+          -2.75,
+          -1.45
+        ],
+        [
+          2.75,
+          -1.45
+        ],
+        [
+          0,
+          2.05
+        ]
+      ],
+      "enemies": [
+        [
+          "sphere",
+          -2.2,
+          -1.4
+        ],
+        [
+          "sphere",
+          2.2,
+          -1.5
+        ],
+        [
+          "sphere",
+          0.15,
+          0.6
+        ]
+      ],
+      "playable": true
+    },
+    {
+      "id": "the_o",
+      "name": "The O",
+      "kind": "level",
+      "level_id": "0-1",
+      "stage": "ring",
+      "pos": [
+        -26,
+        -6
+      ],
+      "shape": {
+        "add": [
+          {
+            "type": "circle",
+            "cx": 0,
+            "cz": 0,
+            "r": 2.75
+          }
+        ],
+        "sub": [
+          {
+            "type": "circle",
+            "cx": 0,
+            "cz": 0,
+            "r": 1.3
+          }
+        ]
+      },
+      "beacons": [
+        [
+          0,
+          2.02
+        ]
+      ],
+      "enemies": [
+        [
+          "torus",
+          1.85,
+          -0.9
+        ],
+        [
+          "sphere",
+          -1.6,
+          -1.4
+        ]
+      ],
+      "playable": true
+    },
+    {
+      "id": "twin_lagoons",
+      "name": "Twin Lagoons",
+      "kind": "level",
+      "level_id": "0-1",
+      "stage": "lagoons",
+      "pos": [
+        -4,
+        -13
+      ],
+      "shape": {
+        "add": [
+          {
+            "type": "circle",
+            "cx": 0,
+            "cz": 0,
+            "r": 3.15
+          }
+        ],
+        "sub": [
+          {
+            "type": "circle",
+            "cx": -1.4,
+            "cz": 0,
+            "r": 0.8
+          },
+          {
+            "type": "circle",
+            "cx": 1.4,
+            "cz": 0,
+            "r": 0.8
+          }
+        ]
+      },
+      "beacons": [
+        [
+          0,
+          0
+        ]
+      ],
+      "enemies": [
+        [
+          "torus",
+          -2.2,
+          1.6
+        ],
+        [
+          "torus",
+          2.3,
+          -1.4
+        ],
+        [
+          "sphere",
+          0,
+          -2.3
+        ],
+        [
+          "sphere",
+          2.0,
+          1.9
+        ]
+      ],
+      "playable": true
+    },
+    {
+      "id": "nulls_mirage",
+      "name": "Null's Mirage",
+      "kind": "level",
+      "level_id": "0-1",
+      "stage": "forgeries",
+      "pos": [
+        6,
+        -16
+      ],
+      "shape": {
+        "add": [
+          {
+            "type": "rect",
+            "x0": -3.4,
+            "x1": 3.4,
+            "z0": -0.85,
+            "z1": 0.85
+          }
+        ]
+      },
+      "givenSpine": [
+        [
+          [
+            -3.2,
+            0
+          ],
+          [
+            3.2,
+            0
+          ]
+        ]
+      ],
+      "playable": true
+    }
+  ],
+  "causeways": [
+    {
+      "from": "landing_pier",
+      "to": "the_walkway",
+      "a": [
+        6.3,
+        10
+      ],
+      "b": [
+        5.6,
+        10
+      ]
+    },
+    {
+      "from": "the_walkway",
+      "to": "the_fork",
+      "a": [
+        -13.6,
+        10
+      ],
+      "b": [
+        -20,
+        5.1
+      ]
+    },
+    {
+      "from": "the_fork",
+      "to": "the_o",
+      "a": [
+        -22.8,
+        1.6
+      ],
+      "b": [
+        -25,
+        -3.6
+      ]
+    },
+    {
+      "from": "the_fork",
+      "to": "twin_lagoons",
+      "a": [
+        -17.2,
+        1.6
+      ],
+      "b": [
+        -6.1,
+        -10.8
+      ]
+    },
+    {
+      "from": "twin_lagoons",
+      "to": "nulls_mirage",
+      "a": [
+        -1.2,
+        -14.3
+      ],
+      "b": [
+        2.8,
+        -15.9
+      ]
+    }
+  ],
+  "causewayWidth": 1.3,
+  "gate": {
+    "id": "broken_causeway",
+    "from": "nulls_mirage",
+    "to": "tidewarp_flats",
+    "a": [
+      9.3,
+      -15.6
+    ],
+    "b": [
+      14.4,
+      -5.7
+    ],
+    "gap": [
+      0.38,
+      0.62
+    ],
+    "needs": "anchor_spool",
+    "note": "Broken causeway: lay a spine across it with the Spool."
+  },
+  "scenery": {
+    "tidewarp_flats": {
+      "name": "Tidewarp Flats",
+      "level_id": "0-2",
+      "pos": [
+        16,
+        -2
+      ],
+      "r": 4
+    },
+    "mirror_shoals": {
+      "name": "Mirror Shoals",
+      "level_id": "0-3",
+      "pos": [
+        25,
+        -9
+      ]
+    },
+    "skeleton_foundry": {
+      "name": "Skeleton Foundry",
+      "pos": [
+        21,
+        -24
+      ],
+      "sites": [
+        {
+          "id": "assembly_hall",
+          "name": "Assembly Hall",
+          "level_id": "0-4",
+          "pos": [
+            20,
+            -20.5
+          ]
+        },
+        {
+          "id": "cone_zone",
+          "name": "Cone Zone",
+          "level_id": "0-5",
+          "pos": [
+            27.5,
+            -27
+          ]
+        },
+        {
+          "id": "timber_yard",
+          "name": "Timber Yard",
+          "level_id": "0-6",
+          "pos": [
+            13.5,
+            -27
+          ]
+        },
+        {
+          "id": "cylinder_works",
+          "name": "Cylinder Works",
+          "level_id": "0-B",
+          "pos": [
+            27,
+            -15.5
+          ],
+          "bonus": true
+        }
+      ]
+    },
+    "hollow_throne": {
+      "name": "The Hollow Throne",
+      "castle_id": "castle-0",
+      "pos": [
+        -16,
+        -14
+      ]
+    },
+    "throne_bridge": {
+      "a": [
+        13,
+        -26
+      ],
+      "b": [
+        -13.5,
+        -15.5
+      ],
+      "needs": "cell_smith",
+      "note": "Unbuilt bridge: forge its cells with the Cell-Smith."
+    }
+  }
+}

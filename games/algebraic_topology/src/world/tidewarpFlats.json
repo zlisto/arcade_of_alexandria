@@ -1,0 +1,79 @@
+{
+  "note": "Tidewarp Flats (World 0 · Level 2) in level-local units: x east, z south. Pools are holes in the flats; ribbons and Gyroid stay out of them.",
+  "outline": [
+    [-19, 10.5], [-19.6, 4], [-18.2, -3], [-17, -9], [-12, -11.6], [-4, -12.1], [4, -11.5], [11, -12.6],
+    [17.6, -12.1], [19.6, -8], [19, -1], [19.6, 5], [18, 10.6], [10, 11.6], [2, 11.1], [-6, 11.9], [-13, 11.6]
+  ],
+  "pools": [
+    { "id": "pool_crossing", "c": [7, 3], "r": 1.6, "zone": "the_pools" },
+    { "id": "nulls_pool", "c": [13, -6], "r": 1.5, "zone": "nulls_snap" },
+    { "id": "pool_w", "c": [-14.5, -5.5], "r": 1.3 },
+    { "id": "pool_s", "c": [-1, 7.5], "r": 1.1 },
+    { "id": "pool_se", "c": [14.5, 7.5], "r": 1.4 },
+    { "id": "pool_n", "c": [3.5, -8.5], "r": 1.0 }
+  ],
+  "entry": { "a": [-27, 13], "b": [-18.6, 9.6], "gap": [-23.3, -21.3], "start": [-17.2, 9] },
+  "exit": { "a": [18.4, -9.6], "b": [25.5, -13], "to": "mirror_shoals" },
+  "causewayWidth": 1.3,
+  "zones": [
+    {
+      "id": "tide_line",
+      "name": "Tide Line",
+      "center": [-12, 3.5],
+      "radius": 4.6,
+      "shrine": [-12, 7.2],
+      "ribbon": { "a": [-15, 3.5], "b": [-9, 3.5] },
+      "markers": [[0.5, 0.25], [0.28, 0.62], [0.74, 0.88]],
+      "enemies": [["sphere", -11, 0.5], ["sphere", -14.5, 1]]
+    },
+    {
+      "id": "hold_posts",
+      "name": "Hold the Posts",
+      "center": [-3, -3.5],
+      "radius": 5,
+      "shrine": [-3, 0.9],
+      "ribbon": { "a": [-6.5, -3], "b": [0.5, -3] },
+      "stakes": [
+        { "id": "k1", "pos": [-3, -6.6] },
+        { "id": "k2", "pos": [-5.2, 0.2] },
+        { "id": "k3", "pos": [-1.2, -7.2] },
+        { "id": "k4", "pos": [-2.2, 0.4] }
+      ],
+      "targets": [
+        { "stakes": ["k1"] },
+        { "stakes": ["k2", "k3"] }
+      ],
+      "enemies": [["sphere", -4, -6], ["torus", -1, -1]],
+      "snappers": [[-6.5, -6.5], [1, -6]]
+    },
+    {
+      "id": "the_pools",
+      "name": "The Pools",
+      "center": [7, 3],
+      "radius": 5,
+      "shrine": [7, 8.3],
+      "ribbon": { "a": [3.4, 3], "b": [10.6, 3], "via": [[7, 5.3]] },
+      "stakes": [
+        { "id": "s1", "pos": [7, 6.9] },
+        { "id": "n1", "pos": [7, -0.7] }
+      ],
+      "targets": [
+        { "stakes": ["s1"], "name": "near side" },
+        { "stakes": ["n1"], "name": "far side", "impossible": true }
+      ],
+      "enemies": [["torus", 4, 6.5], ["torus", 10.5, 6.5]],
+      "snappers": [[4, -0.5]]
+    },
+    {
+      "id": "nulls_snap",
+      "name": "Null's Snap",
+      "center": [13, -6.5],
+      "radius": 5.2,
+      "shrine": [10, -2.4],
+      "jump": { "a": [9.4, -10.4], "b": [16.6, -10.4], "tear": 0.57 },
+      "loop": { "post": [15.8, -6], "radius": 2.8 },
+      "nullAt": [17.4, -8.6],
+      "wave": [["snapper", 10, -4], ["snapper", 16, -3.5], ["snapper", 12, -10], ["sphere", 9, -7], ["torus", 16.5, -8.5]]
+    }
+  ]
+}

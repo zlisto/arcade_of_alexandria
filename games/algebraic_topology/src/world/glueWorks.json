@@ -1,0 +1,60 @@
+{
+  "note": "Glue Works (World 1 · Level 7): presses over loop districts. x east, z south.",
+  "bounds": { "minX": -22, "maxX": 22, "minZ": -24, "maxZ": 20 },
+  "causewayWidth": 1.5,
+  "start": [0, 16],
+  "sites": [
+    { "id": "works_landing", "name": "Works Gate", "kind": "start", "pos": [0, 16], "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 1.8 }] } },
+    {
+      "id": "circle_press",
+      "name": "Glue a Disk",
+      "stage": "station",
+      "pos": [0, 6],
+      "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 5.4 }] },
+      "tracks": [{ "angle": 1.5708, "length": 4.0 }],
+      "emmy": [-3.2, 2.4],
+      "enemies": [["sphere", -2.8, -2.8]]
+    },
+    {
+      "id": "torus_press",
+      "name": "The Torus",
+      "stage": "station",
+      "pos": [-12, -4],
+      "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 5.6 }] },
+      "tracks": [{ "angle": 3.1416, "length": 4.2 }, { "angle": 0, "length": 4.2 }],
+      "emmy": [0.8, 4.0],
+      "enemies": [["unglue", 3.2, -3.0], ["sphere", -3, 3]]
+    },
+    {
+      "id": "half_turn",
+      "name": "Half Turn",
+      "stage": "station",
+      "pos": [12, -4],
+      "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 5.4 }] },
+      "tracks": [{ "angle": 1.5708, "length": 4.1 }],
+      "emmy": [-3.4, 2.6],
+      "enemies": [["unglue", 2.8, -2.6], ["patrol", 0, 3.2]],
+      "patrolWord": "a a"
+    },
+    {
+      "id": "two_pieces",
+      "name": "Two Pieces",
+      "stage": "station",
+      "pos": [0, -14],
+      "shape": { "add": [{ "type": "rect", "x0": -8.5, "x1": 8.5, "z0": -5.5, "z1": 5.5 }] },
+      "tracks": [{ "angle": 3.1416, "length": 4.0 }, { "angle": 0, "length": 4.0 }],
+      "emmy": [-7.2, 0],
+      "overlap": [0, 0],
+      "enemies": [["patrol", -4.5, -3.5], ["patrol", 4.5, -3.5]],
+      "wave": [["unglue", -6, 4], ["unglue", 6, 4]]
+    }
+  ],
+  "causeways": [
+    { "a": [0, 14.2], "b": [0, 11.2] },
+    { "a": [-3.8, 3.2], "b": [-8.4, -0.8] },
+    { "a": [3.8, 3.2], "b": [8.4, -0.8] },
+    { "a": [-6.2, -8.8], "b": [-4.2, -10.2] },
+    { "a": [6.2, -8.8], "b": [4.2, -10.2] }
+  ],
+  "exit": { "gate": [0, -21.2], "a": [0, -19.4], "b": [0, -24.8], "to": "sheetwater" }
+}

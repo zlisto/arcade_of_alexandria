@@ -300,4 +300,5 @@ export const SWING_TOOLS = new Set(['smith', 'blade'])
 export const STROKE_TOOLS = new Set(['spool', 'coil', 'extension'])
 
 /** Tools that fire onAction(gx, gz, clickX, clickZ) on click (no lash arc). */
-export const ACTION_TOOLS = new Set(['smith', 'blade', 'sling', 'clasp', 'compass', 'dial', 'caster', 'wand'])
+// ('cord' is a track tool, but 1-4 / 1-5 also click things with it: stills, roots, the projector.)
+export const ACTION_TOOLS = new Set(['smith', 'blade', 'sling', 'clasp', 'compass', 'dial', 'caster', 'wand', 'cord'])

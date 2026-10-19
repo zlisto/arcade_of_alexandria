@@ -1,0 +1,65 @@
+{
+  "note": "World 1 · Level 3 — The Winding Road. Ring islands with a helix above each station. x east, z south.",
+  "bounds": { "minX": -22, "maxX": 22, "minZ": -8, "maxZ": 28 },
+  "causewayWidth": 1.45,
+  "start": [0, 22],
+  "helixPitch": 2.35,
+  "sites": [
+    { "id": "landing", "name": "Bastion Path", "kind": "start", "pos": [0, 22], "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 1.8 }] } },
+    {
+      "id": "the_helix",
+      "name": "The Helix",
+      "stage": "station",
+      "pos": [0, 12],
+      "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 5.5 }] },
+      "ring": { "cx": 0, "cz": 0, "r": 4.2, "inner": 3.35, "outer": 4.95 },
+      "beacon": [0, 0],
+      "emmy": [-3.4, 2.8],
+      "enemies": [["sphere", -2.5, -3.2], ["sphere", 2.8, -2.6]]
+    },
+    {
+      "id": "sliding",
+      "name": "Sliding Doesn't Count",
+      "stage": "station",
+      "pos": [13, 4],
+      "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 5.5 }] },
+      "ring": { "cx": 0, "cz": 0, "r": 4.2, "inner": 3.35, "outer": 4.95 },
+      "beacon": [0, 0],
+      "emmy": [-3.2, 3],
+      "enemies": [["sphere", 2.5, 3]]
+    },
+    {
+      "id": "unwind",
+      "name": "Unwind",
+      "stage": "station",
+      "pos": [-13, 4],
+      "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 5.5 }] },
+      "ring": { "cx": 0, "cz": 0, "r": 4.2, "inner": 3.35, "outer": 4.95 },
+      "beacon": [0, 0],
+      "emmy": [3.2, 3],
+      "winders": [[2, 1.8, -1.2], [-3, -2, 1.5]],
+      "enemies": [["sphere", -2, 3.5]]
+    },
+    {
+      "id": "number_line",
+      "name": "The Number Line",
+      "stage": "station",
+      "pos": [0, -4],
+      "shape": { "add": [{ "type": "circle", "cx": 0, "cz": 0, "r": 5.6 }] },
+      "ring": { "cx": 0, "cz": 0, "r": 4.25, "inner": 3.4, "outer": 5.0 },
+      "beacon": [0, 0],
+      "emmy": [-3.5, 3.2],
+      "gates": [2, -1, 3],
+      "enemies": [["sphere", 3, -3], ["sphere", -3, -2.5]]
+    }
+  ],
+  "causeways": [
+    { "a": [0, 20.2], "b": [0, 17.4] },
+    { "a": [3.8, 10.2], "b": [9.5, 6.2] },
+    { "a": [-3.8, 10.2], "b": [-9.5, 6.2] },
+    { "a": [9.5, 1.8], "b": [3.6, -1.2] },
+    { "a": [-9.5, 1.8], "b": [-3.6, -1.2] },
+    { "a": [0, -9.4], "b": [0, -12.2] }
+  ],
+  "exit": { "gate": [0, -14.2], "a": [0, -12.2], "b": [0, -18.5], "to": "brouwers_basin" }
+}
