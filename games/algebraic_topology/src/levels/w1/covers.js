@@ -196,9 +196,16 @@ export function cyclePortAt(cover, v, letter) {
   if (!L) return cover
   const inv = L === 'a' ? 'A' : 'B'
   const c = makeCover(cover.n, cover.adj)
+  if (!c.adj[v]) return cover
   const prev = c.adj[v][L]
   const next = (prev + 1) % c.n
-  if (c.adj[prev][inv] === v) c.adj[prev][inv] = prev
+  // Swap, so every label stays a permutation of the sheets (one edge in, one out at each vertex):
+  // whoever was sent to `next` is now sent to the sheet that `v` used to reach.
+  const u = c.adj.findIndex((row) => row[L] === next)
+  if (u >= 0 && u !== v) {
+    c.adj[u][L] = prev
+    c.adj[prev][inv] = u
+  }
   c.adj[v][L] = next
   c.adj[next][inv] = v
   return c

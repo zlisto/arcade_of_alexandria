@@ -4,11 +4,12 @@ import BeaconScene from '../../levels/w1/BeaconScene'
 import LevelMovie from '../LevelMovie'
 import LevelMap from '../LevelMap'
 import MathText from '../MathText'
+import useDialogKeys from '../useDialogKeys'
 import { useExitTrigger } from '../exitTrigger'
 import layout from '../../world/beacon-loop.json'
 import { buildSites, makeSiteWalkable } from '../../world/sites'
 import { makeTrack, makeTracker } from '../../levels/w0/cells'
-import { addLap, letter, reduce, sequenceOk, wordText } from '../../levels/w1/loops'
+import { addLap, letter, reduce, sameLoop, wordText } from '../../levels/w1/loops'
 import { DEFINITION, HINTS, OPENING, STATIONS, STATION_ORDER, emmyAdvice12 } from '../../levels/w1/stages1_2'
 import {
   dialogOpen,
@@ -28,6 +29,7 @@ import {
 import LoopLesson, { LoopLessonOverlay } from '../../movies/w1/LoopLesson'
 import LoopMovie from '../../movies/w1/LoopMovie'
 
+const E = (text) => ({ speaker: 'Emmy Boundary', portrait: 'emmy-boundary', text })
 const TYPE_CPS = 45
 const SITES = buildSites(layout)
 const SITE = Object.fromEntries(SITES.map((s) => [s.id, s]))
@@ -178,7 +180,7 @@ export default function Level1_2({ concept, onBackToTitle, onNext, startAt }) {
       setBag(nextBag)
       const nextLap = lapIdx + 1
       if (goal?.type === 'reduce' && goal.seq && nextLap >= goal.seq.length) {
-        if (!sequenceOk(goal.seq, goal.expect || [])) {
+        if (!sameLoop(nextBag, goal.expect || [])) {
           sfxWrong()
           setLapIdx(0)
           setBag([])
@@ -255,7 +257,7 @@ export default function Level1_2({ concept, onBackToTitle, onNext, startAt }) {
   useEffect(() => {
     const st = here.site
     if (!st || phase !== 'play') return
-    if (st !== current && STATIONS[st]?.early && !met[`early:${st}`]) {
+    if (st !== current && !done[st] && STATIONS[st]?.early && !met[`early:${st}`]) {
       setMet((m) => ({ ...m, [`early:${st}`]: true }))
       say(STATIONS[st].early)
       return
@@ -288,6 +290,7 @@ export default function Level1_2({ concept, onBackToTitle, onNext, startAt }) {
   const line = lines[lineIdx]
   const talking = phase.startsWith('talk')
   emmyTalking.current = talking
+  useDialogKeys(!!line, () => advance())
   useEffect(() => {
     if (!line) return
     dialogOpen()
@@ -364,7 +367,7 @@ export default function Level1_2({ concept, onBackToTitle, onNext, startAt }) {
 
   const playEnabled = !talking && !askOpen && !levelClear
   const nDone = STATION_ORDER.filter((id) => done[id]).length
-  const objective = exitOpen ? 'Walk south through the exit gate' : current ? `Beacons ${nDone}/4 · next: ${STATIONS[current].blueprint}` : ''
+  const objective = exitOpen ? 'Walk north through the exit gate' : current ? `Beacons ${nDone}/4 · next: ${STATIONS[current].blueprint}` : ''
   const stepText = (() => {
     if (!goal) return ''
     if (goal.type === 'loop' || goal.type === 'reduce') {

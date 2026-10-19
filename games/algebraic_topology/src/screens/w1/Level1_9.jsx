@@ -38,6 +38,7 @@ import {
 } from '../../audio/chip'
 import SheetMusicLesson, { SheetMusicLessonOverlay } from '../../movies/w1/SheetMusicLesson'
 import MathText from '../MathText'
+import useDialogKeys from '../useDialogKeys'
 
 const TYPE_CPS = 45
 const SITES = buildSites(layout)
@@ -119,7 +120,8 @@ export default function Level1_9({ concept, onBackToTitle, onNext, startAt }) {
     clearTimeout(toastTimer.current)
     toastTimer.current = setTimeout(() => setToast(null), ms)
   }
-  const say = useCallback((ls, next = 'play') => {
+  const say = useCallback((raw, next = 'play') => {
+    const ls = Array.isArray(raw) ? raw : raw ? [raw] : [] // HINTS19.* may be single lines
     setLines(ls)
     setLineIdx(0)
     setPhase(ls.length ? 'talk:' + next : next)
@@ -250,17 +252,19 @@ export default function Level1_9({ concept, onBackToTitle, onNext, startAt }) {
 
       if (tool === 'compass' && current === 'plane_torus') {
         const loops = goal?.loops || []
-        const hit = loops.find((l) => Math.hypot(lx, lz + 2) < 2)
-        if (!hit) {
+        if (Math.hypot(lx, lz + 2) >= 2) {
           sfxRefuse()
           flash('Compass (6) a loop pedestal on the torus deck.')
           return
         }
+        // one pedestal reads the loops in turn: the next one not yet answered
+        const hit = loops.find((l) => !torusHits[l.word])
+        if (!hit) return flash('Both lattice readings are done.')
         setTorusAsk(hit)
         return
       }
     },
-    [phase, current, tool, presetIdx, base, treeWord, goal, once, flash],
+    [phase, current, tool, presetIdx, base, treeWord, goal, once, flash, torusHits],
   )
 
   const pickTorus = (m, n) => {
@@ -318,6 +322,8 @@ export default function Level1_9({ concept, onBackToTitle, onNext, startAt }) {
   }
   const talking = phase.startsWith('talk:')
   const line = talking ? lines[lineIdx] : null
+  useDialogKeys(!!line, advance)
+  const talkToEmmy = () => say(emmyAdvice19({ here, current, goal, done, cover, base, treeWord, torusHits, coverOk }))
   emmyTalking.current = !!line && line.speaker === 'Emmy Boundary'
   useEffect(() => {
     if (talking) dialogOpen()
@@ -480,25 +486,43 @@ export default function Level1_9({ concept, onBackToTitle, onNext, startAt }) {
           </div>
         )}
 
-        {!talking && !levelClear && (
+        {!talking && !levelClear && !torusAsk && (
           <LevelMap layout={layout} sites={SITES} done={done} next={current || (exitOpen ? 'exit' : null)} pos={here.pos} title="Sheet Stacks" />
         )}
 
-        <div className="tool-row">
-          {['lash', 'clasp', 'compass'].map((t) => (
-            <button key={t} type="button" className={tool === t ? 'tool active' : 'tool'} onClick={() => setTool(t)}>
-              {t === 'lash' ? '1 Lash' : t === 'clasp' ? '5 Clasp' : '6 Compass'}
-            </button>
-          ))}
-        </div>
-        {toast && <div className="toast">{toast}</div>}
+        {toast && !line && <div className="toast">{toast}</div>}
+        {nearEmmy && phase === 'play' && !torusAsk && !levelClear && (
+          <button type="button" className="btn talk-btn" onClick={talkToEmmy}>
+            💬 Talk to Emmy <kbd>E</kbd>
+          </button>
+        )}
+        {!talking && !torusAsk && !levelClear && (
+          <div className="controls">
+            <div className="weapons">
+              {[
+                ['lash', '⚡ Lash', '1'],
+                ['clasp', '⧉ Clasp', '5'],
+                ['compass', '🧭 Compass', '6'],
+              ].map(([t, label, key]) => (
+                <button key={t} type="button" className={`weapon ${tool === t ? 'active' : ''}`} onClick={(e) => (setTool(t), e.currentTarget.blur())}>
+                  {label} <kbd>{key}</kbd>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+        {playEnabled && !toast && !talking && <div className="hint">{current && here.site === current && met[current] ? stepText : 'WASD to move · 1 Lash · 5 Clasp · 6 Compass · E talk to Emmy'}</div>}
 
-        {torusAsk && (
-          <div className="ask-panel level-1-9-torus-ask">
-            <p>
-              Lift ends at $(m,n)$ for {torusAsk.label}?
-            </p>
-            <div className="ask-grid">
+        {torusAsk && !talking && (
+          <div className="dialog verdict" style={{ cursor: 'default' }}>
+            <Portrait id="emmy-boundary" name="Emmy Boundary" />
+            <div className="dialog-body">
+              <span className="speaker">Emmy Boundary</span>
+              <p>
+                <MathText text={`Lift ends at $(m,n)$ for ${torusAsk.label}?`} />
+              </p>
+            </div>
+            <div className="btn-row" style={{ flexWrap: 'wrap', maxWidth: '12rem', justifyContent: 'flex-end' }}>
               {[
                 [1, 1],
                 [1, 0],
@@ -506,27 +530,29 @@ export default function Level1_9({ concept, onBackToTitle, onNext, startAt }) {
                 [0, 0],
                 [2, -1],
               ].map(([m, n]) => (
-                <button key={`${m},${n}`} type="button" className="btn" onClick={() => pickTorus(m, n)}>
+                <button key={`${m},${n}`} type="button" className="btn small" onClick={() => pickTorus(m, n)}>
                   ({m}, {n})
                 </button>
               ))}
+              <button type="button" className="btn small ghost" onClick={() => setTorusAsk(null)}>
+                Cancel
+              </button>
             </div>
           </div>
         )}
 
         {talking && line && (
-          <div className="dialog">
+          <div className="dialog" onClick={advance}>
             <Portrait id={line.portrait || 'gyroid'} name={line.speaker} />
             <div className="dialog-body">
               <span className="speaker">{line.speaker}</span>
               <p>
-                <MathText text={line.text.slice(0, shown)} />
-                <span className="untyped">{line.text.slice(shown)}</span>
+                <MathText text={line.text} shown={shown} />
               </p>
-              <button type="button" className="btn dialog-adv" onClick={advance}>
-                {shown < line.text.length ? '▶▶' : lineIdx + 1 < lines.length ? 'Next ▾' : 'OK'}
-              </button>
             </div>
+            <button type="button" className="btn primary small" onClick={(e) => (e.stopPropagation(), advance())}>
+              {shown < line.text.length ? '▶▶' : lineIdx + 1 < lines.length ? 'Next ▾' : 'OK'}
+            </button>
           </div>
         )}
 
@@ -545,15 +571,28 @@ export default function Level1_9({ concept, onBackToTitle, onNext, startAt }) {
 
         {levelClear && (
           <div className="win-banner exit">
-            <h2>Sheet Music</h2>
-            <p>{DEFINITION19.body}</p>
-            <p className="cite">{DEFINITION19.cite}</p>
-            <a href={DEFINITION19.href} target="_blank" rel="noreferrer">
-              Read the book
-            </a>
-            <button type="button" className="btn primary" onClick={() => onNext?.()}>
-              Next: {DEFINITION19.next} ▸
-            </button>
+            <div className="win-card wide">
+              <span className="lvl-kicker">World 1 · Level 9 clear</span>
+              <h2>{levelMeta?.title || 'Sheet Music'}</h2>
+              <p className="def">{DEFINITION19.body}</p>
+              <p className="cite">
+                {DEFINITION19.cite}{' '}
+                <a href={DEFINITION19.href} target="_blank" rel="noreferrer">
+                  Read the book
+                </a>
+              </p>
+              <div className="btn-row">
+                <button type="button" className="btn" onClick={() => setLevelClear(false)}>
+                  Keep exploring
+                </button>
+                <button type="button" className="btn" onClick={onBackToTitle}>
+                  Back to title
+                </button>
+                <button type="button" className="btn primary" onClick={() => onNext?.()}>
+                  Continue ▸ {DEFINITION19.next}
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>

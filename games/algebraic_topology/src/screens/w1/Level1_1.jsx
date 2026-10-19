@@ -15,8 +15,10 @@ import {
 } from '../../levels/w1/stages1_1'
 import {
   classOfChainRoutes,
+  concat,
   homotopicRelEndpoints,
   linearHomotopy,
+  resample,
   routeClass,
   validateLedger,
 } from '../../levels/w1/routes'
@@ -41,6 +43,7 @@ import {
 } from '../../audio/chip'
 import EndpointsLesson, { EndpointsLessonOverlay } from '../../movies/w1/EndpointsLesson'
 import MathText from '../MathText'
+import useDialogKeys from '../useDialogKeys'
 import { WORLD_TOOLS } from '../../levels/w0/worldTools'
 
 const startLevelMusic = startBastionMusic
@@ -60,11 +63,24 @@ const TOOL_KEYS = { Digit1: 'lash', Digit2: 'spool', Digit3: 'glass' }
 
 const stationAt = (x, z) => SITES.find((s) => s.stage === 'station' && s.containsWorld(x, z)) || null
 
+/** Routes the ledger sorts. At the Triple Gate it sorts whole A→C journeys: two direct routes and the two chains. */
+function ledgerRoutesFor(site) {
+  if (site?.id !== 'chained') return site?.routes || {}
+  const r = site.routes
+  const g = { a: site.gates.a, b: site.gates.b }
+  return {
+    AC_left: r.AC_left,
+    AC_right: r.AC_right,
+    'AB_left·BC_left': concat(r.AB_left, r.BC_left, g),
+    'AB_right·BC_right': concat(r.AB_right, r.BC_right, g),
+  }
+}
+
 function envFor(site) {
   const g = site.gates
-  const routes = site.routes || {}
-  const canonical = routes.L1 || routes.straight || routes.slow || Object.values(routes)[0]
-  return { gates: { a: g.a, b: g.b || g.c }, hedges: site.hedges || [], canonical, routes }
+  const routes = ledgerRoutesFor(site)
+  const canonical = routes.L1 || routes.straight || routes.slow || routes.AC_left || Object.values(routes)[0]
+  return { gates: { a: g.a, b: g.c || g.b }, hedges: site.hedges || [], canonical, routes }
 }
 
 function Portrait({ id, name }) {
@@ -151,7 +167,8 @@ export default function Level1_1({ concept, onBackToTitle, onNext, startAt }) {
     },
   }
 
-  const say = useCallback((ls, next = 'play') => {
+  const say = useCallback((raw, next = 'play') => {
+    const ls = Array.isArray(raw) ? raw : raw ? [raw] : [] // a single line object is fine too
     setLines(ls)
     setLineIdx(0)
     setPhase(ls.length ? 'talk:' + next : next)
@@ -159,6 +176,7 @@ export default function Level1_1({ concept, onBackToTitle, onNext, startAt }) {
 
   const advanceGoal = useCallback(
     (station, lines = []) => {
+      setGlassT(0) // the next slide goal starts from the beginning, not from where the last one ended
       const list = STATIONS[station].goals
       const curG = list[goalIdx[station] || 0]
       if (curG?.wave && !waveSpawned.current) {
@@ -188,7 +206,7 @@ export default function Level1_1({ concept, onBackToTitle, onNext, startAt }) {
       setGoalIdx((m) => ({ ...m, [station]: next }))
       say(lines)
     },
-    [done, goalIdx, say],
+    [done, goalIdx, say, setGlassT],
   )
 
   useEffect(() => {
@@ -239,7 +257,8 @@ export default function Level1_1({ concept, onBackToTitle, onNext, startAt }) {
     const rb = site.routes[b]
     if (!ra || !rb) return
     const ghost = linearHomotopy(ra, rb, glassT)
-    const ref = rb
+    // compare against the target route resampled to the ghost's point count (raw routes have different lengths)
+    const ref = resample(rb, ghost.length)
     let maxD = 0
     const n = Math.min(ghost.length, ref.length)
     for (let i = 0; i < n; i++) maxD = Math.max(maxD, Math.hypot(ghost[i][0] - ref[i][0], ghost[i][1] - ref[i][1]))
@@ -261,7 +280,7 @@ export default function Level1_1({ concept, onBackToTitle, onNext, startAt }) {
 
   const checkLedger = () => {
     if (!site || !goal || goal.type !== 'ledger') return
-    const routes = site.routes
+    const routes = ledgerRoutesFor(site)
     const assign = ledger[current]
     const env = envFor(site)
     const v = validateLedger(assign, routes, env)
@@ -302,11 +321,15 @@ export default function Level1_1({ concept, onBackToTitle, onNext, startAt }) {
     if (!site || goal?.type !== 'chain') return
     const g = site.gates
     const r = site.routes
+    if (!chainSwap) {
+      sfxRefuse()
+      flash('Swap the middle leg first — toggle it, then confirm.', 3400)
+      return
+    }
     const chainEnv = { gates: { a: g.a, b: g.b, c: g.c }, hedges: site.hedges, canonical: r.AC_left }
-    const ab = chainSwap ? r.AB_right : r.AB_left
-    const bc = chainSwap ? r.BC_right : r.BC_left
-    const c1 = classOfChainRoutes(ab, bc, chainEnv)
-    const c2 = classOfChainRoutes(ab, chainSwap ? r.BC_left : r.BC_right, chainEnv)
+    // A→B stays as it is; B→C is swapped from BC_left to BC_alt (same side of the hedge)
+    const c1 = classOfChainRoutes(r.AB_left, r.BC_left, chainEnv)
+    const c2 = classOfChainRoutes(r.AB_left, r.BC_alt, chainEnv)
     if (c1 === c2) {
       sfxCorrect()
       advanceGoal(current, goal.done)
@@ -380,6 +403,7 @@ export default function Level1_1({ concept, onBackToTitle, onNext, startAt }) {
   const playEnabled = phase === 'play' && !lesson
   const talking = phase.startsWith('talk')
   const line = talking ? lines[lineIdx] : null
+  useDialogKeys(!!line, advance)
   const canTalk = nearEmmy && playEnabled && !line
 
   const talkToEmmy = () => {
@@ -485,7 +509,9 @@ export default function Level1_1({ concept, onBackToTitle, onNext, startAt }) {
     return `${WORLD_TOOLS.spool.label} (2) · ${WORLD_TOOLS.glass.label} (3)`
   })()
 
-  const routeIds = site?.routes ? Object.keys(site.routes) : []
+  const routeIds = site?.routes ? Object.keys(ledgerRoutesFor(site)) : []
+  // at the Triple Gate the master ledger sorts whole journeys, so draw those instead of the loose legs
+  const routeOverrides = site?.id === 'chained' && goal?.type === 'ledger' ? { chained: ledgerRoutesFor(site) } : undefined
 
   return (
     <div className="screen level w1-1-level">
@@ -518,6 +544,7 @@ export default function Level1_1({ concept, onBackToTitle, onNext, startAt }) {
           ledger={ledger}
           glassT={glassT}
           slidePair={slidePair}
+          routeOverrides={routeOverrides}
         />
       </Canvas>
 
@@ -582,7 +609,7 @@ export default function Level1_1({ concept, onBackToTitle, onNext, startAt }) {
             {goal.type === 'chain' && (
               <div className="btn-row">
                 <button type="button" className="btn small" onClick={() => setChainSwap((s) => !s)}>
-                  {chainSwap ? 'Middle leg: alt class' : 'Middle leg: default'}
+                  {chainSwap ? 'Middle leg: swapped (B→C alt)' : 'Middle leg: B→C (original)'}
                 </button>
                 <button type="button" className="btn primary small" onClick={confirmChain}>
                   Confirm chain class

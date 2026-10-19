@@ -89,7 +89,7 @@ export const STATIONS = {
         answer: 'A half-rim (180° arc)',
         right: [
           E('Yes. A loop that goes halfway around meets its antipode on the other sheet — the lift runs door to door.'),
-          E('That is $S^2$ covering $ℝP^2$. Null’s sphere trick fails once you can see the double sheet.'),
+          E('That is $S²$ covering $ℝP²$. Null’s sphere trick fails once you can see the double sheet.'),
           G('Opposite doors, one room — got it.'),
         ],
         wrong: [E('A full rim or meridian closes upstairs too. Only a half turn reaches the antipodal door.')],

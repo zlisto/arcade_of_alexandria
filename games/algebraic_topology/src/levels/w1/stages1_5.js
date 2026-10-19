@@ -94,7 +94,7 @@ export const STATIONS = {
     blueprint: 'Shadows',
     arrive: [
       E('Last terrace: split a torus loop into its two circle shadows — laps on each factor — then rebuild.'),
-      E('The board shows $(2,3)$. Walk the tube shadow road twice and the hole shadow road three times, or click the shadow posts to set them.'),
+      E('The board shows $(2,3)$. Walk the tube shadow road twice and the hole shadow road three times. Walk a road backwards to take a lap off.'),
     ],
     goals: [
       {

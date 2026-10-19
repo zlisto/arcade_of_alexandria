@@ -27,6 +27,7 @@ import {
 } from '../../audio/chip'
 import WindingRoadLesson, { WindingRoadLessonOverlay } from '../../movies/w1/WindingRoadLesson'
 import MathText from '../MathText'
+import useDialogKeys from '../useDialogKeys'
 
 const TYPE_CPS = 45
 const SITES = buildSites(layout)
@@ -130,6 +131,7 @@ export default function Level1_3({ concept, onBackToTitle, onNext, startAt }) {
       const next = (goalIdx[station] || 0) + 1
       if (next >= list.length) {
         setDone((d) => ({ ...d, [station]: true }))
+        setBank(0) // each deck starts the cord at zero, so the Number Line gates read exactly what you bank there
         setCheckpoint([SITE[station].pos[0], SITE[station].pos[1] + 3])
         if (STATION_ORDER.every((id) => id === station || done[id])) {
           afterTalk.current = () => {
@@ -223,6 +225,7 @@ export default function Level1_3({ concept, onBackToTitle, onNext, startAt }) {
   const playEnabled = phase === 'play' && !lines.length
   const talking = phase.startsWith('talk:')
   const line = talking ? lines[lineIdx] : null
+  useDialogKeys(!!line, advance)
 
   const working = !!current && here.site === current && met[current] && playEnabled
 
@@ -232,6 +235,7 @@ export default function Level1_3({ concept, onBackToTitle, onNext, startAt }) {
       setLastLap(w)
       setBank((b) => addWindings(b, w))
       if (goal?.type === 'lap' && goal.n === w) {
+        setSlideBase(w) // the banked lap is the loop the Tide Glass will deform next
         sfxFloor()
         advanceGoal(current, goal.done)
       } else if (goal?.type === 'lap') {
@@ -271,7 +275,10 @@ export default function Level1_3({ concept, onBackToTitle, onNext, startAt }) {
   }, [working, tool, current, goal, pendingLap, bankLap])
 
   const confirmSlide = () => {
-    if (goal?.type !== 'slide' || !working || slideBase == null) return
+    if (goal?.type !== 'slide' || !working || slideBase == null) {
+      if (goal?.type === 'slide' && working) flash('Bank a lap first — touch the beacon.')
+      return
+    }
     if (Math.abs(homotopyT - 0.5) < 0.12) return flash('Scrub the Tide Glass (Z/X) to deform the loop first.')
     if (!sameWinding(slideBase * Math.PI * 2, slideBase * Math.PI * 2)) return say([WRONG.slideChanged])
     sfxCorrect()
@@ -294,8 +301,8 @@ export default function Level1_3({ concept, onBackToTitle, onNext, startAt }) {
     if (target?.unwound && !target.killed) {
       spawnRef.current?.([{ type: 'sphere', x: target.x, z: target.z, site: current }])
       setWinders((ws) => ws.map((w) => (w.id === target.id ? { ...w, killed: true } : w)))
-      const left = winders.filter((w) => w.site === current && !w.killed && w.id !== target.id)
-      if (!left.length) advanceGoal(current, goal.done)
+      // each unwind goal frees one Winder; the next goal (or the end of the deck) follows
+      advanceGoal(current, goal.done)
     }
   }, [winders, goal, current, advanceGoal])
 
@@ -374,7 +381,7 @@ export default function Level1_3({ concept, onBackToTitle, onNext, startAt }) {
             : 'Explore the Winding Road'
 
   return (
-    <div className="screen level-screen w13-level">
+    <div className="screen level w13-level">
       <Canvas shadows camera={{ position: [0, 14, 18], fov: 42 }} style={{ touchAction: 'none' }}>
         <WindingRoadScene
           layout={layout}
@@ -403,29 +410,44 @@ export default function Level1_3({ concept, onBackToTitle, onNext, startAt }) {
         />
       </Canvas>
 
-      <div className="hud">
-        <div className="hud-top">
+      <div className="ui-overlay">
+      <div className="lvl-top">
+        <div className="btn-row" style={{ justifyContent: 'flex-start' }}>
           <button type="button" className="btn ghost" onClick={onBackToTitle}>
             ◂ Title
           </button>
-          <button type="button" className="btn ghost" onClick={() => (setMuted(!muted), setAudioMuted(!muted))}>
+          <button type="button" className="btn ghost" aria-pressed={muted} onClick={(e) => (setMuted(!muted), setAudioMuted(!muted), e.currentTarget.blur())}>
             {muted ? '♪ off' : '♪ on'}
           </button>
-          <button type="button" className="btn ghost" onClick={() => setLesson(true)}>
+          <button type="button" className="btn ghost" onClick={(e) => (setLesson(true), e.currentTarget.blur())}>
             ? How it works
           </button>
         </div>
-        <span className="lvl-kicker">World 1 · Level 3 · Winding Road</span>
-        <h1>{levelMeta?.title || 'The Winding Road'}</h1>
-        <p className="objective">
-          {current ? STATIONS[current].blueprint : 'Complete'} · {stepText}
-        </p>
-        <p className="forgery-count">♥ {hearts} · here: {here.site || 'path'}</p>
+        <div className="lvl-title">
+          <span className="lvl-kicker">World 1 · Level 3 · Winding Road</span>
+          <h2>{levelMeta?.title || 'The Winding Road'}</h2>
+          <div className="hud">
+            <span className="hearts">
+              {[0, 1, 2].map((i) => (
+                <span key={i} className={i < hearts ? 'heart' : 'heart lost'}>
+                  ♥
+                </span>
+              ))}
+            </span>
+            <span className="objective">{current ? STATIONS[current].blueprint : 'Complete'}</span>
+          </div>
+          {here.site && (
+            <div className="here">
+              <strong>{SITE[here.site]?.name}</strong>
+              {done[here.site] ? ' · finished' : enemies[here.site] ? ` · spawn: ${enemies[here.site]}` : ' · clear'}
+            </div>
+          )}
+        </div>
       </div>
 
       {working && (
         <div className="rules-panel forge-panel works-panel w13-panel">
-          <p className="blueprint">{STATIONS[current].blueprint}</p>
+          <h3>{STATIONS[current].blueprint}</h3>
           <p className="forgery-count">Winding bank: {bank > 0 ? '+' : ''}{bank}</p>
           <p className="forgery-count">{stepText}</p>
         </div>
@@ -473,6 +495,7 @@ export default function Level1_3({ concept, onBackToTitle, onNext, startAt }) {
           </div>
         </div>
       )}
+      </div>
 
       {lesson && (
         <LevelMovie

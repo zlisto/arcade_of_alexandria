@@ -38,7 +38,7 @@ export const STATIONS = {
   build_cover: {
     blueprint: 'Build a cover',
     arrive: [
-      E('Three sheets over the figure-eight. At every junction, exactly one incoming and one outgoing edge per label — click a glowing port to rewire it.'),
+      E('Three sheets over the figure-eight. At every junction, exactly one incoming and one outgoing edge per label — use the sheet buttons on the panel to rewire a port.'),
       N('Mix the sheets. Maybe every loop will look the same from down there.'),
       E('Ignore him. Wire until the local rule holds and all three sheets connect.'),
     ],
@@ -76,7 +76,7 @@ export const STATIONS = {
       { type: 'prove', done: [E('There it is: $ab$ closes and $ba$ does not. In the free group, order matters — what 1-6 suspected, now proved by a cover.'), G('Sheet Compass is mine. Null’s “every loop shrinks” still waits for the sphere — but not here.')] },
       { type: 'exit', done: [E('The viaduct exit is open north — Sheet Stacks wait beyond. Walk out when ready.')] },
     ],
-    early: [E('Master deck last — prove $ab \\neq ba$.')],
+    early: [E('Master deck last — prove $ab ≠ ba$.')],
   },
 }
 

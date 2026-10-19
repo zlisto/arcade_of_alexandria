@@ -110,10 +110,15 @@ export default function Level1_8({ concept, onBackToTitle, onNext, startAt }) {
     clearTimeout(toastTimer.current)
     toastTimer.current = setTimeout(() => setToast(null), ms)
   }
-  const say = useCallback((ls, next = 'play') => {
+  const say = useCallback((raw, next = 'play') => {
+    const ls = Array.isArray(raw) ? raw : raw ? [raw] : [] // HINTS18.* are single lines
     setLines(ls)
     setLineIdx(0)
-    setPhase(ls.length ? `talk:${next}` : next)
+    if (ls.length) return setPhase(`talk:${next}`)
+    setPhase('play') // nothing to say: straight back to play, running whatever waited on the talk
+    const fn = afterTalk.current
+    afterTalk.current = null
+    fn?.()
   }, [])
   const once = (key, ls, fallback) => {
     if (!seen[key]) {
@@ -173,14 +178,14 @@ export default function Level1_8({ concept, onBackToTitle, onNext, startAt }) {
   )
 
   const onPortClick = useCallback(
-    (label) => {
-      if (tool !== 'compass') {
+    (label, sheet = 0, fromPanel = false) => {
+      if (tool !== 'compass' && !fromPanel) {
         flash('Sheet Compass (6) to rewire ports.')
         sfxRefuse()
         return
       }
       setCover((c) => {
-        const next = cyclePortAt(c, 0, label)
+        const next = cyclePortAt(c, sheet, label)
         if (goal?.type === 'wire' && isValidCover(next) && coverConnectedFrom(next, 0) && next.n === 3) {
           sfxCorrect()
           setTimeout(() => advanceGoal(current, goal.done), 0)
@@ -283,7 +288,7 @@ export default function Level1_8({ concept, onBackToTitle, onNext, startAt }) {
     }
     const next = phase.split(':')[1] || 'play'
     setLines([])
-    setPhase(next)
+    setPhase(next === 'after' ? 'play' : next)
     if (next === 'after' && afterTalk.current) {
       afterTalk.current()
       afterTalk.current = null
@@ -380,7 +385,7 @@ export default function Level1_8({ concept, onBackToTitle, onNext, startAt }) {
   const stepText = (() => {
     if (!goal) return ''
     if (goal.type === 'lap') return `Winding Cord (4): walk the loop ${goal.count}× · lift on sheet ${liftSheet + 1}`
-    if (goal.type === 'wire') return 'Compass (6): click ports until the three-sheet cover matches'
+    if (goal.type === 'wire') return 'Rewire with the buttons below until all three sheets connect (each label sends every sheet to a different sheet)'
     if (goal.type === 'rescue') return 'Walk a loop that lifts you to sheet 2'
     if (goal.type === 'prove') return 'Compass (6) on beacon: confirm ab closes, ba does not'
     if (goal.type === 'exit') return 'Walk north through the exit'
@@ -449,6 +454,20 @@ export default function Level1_8({ concept, onBackToTitle, onNext, startAt }) {
           <div className="rules-panel forge-panel works-panel">
             <h3>{STATIONS[current].blueprint}</h3>
             <p className="forgery-count">{stepText}</p>
+            {(goal?.type === 'wire' || goal?.type === 'prove') && (
+              <div className="w18-wiring">
+                {cover.adj.map((row, v) => (
+                  <div key={v} className="btn-row" style={{ justifyContent: 'flex-start', alignItems: 'center', gap: '0.35rem', marginTop: '0.3rem' }}>
+                    <span style={{ minWidth: '4.2rem', fontSize: '0.8rem' }}>Sheet {v + 1}</span>
+                    {['a', 'b'].map((L) => (
+                      <button key={L} type="button" className="btn small" onClick={() => onPortClick(L, v, true)}>
+                        {L} → {row[L] + 1}
+                      </button>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
         {line && (

@@ -48,7 +48,7 @@ export const STATIONS = {
     blueprint: 'Hedge bed · sort routes',
     arrive: [
       E('A hedge bed is a hole in the lawn. Routes around the left and right don’t slide together — different classes.'),
-      E('Drag each glowing route to a ledger bin, or click a route then a bin. Match homotopy, not shape.'),
+      E('Click a route in the ledger panel, then click its bin. Match homotopy, not shape.'),
     ],
     goals: [
       {
@@ -112,9 +112,9 @@ export const STATIONS = {
 export const HINTS = {
   knockout: [E('Hearts back. Routes and ledger progress stay — re-tie any clipped thread with the Spool.')],
   refuse: {
-    ledger: E('That route doesn’t belong in that bin — try sliding it mentally around the hedge.'),
-    slide: E('Scrub t until the ghost route matches — endpoints stay on the gate posts.'),
-    chain: E('Pick routes that meet at the middle gatehouse, then confirm the swap.'),
+    ledger: [E('That route doesn’t belong in that bin — try sliding it mentally around the hedge.')],
+    slide: [E('Scrub t until the ghost route matches — endpoints stay on the gate posts.')],
+    chain: [E('Pick routes that meet at the middle gatehouse, then confirm the swap.')],
   },
 }
 

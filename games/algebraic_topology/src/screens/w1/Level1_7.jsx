@@ -43,6 +43,7 @@ import {
 } from '../../audio/chip'
 import GlueJobLesson, { GlueJobLessonOverlay } from '../../movies/w1/GlueJobLesson'
 import MathText from '../MathText'
+import useDialogKeys from '../useDialogKeys'
 
 const TYPE_CPS = 45
 const FOLD_SECONDS = 2.6
@@ -141,10 +142,15 @@ export default function Level1_7({ concept, onBackToTitle, onNext, startAt }) {
     clearTimeout(toastTimer.current)
     toastTimer.current = setTimeout(() => setToast(null), ms)
   }
-  const say = useCallback((ls, next = 'play') => {
+  const say = useCallback((raw, next = 'play') => {
+    const ls = Array.isArray(raw) ? raw : raw ? [raw] : [] // a single line object is fine too
     setLines(ls)
     setLineIdx(0)
-    setPhase(ls.length ? 'talk:' + next : next)
+    if (ls.length) return setPhase('talk:' + next)
+    setPhase('play') // nothing to say: straight back to play (and run whatever was waiting on the talk)
+    const fn = afterTalk.current
+    afterTalk.current = null
+    fn?.()
   }, [])
 
   useEffect(() => {
@@ -457,6 +463,30 @@ export default function Level1_7({ concept, onBackToTitle, onNext, startAt }) {
   })
 
   const line = lines[lineIdx]
+  const advance = () => {
+    if (!line) return
+    if (shown < line.text.length) {
+      shownNow.current = line.text.length
+      setShown(line.text.length)
+      return
+    }
+    if (lineIdx + 1 < lines.length) {
+      setLineIdx(lineIdx + 1)
+      setShown(0)
+      dialogOpen()
+      return
+    }
+    setLines([])
+    const next = phase.split(':')[1] || 'play'
+    // 'after' / 'ask' / 'order' only say what opens next (the effects below open the panel): the player is back in play
+    setPhase(['after', 'ask', 'order'].includes(next) ? 'play' : next)
+    const fn = afterTalk.current
+    afterTalk.current = null
+    fn?.()
+  }
+  useDialogKeys(!!line, advance)
+  const talkToEmmy = () =>
+    say(emmyAdvice17({ current, done, goal, here: here.site, site: SITE[current], pres: presentation, wordWalk: wordText(word), enemies: current ? enemies[current] : 0, waveOn }))
   useEffect(() => {
     if (!line) return
     duckMusic(true)
@@ -481,7 +511,7 @@ export default function Level1_7({ concept, onBackToTitle, onNext, startAt }) {
 
   useEffect(() => {
     const onKey = (e) => {
-      if (e.code === 'KeyE' && nearEmmy && phase === 'play') {
+      if (e.code === 'KeyE' && nearEmmy && phase === 'play' && !askOpen && !orderOpen) {
         say(emmyAdvice17({ current, done, goal, here: here.site, site: SITE[current], pres: presentation, wordWalk: wordText(word), enemies: current ? enemies[current] : 0, waveOn }))
         return
       }
@@ -493,7 +523,7 @@ export default function Level1_7({ concept, onBackToTitle, onNext, startAt }) {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [nearEmmy, phase, say, current, done, goal, here.site, presentation, word, enemies, waveOn])
+  }, [nearEmmy, phase, say, current, done, goal, here.site, presentation, word, enemies, waveOn, askOpen, orderOpen])
 
   const scene = (
     <GlueScene
@@ -529,6 +559,18 @@ export default function Level1_7({ concept, onBackToTitle, onNext, startAt }) {
   )
 
   const nDone = STATION_ORDER.filter((id) => done[id]).length
+  const stepText = (() => {
+    if (!goal) return ''
+    if (goal.type === 'point') return 'Cell-Smith (2): stand on the furnace and click to forge the point'
+    if (goal.type === 'edges') return `Walk each track out and back to the furnace (${cx.edges.length}/${goal.n} edges)`
+    if (goal.type === 'disk') return `Walked: ${word.length ? wordText(word) : '—'} · target ${goal.word ? wordText(parseCellWord(goal.word)) : 'the rim'} · click the furnace to press`
+    if (goal.type === 'trivial') return 'Walk the glued loop again — it slides to nothing'
+    if (goal.type === 'commute') return 'Walk a b and b a — same class now'
+    if (goal.type === 'order') return 'Answer Emmy'
+    if (goal.type === 'clasp') return 'Clasp (5): click the amber clasp in the middle'
+    if (goal.type === 'ask') return 'Answer Emmy'
+    return ''
+  })()
   const objective = exitOpen ? 'Walk out to Sheetwater' : current ? `Presses ${nDone}/4 · ${STATIONS[current].blueprint}` : ''
 
   return (
@@ -537,126 +579,147 @@ export default function Level1_7({ concept, onBackToTitle, onNext, startAt }) {
         {scene}
       </Canvas>
 
-      <header className="hud-top">
-        <div className="hud-row">
-          <button type="button" onClick={onBackToTitle}>
-            ◂ Title
-          </button>
-          <button type="button" onClick={() => setMuted(setAudioMuted(!muted))}>
-            {muted ? '♪ off' : '♪ on'}
-          </button>
-          <button type="button" onClick={() => setLesson(true)}>
-            ? How it works
-          </button>
-        </div>
-        <p className="kicker">WORLD 1 · LEVEL 7 · GLUE JOB</p>
-        <h1>{levelMeta?.title || 'Glue Job'}</h1>
-        <p className="objective">{objective}</p>
-        <p className="here">{here.site ? `${SITE[here.site]?.name || here.site}${enemies[here.site] ? ` · ${enemies[here.site]} spawn` : ''}` : '…'}</p>
-      </header>
-
-      {current && met[current] && !askOpen && !orderOpen && (
-        <aside className="rules-panel forge-panel glue-panel">
-          <div className="forge-blueprint">{STATIONS[current].blueprint}</div>
-          {presentation && <p className="rule-math">π₁: {presentationLabel(presentation)}</p>}
-          <p className="forge-step">{goal?.type === 'disk' ? `Walked: ${wordText(word) || '—'}` : goal?.type || ''}</p>
-        </aside>
-      )}
-
-      {!askOpen && !orderOpen && phase === 'play' && (
-        <LevelMap layout={layout} sites={SITES} done={done} next={current || (exitOpen ? 'exit' : null)} pos={here.pos} title="Glue Works" />
-      )}
-
-      <footer className="hud-bottom">
-        {toast && <p className="toast">{toast}</p>}
-        <div className="tool-bar">
-          {['lash', 'smith', 'clasp'].map((t) => (
-            <button key={t} type="button" className={tool === t ? 'active' : ''} onClick={() => setTool(t)}>
-              {WORLD_TOOLS[t].label} ({WORLD_TOOLS[t].key})
+      <div className="ui-overlay">
+        <div className="lvl-top">
+          <div className="btn-row" style={{ justifyContent: 'flex-start' }}>
+            <button type="button" className="btn ghost" onClick={onBackToTitle}>
+              ◂ Title
             </button>
-          ))}
-        </div>
-        <p className="hint">lost? walk up to Emmy and press E</p>
-      </footer>
-
-      {lines.length > 0 && (
-        <div className="dialog-box" role="dialog">
-          <Portrait id={lines[lineIdx].portrait || 'gyroid'} name={lines[lineIdx].speaker} />
-          <div className="dialog">
-            <p className="speaker">{lines[lineIdx].speaker}</p>
-            <MathText text={lines[lineIdx].text.slice(0, shown)} />
-            <button
-              type="button"
-              onClick={() => {
-                if (shown < lines[lineIdx].text.length) {
-                  shownNow.current = lines[lineIdx].text.length
-                  setShown(lines[lineIdx].text.length)
-                } else if (lineIdx + 1 < lines.length) {
-                  setLineIdx(lineIdx + 1)
-                  setShown(0)
-                  dialogOpen()
-                } else {
-                  setLines([])
-                  const next = phase.split(':')[1] || 'play'
-                  setPhase(next)
-                  afterTalk.current?.()
-                  afterTalk.current = null
-                }
-              }}
-            >
-              {shown < lines[lineIdx].text.length ? '▶▶' : lineIdx + 1 < lines.length ? 'Next ▾' : 'OK'}
+            <button type="button" className="btn ghost" aria-pressed={muted} onClick={() => (setMuted(!muted), setAudioMuted(!muted))}>
+              {muted ? '♪ off' : '♪ on'}
+            </button>
+            <button type="button" className="btn ghost" onClick={() => setLesson(true)}>
+              ? How it works
             </button>
           </div>
+          <div className="lvl-title">
+            <span className="lvl-kicker">World 1 · Level 7 · Glue Works</span>
+            <h2>{levelMeta?.title || 'Glue Job'}</h2>
+            <div className="hud">
+              <span className="hearts">{[0, 1, 2].map((i) => (<span key={i} className={i < hearts ? 'heart' : 'heart lost'}>♥</span>))}</span>
+              <span className="objective">{objective}</span>
+            </div>
+            {here.site && (
+              <div className="here">
+                <strong>{SITE[here.site]?.name || here.site}</strong>
+                {enemies[here.site] ? ` · spawn: ${enemies[here.site]}` : ''}
+              </div>
+            )}
+          </div>
         </div>
-      )}
 
-      {askOpen && goal?.type === 'ask' && (
-        <div className="question-panel glue-ask">
-          <p>{goal.question}</p>
-          {goal.choices.map((c, i) => (
-            <button
-              key={c}
-              type="button"
-              onClick={() => {
-                setAskOpen(false)
-                if (i === goal.answer) {
-                  sfxCorrect()
-                  advanceGoal(current, goal.right)
-                } else {
-                  sfxWrong()
-                  say(goal.wrong, 'ask')
-                }
-              }}
-            >
-              {c}
-            </button>
-          ))}
-        </div>
-      )}
+        {current && met[current] && !askOpen && !orderOpen && (
+          <aside className="rules-panel forge-panel glue-panel">
+            <h3>{STATIONS[current].blueprint}</h3>
+            {presentation && <p className="rule-math">π₁: {presentationLabel(presentation)}</p>}
+            <p className="forge-step">{stepText}</p>
+          </aside>
+        )}
 
-      {orderOpen && goal?.type === 'order' && (
-        <div className="question-panel glue-order">
-          <p>Which word is trivial in $⟨ a \\mid a² ⟩$?</p>
-          {['a', 'aa'].map((c) => (
-            <button
-              key={c}
-              type="button"
-              onClick={() => {
-                setOrderOpen(false)
-                if (c === goal.answer) {
-                  sfxCorrect()
-                  advanceGoal(current, goal.right)
-                } else {
-                  sfxWrong()
-                  say(goal.wrong, 'order')
-                }
-              }}
-            >
-              ${c}$
+        {!askOpen && !orderOpen && !line && !levelClear && (
+          <LevelMap layout={layout} sites={SITES} done={done} next={current || (exitOpen ? 'exit' : null)} pos={here.pos} title="Glue Works" />
+        )}
+
+        {toast && !line && <div className="toast">{toast}</div>}
+        {nearEmmy && phase === 'play' && !askOpen && !orderOpen && !levelClear && (
+          <button type="button" className="btn talk-btn" onClick={talkToEmmy}>
+            💬 Talk to Emmy <kbd>E</kbd>
+          </button>
+        )}
+        {!line && !askOpen && !orderOpen && !levelClear && (
+          <div className="controls">
+            <div className="weapons">
+              {['lash', 'smith', 'clasp'].map((t) => (
+                <button key={t} type="button" className={`weapon ${tool === t ? 'active' : ''}`} onClick={(e) => (setTool(t), e.currentTarget.blur())}>
+                  {WORLD_TOOLS[t].label} <kbd>{WORLD_TOOLS[t].key}</kbd>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+        {playEnabled && !toast && !line && <div className="hint">WASD to move · 2 Cell-Smith · 5 Clasp · 1 Lash · E talk to Emmy</div>}
+
+        {line && (
+          <div className="dialog" onClick={advance}>
+            <Portrait id={line.portrait || 'gyroid'} name={line.speaker} />
+            <div className="dialog-body">
+              <span className="speaker">{line.speaker}</span>
+              <p>
+                <MathText text={line.text} shown={shown} />
+              </p>
+            </div>
+            <button type="button" className="btn primary small" onClick={(e) => (e.stopPropagation(), advance())}>
+              {shown < line.text.length ? '▶▶' : lineIdx + 1 < lines.length ? 'Next ▾' : 'OK'}
             </button>
-          ))}
-        </div>
-      )}
+          </div>
+        )}
+
+        {askOpen && !line && goal?.type === 'ask' && (
+          <div className="dialog verdict" style={{ cursor: 'default' }}>
+            <Portrait id="emmy-boundary" name="Emmy Boundary" />
+            <div className="dialog-body">
+              <span className="speaker">Emmy Boundary</span>
+              <p>
+                <MathText text={goal.question} />
+              </p>
+            </div>
+            <div className="btn-row" style={{ flexDirection: 'column' }}>
+              {goal.choices.map((c, i) => (
+                <button
+                  key={c}
+                  type="button"
+                  className="btn small"
+                  onClick={() => {
+                    setAskOpen(false)
+                    if (i === goal.answer) {
+                      sfxCorrect()
+                      advanceGoal(current, goal.right)
+                    } else {
+                      sfxWrong()
+                      say(goal.wrong, 'ask')
+                    }
+                  }}
+                >
+                  <MathText text={c} />
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {orderOpen && !line && goal?.type === 'order' && (
+          <div className="dialog verdict" style={{ cursor: 'default' }}>
+            <Portrait id="emmy-boundary" name="Emmy Boundary" />
+            <div className="dialog-body">
+              <span className="speaker">Emmy Boundary</span>
+              <p>
+                <MathText text={'Which word is trivial in $⟨ a | a² ⟩$?'} />
+              </p>
+            </div>
+            <div className="btn-row" style={{ flexDirection: 'column' }}>
+              {['a', 'aa'].map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  className="btn small"
+                  onClick={() => {
+                    setOrderOpen(false)
+                    if (c === goal.answer) {
+                      sfxCorrect()
+                      advanceGoal(current, goal.right)
+                    } else {
+                      sfxWrong()
+                      say(goal.wrong, 'order')
+                    }
+                  }}
+                >
+                  <MathText text={`$${c}$`} />
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
 
       {lesson && (
         <LevelMovie
@@ -674,18 +737,31 @@ export default function Level1_7({ concept, onBackToTitle, onNext, startAt }) {
 
       {levelClear && (
         <div className="win-banner exit">
-          <h2>Glue Job — clear</h2>
-          <MathText text={DEFINITION17.text} />
-          <p className="cite">{DEFINITION17.cite}</p>
-          <a href={DEFINITION17.link} target="_blank" rel="noreferrer">
-            Read the book
-          </a>
-          <p>Next: {DEFINITION17.next}</p>
-          {onNext && (
-            <button type="button" onClick={onNext}>
-              Continue ▸
-            </button>
-          )}
+          <div className="win-card wide">
+            <span className="lvl-kicker">World 1 · Level 7 clear</span>
+            <h2>{levelMeta?.title || 'Glue Job'}</h2>
+            <p className="def">
+              <MathText text={DEFINITION17.text} />
+            </p>
+            <p className="cite">
+              {DEFINITION17.cite}{' '}
+              <a href={DEFINITION17.link} target="_blank" rel="noreferrer">
+                Read the book
+              </a>
+            </p>
+            <p className="next-up">Next: {DEFINITION17.next}</p>
+            <div className="btn-row">
+              <button type="button" className="btn" onClick={() => setLevelClear(false)}>
+                Keep exploring
+              </button>
+              <button type="button" className="btn" onClick={onBackToTitle}>
+                Back to title
+              </button>
+              <button type="button" className="btn primary" onClick={onNext}>
+                Continue ▸
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

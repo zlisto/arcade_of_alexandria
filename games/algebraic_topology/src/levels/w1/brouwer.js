@@ -38,12 +38,14 @@ export function makeRimTracker(center, radius, band = 0.75) {
   let prev = null
   let turns = 0
   let armed = false
-  const update = (x, z) => {
+  // `need` = how many full turns to wait for (the winding-3 rim needs three laps, not one)
+  const update = (x, z, need = 1) => {
+    const goalTurns = Math.max(1, Math.abs(need)) - 0.08
     const dx = x - center[0]
     const dz = z - center[1]
     const d = Math.hypot(dx, dz)
     if (Math.abs(d - radius) > band) {
-      if (armed && Math.abs(turns) >= 0.92) {
+      if (armed && Math.abs(turns) >= goalTurns) {
         const w = Math.round(turns)
         prev = null
         turns = 0
@@ -62,7 +64,7 @@ export function makeRimTracker(center, radius, band = 0.75) {
       turns += da / (2 * Math.PI)
     }
     prev = a
-    if (Math.abs(turns) >= 0.92) {
+    if (Math.abs(turns) >= goalTurns) {
       const w = Math.round(turns)
       prev = null
       turns = 0
@@ -71,7 +73,7 @@ export function makeRimTracker(center, radius, band = 0.75) {
     }
     return null
   }
-  const progress = () => Math.min(1, Math.abs(turns))
+  const progress = (need = 1) => Math.min(1, Math.abs(turns) / Math.max(1, Math.abs(need)))
   const reset = () => {
     prev = null
     turns = 0

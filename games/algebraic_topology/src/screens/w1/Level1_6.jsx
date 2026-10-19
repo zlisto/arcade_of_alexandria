@@ -34,6 +34,7 @@ import {
 } from '../../audio/chip'
 import FreeWordLesson, { FreeWordLessonOverlay } from '../../movies/w1/FreeWordLesson'
 import MathText from '../MathText'
+import useDialogKeys from '../useDialogKeys'
 
 const TYPE_CPS = 45
 const SITES = buildSites(layout)
@@ -98,6 +99,7 @@ export default function Level1_6({ concept, onBackToTitle, onNext, startAt }) {
   const patrolApi = useRef(null)
   const toastTimer = useRef(null)
   const afterTalk = useRef(null)
+  const waveSeen = useRef(false)
   const emmyAt = useRef({ x: layout.start[0] - 1.2, z: layout.start[1] - 0.8, rotY: Math.PI, walk: 0 })
   const emmyTalking = useRef(false)
   const [nearEmmy, setNearEmmy] = useState(false)
@@ -113,7 +115,8 @@ export default function Level1_6({ concept, onBackToTitle, onNext, startAt }) {
     clearTimeout(toastTimer.current)
     toastTimer.current = setTimeout(() => setToast(null), ms)
   }
-  const say = useCallback((ls, next = 'play') => {
+  const say = useCallback((raw, next = 'play') => {
+    const ls = Array.isArray(raw) ? raw : raw ? [raw] : [] // a single line object is fine too
     setLines(ls)
     setLineIdx(0)
     setPhase(ls.length ? 'talk:' + next : next)
@@ -141,6 +144,7 @@ export default function Level1_6({ concept, onBackToTitle, onNext, startAt }) {
       const next = (goalIdx[station] || 0) + 1
       if (next >= list.length) {
         setDone((d) => ({ ...d, [station]: true }))
+        setTape([]) // each deck starts with a clean tape (a leftover letter would make the next deck's target unreachable)
         setCheckpoint(SITE[station].pos.map((v, i) => v + (i ? 2.2 : 0)))
         if (station === STATION_ORDER[STATION_ORDER.length - 1]) {
           setExitOpen(true)
@@ -156,6 +160,7 @@ export default function Level1_6({ concept, onBackToTitle, onNext, startAt }) {
         return say([...ls, ...(g.done || [])], 'after')
       }
       if (g.type === 'patrol' && g.wave) {
+        waveSeen.current = false
         setWaveOn(true)
         setWaveSpawned(true)
       }
@@ -452,7 +457,10 @@ export default function Level1_6({ concept, onBackToTitle, onNext, startAt }) {
   }, [nearEmmy, phase])
 
   useEffect(() => {
-    if (goal?.type === 'patrol' && waveSpawned && enemies.patrol_yard === 0 && current === 'patrol_yard') advanceGoal('patrol_yard', goal.done)
+    if (goal?.type !== 'patrol' || !waveSpawned || current !== 'patrol_yard') return
+    // the engine drops a site from `enemies` once nothing is alive there, so "0" is `undefined`; wait until the wave has appeared first
+    if (enemies.patrol_yard > 0) waveSeen.current = true
+    else if (waveSeen.current) advanceGoal('patrol_yard', goal.done)
   }, [enemies, goal, waveSpawned, current, advanceGoal])
 
   useExitTrigger(exitOpen, stateRef, (x, z) => Math.abs(x - layout.exit.gate[0]) < 1.6 && z < layout.exit.gate[1] - 0.8, () => setLevelClear(true))
@@ -461,6 +469,7 @@ export default function Level1_6({ concept, onBackToTitle, onNext, startAt }) {
   const talking = lines.length > 0
   const canTalk = nearEmmy && playEnabled
   const line = lines[lineIdx]
+  useDialogKeys(!!line, advance)
   const atStation = current && here.site === current && met[current]
   const nDone = STATION_ORDER.filter((id) => done[id]).length
   const objective = exitOpen ? 'Walk north through the gate to Glue Works' : current ? `Decks ${nDone}/4 · next: ${SITE[current].name}` : ''

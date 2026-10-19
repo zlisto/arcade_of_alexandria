@@ -51,7 +51,7 @@ export const STATIONS = {
     blueprint: 'Brackets don’t matter',
     arrive: [
       E('Three loops: $α$, $β$, $γ$. Combine them in order — then combine the same three again.'),
-      E('Parentheses only group how you *think* about concatenation; sliding never changes the class.'),
+      E('Parentheses only group how you think about concatenation; sliding never changes the class.'),
     ],
     goals: [
       {
@@ -74,7 +74,7 @@ export const STATIONS = {
         right: [G('Same gold word both times. Brackets were only in my head.'), E('Onward — carry these loops to the second beacon down the causeway.')],
       },
     ],
-    early: [E('The triple-loop deck is south — finish There and Back first.')],
+    early: [E('The triple-loop deck is north — finish There and Back first.')],
     enemies: [['torus', -2.5, 3], ['torus', 2.5, -2.5]],
   },
   second_beacon: {
@@ -91,7 +91,7 @@ export const STATIONS = {
         ],
       },
     ],
-    early: [E('The second beacon waits at the end of the south causeway.')],
+    early: [E('The second beacon waits at the end of the north causeway.')],
     enemies: [['sphere', -3, 2], ['sphere', 3, 2]],
   },
 }
@@ -117,7 +117,7 @@ export function emmyAdvice12(state) {
   if (enemies?.[here.site]) return [E('Lash the violet spawn — two hits on the torus — then close your loop.')]
   if (!current || here.site !== current) {
     const next = STATION_ORDER.find((id) => !done[id])
-    return next ? [HINTS.wrongSection(STATIONS[next].blueprint)] : [E('All sections done — walk south through the exit gate.')]
+    return next ? [HINTS.wrongSection(STATIONS[next].blueprint)] : [E('All sections done — walk north through the exit gate.')]
   }
   if (!goal) return [E('Walk out through the exit when you’re ready.')]
   if (goal.type === 'loop' || goal.type === 'reduce') {
@@ -125,7 +125,7 @@ export function emmyAdvice12(state) {
     if (need) return [E(`Next lap: track ${['α', 'β', 'γ'][need.track] || '?'}${need.dir < 0 ? '⁻¹' : ''} from the beacon and back.`)]
     return [E('Run the laps in order from the beacon.')]
   }
-  if (goal.type === 'arrive_b') return [E('Follow the causeway to the smaller beacon at the south end.')]
+  if (goal.type === 'arrive_b') return [E('Follow the causeway to the smaller beacon at the north end.')]
   if (goal.type === 'carry') return [E('Close one loop at this beacon — the ledger should match the carried word.')]
   if (goal.type === 'ask') return [E('You ran the same three laps twice. Do the ledgers match?')]
   return [E('Keep the beacon at your back when you start each lap.')]

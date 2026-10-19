@@ -26,6 +26,7 @@ import {
 } from '../../audio/chip'
 import PushForwardLesson, { PushForwardLessonOverlay } from '../../movies/w1/PushForwardLesson'
 import MathText from '../MathText'
+import useDialogKeys from '../useDialogKeys'
 
 const TYPE_CPS = 45
 const REACH = 3.4
@@ -90,6 +91,7 @@ export default function Level1_5({ concept, onBackToTitle, onNext, startAt }) {
   const ribbonApi = useRef(null)
   const toastTimer = useRef(null)
   const afterTalk = useRef(null)
+  const waveSeen = useRef(false)
   const emmyAt = useRef({ x: layout.start[0] - 1.2, z: layout.start[1] - 0.8, rotY: Math.PI, walk: 0 })
   const emmyTalking = useRef(false)
   const [nearEmmy, setNearEmmy] = useState(false)
@@ -106,7 +108,8 @@ export default function Level1_5({ concept, onBackToTitle, onNext, startAt }) {
     clearTimeout(toastTimer.current)
     toastTimer.current = setTimeout(() => setToast(null), ms)
   }
-  const say = useCallback((ls, next = 'play') => {
+  const say = useCallback((raw, next = 'play') => {
+    const ls = Array.isArray(raw) ? raw : raw ? [raw] : [] // a single line object is fine too
     setLines(ls)
     setLineIdx(0)
     setPhase(ls.length ? 'talk:' + next : next)
@@ -137,13 +140,14 @@ export default function Level1_5({ concept, onBackToTitle, onNext, startAt }) {
   const advanceGoal = useCallback(
     (station, ls = []) => {
       const list = STATIONS[station].goals
-      const curG = list[goalIdx[station] || 0]
-      if (curG?.wave) {
+      const next = (goalIdx[station] || 0) + 1
+      if (list[next]?.wave) {
+        // the guard goal *starts* with the wave: spawn it as we step into that goal
+        waveSeen.current = false
         setWaveOn(true)
         setWaveSpawned(true)
         spawnRef.current?.(SITE[station].wave.map(([type, x, z]) => ({ type, x: x + SITE[station].pos[0], z: z + SITE[station].pos[1], site: station })))
       }
-      const next = (goalIdx[station] || 0) + 1
       if (next >= list.length) {
         setDone((d) => ({ ...d, [station]: true }))
         setCheckpoint([SITE[station].pos[0] + 1, SITE[station].pos[1] + 2.8])
@@ -226,7 +230,8 @@ export default function Level1_5({ concept, onBackToTitle, onNext, startAt }) {
 
   useEffect(() => {
     if (goal?.type !== 'guard' || !waveSpawned || phase !== 'play') return
-    if ((enemies.shadows_deck || 0) === 0 && waveOn) {
+    if ((enemies.shadows_deck || 0) > 0) waveSeen.current = true // the wave has actually appeared
+    else if (waveSeen.current && waveOn) {
       setWaveOn(false)
       advanceGoal('shadows_deck', goal.done)
     }
@@ -419,6 +424,7 @@ export default function Level1_5({ concept, onBackToTitle, onNext, startAt }) {
   }
   const talking = phase.startsWith('talk:')
   const line = talking ? lines[lineIdx] : null
+  useDialogKeys(!!line, advance)
   emmyTalking.current = !!line && line.speaker === 'Emmy Boundary'
   useEffect(() => {
     if (talking) dialogOpen()
@@ -571,41 +577,58 @@ export default function Level1_5({ concept, onBackToTitle, onNext, startAt }) {
           <LevelMap layout={layout} sites={SITES} done={done} next={current || (exitOpen ? 'exit' : null)} pos={here.pos} title="Torus Terraces" />
         )}
 
-        <div className="hud-bottom">
-          {toast && <div className="toast">{toast}</div>}
-          <div className="weapon-row">
-            {[
-              ['lash', '1 Lash'],
-              ['cord', '4 Cord'],
-              ['sling', '5 Sling'],
-            ].map(([id, label]) => (
-              <button key={id} type="button" className={`weapon ${tool === id ? 'active' : ''}`} onClick={() => setTool(id)}>
-                {label}
-              </button>
-            ))}
+        {toast && !line && <div className="toast">{toast}</div>}
+        {nearEmmy && phase === 'play' && !askOpen && !levelClear && (
+          <button type="button" className="btn talk-btn" onClick={() => say(emmyAdvice15({ current, here, goal, done, STATIONS, SITE, loops, hijacked, waveOn, waveSpawned, enemies, exitOpen }))}>
+            💬 Talk to Emmy <kbd>E</kbd>
+          </button>
+        )}
+        {playEnabled && (
+          <div className="controls">
+            <div className="weapons">
+              {[
+                ['lash', '⚡ Lash', '1'],
+                ['cord', '◎ Cord', '4'],
+                ['sling', '⤴ Sling', '5'],
+              ].map(([id, label, key]) => (
+                <button key={id} type="button" className={`weapon ${tool === id ? 'active' : ''}`} onClick={(e) => (setTool(id), e.currentTarget.blur())}>
+                  {label} <kbd>{key}</kbd>
+                </button>
+              ))}
+            </div>
           </div>
-          <p className="hint-line">lost? walk up to Emmy and press E</p>
-        </div>
+        )}
+        {playEnabled && !toast && <div className="hint">{current && here.site === current ? stepText : 'WASD to move · 1 Lash · 4 Cord · 5 Sling · E talk to Emmy'}</div>}
 
-        {askOpen && goal?.type === 'ask' && (
-          <div className="question-panel">
-            <p><MathText text={goal.question} /></p>
-            {goal.options.map((opt, i) => (
-              <button key={i} type="button" className="btn" onClick={() => answer(i)}>
-                {typeof opt === 'string' ? opt : opt}
-              </button>
-            ))}
+        {askOpen && !line && goal?.type === 'ask' && (
+          <div className="dialog verdict" style={{ cursor: 'default' }}>
+            <Portrait id="emmy-boundary" name="Emmy Boundary" />
+            <div className="dialog-body">
+              <span className="speaker">Emmy Boundary</span>
+              <p><MathText text={goal.question} /></p>
+            </div>
+            <div className="btn-row" style={{ flexDirection: 'column' }}>
+              {goal.options.map((opt, i) => (
+                <button key={i} type="button" className="btn small" onClick={() => answer(i)}>
+                  {opt}
+                </button>
+              ))}
+            </div>
           </div>
         )}
 
         {talking && line && (
-          <div className="dialog">
+          <div className="dialog" onClick={advance}>
             <Portrait id={line.portrait || 'gyroid'} name={line.speaker} />
             <div className="dialog-body">
-              <p className="speaker">{line.speaker}</p>
-              <p><MathText text={line.text} shown={shown} /></p>
-              <button type="button" className="btn dialog-advance" onClick={advance}>{shown < line.text.length ? '▶▶' : lineIdx + 1 < lines.length ? 'Next ▾' : 'OK'}</button>
+              <span className="speaker">{line.speaker}</span>
+              <p>
+                <MathText text={line.text} shown={shown} />
+              </p>
             </div>
+            <button type="button" className="btn primary small" onClick={(e) => (e.stopPropagation(), advance())}>
+              {shown < line.text.length ? '▶▶' : lineIdx + 1 < lines.length ? 'Next ▾' : 'OK'}
+            </button>
           </div>
         )}
 
@@ -625,18 +648,29 @@ export default function Level1_5({ concept, onBackToTitle, onNext, startAt }) {
 
         {levelClear && (
           <div className="win-banner exit">
-            <h2>Torus Terraces clear</h2>
-            <p className="definition">{DEFINITION.text}</p>
-            <p className="cite">{DEFINITION.cite}</p>
-            <a href={DEFINITION.link} target="_blank" rel="noreferrer">
-              Read the book
-            </a>
-            <p>Next: {DEFINITION.next}</p>
-            {onNext && (
-              <button type="button" className="btn" onClick={onNext}>
-                Continue ▸
-              </button>
-            )}
+            <div className="win-card wide">
+              <span className="lvl-kicker">World 1 · Level 5 clear</span>
+              <h2>{levelMeta?.title || 'Push It Forward'}</h2>
+              <p className="def">{DEFINITION.text}</p>
+              <p className="cite">
+                {DEFINITION.cite}{' '}
+                <a href={DEFINITION.link} target="_blank" rel="noreferrer">
+                  Read the book
+                </a>
+              </p>
+              <p className="next-up">Next: {DEFINITION.next}</p>
+              <div className="btn-row">
+                <button type="button" className="btn" onClick={() => setLevelClear(false)}>
+                  Keep exploring
+                </button>
+                <button type="button" className="btn" onClick={onBackToTitle}>
+                  Back to title
+                </button>
+                <button type="button" className="btn primary" onClick={onNext}>
+                  Continue ▸ Free Word Play
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>

@@ -77,7 +77,7 @@ export const STATIONS = {
         type: 'order',
         answer: 'aa',
         wrong: [E('Not quite. $a$ is still visible once. $a a$ is the word that slides away.')],
-        right: [E('Right: $a$ survives; $a a$ does not. That is $⟨ a \\mid a² ⟩$.'), E('North to the overlap deck — Van Kampen’s turn.')],
+        right: [E('Right: $a$ survives; $a a$ does not. That is $⟨ a | a² ⟩$.'), E('North to the overlap deck — Van Kampen’s turn.')],
       },
     ],
     early: [E('Half Turn is southeast — after the torus.')],

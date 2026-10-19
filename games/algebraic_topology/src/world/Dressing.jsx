@@ -98,7 +98,8 @@ export function Gear({ position, rotation = [0, 0, 0], r = 1.5, teeth = 14, spee
 }
 
 /** Rocks floating around a center, bobbing and slowly orbiting. */
-export function FloatingRocks({ center = [0, 0, 0], radius = [12, 20], count = 24, seed = 9, color = '#1a1424', glow = '#a259ff', ySpread = [-4, 6] }) {
+export function FloatingRocks({ center = [0, 0, 0], radius = [12, 20], count = 24, seed = 9, color = '#1a1424', glow = '#a259ff', ySpread = [-9, -3] }) {
+  // (default sits below the floor: rocks that drift up between the camera and the play area hide the action)
   const ref = useRef()
   const plan = useMemo(() => {
     const r = rng(seed)

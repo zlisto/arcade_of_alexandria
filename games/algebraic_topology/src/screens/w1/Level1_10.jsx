@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import DeckHallsScene from '../../levels/w1/DeckHallsScene'
 import LevelMovie from '../LevelMovie'
 import LevelMap from '../LevelMap'
+import useDialogKeys from '../useDialogKeys'
 import { useExitTrigger } from '../exitTrigger'
 import {
   COVER_CYCLIC3,
@@ -93,6 +94,7 @@ export default function Level1_10({ concept, onBackToTitle, onNext, startAt }) {
   const ribbonApi = useRef(null)
   const toastTimer = useRef(null)
   const afterTalk = useRef(null)
+  const guardsSeen = useRef(false)
   const emmyAt = useRef({ x: layout.start[0] - 1, z: layout.start[1] - 0.6, rotY: Math.PI, walk: 0 })
   const emmyTalking = useRef(false)
   const [nearEmmy, setNearEmmy] = useState(false)
@@ -111,9 +113,15 @@ export default function Level1_10({ concept, onBackToTitle, onNext, startAt }) {
     toastTimer.current = setTimeout(() => setToast(null), ms)
   }
   const say = useCallback((ls, next = 'play') => {
-    setLines(ls)
+    const list = Array.isArray(ls) ? ls : ls ? [ls] : []
+    setLines(list)
     setLineIdx(0)
-    setPhase(ls.length ? 'talk:' + next : next)
+    if (list.length) setPhase('talk:' + next)
+    else {
+      setPhase(next === 'after' ? 'play' : next)
+      afterTalk.current?.()
+      afterTalk.current = null
+    }
   }, [])
 
   useEffect(() => {
@@ -252,7 +260,7 @@ export default function Level1_10({ concept, onBackToTitle, onNext, startAt }) {
   }, [current])
 
   const walkable = useMemo(() => {
-    const extra = exitOpen && layout.exit ? [{ a: layout.exit.a, b: layout.exit.b }] : []
+    const extra = exitOpen && layout.exit ? [[layout.exit.a, layout.exit.b]] : []
     return makeSiteWalkable(layout, SITES, extra)
   }, [exitOpen])
 
@@ -327,7 +335,7 @@ export default function Level1_10({ concept, onBackToTitle, onNext, startAt }) {
     if (current === 'antipodal' && goal?.type === 'walk' && here.site === 'antipodal') {
       setWalkLoop(goal.loopId)
       const d = Math.hypot(here.pos[0] - SITE.antipodal.pos[0], here.pos[1] - SITE.antipodal.pos[1])
-      if (d > 4 && d < 5.2) setWalkProgress((p) => Math.min(1, p + 0.02))
+      if (d > 4 && d < 5.2) setWalkProgress((p) => Math.min(1, p + 0.04))
     }
   }, [here, current, goal])
 
@@ -340,7 +348,16 @@ export default function Level1_10({ concept, onBackToTitle, onNext, startAt }) {
   }, [walkProgress, goal, advanceGoal, current])
 
   useEffect(() => {
-    if (guardsAligned && enemies[current] === 0 && goal?.guards) advanceGoal(current, goal.done)
+    // the report only lists sites that still have enemies, so "gone" means missing/0 after we saw some
+    if (!guardsAligned || !goal?.guards) {
+      guardsSeen.current = false
+      return
+    }
+    if ((enemies[current] || 0) > 0) guardsSeen.current = true
+    else if (guardsSeen.current) {
+      guardsSeen.current = false
+      advanceGoal(current, goal.done)
+    }
   }, [guardsAligned, enemies, current, goal, advanceGoal])
 
   const talking = phase.startsWith('talk')
@@ -374,11 +391,13 @@ export default function Level1_10({ concept, onBackToTitle, onNext, startAt }) {
     }
     setLines([])
     const next = phase.split(':')[1] || 'play'
-    setPhase(next)
+    setPhase(next === 'after' || next === 'ask' ? 'play' : next)
     duckMusic(false)
     afterTalk.current?.()
     afterTalk.current = null
   }
+
+  useDialogKeys(!!line, advance)
 
   useEffect(() => {
     const onKey = (e) => {
@@ -395,7 +414,11 @@ export default function Level1_10({ concept, onBackToTitle, onNext, startAt }) {
     : 'Walk out the north gate'
 
   const stepText =
-    tool === 'compass'
+    goal?.type === 'walk'
+      ? 'Walk the glowing half-rim with WASD — stay on the ring (about radius 4–5).'
+      : goal?.type === 'ask'
+        ? 'Pick an answer on the panel.'
+        : tool === 'compass'
       ? 'Sheet Compass (6): click the deck wheel to rotate all sheets.'
       : guardsAligned
         ? 'Lash (1): one strike clears every stacked guard.'
@@ -420,6 +443,7 @@ export default function Level1_10({ concept, onBackToTitle, onNext, startAt }) {
       isNormal: cover ? isNormalCover(cover) : null,
       deckLabel: cover ? deckShiftLabel(cover, shift) : null,
       loopLift: loopLiftKind('half'),
+      walkProgress,
     }
 
   return (
@@ -459,16 +483,16 @@ export default function Level1_10({ concept, onBackToTitle, onNext, startAt }) {
         />
       </Canvas>
 
-      <div className="hud-wrap">
-        <div className="hud-top">
-          <div className="hud-actions">
-            <button type="button" className="btn small" onClick={onBackToTitle}>
+      <div className="ui-overlay">
+        <div className="lvl-top">
+          <div className="btn-row" style={{ justifyContent: 'flex-start' }}>
+            <button type="button" className="btn ghost" onClick={onBackToTitle}>
               ◂ Title
             </button>
-            <button type="button" className="btn small" onClick={() => (setMuted(!muted), setAudioMuted(!muted))}>
+            <button type="button" className="btn ghost" aria-pressed={muted} onClick={() => (setMuted(!muted), setAudioMuted(!muted))}>
               {muted ? '♪ off' : '♪ on'}
             </button>
-            <button type="button" className="btn small" onClick={() => setLesson(true)}>
+            <button type="button" className="btn ghost" onClick={() => setLesson(true)}>
               ? How it works
             </button>
           </div>
@@ -519,7 +543,9 @@ export default function Level1_10({ concept, onBackToTitle, onNext, startAt }) {
             <Portrait id="emmy-boundary" name="Emmy Boundary" />
             <div className="dialog-body">
               <span className="speaker">Emmy Boundary</span>
-              <p>{goal.question}</p>
+              <p>
+                <MathText text={goal.question} />
+              </p>
             </div>
             <div className="btn-row">
               {goal.options.map((v) => (

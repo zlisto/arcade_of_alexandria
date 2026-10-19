@@ -128,7 +128,8 @@ export default function Level1_4({ concept, onBackToTitle, onNext, startAt }) {
     toastTimer.current = setTimeout(() => setToast(null), ms)
   }
 
-  const say = useCallback((ls, next = 'play') => {
+  const say = useCallback((raw, next = 'play') => {
+    const ls = Array.isArray(raw) ? raw : raw ? [raw] : [] // a single line object is fine too
     setLines(ls)
     setLineIdx(0)
     setPhase(ls.length ? 'talk:' + next : next)
@@ -138,7 +139,8 @@ export default function Level1_4({ concept, onBackToTitle, onNext, startAt }) {
     (station, ls = []) => {
       const list = STATIONS[station].goals
       const curG = list[goalIdx[station] || 0]
-      if (curG?.type === 'guard' && SITE[station].wave) {
+      // the goal marked `wave` releases the drones when it finishes; the following `guard` goal waits for them to be cleared
+      if (curG?.wave && SITE[station].wave) {
         setWaveOn(true)
         spawnRef.current?.(
           SITE[station].wave.map(([type, x, z]) => ({
@@ -150,7 +152,8 @@ export default function Level1_4({ concept, onBackToTitle, onNext, startAt }) {
         )
       }
       const next = (goalIdx[station] || 0) + 1
-      if (next >= list.length) {
+      // an `exit` goal is just "walk out the gate": the deck is finished when it comes up, and the gate opens
+      if (next >= list.length || list[next]?.type === 'exit') {
         setDone((d) => ({ ...d, [station]: true }))
         setCheckpoint([SITE[station].pos[0] + 1.2, SITE[station].pos[1] + 3.2])
         if (station === 'antipodes') {
@@ -259,7 +262,7 @@ export default function Level1_4({ concept, onBackToTitle, onNext, startAt }) {
       if (!site?.rimRadius) return
       if (!site.containsWorld(x, z)) return
       const tr = rimTrackers.current[current]
-      const ev = tr.update(x, z)
+      const ev = tr.update(x, z, goal.winding)
       if (ev?.event === 'done') {
         if (ev.winding === goal.winding) {
           sfxCorrect()
@@ -383,10 +386,11 @@ export default function Level1_4({ concept, onBackToTitle, onNext, startAt }) {
     }
     const next = phase.split(':')[1] || 'play'
     setLines([])
-    setPhase(next)
+    setPhase(next === 'after' ? 'play' : next) // 'after' only means "run afterTalk"; play must resume either way
     if (next === 'after' && afterTalk.current) {
-      afterTalk.current()
+      const fn = afterTalk.current
       afterTalk.current = null
+      fn()
     }
   }, [line, lineIdx, lines.length, phase, shown])
 
@@ -395,7 +399,8 @@ export default function Level1_4({ concept, onBackToTitle, onNext, startAt }) {
     if (!line) return
     dialogOpen()
     duckMusic(true)
-    let i = shownNow.current
+    let i = 0
+    setShown(0) // every line types out from the start (a new say() used to inherit the last line's full length)
     const id = setInterval(() => {
       i += 1
       setShown((n) => Math.max(n, i))
@@ -567,7 +572,7 @@ export default function Level1_4({ concept, onBackToTitle, onNext, startAt }) {
             <h3>{STATIONS[current].blueprint}</h3>
             {goal?.type === 'rim' && (
               <p className="cells-line">
-                Cord progress: <b>{Math.round((rimTrackers.current[current]?.progress?.() || 0) * 100)}%</b>
+                Cord progress: <b>{Math.round((rimTrackers.current[current]?.progress?.(goal.winding) || 0) * 100)}%</b>
               </p>
             )}
             <p className="forgery-count">{stepText}</p>

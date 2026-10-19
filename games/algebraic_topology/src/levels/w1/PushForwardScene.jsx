@@ -30,7 +30,7 @@ function TerraceSky() {
       <Sparkles count={90} scale={[50, 5, 50]} position={[0, 2, -4]} size={2} speed={0.25} color="#ffd2a0" />
       <Seascape y={-2.4} depth={2.4} area={[0, -4, 70, 64]} seed={15} palette={{ water: '#1a3050', sand: '#4a5058', weed: '#2a3848' }} lanterns={10} />
       <Clouds seed={5} area={[-20, -24, 40, 40]} y={14} />
-      <FloatingRocks seed={8} count={12} center={[0, 6, -4]} radius={[14, 22]} />
+      <FloatingRocks seed={8} count={12} center={[0, 0, -4]} radius={[14, 22]} />
     </>
   )
 }
