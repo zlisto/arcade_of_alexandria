@@ -5,6 +5,7 @@ import * as THREE from 'three'
 import { getState, setState, toast } from '../engine/store'
 import { sfx } from '../audio/sfx'
 import { HYBRIDS } from '../chem/rules'
+import { ColossusBody, useColossusAssets, socketCount } from './ColossusModel'
 
 // The Unbonded Colossus (boss of the Orbital Caverns; book §1.4, §1.6–1.9).
 // A giant of loose atoms with empty sockets. Pattern: stomp shockwave (roll through it or hop over it),
@@ -18,6 +19,40 @@ const PHASES = [
 ]
 const HITS_PER_PHASE = 3
 
+// The core shows the bonding geometry it is asking for (§1.6–1.9): bond sticks for the σ framework and
+// translucent lobes for the unhybridized p orbitals that make π bonds.
+const T = 1 / Math.sqrt(3)
+const CORE_SHAPES = {
+  sp3: { sticks: [[T, T, T], [T, -T, -T], [-T, T, -T], [-T, -T, T]], p: [] },
+  sp2: { sticks: [[0, 1, 0], [Math.cos(-Math.PI / 6), Math.sin(-Math.PI / 6), 0], [-Math.cos(-Math.PI / 6), Math.sin(-Math.PI / 6), 0]], p: [[0, 0, 1]] },
+  sp: { sticks: [[1, 0, 0], [-1, 0, 0]], p: [[0, 1, 0], [0, 0, 1]] },
+}
+function CoreShape({ kind }) {
+  const sh = CORE_SHAPES[kind]
+  const up = new THREE.Vector3(0, 1, 0)
+  return (
+    <group>
+      {sh.sticks.map((d, i) => {
+        const q = new THREE.Quaternion().setFromUnitVectors(up, new THREE.Vector3(...d))
+        return (
+          <group key={'s' + i} quaternion={q}>
+            <mesh position={[0, 0.75, 0]}><cylinderGeometry args={[0.07, 0.07, 0.6, 10]} /><meshStandardMaterial color="#cfe" metalness={0.7} roughness={0.3} /></mesh>
+            <mesh position={[0, 1.08, 0]}><torusGeometry args={[0.13, 0.035, 8, 16]} /><meshBasicMaterial color="#43e6f5" toneMapped={false} /></mesh>
+          </group>
+        )
+      })}
+      {sh.p.map((d, i) => {
+        const q = new THREE.Quaternion().setFromUnitVectors(up, new THREE.Vector3(...d))
+        return (
+          <group key={'p' + i} quaternion={q}>
+            {[1, -1].map((sg) => <mesh key={sg} position={[0, sg * 0.75, 0]} scale={[0.32, 0.55, 0.32]}><sphereGeometry args={[1, 16, 12]} /><meshStandardMaterial color="#7ff4ff" emissive="#2fb8c8" emissiveIntensity={0.8} transparent opacity={0.35} depthWrite={false} /></mesh>)}
+          </group>
+        )
+      })}
+    </group>
+  )
+}
+
 export default function Colossus({ world, center, active, onDefeated }) {
   const g = useRef()
   const armL = useRef()
@@ -27,20 +62,9 @@ export default function Colossus({ world, center, active, onDefeated }) {
   const wave = useRef()
   const st = useRef({ phase: 0, hits: 0, mode: 'idle', t: 0, waveR: 0, waveOn: false, facing: 0, pos: new THREE.Vector3(center[0], 0, center[2]), cycle: 0, dead: false, flinch: 0 })
   const [label, setLabel] = useState(null)
-  const atoms = useMemo(() => {
-    // torso cluster of loose atoms (colors: C black, O red, N blue, H white)
-    const cols = ['#2b2b2b', '#2b2b2b', '#e0453b', '#3b6fe0', '#f4f4f4']
-    const out = []
-    let s = 3
-    const rnd = () => { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646 }
-    for (let i = 0; i < 46; i++) {
-      const a = rnd() * Math.PI * 2
-      const h = rnd()
-      const r = 1.5 * Math.sin(h * Math.PI) + 0.4
-      out.push({ p: [Math.cos(a) * r, 2.6 + h * 3.6, Math.sin(a) * r * 0.8], r: 0.35 + rnd() * 0.35, c: cols[i % cols.length] })
-    }
-    return out
-  }, [])
+  const A = useColossusAssets()
+  const orbit = useRef()
+  const bolts = useRef()
 
   useEffect(() => {
     if (!active) return
@@ -163,46 +187,27 @@ export default function Colossus({ world, center, active, onDefeated }) {
     wave.current.visible = s.waveOn
     if (s.waveOn) { wave.current.position.set(s.pos.x, 0.08, s.pos.z); wave.current.scale.setScalar(s.waveR) }
     if (s.mode === 'dying') g.current.scale.setScalar(Math.max(0.01, 1 - s.t * 0.35))
+    // loose atoms circle the torso; the lightning flickers
+    if (orbit.current) { orbit.current.rotation.y = t * 0.45; orbit.current.position.y = Math.sin(t * 1.3) * 0.15 }
+    if (bolts.current) bolts.current.visible = Math.sin(t * 23) + Math.sin(t * 7.3) > -0.4
   })
 
   if (!active && !st.current.dead) return null
   return (
     <group>
       <group ref={g}>
-        {atoms.map((a, i) => (
-          <mesh key={i} position={a.p} castShadow><sphereGeometry args={[a.r, 12, 10]} /><meshStandardMaterial color={a.c} roughness={0.4} metalness={0.15} emissive="#110a1a" /></mesh>
-        ))}
-        {/* empty sockets dotted over its body */}
-        {atoms.filter((_, i) => i % 5 === 0).map((a, i) => (
-          <mesh key={'s' + i} position={[a.p[0] * 1.18, a.p[1], a.p[2] * 1.18]}><torusGeometry args={[0.18, 0.04, 6, 14]} /><meshBasicMaterial color="#a06bff" toneMapped={false} /></mesh>
-        ))}
-        {/* legs */}
-        {[-1, 1].map((sd) => (
-          <group key={sd} position={[sd * 1.1, 0, 0]}>
-            {[0.5, 1.3, 2.1].map((y, k) => <mesh key={k} position={[0, y, 0]} castShadow><sphereGeometry args={[0.55, 12, 10]} /><meshStandardMaterial color={k === 1 ? '#3b6fe0' : '#2b2b2b'} roughness={0.4} /></mesh>)}
-          </group>
-        ))}
-        {/* arms: chains of atoms */}
-        <group ref={armL} position={[-2.1, 5.4, 0]}>
-          {[0, 1, 2, 3].map((k) => <mesh key={k} position={[-0.2 * k, -0.9 * k - 0.4, 0.3 * k]} castShadow><sphereGeometry args={[0.5 - k * 0.04, 12, 10]} /><meshStandardMaterial color={k % 2 ? '#e0453b' : '#2b2b2b'} roughness={0.4} /></mesh>)}
-        </group>
-        <group ref={armR} position={[2.1, 5.4, 0]}>
-          {[0, 1, 2, 3].map((k) => <mesh key={k} position={[0.2 * k, -0.9 * k - 0.4, 0.3 * k]} castShadow><sphereGeometry args={[0.5 - k * 0.04, 12, 10]} /><meshStandardMaterial color={k % 2 ? '#e0453b' : '#2b2b2b'} roughness={0.4} /></mesh>)}
-        </group>
+        <ColossusBody A={A} armL={armL} armR={armR} orbit={orbit} bolts={bolts} filled={Math.round((Math.min(st.current.phase, PHASES.length) / PHASES.length) * socketCount(A))} />
         {/* the core: a carbon heart */}
         <group ref={core} position={[0, 4.4, 0.9]}>
           <mesh><icosahedronGeometry args={[0.55, 1]} /><meshStandardMaterial ref={coreMat} color="#1a1a1a" emissive="#43e6f5" emissiveIntensity={0.6} roughness={0.2} toneMapped={false} /></mesh>
           <pointLight color="#43e6f5" intensity={4} distance={8} />
+          {label && <CoreShape kind={label} />}
           {label && (
             <Html position={[0, 1.4, 0]} center distanceFactor={12}>
               <div className="coretag">needs <b>{HYBRIDS[label].label}</b> · {HYBRIDS[label].angle}°</div>
             </Html>
           )}
         </group>
-        {/* head */}
-        <mesh position={[0, 6.8, 0]} castShadow><sphereGeometry args={[0.75, 14, 12]} /><meshStandardMaterial color="#2b2b2b" roughness={0.35} /></mesh>
-        <mesh position={[-0.28, 6.9, 0.62]}><sphereGeometry args={[0.12, 8, 6]} /><meshBasicMaterial color="#d6b4ff" toneMapped={false} /></mesh>
-        <mesh position={[0.28, 6.9, 0.62]}><sphereGeometry args={[0.12, 8, 6]} /><meshBasicMaterial color="#d6b4ff" toneMapped={false} /></mesh>
       </group>
       <mesh ref={wave} rotation={[-Math.PI / 2, 0, 0]} visible={false}>
         <ringGeometry args={[0.93, 1, 64]} />

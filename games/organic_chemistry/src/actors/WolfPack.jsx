@@ -3,6 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { sfx } from '../audio/sfx'
 import { toast } from '../engine/store'
+import { WolfBody, useWolfAssets, animateWolf } from './WolfModel'
 
 // Radical Wolves (book §6.6, §10.2): each carries one unpaired electron.
 // • A sword hit knocks a wolf back. If it lands without meeting another wolf, it abstracts an atom and
@@ -11,34 +12,10 @@ import { toast } from '../engine/store'
 // So the way to win is aim: lock on and knock wolves into each other.
 
 const MAX = 6
-const VIOLET = new THREE.Color('#a06bff')
-
-function WolfBody({ refs, i }) {
-  return (
-    <group ref={(g) => (refs.current[i] = g)} visible={false}>
-      <group name="body">
-        <mesh position={[0, 0.62, 0]} scale={[0.42, 0.42, 0.95]} castShadow><sphereGeometry args={[1, 14, 12]} /><meshStandardMaterial color="#4a3466" roughness={0.7} emissive="#3a1a6a" emissiveIntensity={0.55} /></mesh>
-        <mesh position={[0, 0.82, 0.7]} scale={[0.27, 0.27, 0.4]} castShadow><sphereGeometry args={[1, 12, 10]} /><meshStandardMaterial color="#523a70" roughness={0.7} emissive="#3a1a6a" emissiveIntensity={0.45} /></mesh>
-        <mesh position={[0, 0.76, 1.05]} scale={[0.14, 0.12, 0.25]}><sphereGeometry args={[1, 10, 8]} /><meshStandardMaterial color="#1c1428" /></mesh>
-        <mesh position={[-0.12, 1.06, 0.68]} rotation={[0, 0, 0.2]}><coneGeometry args={[0.07, 0.22, 6]} /><meshStandardMaterial color="#4a3466" emissive="#3a1a6a" emissiveIntensity={0.4} /></mesh>
-        <mesh position={[0.12, 1.06, 0.68]} rotation={[0, 0, -0.2]}><coneGeometry args={[0.07, 0.22, 6]} /><meshStandardMaterial color="#4a3466" emissive="#3a1a6a" emissiveIntensity={0.4} /></mesh>
-        <mesh position={[-0.1, 0.88, 0.95]}><sphereGeometry args={[0.035, 8, 6]} /><meshBasicMaterial color="#d7b8ff" toneMapped={false} /></mesh>
-        <mesh position={[0.1, 0.88, 0.95]}><sphereGeometry args={[0.035, 8, 6]} /><meshBasicMaterial color="#d7b8ff" toneMapped={false} /></mesh>
-        <mesh position={[0, 0.78, -0.95]} rotation={[0.9, 0, 0]}><coneGeometry args={[0.12, 0.6, 6]} /><meshStandardMaterial color="#4a3466" emissive="#3a1a6a" emissiveIntensity={0.4} /></mesh>
-        {[[-0.2, 0.55], [0.2, 0.55], [-0.2, -0.5], [0.2, -0.5]].map(([x, z], k) => (
-          <mesh key={k} position={[x, 0.25, z]} name={'leg' + k}><capsuleGeometry args={[0.06, 0.36, 3, 6]} /><meshStandardMaterial color="#3a2a52" /></mesh>
-        ))}
-        {/* the unpaired electron */}
-        <mesh position={[0, 0.98, 0.2]} name="spark"><sphereGeometry args={[0.15, 12, 10]} /><meshStandardMaterial color="#c9a6ff" emissive={VIOLET} emissiveIntensity={3} toneMapped={false} /></mesh>
-        <pointLight position={[0, 0.7, 0.2]} color="#a06bff" intensity={1.2} distance={3.5} />
-      </group>
-      <mesh name="flash" visible={false}><sphereGeometry args={[1, 16, 12]} /><meshBasicMaterial color="#e9dcff" transparent opacity={0.6} toneMapped={false} /></mesh>
-    </group>
-  )
-}
 
 export default function WolfPack({ world, spawns, onCleared, active = true, tutorial = true, arena }) {
   const refs = useRef([])
+  const A = useWolfAssets()
   const wolves = useRef([])
   const told = useRef({ split: false, pair: false })
   const ids = useRef([])
@@ -189,10 +166,7 @@ export default function WolfPack({ world, spawns, onCleared, active = true, tuto
       g.position.copy(w.pos)
       g.rotation.y = w.facing
       g.rotation.z = w.state === 'knocked' ? Math.sin(w.t * 20) * 0.6 : 0
-      const sp = body.getObjectByName('spark')
-      sp.scale.setScalar(1 + Math.sin(state.clock.elapsedTime * 12 + i) * 0.25)
-      const legSwing = Math.sin(state.clock.elapsedTime * 14 + i) * Math.min(1, w.vel.length() / 3) * 0.6
-      for (let k = 0; k < 4; k++) { const l = body.getObjectByName('leg' + k); l.rotation.x = (k % 2 ? 1 : -1) * legSwing }
+      animateWolf(g, state.clock.elapsedTime, w.vel.length(), i)
     }
     const pending = list.some((w) => w && (w.state === 'spawning' || w.state === 'pairing'))
     if (alive === 0 && !pending && !cleared.current && list.length) {
@@ -201,7 +175,7 @@ export default function WolfPack({ world, spawns, onCleared, active = true, tuto
     }
   })
 
-  return <group>{[...Array(MAX)].map((_, i) => <WolfBody key={i} refs={refs} i={i} />)}</group>
+  return <group>{[...Array(MAX)].map((_, i) => <WolfBody key={i} A={A} groupRef={(g) => (refs.current[i] = g)} />)}</group>
 }
 
 function clampArena(p, a) {

@@ -99,16 +99,54 @@ function Methane({ show, position }) {
 }
 
 function CaveMouth({ open }) {
+  // A cliff face with a stone arch and a tunnel you can see into, the mountain set back behind it.
+  // Collision (in VillageLevel) is unchanged: rock either side of x = ±2.2, overhead from y = 4.1.
   const glow = useRef()
-  useFrame(({ clock }) => { if (glow.current) glow.current.material.opacity = open ? 0.55 + Math.sin(clock.elapsedTime * 2) * 0.15 : 0 })
+  useFrame(({ clock }) => { if (glow.current) glow.current.material.opacity = open ? 0.5 + Math.sin(clock.elapsedTime * 2) * 0.15 : 0 })
+  const rocks = useMemo(() => scatter(46, 23, (r) => {
+    const side = r() < 0.5 ? -1 : 1
+    const sc = 1.1 + r() * 1.5
+    const x = side * (2.9 + sc * 0.9 + r() * 11) // keep clear of the mouth (|x| < 2.2)
+    return [x, r() * 6.5, 0.6 + r() * 1.2, sc, r() * 6]
+  }), [])
+  const crystals = useMemo(() => scatter(10, 31, (r) => { const a = Math.PI * (0.1 + r() * 0.8); return [Math.cos(a) * (3 + r() * 0.6), Math.sin(a) * (3 + r() * 0.6) + 0.8, 0.25 + r() * 0.35, r() * 6] }), [])
+  const rock = '#6b6658', rockDark = '#4e4a40'
   return (
     <group position={[CAVE[0], 0, CAVE[2] - 4]}>
-      <mesh position={[0, 6, -6]} castShadow><coneGeometry args={[16, 14, 9]} /><meshStandardMaterial color="#5a6a4a" roughness={0.95} flatShading /></mesh>
-      <mesh position={[0, 2.2, 1.2]}><boxGeometry args={[4.4, 4.4, 1]} /><meshStandardMaterial color="#3a3a3a" roughness={0.95} /></mesh>
-      <mesh position={[0, 1.8, 1.75]}><planeGeometry args={[3.2, 3.6]} /><meshBasicMaterial color={open ? '#0b2a33' : '#2a2a2a'} /></mesh>
-      <mesh ref={glow} position={[0, 1.8, 1.8]}><planeGeometry args={[3.2, 3.6]} /><meshBasicMaterial color="#43e6f5" transparent opacity={0} toneMapped={false} /></mesh>
-      {!open && <mesh position={[0, 1.9, 1.9]}><boxGeometry args={[3.4, 3.8, 0.4]} /><meshStandardMaterial color="#6e6a64" roughness={1} flatShading /></mesh>}
-      {open && <pointLight position={[0, 2, 3]} color="#43e6f5" intensity={8} distance={14} />}
+      {/* the mountain, well behind the cliff so it never covers the mouth */}
+      <mesh position={[0, 7, -17]} castShadow><coneGeometry args={[17, 16, 9]} /><meshStandardMaterial color="#5a6a4a" roughness={0.95} flatShading /></mesh>
+      <mesh position={[-10, 4, -12]}><coneGeometry args={[8, 9, 7]} /><meshStandardMaterial color="#617052" roughness={0.95} flatShading /></mesh>
+      <mesh position={[11, 3.5, -11]}><coneGeometry args={[7, 8, 7]} /><meshStandardMaterial color="#56654a" roughness={0.95} flatShading /></mesh>
+      {/* cliff face: rock either side of the mouth and a band above it */}
+      <mesh position={[-9.1, 3.5, -2.5]} castShadow><boxGeometry args={[13.8, 7, 7]} /><meshStandardMaterial color={rockDark} roughness={1} flatShading /></mesh>
+      <mesh position={[9.1, 3.5, -2.5]} castShadow><boxGeometry args={[13.8, 7, 7]} /><meshStandardMaterial color={rockDark} roughness={1} flatShading /></mesh>
+      <mesh position={[0, 5.9, -2.5]}><boxGeometry args={[4.6, 3.6, 7]} /><meshStandardMaterial color={rockDark} roughness={1} flatShading /></mesh>
+      {rocks.map(([x, y, z, sc, rot], k) => (
+        <mesh key={k} position={[x, y, 1 + z * 0.4]} rotation={[rot, rot * 1.3, 0]} scale={sc} castShadow><dodecahedronGeometry args={[1, 0]} /><meshStandardMaterial color={k % 3 ? rock : '#7a7464'} roughness={1} flatShading /></mesh>
+      ))}
+      <mesh position={[-1.5, 7.4, 0.6]} rotation={[0.3, 0.2, 0]} scale={[2.2, 1.2, 1.4]}><dodecahedronGeometry args={[1, 0]} /><meshStandardMaterial color={rock} roughness={1} flatShading /></mesh>
+      <mesh position={[1.8, 7.2, 0.5]} rotation={[0.1, 0.9, 0.3]} scale={[2, 1.1, 1.3]}><dodecahedronGeometry args={[1, 0]} /><meshStandardMaterial color={rock} roughness={1} flatShading /></mesh>
+      {/* stone arch with a keystone, and cyan crystals growing round it */}
+      <mesh position={[0, 0.2, 1.05]}><torusGeometry args={[2.55, 0.42, 6, 18, Math.PI]} /><meshStandardMaterial color="#8a8474" roughness={0.9} flatShading /></mesh>
+      {[-1, 1].map((sd) => <mesh key={sd} position={[sd * 2.55, 0.1, 1.05]}><boxGeometry args={[0.9, 0.5, 0.9]} /><meshStandardMaterial color="#8a8474" roughness={0.9} flatShading /></mesh>)}
+      <mesh position={[0, 2.85, 1.15]}><boxGeometry args={[0.7, 0.8, 0.95]} /><meshStandardMaterial color="#9a9482" roughness={0.85} flatShading /></mesh>
+      <mesh position={[0, 2.85, 1.64]} rotation={[0, 0, Math.PI / 4]}><boxGeometry args={[0.22, 0.22, 0.02]} /><meshBasicMaterial color={open ? '#43e6f5' : '#3a5a60'} toneMapped={false} /></mesh>
+      {crystals.map(([x, y, sc, rot], k) => (
+        <mesh key={k} position={[x, y, 1.2]} rotation={[0.3, rot, Math.atan2(y - 0.8, x) - Math.PI / 2]} scale={[sc * 0.6, sc * 1.6, sc * 0.6]}><octahedronGeometry args={[1, 0]} /><meshStandardMaterial color="#9ff3ff" emissive="#43e6f5" emissiveIntensity={open ? 1.4 : 0.3} roughness={0.2} toneMapped={false} /></mesh>
+      ))}
+      {/* the tunnel: dark walls running back into the hill, glowing at the far end */}
+      <mesh position={[0, 2.1, -3.5]} rotation={[0, 0, 0]}><boxGeometry args={[4.4, 4.2, 8]} /><meshStandardMaterial color="#1e1c22" roughness={1} side={THREE.BackSide} /></mesh>
+      <mesh position={[0, 2.0, -7.4]}><planeGeometry args={[4.2, 4]} /><meshBasicMaterial color={open ? '#0e3a46' : '#141318'} /></mesh>
+      <mesh ref={glow} position={[0, 2.0, -7.3]}><planeGeometry args={[4.2, 4]} /><meshBasicMaterial color="#43e6f5" transparent opacity={0} toneMapped={false} /></mesh>
+      {/* the rock plug while the wolves roam */}
+      {!open && (
+        <group position={[0, 0, 1.2]}>
+          <mesh position={[0, 1.4, 0]} scale={[1.9, 1.5, 0.9]}><dodecahedronGeometry args={[1, 0]} /><meshStandardMaterial color="#7a7464" roughness={1} flatShading /></mesh>
+          <mesh position={[-1.2, 3.0, -0.1]} scale={[1, 0.9, 0.7]}><dodecahedronGeometry args={[1, 0]} /><meshStandardMaterial color="#6e6a5e" roughness={1} flatShading /></mesh>
+          <mesh position={[1.2, 3.1, -0.1]} scale={[1, 0.9, 0.7]}><dodecahedronGeometry args={[1, 0]} /><meshStandardMaterial color="#6e6a5e" roughness={1} flatShading /></mesh>
+        </group>
+      )}
+      {open && <pointLight position={[0, 2.2, 0]} color="#43e6f5" intensity={10} distance={16} />}
     </group>
   )
 }

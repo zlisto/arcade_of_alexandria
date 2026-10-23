@@ -2,7 +2,7 @@ import { forwardRef, useImperativeHandle, useMemo, useRef } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { RoundedBox } from '@react-three/drei'
 import * as THREE from 'three'
-import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js'
+import { rimMat, getEnv, bend } from '../engine/materials'
 import { ELEMENTS } from '../chem/rules'
 
 // Kai, modeled on assets/characters/kai.png: graphite plate armor with a high collar, layered
@@ -16,39 +16,6 @@ import { ELEMENTS } from '../chem/rules'
 //   spin 0..1, block 0..1, hurt 0..1, stance 'sp3'|'sp2'|'sp', sockets [symbols], charge 0..1
 
 const CYAN = '#43e6f5'
-
-// Standard material + fresnel rim light (patched into the shader).
-function rimMat(params, rim = '#7fb2ff', strength = 0.35, power = 2.6) {
-  const m = new THREE.MeshStandardMaterial(params)
-  const rimColor = new THREE.Color(rim)
-  m.onBeforeCompile = (shader) => {
-    shader.uniforms.rimColor = { value: rimColor }
-    shader.uniforms.rimStrength = { value: strength }
-    shader.uniforms.rimPower = { value: power }
-    shader.fragmentShader = 'uniform vec3 rimColor;\nuniform float rimStrength;\nuniform float rimPower;\n' + shader.fragmentShader.replace(
-      '#include <dithering_fragment>',
-      'float rimF = pow(1.0 - clamp(dot(normalize(normal), normalize(vViewPosition)), 0.0, 1.0), rimPower);\n  gl_FragColor.rgb += rimColor * rimF * rimStrength;\n  #include <dithering_fragment>',
-    )
-  }
-  m.customProgramCacheKey = () => `rim-${rim}-${strength}-${power}`
-  return m
-}
-
-// A soft studio reflection map, generated locally once, so the metal armor has something to reflect.
-let envTex = null
-function getEnv(gl) {
-  if (!envTex) { const pm = new THREE.PMREMGenerator(gl); envTex = pm.fromScene(new RoomEnvironment(), 0.04).texture; pm.dispose() }
-  return envTex
-}
-
-// Bend a flat extruded plate around the body (sides curve back), so plates hug the torso.
-function bend(geo, k) {
-  const p = geo.attributes.position
-  for (let i = 0; i < p.count; i++) p.setZ(i, p.getZ(i) - k * p.getX(i) * p.getX(i))
-  p.needsUpdate = true
-  geo.computeVertexNormals()
-  return geo
-}
 
 function useKaiAssets() {
   const gl = useThree((st) => st.gl)

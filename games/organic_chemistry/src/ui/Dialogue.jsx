@@ -6,14 +6,27 @@ import { sfx } from '../audio/sfx'
 // FF7-style dialogue: fixed-size box, the whole line is laid out (untyped part invisible), ▶▶ finishes the line,
 // Next ▾ advances; Space / Enter / E do the same.
 
+// Small face crops (art/portraits/*.jpg, ~8 KB each) so the box never waits on a 1–2 MB poster.
 export const PORTRAITS = {
-  Pi: 'art/pi.png',
-  Kai: 'art/kai.png',
-  'Sage Aufbau': 'art/sage-aufbau.png',
-  Malradix: 'art/malradix.png',
-  'Malradix the Unpaired': 'art/malradix.png',
-  'Princess Octavia': 'art/octavia.png',
-  Octavia: 'art/octavia.png',
+  Pi: 'art/portraits/pi.jpg',
+  Kai: 'art/portraits/kai.jpg',
+  'Sage Aufbau': 'art/portraits/sage-aufbau.jpg',
+  Malradix: 'art/portraits/malradix.jpg',
+  'Malradix the Unpaired': 'art/portraits/malradix.jpg',
+  'Princess Octavia': 'art/portraits/octavia.jpg',
+  Octavia: 'art/portraits/octavia.jpg',
+}
+// fetch them up front, so the first line of dialogue already has its face
+if (typeof window !== 'undefined') Object.values(PORTRAITS).forEach((src) => { const im = new Image(); im.src = src })
+
+function Portrait({ who }) {
+  const src = PORTRAITS[who]
+  const [failed, setFailed] = useState(false)
+  useEffect(() => setFailed(false), [src])
+  if (src && !failed) return <img className="portrait" src={src} alt="" onError={() => setFailed(true)} />
+  // no art (villagers) or it failed to load: a lettered badge instead of a broken image
+  const initials = who.split(/[\s&]+/).filter(Boolean).map((w) => w[0]).join('').slice(0, 2).toUpperCase()
+  return <div className="portrait portrait-badge"><span>{initials}</span></div>
 }
 
 export default function Dialogue() {
@@ -62,10 +75,9 @@ export default function Dialogue() {
     return () => window.removeEventListener('keydown', k, true)
   })
   if (!d || !line) return null
-  const portrait = PORTRAITS[line.who]
   return (
     <div className="dialogue" onClick={advance}>
-      {portrait && <img className="portrait" src={portrait} alt={line.who} />}
+      <Portrait who={line.who} />
       <div className="dbox">
         <div className="who">{line.who}</div>
         <div className="dtext">

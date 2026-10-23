@@ -30,22 +30,8 @@ export function Malradix({ staffGlow = 1, ...props }) {
   )
 }
 
-export function Octavia(props) {
-  return (
-    <group {...props}>
-      <mesh position={[0, 0.85, 0]} castShadow><coneGeometry args={[0.55, 1.7, 14]} /><meshStandardMaterial color="#efeae0" roughness={0.6} /></mesh>
-      <mesh position={[0, 1.2, 0]}><cylinderGeometry args={[0.2, 0.3, 0.12, 12]} /><meshStandardMaterial color="#d9b25e" metalness={0.6} roughness={0.35} /></mesh>
-      <mesh position={[0, 1.55, 0]}><capsuleGeometry args={[0.16, 0.35, 4, 10]} /><meshStandardMaterial color="#efeae0" /></mesh>
-      <mesh position={[0, 1.95, 0]}><sphereGeometry args={[0.16, 14, 12]} /><meshStandardMaterial color="#e2b896" /></mesh>
-      {/* long straight black hair with bangs */}
-      <mesh position={[0, 1.9, -0.06]} scale={[1.05, 1.6, 0.9]}><sphereGeometry args={[0.18, 12, 10]} /><meshStandardMaterial color="#0b0b0e" /></mesh>
-      <mesh position={[0, 2.03, 0.07]} scale={[1, 0.35, 0.8]}><sphereGeometry args={[0.16, 12, 8]} /><meshStandardMaterial color="#0b0b0e" /></mesh>
-      {/* circlet of eight lights in four pairs */}
-      {[...Array(8)].map((_, i) => { const a = -1.2 + (i / 7) * 2.4; return <mesh key={i} position={[Math.sin(a) * 0.17, 2.1 + Math.cos(a * 1.2) * 0.02, Math.cos(a) * 0.12]}><sphereGeometry args={[0.022, 6, 6]} /><meshBasicMaterial color="#bff6ff" toneMapped={false} /></mesh> })}
-      <pointLight position={[0, 2.1, 0.3]} color="#ffe9b8" intensity={1.5} distance={4} />
-    </group>
-  )
-}
+// Octavia has her own detailed model
+export { Octavia } from './OctaviaModel'
 
 export function Crown({ shatter = 0, glow = 1, ...props }) {
   // four arms of light at tetrahedral angles around a carbon heart
