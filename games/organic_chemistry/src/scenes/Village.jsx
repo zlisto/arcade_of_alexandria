@@ -346,10 +346,10 @@ function VillageLevel({ world, onExit }) {
       <WellStation world={world} onUse={useWell} label={() => (getState().save.well ? null : getState().sockets.length >= 4 ? 'Seal the well with CH₄' : 'Examine the broken well')} />
       <Methane show={save.well} position={[WELL[0], 3.6, WELL[2]]} />
       {/* villagers: hydrogens, so they go about in pairs (H₂) */}
-      <NPC world={world} pos={[WELL[0] - 4.2, WELL[2] + 2.6]} name="Elder Proton" hat="#4a4a8a" onTalk={talkElder} />
+      <NPC world={world} pos={[WELL[0] - 4.2, WELL[2] + 2.6]} name="Elder Proton" hat="#4a4a8a" kind="elder" onTalk={talkElder} />
       <NPC world={world} pos={[-4, 13]} name="Hilda & Hal" pair onTalk={() => say([{ who: 'Hilda', text: "We hydrogens can only hold one hand each. So we go about in twos — H₂, the two of us." }, { who: 'Hal', text: 'Four bonds, though? Kai, you must be exhausted.' }])} />
-      <NPC world={world} pos={[16, 2]} name="Old Deut" hat="#2a6a4a" onTalk={() => say([{ who: 'Old Deut', text: "I'm a hydrogen with an extra neutron in my nucleus. Heavier — deuterium, they call it — but the same element. Same one bond." }, { who: 'Pi', text: 'An isotope: same number of protons (atomic number), different mass number.' }])} />
-      <NPC world={world} pos={[-10, -10]} name="Pip" hat="#c08a2a" onTalk={() => say([{ who: 'Pip', text: "The sage in the cave once told me carbon's electrons fill up from the bottom like water in a jug. 1s first, then 2s, then 2p." }])} />
+      <NPC world={world} pos={[16, 2]} name="Old Deut" hat="#2a6a4a" kind="deut" onTalk={() => say([{ who: 'Old Deut', text: "I'm a hydrogen with an extra neutron in my nucleus. Heavier — deuterium, they call it — but the same element. Same one bond." }, { who: 'Pi', text: 'An isotope: same number of protons (atomic number), different mass number.' }])} />
+      <NPC world={world} pos={[-10, -10]} name="Pip" hat="#c08a2a" kind="kid" onTalk={() => say([{ who: 'Pip', text: "The sage in the cave once told me carbon's electrons fill up from the bottom like water in a jug. 1s first, then 2s, then 2p." }])} />
       {LOOSE_H.map((p, i) => <LooseH key={i} world={world} pos={p} taken={taken[i]} onTake={() => take(i)} />)}
       <WolfPack world={world} spawns={[[2, 2], [9, 7]]} active={wolvesOn} onCleared={cleared} />
       <CaveMouth open={save.wolvesCleared} />
@@ -373,7 +373,7 @@ function WellStation({ world, onUse, label }) {
   return null
 }
 
-function NPC({ world, pos, name, onTalk, hat, pair }) {
+function NPC({ world, pos, name, onTalk, hat, pair, kind }) {
   const cb = useRef(onTalk)
   cb.current = onTalk
   useEffect(() => {
@@ -394,7 +394,7 @@ function NPC({ world, pos, name, onTalk, hat, pair }) {
       <group ref={g}>
         {pair ? <><Villager position={[-0.45, 0, 0]} hat="#c0394b" /><Villager position={[0.45, 0, 0]} hat="#3a6ab2" />
           <mesh position={[0, 0.55, 0.1]} rotation={[0, 0, Math.PI / 2]}><cylinderGeometry args={[0.05, 0.05, 0.6, 6]} /><meshStandardMaterial color="#f0d2b8" /></mesh></>
-          : <Villager hat={hat} />}
+          : <Villager hat={hat} kind={kind} />}
       </group>
       <Html position={[0, 1.9, 0]} center distanceFactor={10}><div className="tag3d">{name}</div></Html>
     </group>
