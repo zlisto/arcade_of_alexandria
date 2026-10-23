@@ -12,6 +12,20 @@ import { WolfBody, useWolfAssets, animateWolf } from './WolfModel'
 // So the way to win is aim: lock on and knock wolves into each other.
 
 const MAX = 6
+// tuning for the "knock one into another" mechanic
+const PAIR_RADIUS = 1.9 // how close two wolves must pass to pair (bodies are ~1.6 m long)
+const AIM_CONE = Math.cos((55 * Math.PI) / 180) // aim assist: wolves within 55° of the knock direction…
+const AIM_RANGE = 9 // …and this many metres away pull the knocked wolf toward them
+const SPACING = 1.8 // hunting wolves keep at least this far apart (was 2.4)
+const huntable = (o) => o && (o.state === 'chase' || o.state === 'windup' || o.state === 'lunge')
+const pairable = (o) => huntable(o) || (o && o.state === 'knocked')
+// distance from point c to the segment a→b, on the ground plane
+function segDist(a, b, c) {
+  const abx = b.x - a.x, abz = b.z - a.z
+  const l2 = abx * abx + abz * abz
+  const t = l2 > 1e-6 ? Math.max(0, Math.min(1, ((c.x - a.x) * abx + (c.z - a.z) * abz) / l2)) : 0
+  return Math.hypot(a.x + abx * t - c.x, a.z + abz * t - c.z)
+}
 
 export default function WolfPack({ world, spawns, onCleared, active = true, tutorial = true, arena }) {
   const refs = useRef([])
@@ -44,7 +58,28 @@ export default function WolfPack({ world, spawns, onCleared, active = true, tuto
         if (!w || w.state === 'knocked' || w.state === 'pairing' || w.state === 'gone') return false
         w.state = 'knocked'
         w.t = 0
-        w.vel.set(dir[0], 0, dir[2]).multiplyScalar(kind === 'spin' ? 12 : 14)
+        // aim assist: if another wolf is roughly where you knocked this one, fly straight at it
+        const d = new THREE.Vector3(dir[0], 0, dir[2]).normalize()
+        let best = null, bestScore = Infinity
+        for (const o of wolves.current) {
+          if (!huntable(o) || o === w) continue
+          const v = new THREE.Vector3(o.pos.x - w.pos.x, 0, o.pos.z - w.pos.z)
+          const dist = v.length()
+          if (dist < 0.01 || dist > AIM_RANGE) continue
+          const cos = v.dot(d) / dist
+          if (cos < AIM_CONE) continue
+          const score = dist * (2 - cos) // nearer and straighter wins
+          if (score < bestScore) { bestScore = score; best = o }
+        }
+        w.homing = best
+        if (best) {
+          const v = new THREE.Vector3(best.pos.x - w.pos.x, 0, best.pos.z - w.pos.z)
+          const gap = v.length()
+          // fast enough to reach it before the knock wears off
+          w.vel.copy(v.multiplyScalar(1 / gap)).multiplyScalar(Math.max(14, gap * 3.2))
+        } else {
+          w.vel.copy(d).multiplyScalar(kind === 'spin' ? 12 : 14)
+        }
         w.vel.y = 3
         sfx('growl')
         return true
@@ -70,6 +105,13 @@ export default function WolfPack({ world, spawns, onCleared, active = true, tuto
       const toP = p ? new THREE.Vector3(p.pos.x - w.pos.x, 0, p.pos.z - w.pos.z) : new THREE.Vector3()
       const dist = toP.length()
       if (w.state === 'knocked') {
+        const prev = w.pos.clone()
+        // keep homing on the chosen partner while it moves
+        if (w.homing && huntable(w.homing)) {
+          const v = new THREE.Vector3(w.homing.pos.x - w.pos.x, 0, w.homing.pos.z - w.pos.z)
+          const sp = Math.hypot(w.vel.x, w.vel.z)
+          if (v.lengthSq() > 0.01) { v.normalize().multiplyScalar(sp); w.vel.x += (v.x - w.vel.x) * Math.min(1, dt * 8); w.vel.z += (v.z - w.vel.z) * Math.min(1, dt * 8) }
+        }
         w.pos.addScaledVector(w.vel, dt)
         w.vel.y -= 14 * dt
         w.pos.y = Math.max(0, w.pos.y + w.vel.y * dt)
@@ -79,9 +121,10 @@ export default function WolfPack({ world, spawns, onCleared, active = true, tuto
         const [cx, cz] = world.collide(w.pos.x, w.pos.y + 0.1, w.pos.z, 0.5, 0.9)
         if (Math.hypot(cx - w.pos.x, cz - w.pos.z) > 0.01) { w.vel.multiplyScalar(0.4); w.pos.x = cx; w.pos.z = cz }
         // termination: slam into another wolf → both pair and vanish
+        // checked along this frame's whole path, so a fast wolf can't skip past its partner
         for (const o of list) {
-          if (!o || o === w || !(o.state === 'chase' || o.state === 'windup' || o.state === 'lunge' || o.state === 'knocked')) continue
-          if (o.pos.distanceTo(w.pos) < 1.25) {
+          if (!pairable(o) || o === w) continue
+          if (segDist(prev, w.pos, o.pos) < PAIR_RADIUS) {
             w.state = 'pairing'; o.state = 'pairing'; w.t = 0; o.t = 0
             const mid = w.pos.clone().add(o.pos).multiplyScalar(0.5)
             w.pairAt = mid; o.pairAt = mid
@@ -100,7 +143,7 @@ export default function WolfPack({ world, spawns, onCleared, active = true, tuto
             const a = Math.random() * Math.PI * 2
             const nw = spawnWolf(w.pos.x + Math.cos(a) * 1.6, w.pos.z + Math.sin(a) * 1.6)
             if (nw) { nw.flash = 0.4; sfx('split') }
-            if (tutorial && !told.current.split) { told.current.split = true; toast('Hitting a radical just made another one! Knock a wolf INTO another wolf to pair them.', 'warn', 5200) }
+            if (tutorial && !told.current.split) { told.current.split = true; toast('Hitting a lone radical just made another one! Lock on and knock a wolf toward another wolf — it will fly into it and they pair up.', 'warn', 5600) }
           }
         }
       } else if (p) {
@@ -128,7 +171,7 @@ export default function WolfPack({ world, spawns, onCleared, active = true, tuto
           if (!o || o === w || o.state === 'gone' || o.state === 'pairing') continue
           const d = w.pos.clone().sub(o.pos); d.y = 0
           const l = d.length()
-          if (l < 2.4 && l > 0.001) desired.addScaledVector(d.normalize(), (2.4 - l) * 3)
+          if (l < SPACING && l > 0.001) desired.addScaledVector(d.normalize(), (SPACING - l) * 3)
         }
         w.vel.lerp(desired, Math.min(1, dt * 6))
         w.pos.addScaledVector(w.vel, dt)
