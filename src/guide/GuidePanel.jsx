@@ -49,11 +49,12 @@ export default function GuidePanel({ visitor, onClose, onPlayGame }) {
   const [typing, setTyping] = useState(false)
   const [query, setQuery] = useState('')
   const log = useRef()
-  const games = useMemo(() => searchGames(query), [query])
+  // Only games that are playable now; coming-soon cabinets stay in the hall but not in the chat.
+  const games = useMemo(() => searchGames(query).filter((g) => g.href), [query])
 
   useEffect(() => {
     saved = messages
-    // Messages sit above the catalog, so scroll to the newest message, not the bottom.
+    // Scroll to the top of the newest message so long answers read from their start.
     const el = log.current
     const last = el?.querySelectorAll('.guide-msg')
     if (el && last?.length) {
@@ -95,6 +96,31 @@ export default function GuidePanel({ visitor, onClose, onPlayGame }) {
           ×
         </button>
       </header>
+      <div className="guide-games">
+        <input
+          type="search"
+          placeholder="Search games…"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={(e) => e.stopPropagation()}
+        />
+        {games.length === 0 ? (
+          <p className="world-none">No games match that search.</p>
+        ) : (
+          games.map((g) => (
+            <div key={g.id} className="guide-game">
+              <span className="world-dot" />
+              <div className="guide-game-name">
+                <b>{g.title}</b>
+                <span>{g.subject}</span>
+              </div>
+              <button type="button" onClick={() => onPlayGame?.(g)}>
+                Play →
+              </button>
+            </div>
+          ))
+        )}
+      </div>
       <div className="guide-log" ref={log}>
         {messages.map((m, i) => (
           <div key={i} className={`guide-msg ${m.who === 'you' ? 'you' : 'tauhid'}`}>
@@ -107,49 +133,6 @@ export default function GuidePanel({ visitor, onClose, onPlayGame }) {
           </div>
         ))}
         {typing && <div className="guide-msg tauhid typing">…</div>}
-
-        <div className="game-catalog">
-          <div className="game-catalog-head">
-            <b>Game catalog</b>
-            <input
-              type="search"
-              placeholder="Search games…"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              onKeyDown={(e) => e.stopPropagation()}
-            />
-          </div>
-          {games.length === 0 ? (
-            <p className="world-none">No games match that search.</p>
-          ) : (
-            games.map((g) => (
-              <div key={g.id} className={`world-card ${g.href ? 'ok' : ''}`}>
-                <div className="world-head">
-                  <span className="world-dot" style={{ background: g.href ? '#5fe39b' : '#ff4fa3', boxShadow: 'none' }} />
-                  <b>{g.title}</b>
-                  <button type="button" onClick={() => onPlayGame?.(g)} disabled={!g.href && false}>
-                    {g.href ? 'Play →' : 'Soon'}
-                  </button>
-                </div>
-                <span className="world-host">{g.subject} · {g.href ? 'ready' : 'coming soon'}</span>
-                <p className="game-blurb">{g.blurb}</p>
-              </div>
-            ))
-          )}
-        </div>
-
-        <div className="world-list">
-          <div className="world-card ok">
-            <div className="world-head">
-              <span className="world-dot" />
-              <b>Metaverse Square</b>
-              <button type="button" onClick={goHub}>
-                Go →
-              </button>
-            </div>
-            <span className="world-host">every world · portal</span>
-          </div>
-        </div>
       </div>
       <div className="guide-asks">
         {FACTS.map((f) => (
@@ -158,7 +141,12 @@ export default function GuidePanel({ visitor, onClose, onPlayGame }) {
           </button>
         ))}
       </div>
-      <div className="guide-foot">Click outside the chat, Esc or × to keep exploring</div>
+      <div className="guide-foot">
+        <span>Esc or × to keep exploring</span>
+        <button type="button" onClick={goHub}>
+          Metaverse Square →
+        </button>
+      </div>
     </div>
   )
 }
