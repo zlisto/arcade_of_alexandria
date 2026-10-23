@@ -581,3 +581,15 @@ body,
   color: var(--pink-soft);
   letter-spacing: 2px;
 }
+
+.guide-play {
+  margin-top: 8px;
+  border: 1px solid var(--pink);
+  background: var(--pink);
+  color: var(--black);
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 13px;
+  cursor: pointer;
+}

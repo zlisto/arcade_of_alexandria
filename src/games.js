@@ -26,12 +26,12 @@ export const GAMES = [
   },
   {
     id: 'organic_chemistry',
-    title: 'Organic Chemistry',
-    subject: 'Chemistry',
-    blurb: 'Build molecules, steer reactions, and read mechanisms by doing them in play.',
-    authors: 'Orgo textbook (TBD)',
-    href: null,
-    status: 'coming_soon',
+    title: 'Legend of Valence',
+    subject: 'Organic Chemistry',
+    blurb: 'A carbon knight masters the laws of bonding in twelve dungeons — octets, resonance, and mechanisms you play, from McMurry’s Organic Chemistry.',
+    authors: 'John E. McMurry · Organic Chemistry (OpenStax, 10th ed.)',
+    href: 'https://zlisto.github.io/legend-of-valence/',
+    status: 'live',
     theme: { primary: '#e07a2f', secondary: '#3d2414', accent: '#ffd0a8', wood: '#6b4a2a', label: 'ORGO' },
   },
   {

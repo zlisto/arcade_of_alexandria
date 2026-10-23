@@ -32,10 +32,14 @@ function marqueeTex(title, theme) {
   g.fillStyle = 'rgba(0,0,0,0.35)'
   g.fillRect(0, 18, 256, 32)
   g.fillStyle = '#f4f4f0'
-  g.font = 'bold 22px monospace'
   g.textAlign = 'center'
   g.textBaseline = 'middle'
-  const label = (title.length > 16 ? title.slice(0, 15) + '…' : title).toUpperCase()
+  // shrink the font so longer titles fit before falling back to an ellipsis
+  let label = title.toUpperCase()
+  let size = 22
+  g.font = `bold ${size}px monospace`
+  while (size > 15 && g.measureText(label).width > 240) g.font = `bold ${--size}px monospace`
+  while (label.length > 4 && g.measureText(label).width > 240) label = label.slice(0, -2) + '…'
   g.fillText(label, 128, 34)
   const t = new THREE.CanvasTexture(c)
   t.colorSpace = THREE.SRGBColorSpace

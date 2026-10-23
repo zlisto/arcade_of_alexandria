@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 import { FACTS, GREETING } from './facts.js'
-import { searchGames } from '../games.js'
+import { gameById, searchGames } from '../games.js'
 import { PORTAL } from '../layout.js'
 import { navigate } from '../mvw.js'
 import { fadeOut, whoosh } from '../audio.js'
@@ -53,7 +53,13 @@ export default function GuidePanel({ visitor, onClose, onPlayGame }) {
 
   useEffect(() => {
     saved = messages
-    log.current?.scrollTo({ top: log.current.scrollHeight, behavior: 'smooth' })
+    // Messages sit above the catalog, so scroll to the newest message, not the bottom.
+    const el = log.current
+    const last = el?.querySelectorAll('.guide-msg')
+    if (el && last?.length) {
+      const top = last[last.length - 1].getBoundingClientRect().top - el.getBoundingClientRect().top + el.scrollTop - 8
+      el.scrollTo({ top, behavior: 'smooth' })
+    }
   }, [messages, typing])
   useEffect(() => {
     const esc = (e) => e.code === 'Escape' && onClose()
@@ -67,7 +73,7 @@ export default function GuidePanel({ visitor, onClose, onPlayGame }) {
     setMessages((m) => [...m, { who: 'you', text: fact.q }])
     setTyping(true)
     setTimeout(() => {
-      setMessages((m) => [...m, { who: 'guide', text: fact.a }])
+      setMessages((m) => [...m, { who: 'guide', text: fact.a, gameId: fact.gameId }])
       setTyping(false)
     }, 650)
   }
@@ -93,6 +99,11 @@ export default function GuidePanel({ visitor, onClose, onPlayGame }) {
         {messages.map((m, i) => (
           <div key={i} className={`guide-msg ${m.who === 'you' ? 'you' : 'tauhid'}`}>
             <Rich text={m.text} />
+            {m.gameId && gameById(m.gameId)?.href && (
+              <button type="button" className="guide-play" onClick={() => onPlayGame?.(gameById(m.gameId))}>
+                Play {gameById(m.gameId).title} →
+              </button>
+            )}
           </div>
         ))}
         {typing && <div className="guide-msg tauhid typing">…</div>}

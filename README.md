@@ -4,7 +4,9 @@
 
 A Metaverse Web world (`mvw/0.1`): a hall of arcade cabinets where **textbooks become video games**. Talk to **Callimachus**, an ancient Alexandrian librarian Labubu, for a fixed Q&A and a **searchable game catalog**. Aim at a cabinet and click / **E** to play.
 
-Games live in **separate repos**. This world only lists them and links out. Right now the catalog has **Algebraic Topology** with no URL yet — clicking the cabinet shows “coming soon.”
+Games live in **separate repos**. This world only lists them and links out. Playable now: **Winding World** (Algebraic Topology) and **Legend of Valence** (Organic Chemistry, https://zlisto.github.io/legend-of-valence/). The rest are “coming soon.”
+
+To add a game, use the `add-metaverse-arcade-game` skill in `.claude/skills/`.
 
 ## Dev
 
