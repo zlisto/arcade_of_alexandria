@@ -1,0 +1,206 @@
+import { useEffect, useLayoutEffect, useMemo, useRef } from 'react'
+import { useFrame } from '@react-three/fiber'
+import * as THREE from 'three'
+
+// Reusable scene pieces. Each piece that blocks or carries Kai registers itself with the world.
+
+/** Solid box: visible + collidable. pos = center, size = [w,h,d]. */
+export function Block({ world, pos, size, color = '#555', mat, visible = true, noCam = false, children, rotationY = 0 }) {
+  useEffect(() => {
+    const min = [pos[0] - size[0] / 2, pos[1] - size[1] / 2, pos[2] - size[2] / 2]
+    const max = [pos[0] + size[0] / 2, pos[1] + size[1] / 2, pos[2] + size[2] / 2]
+    const id = world.addSolid(min, max)
+    if (noCam) world.solids.get(id).noCam = true
+    return () => world.remove(id)
+  }, [world, ...pos, ...size])
+  if (!visible) return null
+  return (
+    <mesh position={pos} rotation={[0, rotationY, 0]} castShadow receiveShadow>
+      <boxGeometry args={size} />
+      {mat || <meshStandardMaterial color={color} roughness={0.85} />}
+      {children}
+    </mesh>
+  )
+}
+
+/** Walkable slab whose top is at y. */
+export function Slab({ world, x0, z0, x1, z1, y = 0, thick = 0.5, color = '#3a3540', mat, visible = true }) {
+  useEffect(() => {
+    const id = world.addFloor(Math.min(x0, x1), Math.min(z0, z1), Math.max(x0, x1), Math.max(z0, z1), y)
+    return () => world.remove(id)
+  }, [world, x0, z0, x1, z1, y])
+  if (!visible) return null
+  return (
+    <mesh position={[(x0 + x1) / 2, y - thick / 2, (z0 + z1) / 2]} receiveShadow>
+      <boxGeometry args={[Math.abs(x1 - x0), thick, Math.abs(z1 - z0)]} />
+      {mat || <meshStandardMaterial color={color} roughness={0.92} />}
+    </mesh>
+  )
+}
+
+/** A gate that blocks until `open`, then slides into the floor. */
+export function Gate({ world, pos, size = [4, 4, 0.6], open, color = '#2a3550', glow = '#43e6f5', label }) {
+  const ref = useRef()
+  const idRef = useRef(null)
+  const cur = useRef(open ? 1 : 0)
+  useEffect(() => {
+    const min = [pos[0] - size[0] / 2, pos[1], pos[2] - size[2] / 2]
+    const max = [pos[0] + size[0] / 2, pos[1] + size[1], pos[2] + size[2] / 2]
+    idRef.current = world.addSolid(min, max)
+    return () => world.remove(idRef.current)
+  }, [world])
+  useEffect(() => { world.setEnabled(idRef.current, !open) }, [open])
+  useFrame((_, dt) => {
+    cur.current += ((open ? 1 : 0) - cur.current) * Math.min(1, dt * 2.5)
+    if (ref.current) ref.current.position.y = pos[1] + size[1] / 2 - cur.current * (size[1] + 0.05)
+  })
+  return (
+    <group>
+      <group ref={ref} position={[pos[0], pos[1] + size[1] / 2, pos[2]]}>
+        {/* stone slab behind a portcullis of glowing bars, so it reads as a door, not a wall of light */}
+        <mesh castShadow><boxGeometry args={[size[0], size[1], size[2] * 0.5]} /><meshStandardMaterial color="#1f1d28" roughness={0.95} flatShading /></mesh>
+        {[...Array(Math.max(2, Math.round(size[0] / 0.9)))].map((_, i, a) => (
+          <mesh key={i} position={[-size[0] / 2 + (i + 0.5) * (size[0] / a.length), 0, size[2] * 0.3]}><boxGeometry args={[0.12, size[1], 0.12]} /><meshStandardMaterial color={color} metalness={0.6} roughness={0.4} emissive={glow} emissiveIntensity={0.35} /></mesh>
+        ))}
+        {[-0.3, 0.3].map((f) => <mesh key={f} position={[0, f * size[1], size[2] * 0.3]}><boxGeometry args={[size[0], 0.14, 0.14]} /><meshStandardMaterial color={color} metalness={0.6} roughness={0.4} /></mesh>)}
+      </group>
+      {/* frame */}
+      <mesh position={[pos[0] - size[0] / 2 - 0.25, pos[1] + size[1] / 2 + 0.2, pos[2]]}><boxGeometry args={[0.5, size[1] + 0.4, size[2] + 0.4]} /><meshStandardMaterial color="#1c1a22" roughness={0.9} /></mesh>
+      <mesh position={[pos[0] + size[0] / 2 + 0.25, pos[1] + size[1] / 2 + 0.2, pos[2]]}><boxGeometry args={[0.5, size[1] + 0.4, size[2] + 0.4]} /><meshStandardMaterial color="#1c1a22" roughness={0.9} /></mesh>
+      <mesh position={[pos[0], pos[1] + size[1] + 0.25, pos[2]]}><boxGeometry args={[size[0] + 1, 0.5, size[2] + 0.4]} /><meshStandardMaterial color="#1c1a22" roughness={0.9} /></mesh>
+      <mesh position={[pos[0], pos[1] + size[1] + 0.25, pos[2] + size[2] / 2 + 0.21]}><boxGeometry args={[size[0] * 0.6, 0.12, 0.02]} /><meshBasicMaterial color={open ? '#2e4a3c' : glow} toneMapped={false} /></mesh>
+    </group>
+  )
+}
+
+/** A puzzle station: glowing pedestal you press E at. */
+export function Station({ world, pos, label, onUse, enabled = true, solved = false, color = '#43e6f5' }) {
+  const idRef = useRef(null)
+  const cb = useRef(onUse)
+  cb.current = onUse
+  useEffect(() => {
+    idRef.current = world.addInteractable({ pos, radius: 2.2, label, onInteract: () => cb.current && cb.current() })
+    const s = world.addSolid([pos[0] - 0.45, pos[1], pos[2] - 0.45], [pos[0] + 0.45, pos[1] + 1.05, pos[2] + 0.45])
+    return () => { world.remove(idRef.current); world.remove(s) }
+  }, [world])
+  useEffect(() => { const it = world.interactables.get(idRef.current); if (it) { it.enabled = enabled; it.label = label } }, [enabled, label])
+  const orb = useRef()
+  useFrame(({ clock }) => { if (orb.current) { orb.current.position.y = pos[1] + 1.45 + Math.sin(clock.elapsedTime * 2) * 0.08; orb.current.rotation.y += 0.02 } })
+  const c = solved ? '#6fe39a' : color
+  return (
+    <group>
+      <mesh position={[pos[0], pos[1] + 0.5, pos[2]]} castShadow><cylinderGeometry args={[0.38, 0.5, 1.0, 8]} /><meshStandardMaterial color="#2a2733" roughness={0.7} /></mesh>
+      <mesh position={[pos[0], pos[1] + 1.02, pos[2]]}><cylinderGeometry args={[0.5, 0.42, 0.08, 8]} /><meshStandardMaterial color="#3a3644" /></mesh>
+      <mesh ref={orb} position={[pos[0], pos[1] + 1.45, pos[2]]}><octahedronGeometry args={[0.22, 0]} /><meshStandardMaterial color={c} emissive={c} emissiveIntensity={2} toneMapped={false} /></mesh>
+      <pointLight position={[pos[0], pos[1] + 1.6, pos[2]]} color={c} intensity={2.2} distance={6} />
+    </group>
+  )
+}
+
+/** Instanced scatter: trees, rocks, crystals. items = [[x,z,scale,rotY], ...] */
+export function Scatter({ items, kind = 'rock', y = 0, color }) {
+  const ref = useRef()
+  const ref2 = useRef()
+  const dummy = useMemo(() => new THREE.Object3D(), [])
+  useLayoutEffect(() => {
+    items.forEach(([x, z, s = 1, r = 0], i) => {
+      dummy.position.set(x, y + (kind === 'tree' ? 1.2 * s : kind === 'crystal' ? 0.6 * s : 0.25 * s), z)
+      dummy.rotation.set(kind === 'crystal' ? 0.15 * Math.sin(i) : 0, r, kind === 'crystal' ? 0.15 * Math.cos(i * 1.7) : 0)
+      dummy.scale.setScalar(s)
+      dummy.updateMatrix()
+      ref.current.setMatrixAt(i, dummy.matrix)
+      if (ref2.current) {
+        dummy.position.set(x, y + 0.6 * s, z)
+        dummy.rotation.set(0, r, 0)
+        dummy.updateMatrix()
+        ref2.current.setMatrixAt(i, dummy.matrix)
+      }
+    })
+    ref.current.instanceMatrix.needsUpdate = true
+    if (ref2.current) ref2.current.instanceMatrix.needsUpdate = true
+  }, [items])
+  if (kind === 'tree') {
+    return (
+      <group>
+        <instancedMesh ref={ref} args={[null, null, items.length]} castShadow>
+          <coneGeometry args={[1.1, 2.6, 7]} />
+          <meshStandardMaterial color={color || '#2f5a3a'} roughness={0.9} />
+        </instancedMesh>
+        <instancedMesh ref={ref2} args={[null, null, items.length]}>
+          <cylinderGeometry args={[0.16, 0.22, 1.2, 6]} />
+          <meshStandardMaterial color="#4a3426" roughness={0.9} />
+        </instancedMesh>
+      </group>
+    )
+  }
+  if (kind === 'crystal') {
+    return (
+      <instancedMesh ref={ref} args={[null, null, items.length]}>
+        <octahedronGeometry args={[0.5, 0]} />
+        <meshStandardMaterial color={color || '#43c8e6'} emissive={color || '#1fa7c4'} emissiveIntensity={1.1} roughness={0.25} metalness={0.1} transparent opacity={0.92} />
+      </instancedMesh>
+    )
+  }
+  return (
+    <instancedMesh ref={ref} args={[null, null, items.length]} castShadow receiveShadow>
+      <dodecahedronGeometry args={[0.6, 0]} />
+      <meshStandardMaterial color={color || '#5a5560'} roughness={0.95} flatShading />
+    </instancedMesh>
+  )
+}
+
+export function Torch({ pos, color = '#ffb35a' }) {
+  const flame = useRef()
+  const light = useRef()
+  useFrame(({ clock }) => {
+    const f = 1 + Math.sin(clock.elapsedTime * 13 + pos[0]) * 0.12 + Math.sin(clock.elapsedTime * 7.3) * 0.08
+    if (flame.current) flame.current.scale.set(1, f, 1)
+    if (light.current) light.current.intensity = 2.4 * f
+  })
+  return (
+    <group position={pos}>
+      <mesh position={[0, 0.7, 0]}><cylinderGeometry args={[0.06, 0.09, 1.4, 6]} /><meshStandardMaterial color="#2a2420" /></mesh>
+      <mesh position={[0, 1.45, 0]}><cylinderGeometry args={[0.18, 0.1, 0.18, 8]} /><meshStandardMaterial color="#3a3028" /></mesh>
+      <mesh ref={flame} position={[0, 1.7, 0]}><coneGeometry args={[0.14, 0.42, 8]} /><meshBasicMaterial color={color} toneMapped={false} /></mesh>
+      <pointLight ref={light} position={[0, 1.8, 0]} color={color} intensity={2.4} distance={8} />
+    </group>
+  )
+}
+
+/** Deterministic pseudo-random scatter generator. */
+export function scatter(n, seed, fn) {
+  let s = seed
+  const rnd = () => { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646 }
+  const out = []
+  for (let i = 0; i < n; i++) { const v = fn(rnd, i); if (v) out.push(v) }
+  return out
+}
+
+/** Floating motes / sparks for atmosphere. */
+export function Motes({ count = 120, area = [40, 8, 40], center = [0, 2, 0], color = '#9fe8ff', size = 0.06 }) {
+  const ref = useRef()
+  const geo = useMemo(() => {
+    const g = new THREE.BufferGeometry()
+    const p = new Float32Array(count * 3)
+    for (let i = 0; i < count; i++) {
+      p[i * 3] = center[0] + (Math.random() - 0.5) * area[0]
+      p[i * 3 + 1] = center[1] + Math.random() * area[1]
+      p[i * 3 + 2] = center[2] + (Math.random() - 0.5) * area[2]
+    }
+    g.setAttribute('position', new THREE.BufferAttribute(p, 3))
+    return g
+  }, [count])
+  useFrame((_, dt) => {
+    const a = geo.attributes.position.array
+    for (let i = 0; i < count; i++) {
+      a[i * 3 + 1] += dt * 0.25
+      if (a[i * 3 + 1] > center[1] + area[1]) a[i * 3 + 1] = center[1]
+    }
+    geo.attributes.position.needsUpdate = true
+  })
+  return (
+    <points ref={ref} geometry={geo}>
+      <pointsMaterial color={color} size={size} transparent opacity={0.8} depthWrite={false} toneMapped={false} />
+    </points>
+  )
+}
