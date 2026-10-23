@@ -42,12 +42,13 @@ function Driver({ kai, anim, stance, sockets }) {
     p.swingSide = 1
     p.block = anim === 'block' ? 1 : 0
     p.charge = anim === 'charge' ? 1 : 0
-    p.spin = 0; p.roll = 0; p.hurt = 0
+    p.spin = 0; p.hurt = 0
+    p.roll = anim === 'roll' ? (t.current * 1.6) % 1 : anim === 'rollfreeze' ? window.__rollAt || 0.5 : 0
   })
   return null
 }
 
-const VIEWS = { faceLow: [[0.2, 1.25, 0.95], [0, 1.18, 0]], tall: [[0, 1.5, 4.3], [0, 1.3, 0]], wide: [[0, 1.0, 4.2], [0, 0.7, 0]], wolf: [[2.0, 1.35, 3.6], [0, 0.7, 0]], big: [[6, 5, 22], [0, 4, 0]], full: [[0, 1.25, 3.3], [0, 1.0, 0]], face: [[0.25, 1.82, 0.75], [0, 1.77, 0]], back: [[0, 1.6, -2.6], [0, 1.0, 0]], side: [[2.8, 1.3, 0.4], [0, 1.0, 0]] }
+const VIEWS = { sword: [[0.9, 1.15, 1.25], [0.28, 0.95, 0.55]], profile: [[3.4, 0.9, 0.0], [0, 0.85, 0]], faceLow: [[0.2, 1.25, 0.95], [0, 1.18, 0]], tall: [[0, 1.5, 4.3], [0, 1.3, 0]], wide: [[0, 1.0, 4.2], [0, 0.7, 0]], wolf: [[2.0, 1.35, 3.6], [0, 0.7, 0]], big: [[6, 5, 22], [0, 4, 0]], full: [[0, 1.25, 3.3], [0, 1.0, 0]], face: [[0.25, 1.82, 0.75], [0, 1.77, 0]], back: [[0, 1.6, -2.6], [0, 1.0, 0]], side: [[2.8, 1.3, 0.4], [0, 1.0, 0]] }
 function Cam({ view }) {
   const { camera, controls } = useThree()
   useEffect(() => { const [p, t] = VIEWS[view]; camera.position.set(...p); if (controls) { controls.target.set(...t); controls.update() } }, [view, controls])
@@ -98,7 +99,7 @@ export default function ModelViewer() {
       <div style={{ position: 'fixed', top: 10, left: 10, display: 'flex', gap: 6, flexWrap: 'wrap', font: '13px Inter, sans-serif' }}>
         {['kai', 'wolf', 'colossus', 'octavia', 'pi', 'aufbau', 'malradix', 'villagers'].map((m) => btn(model === m, m, () => { setModel(m); setView(m === 'colossus' ? 'big' : m === 'malradix' ? 'tall' : m === 'villagers' ? 'wide' : 'full') }))}
         {btn(cave, 'cave', () => setLight('cave'))}{btn(!cave, 'day', () => setLight('day'))}
-        {['idle', 'run', 'slash', 'block', 'charge'].map((a) => btn(anim === a, a, () => setAnim(a)))}
+        {['idle', 'run', 'slash', 'block', 'charge', 'roll'].map((a) => btn(anim === a, a, () => setAnim(a)))}
         {['sp3', 'sp2', 'sp'].map((s) => btn(stance === s, s, () => setStance(s)))}
         {btn(sockets, 'atoms', () => setSockets(!sockets))}
         {Object.keys(VIEWS).map((v) => btn(view === v, 'cam:' + v, () => setView(v)))}

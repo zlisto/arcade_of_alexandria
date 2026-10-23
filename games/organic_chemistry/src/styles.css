@@ -232,3 +232,36 @@ button { font: inherit; }
 .ls-item { text-align: left; background: #181523; color: #ddd; border: 1px solid #2c2838; border-radius: 7px; padding: .45rem .7rem; cursor: pointer; font-size: .9rem; }
 .ls-item:hover { border-color: var(--cyan); color: #fff; }
 .ls-solo { width: 100%; margin: .3rem 0; font-weight: 700; color: var(--gold); }
+
+/* ---------- lesson cards (first time a trial opens, and its "?" button) */
+.phelp { position: absolute; top: 9px; right: 44px; width: 26px; height: 26px; border-radius: 50%; background: #1c2a34; border: 1px solid var(--cyan); color: var(--cyan); font-weight: 700; cursor: pointer; }
+.lesson-kicker { margin: 0; color: var(--cyan); font-size: .75rem; letter-spacing: .15em; text-transform: uppercase; }
+.lesson h2 { margin: .2rem 0 .6rem; }
+.lesson ul { margin: 0 0 .8rem; padding-left: 1.2rem; }
+.lesson li { margin: .35rem 0; line-height: 1.45; }
+.lesson-ex { background: #14121d; border-left: 3px solid var(--gold); border-radius: 6px; padding: .55rem .8rem; margin: .4rem 0 .6rem; line-height: 1.45; }
+.lesson-ex b { color: var(--gold); margin-right: .35rem; }
+.lesson-cite { font-size: .78rem; color: var(--muted); margin: .2rem 0 .8rem; }
+
+/* ---------- Molecule Gauntlet (item menu) */
+.im-gauntlet { display: grid; grid-template-columns: 190px 1fr; gap: .8rem; }
+.mg-list { display: flex; flex-direction: column; gap: 3px; }
+.mg-list .small { color: #888; font-size: .78rem; margin: 0 0 .3rem; }
+.mg-item { display: flex; gap: .5rem; align-items: baseline; text-align: left; background: #161320; border: 1px solid #2a2636; border-radius: 6px; padding: .35rem .6rem; color: #ccc; cursor: pointer; font-size: .85rem; }
+.mg-item b { color: var(--cyan); min-width: 4.5rem; }
+.mg-item.sel { background: #2a2338; border-color: var(--gold); }
+.mg-item.sel b { color: var(--gold); }
+.mg-item.locked { color: #4a4458; cursor: default; }
+.mg-item.locked b { color: #4a4458; }
+.mg-detail { background: #14121d; border: 1px solid #262232; border-radius: 10px; padding: .8rem 1rem; }
+.mg-top { display: flex; gap: .8rem; align-items: center; flex-wrap: wrap; }
+.molview { background: radial-gradient(circle, #1d1a2b, #0e0c15 70%); border-radius: 12px; cursor: grab; touch-action: none; flex: none; }
+.mg-detail h3 { margin: 0 0 .4rem; font-family: Cinzel, serif; color: var(--gold); }
+.mg-formula { font-family: Inter, system-ui, sans-serif; color: var(--cyan); font-size: .95rem; margin-left: .3rem; }
+.mg-detail dl { display: grid; grid-template-columns: auto 1fr; gap: .2rem .7rem; margin: 0; font-size: .85rem; }
+.mg-detail dt { color: #888; }
+.mg-detail dd { margin: 0; color: #ddd; }
+.mg-fact { line-height: 1.5; margin: .7rem 0 .4rem; }
+.mg-use { color: #bbb; font-size: .88rem; margin: 0 0 .4rem; }
+.mg-beyond { display: inline-block; font-size: .68rem; text-transform: uppercase; letter-spacing: .08em; color: #c79bff; border: 1px solid #5a4480; border-radius: 4px; padding: 0 .35rem; margin-right: .3rem; }
+@media (max-width: 760px) { .im-gauntlet { grid-template-columns: 1fr; } }

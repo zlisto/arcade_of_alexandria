@@ -2,7 +2,8 @@
 let ctx = null
 let master = null
 let musicNodes = []
-let muted = false
+// the Sound on/off choice is remembered between visits
+let muted = (() => { try { return localStorage.getItem('valence-muted') === '1' } catch { return false } })()
 
 function ac() {
   if (!ctx) {
@@ -10,14 +11,18 @@ function ac() {
     if (!AC) return null
     ctx = new AC()
     master = ctx.createGain()
-    master.gain.value = 0.5
+    master.gain.value = muted ? 0 : 0.5
     master.connect(ctx.destination)
   }
   if (ctx.state === 'suspended') ctx.resume()
   return ctx
 }
 
-export function setMuted(m) { muted = m; if (master) master.gain.value = m ? 0 : 0.5 }
+export function setMuted(m) {
+  muted = m
+  if (master) master.gain.value = m ? 0 : 0.5
+  try { localStorage.setItem('valence-muted', m ? '1' : '0') } catch { /* storage blocked */ }
+}
 export function isMuted() { return muted }
 
 function tone({ f = 440, f2, type = 'sine', dur = 0.15, vol = 0.25, attack = 0.005, delay = 0, filter }) {
@@ -68,6 +73,15 @@ function noise({ dur = 0.15, vol = 0.2, filter = 1200, delay = 0, hp = 0 }) {
 
 const SFX = {
   swing: () => noise({ dur: 0.14, vol: 0.14, hp: 1800 }),
+  // sword charge, after A Link to the Past: a rising buzz while it builds, then a bright two-note
+  // "doo-DOO" chime when the spin attack is ready
+  chargeUp: () => { tone({ f: 196, f2: 784, type: 'square', dur: 0.42, vol: 0.045, filter: 1600, attack: 0.03 }); tone({ f: 392, f2: 1568, type: 'triangle', dur: 0.42, vol: 0.03, attack: 0.03 }) },
+  chargeFull: () => {
+    tone({ f: 1175, type: 'square', dur: 0.09, vol: 0.07, filter: 4000 }) // D6
+    tone({ f: 1760, type: 'square', dur: 0.26, vol: 0.07, filter: 4000, delay: 0.1 }) // A6
+    tone({ f: 2350, type: 'triangle', dur: 0.3, vol: 0.035, delay: 0.1 })
+    noise({ dur: 0.18, vol: 0.03, hp: 6000, delay: 0.1 })
+  },
   spin: () => { noise({ dur: 0.35, vol: 0.18, hp: 1200 }); tone({ f: 300, f2: 900, type: 'sawtooth', dur: 0.35, vol: 0.06, filter: 2000 }) },
   hit: () => { tone({ f: 180, f2: 60, type: 'square', dur: 0.12, vol: 0.18, filter: 900 }); noise({ dur: 0.08, vol: 0.2, filter: 3000 }) },
   hurt: () => tone({ f: 330, f2: 110, type: 'square', dur: 0.25, vol: 0.18, filter: 1400 }),

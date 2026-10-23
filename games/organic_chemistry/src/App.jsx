@@ -1,6 +1,7 @@
 import { Component, useEffect, useRef, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
-import { getState, setState, useGame, resetSave, saveGame } from './engine/store'
+import { getState, setState, useGame, resetSave, saveGame, toast } from './engine/store'
+import { MOLECULES } from './data/molecules'
 import { initInput, releaseMouse, wasIntentionalRelease, captureMouse } from './engine/input'
 import Intro, { IntroScene } from './scenes/Intro'
 import Village from './scenes/Village'
@@ -131,6 +132,18 @@ export default function App() {
   }
 
   useEffect(() => { if (screen === 'title') stopMusic() }, [screen])
+
+  // a molecule met for the first time gets logged on the Gauntlet (Esc menu), with a toast
+  const save = useGame((s) => s.save)
+  const logged = useRef(null)
+  useEffect(() => {
+    const now = new Set(MOLECULES.filter((m) => { try { return !!m.unlocked(save) } catch { return false } }).map((m) => m.id))
+    if (logged.current && (screen === 'village' || screen === 'caverns')) {
+      const fresh = MOLECULES.filter((m) => now.has(m.id) && !logged.current.has(m.id))
+      if (fresh.length) setTimeout(() => toast(`Logged in your Molecule Gauntlet: ${fresh.map((m) => `${m.name} (${m.formula})`).join(', ')} — press Esc to see it`, 'good', 4200), 1800)
+    }
+    logged.current = now
+  }, [save, screen])
 
   const onNew = () => { resetSave(); sfx('lock'); go('intro') }
   // level select: load that point's save, then open its scene

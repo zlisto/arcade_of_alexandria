@@ -148,7 +148,13 @@ export default function Player({ world, start = [0, 0, 0], startFacing = 0 }) {
 
     // ---- attack input
     if (!busy) {
-      if (inp.attack) s.attackHeld += dt
+      if (inp.attack) {
+        const before = s.attackHeld
+        s.attackHeld += dt
+        // charge cues: a rising buzz as the charge starts, a chime when the spin attack is ready
+        if (before < 0.2 && s.attackHeld >= 0.2) sfx('chargeUp')
+        if (before < 0.65 && s.attackHeld >= 0.65) sfx('chargeFull')
+      }
       if (inp.attackPressed && s.mode !== 'roll' && s.mode !== 'hurt' && s.mode !== 'dash') {
         if (s.mode === 'attack') s.comboQueued = true
         else startAttack(s, 0)

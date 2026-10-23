@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
-import { setState, useGame } from '../engine/store'
+import { setState, useGame, getState, saveGame } from '../engine/store'
+import { LESSONS } from '../data/lessons'
 import { setInputEnabled, releaseMouse } from '../engine/input'
 import { sfx } from '../audio/sfx'
 import {
@@ -12,16 +13,35 @@ import {
 
 export default function Panels() {
   const p = useGame((s) => s.panel)
+  const [lesson, setLesson] = useState(false)
   useEffect(() => { setInputEnabled(!p); if (p) releaseMouse() }, [p])
+  // the first time a trial opens, its lesson card comes first
+  useEffect(() => { if (p) setLesson(!!LESSONS[p.kind] && !(getState().save.lessonsSeen || {})[p.kind]) }, [p])
   if (!p) return null
   const close = (ok) => { const f = p.onClose; setState({ panel: null }); setTimeout(() => f && f(ok), 0) }
   const C = { atomForge: AtomForge, shells: Shells, octet: OctetBridge, well: EnergyWell, skeleton: Skeleton, hybridCheck: HybridCheck }[p.kind]
+  const L = LESSONS[p.kind]
+  const gotIt = () => { saveGame({ lessonsSeen: { ...(getState().save.lessonsSeen || {}), [p.kind]: true } }); setLesson(false); sfx('lock') }
   return (
     <div className="panel-wrap">
       <div className="panel">
         <button className="pclose" onClick={() => close(false)} title="Step away">✕</button>
-        <C {...p.props} done={() => close(true)} />
+        {L && !lesson && <button className="phelp" onClick={() => setLesson(true)} title="Show the lesson again">?</button>}
+        {lesson ? <LessonCard L={L} onGo={gotIt} /> : <C {...p.props} done={() => close(true)} />}
       </div>
+    </div>
+  )
+}
+
+function LessonCard({ L, onGo }) {
+  return (
+    <div className="lesson">
+      <p className="lesson-kicker">Lesson · §{L.section}</p>
+      <h2>{L.title}</h2>
+      <ul>{L.points.map((t, i) => <li key={i}>{t}</li>)}</ul>
+      <div className="lesson-ex"><b>Example</b> {L.example}</div>
+      <p className="lesson-cite">McMurry, <i>Organic Chemistry</i> (OpenStax) · §{L.section}, pp. {L.pages}</p>
+      <button className="go" onClick={onGo}>Got it — try the trial</button>
     </div>
   )
 }

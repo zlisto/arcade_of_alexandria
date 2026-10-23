@@ -63,11 +63,25 @@ function useKaiAssets() {
     // ab bands under the chevron
     const band = (w) => { const s = new THREE.Shape(); s.moveTo(-w, 0); s.lineTo(w, 0); s.lineTo(w * 0.96, 0.045); s.lineTo(-w * 0.96, 0.045); s.closePath(); return bend(new THREE.ExtrudeGeometry(s, { depth: 0.014, bevelEnabled: true, bevelThickness: 0.006, bevelSize: 0.006, bevelSegments: 1 }), 2.6) }
     const abBand = band(0.17)
-    // blade: a tapered, pointed profile with bevelled edges
-    const bs = new THREE.Shape()
-    bs.moveTo(-0.027, 0); bs.lineTo(0.027, 0); bs.lineTo(0.022, 0.86); bs.lineTo(0, 1.0); bs.lineTo(-0.022, 0.86); bs.closePath()
-    const blade = new THREE.ExtrudeGeometry(bs, { depth: 0.008, bevelEnabled: true, bevelThickness: 0.006, bevelSize: 0.008, bevelSegments: 2 })
-    blade.translate(0, 0, -0.004)
+    // blade: steel with a diamond cross-section — a ridge down the middle, edges either side —
+    // tapering a little toward a point. Faceted so the two faces catch the light differently.
+    const blade = (() => {
+      const L = 0.98, tipL = 0.16, w0 = 0.036, w1 = 0.028, t = 0.009
+      const ring = (y, w, th) => [[w, y, 0], [0, y, th], [-w, y, 0], [0, y, -th]]
+      const rings = [ring(0, w0, t), ring(L - tipL, w1, t * 0.9)]
+      const tip = [0, L, 0]
+      const pos = []
+      const tri = (a, b, c) => pos.push(...a, ...b, ...c)
+      for (let k = 0; k < 4; k++) { const a = rings[0][k], b = rings[0][(k + 1) % 4], c = rings[1][(k + 1) % 4], d = rings[1][k]; tri(a, b, c); tri(a, c, d) }
+      for (let k = 0; k < 4; k++) tri(rings[1][k], rings[1][(k + 1) % 4], tip)
+      tri(rings[0][0], rings[0][2], rings[0][1]); tri(rings[0][0], rings[0][3], rings[0][2])
+      const g = new THREE.BufferGeometry()
+      g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3))
+      g.computeVertexNormals()
+      return g
+    })()
+    // crossguard: quillons sweeping out and up toward the blade, with ball ends
+    const guard = new THREE.TubeGeometry(new THREE.CatmullRomCurve3([[-0.15, 0.045, 0], [-0.1, 0.0, 0], [0, -0.012, 0], [0.1, 0.0, 0], [0.15, 0.045, 0]].map((q) => new THREE.Vector3(...q))), 24, 0.014, 8, false)
     // pauldron plates: shallow caps
     const cap = (r) => new THREE.SphereGeometry(r, 20, 10, 0, Math.PI * 2, 0, Math.PI * 0.5)
     const caps = [cap(0.15), cap(0.135), cap(0.12)]
@@ -86,7 +100,7 @@ function useKaiAssets() {
     for (let i = 0; i < 8; i++) add(-0.8 + (i / 7) * 1.6 + (rnd() - 0.5) * 0.1, 0.62 + rnd() * 0.1, 0.065 + rnd() * 0.03, 0.045 + rnd() * 0.012, [0.6, -0.75, 0.35]) // short fringe above the brows
     for (let i = 0; i < 18; i++) add(-1.9 + rnd() * 3.8, 0.45 + rnd() * 0.85, 0.09 + rnd() * 0.05, 0.06 + rnd() * 0.02, [0.55, 0.05, -0.85]) // crown, swept back and lying flat
     for (let i = 0; i < 9; i++) add(Math.PI + (rnd() - 0.5) * 2.6, -0.05 + rnd() * 0.45, 0.1 + rnd() * 0.04, 0.05, [0.7, -0.8, -0.3]) // back and sides, falling
-    return { M, torso, chest, ridge, abBand, blade, caps, tufts }
+    return { M, torso, chest, ridge, abBand, blade, guard, caps, tufts, env }
   }, [])
 }
 
@@ -196,8 +210,10 @@ function Head({ headRef, eyesRef, hairRef, M, tufts }) {
 const KaiModel = forwardRef(function KaiModel(_, ref) {
   const pose = useRef({ run: 0, phase: 0, roll: 0, swing: 0, swingSide: 1, spin: 0, block: 0, hurt: 0, stance: 'sp3', sockets: [], charge: 0 })
   useImperativeHandle(ref, () => pose.current)
-  const { M, torso, chest, ridge, abBand, blade: bladeGeo, caps, tufts } = useKaiAssets()
+  const { M, torso, chest, ridge, abBand, blade: bladeGeo, guard: guardGeo, caps, tufts, env } = useKaiAssets()
   const root = useRef()
+  const pivot = useRef()
+  const formScale = useRef(1)
   const body = useRef()
   const upper = useRef()
   const legL = useRef(); const legR = useRef(); const kneeL = useRef(); const kneeR = useRef()
@@ -205,7 +221,9 @@ const KaiModel = forwardRef(function KaiModel(_, ref) {
   const head = useRef(); const eyes = useRef(); const hair = useRef()
   const panels = useRef([])
   const blade = useRef()
-  const bladeMat = useMemo(() => new THREE.MeshStandardMaterial({ color: '#7ff4ff', emissive: new THREE.Color(CYAN), emissiveIntensity: 1.8, toneMapped: false }), [])
+  const bladeMat = useMemo(() => new THREE.MeshStandardMaterial({ color: '#dfe4ec', metalness: 1, roughness: 0.2, envMap: env, envMapIntensity: 1.4, flatShading: true, emissive: new THREE.Color(CYAN), emissiveIntensity: 0 }), [env])
+  const fullerMat = useMemo(() => new THREE.MeshStandardMaterial({ color: '#7d8590', metalness: 1, roughness: 0.35, envMap: env, envMapIntensity: 0.8 }), [env])
+  const sparkle = useRef()
   const nodeMats = useMemo(() => NODES.map(() => new THREE.MeshStandardMaterial({ color: CYAN, emissive: new THREE.Color(CYAN), emissiveIntensity: 1.8, toneMapped: false })), [])
   const atomRefs = useRef([])
   const trail = useRef()
@@ -222,8 +240,10 @@ const KaiModel = forwardRef(function KaiModel(_, ref) {
     // hybrid form: scale the whole body evenly, and blend every glow toward the form's colour
     const F = FORMS[p.stance] || FORMS.sp3
     const s = body.current.scale
-    const sc = s.x + (F.scale - s.x) * k
-    s.setScalar(sc)
+    formScale.current += (F.scale - formScale.current) * k
+    const sc = formScale.current
+    // squash a little while tucked in a roll
+    s.setScalar(sc * (1 - 0.15 * (p.roll > 0 ? Math.min(1, Math.sin(p.roll * Math.PI) * 1.6) : 0)))
     if (tag.current) tag.current.position.y = 2.12 * sc + 0.12
     const ck = Math.min(1, dt * 8)
     col.glow.set(F.glow); col.armor.set(F.armor); col.armorDark.set(F.armorDark)
@@ -232,36 +252,38 @@ const KaiModel = forwardRef(function KaiModel(_, ref) {
     trail.current.material.color.lerp(col.glow, ck)
     nodeMats.forEach((m) => { m.color.lerp(col.glow, ck); m.emissive.lerp(col.glow, ck) })
     bladeMat.emissive.lerp(col.glow, ck)
-    bladeMat.color.lerp(col.blade.copy(col.glow).lerp(col.white, 0.45), ck)
     M.armor.color.lerp(col.armor, ck); M.armorDark.color.lerp(col.armorDark, ck)
 
     const run = p.run
     const sw = Math.sin(p.phase) * run
+    // forward roll: curl into a ball (knees to chest, arms in, head down) while turning over
+    const tuck = p.roll > 0 ? Math.min(1, Math.sin(p.roll * Math.PI) * 1.6) : 0
     const c = Math.cos(p.phase)
     // legs, with knees bending through the forward swing
-    legL.current.rotation.x = sw * 0.85
-    legR.current.rotation.x = -sw * 0.85
-    kneeL.current.rotation.x = 0.06 + run * (0.15 + 1.05 * Math.max(0, -c))
-    kneeR.current.rotation.x = 0.06 + run * (0.15 + 1.05 * Math.max(0, c))
+    legL.current.rotation.x = sw * 0.85 * (1 - tuck) - 1.45 * tuck
+    legR.current.rotation.x = -sw * 0.85 * (1 - tuck) - 1.45 * tuck
+    kneeL.current.rotation.x = (0.06 + run * (0.15 + 1.05 * Math.max(0, -c))) * (1 - tuck) + 2.3 * tuck
+    kneeR.current.rotation.x = (0.06 + run * (0.15 + 1.05 * Math.max(0, c))) * (1 - tuck) + 2.3 * tuck
 
     // right arm holds the blade, left the buckler
-    let rx = -sw * 0.55 - 0.12, ry = 0, rz = -0.12, re = -(0.3 + 0.25 * run)
+    let rx = -sw * 0.7 - 0.12 - 0.15 * run, ry = 0, rz = -0.12, re = -(0.3 + 0.45 * run)
     if (p.swing !== 0) { rx = -1.35; ry = p.swing * 1.6 * p.swingSide; re = -0.15 }
     if (p.spin > 0) { rx = -1.5; ry = 0; re = -0.1 }
     if (p.charge > 0) { rx = -0.45; rz = -0.9; re = -0.7 }
+    if (tuck > 0) { rx = rx * (1 - tuck) - 0.9 * tuck; re = re * (1 - tuck) - 1.7 * tuck }
     armR.current.rotation.set(rx, ry, rz)
     elbowR.current.rotation.x = re
     const b = p.block
-    armL.current.rotation.set(b > 0.1 ? -1.25 * b : sw * 0.55 - 0.12, b * 0.75, 0.12)
-    elbowL.current.rotation.x = b > 0.1 ? -0.95 * b : -(0.3 + 0.25 * run)
+    armL.current.rotation.set(b > 0.1 ? -1.25 * b : (sw * 0.7 - 0.12 - 0.15 * run) * (1 - tuck) - 0.9 * tuck, b * 0.75, 0.12)
+    elbowL.current.rotation.x = b > 0.1 ? -0.95 * b : -(0.3 + 0.45 * run) * (1 - tuck) - 1.7 * tuck
 
     // upper body: lean into a run, twist with the slash, breathe
     const up = upper.current
-    up.rotation.x = 0.1 * run
+    up.rotation.x = 0.26 * run + 1.1 * tuck
     up.rotation.y = p.swing !== 0 ? p.swing * 0.28 * p.swingSide : Math.sin(p.phase) * 0.06 * run
     up.scale.y = 1 + Math.sin(t * 2.1) * 0.008 * (1 - run)
     head.current.rotation.y = -up.rotation.y * 0.6
-    head.current.rotation.x = -0.06 * run
+    head.current.rotation.x = -0.14 * run + 0.75 * tuck
     hair.current.rotation.x = -0.05 * run + Math.sin(t * 9) * 0.015 * run
     // blink every few seconds
     eyes.current.scale.y = (t % 3.7) < 0.11 ? 0.12 : 1
@@ -277,13 +299,18 @@ const KaiModel = forwardRef(function KaiModel(_, ref) {
 
     // whole-body moves
     const r = root.current
-    r.rotation.x = p.roll > 0 ? p.roll * Math.PI * 2 : 0
-    r.position.y = p.roll > 0 ? 0.1 * Math.sin(p.roll * Math.PI) : Math.abs(Math.sin(p.phase)) * 0.06 * run
+    r.rotation.x = 0
+    pivot.current.rotation.x = p.roll > 0 ? p.roll * Math.PI * 2 : p.roll < 0 ? p.roll * Math.PI : 0
+    // a forward lean from the ankles that grows with speed, plus a small bob
+    body.current.rotation.x = 0.13 * run * (1 - tuck)
+    r.position.y = p.roll > 0 ? -0.12 * tuck * sc : Math.abs(Math.sin(p.phase)) * 0.07 * run
     r.rotation.y = p.spin > 0 ? -p.spin * Math.PI * 2 : 0
     body.current.rotation.z = p.hurt * 0.3 * Math.sin(t * 40)
 
     // blade glow and charge
-    bladeMat.emissiveIntensity = 1.6 + Math.sin(t * 6) * 0.3 + p.charge * 3 + (p.swing !== 0 || p.spin > 0 ? 1.5 : 0)
+    // steel stays steel; it picks up a glow of the form's colour as it charges, and flashes on a swing
+    bladeMat.emissiveIntensity = p.charge * (0.9 + Math.sin(t * 18) * 0.15) + (p.swing !== 0 || p.spin > 0 ? 0.35 : 0)
+    if (sparkle.current) { sparkle.current.visible = p.charge >= 1; sparkle.current.rotation.z = t * 6; sparkle.current.scale.setScalar(0.8 + Math.sin(t * 20) * 0.3) }
     blade.current.scale.y = 1 + p.charge * 0.25
     trail.current.visible = p.swing !== 0 || p.spin > 0
 
@@ -306,6 +333,9 @@ const KaiModel = forwardRef(function KaiModel(_, ref) {
   return (
     <group ref={root}>
       <group ref={body}>
+        {/* rolls turn around the middle of the body, not the feet */}
+        <group ref={pivot} position={[0, 0.92, 0.18]}>
+        <group position={[0, -0.92, -0.18]}>
         <Leg side={-1} legRef={legL} kneeRef={kneeL} M={M} />
         <Leg side={1} legRef={legR} kneeRef={kneeR} M={M} />
         {/* hips, belt and the glowing buckle */}
@@ -372,21 +402,32 @@ const KaiModel = forwardRef(function KaiModel(_, ref) {
               </group>
             </Arm>
             <Arm side={1} armRef={armR} elbowRef={elbowR} M={M} caps={caps}>
-              {/* the light blade, held in the right gauntlet, pointing forward */}
+              {/* the sword, held in the right gauntlet, pointing forward: steel blade, curved
+                  crossguard with a gem, leather-wrapped grip, faceted pommel */}
               <group position={[0, -0.29, 0.03]} rotation={[Math.PI / 2, 0, 0]}>
-                <mesh position={[0, -0.12, 0]} material={M.edge}><sphereGeometry args={[0.024, 12, 10]} /></mesh>
-                <mesh position={[0, -0.04, 0]} material={M.leather}><cylinderGeometry args={[0.017, 0.017, 0.15, 10]} /></mesh>
-                {[-0.09, -0.05, -0.01, 0.03].map((y) => <mesh key={y} position={[0, y, 0]} rotation={[Math.PI / 2, 0, 0]} material={M.under}><torusGeometry args={[0.018, 0.004, 5, 12]} /></mesh>)}
-                <RoundedBox args={[0.2, 0.032, 0.05]} radius={0.012} smoothness={2} position={[0, 0.05, 0]} material={M.armor} />
-                {[-1, 1].map((s) => <mesh key={s} position={[s * 0.11, 0.065, 0]} rotation={[0, 0, -s * 0.9]} material={M.edge}><coneGeometry args={[0.018, 0.05, 6]} /></mesh>)}
-                <mesh position={[0, 0.05, 0.026]} material={M.glow}><sphereGeometry args={[0.012, 8, 6]} /></mesh>
-                <group ref={blade} position={[0, 0.068, 0]}>
-                  <mesh geometry={bladeGeo} material={bladeMat} />
-                  <mesh position={[0, 0.42, 0]} material={M.wire}><boxGeometry args={[0.009, 0.72, 0.024]} /></mesh>
+                <mesh position={[0, -0.135, 0]} material={M.edge}><octahedronGeometry args={[0.026, 1]} /></mesh>
+                <mesh position={[0, -0.112, 0]} material={M.armorDark}><cylinderGeometry args={[0.02, 0.016, 0.02, 10]} /></mesh>
+                <mesh position={[0, -0.04, 0]} material={M.leather}><cylinderGeometry args={[0.016, 0.018, 0.14, 10]} /></mesh>
+                {[-0.095, -0.07, -0.045, -0.02, 0.005].map((y) => <mesh key={y} position={[0, y, 0]} rotation={[Math.PI / 2, 0.35, 0]} material={M.under}><torusGeometry args={[0.018, 0.0045, 5, 12]} /></mesh>)}
+                <mesh position={[0, 0.032, 0]} material={M.armorDark}><cylinderGeometry args={[0.024, 0.02, 0.022, 10]} /></mesh>
+                <mesh geometry={guardGeo} position={[0, 0.05, 0]} material={M.edge} />
+                {[-1, 1].map((sd) => <mesh key={sd} position={[sd * 0.15, 0.095, 0]} material={M.edge}><sphereGeometry args={[0.018, 10, 8]} /></mesh>)}
+                <RoundedBox args={[0.06, 0.04, 0.034]} radius={0.01} smoothness={2} position={[0, 0.05, 0]} material={M.armor} />
+                {[-1, 1].map((sd) => <mesh key={sd} position={[0, 0.05, sd * 0.019]} rotation={[sd * Math.PI / 2, 0, 0]} material={M.glow}><octahedronGeometry args={[0.011, 0]} /></mesh>)}
+                <group ref={blade} position={[0, 0.07, 0]}>
+                  <mesh geometry={bladeGeo} material={bladeMat} castShadow />
+                  {/* the fuller: a groove down each face */}
+                  {[-1, 1].map((sd) => <mesh key={sd} position={[0, 0.36, sd * 0.0083]} material={fullerMat}><boxGeometry args={[0.008, 0.6, 0.0012]} /></mesh>)}
+                  {/* a glint at the tip when the spin attack is charged */}
+                  <group ref={sparkle} position={[0, 1.0, 0]} visible={false}>
+                    {[0, 1].map((k) => <mesh key={k} rotation={[0, 0, k * Math.PI / 2]} material={M.glow}><boxGeometry args={[0.012, 0.11, 0.004]} /></mesh>)}
+                  </group>
                 </group>
               </group>
             </Arm>
           </group>
+        </group>
+        </group>
         </group>
       </group>
       {/* which hybrid form Kai is in, above his head */}

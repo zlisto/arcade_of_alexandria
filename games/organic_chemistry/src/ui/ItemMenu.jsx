@@ -5,6 +5,8 @@ import { ELEMENTS, HYBRIDS } from '../chem/rules'
 import { CODEX, BOOK } from '../data/codex'
 import { ROOMS } from '../data/dungeon1'
 import { sfx } from '../audio/sfx'
+import { MOLECULES } from '../data/molecules'
+import MoleculeView from './MoleculeView'
 
 // The pause screen, Ocarina-style: Items (gear, the Hybrid Crystal's three forms, bond sockets,
 // shards), Notes (what each puzzle taught, with book section + pages) and Quest (where to go next).
@@ -103,6 +105,44 @@ function Notes({ s }) {
   )
 }
 
+function Gauntlet({ s }) {
+  // every molecule Kai has met, logged on his gauntlet
+  const got = MOLECULES.filter((m) => { try { return !!m.unlocked(s.save) } catch { return false } })
+  const [id, setId] = useState(null)
+  const m = got.find((x) => x.id === id) || got[got.length - 1]
+  if (!got.length) return <div className="im-empty">No molecules logged yet. Each one you meet is recorded here.</div>
+  return (
+    <div className="im-gauntlet">
+      <div className="mg-list">
+        <p className="small">{got.length} of {MOLECULES.length} logged</p>
+        {MOLECULES.map((x) => {
+          const have = got.includes(x)
+          return have
+            ? <button key={x.id} className={'mg-item' + (x === m ? ' sel' : '')} onClick={() => setId(x.id)}><b>{x.formula}</b><span>{x.name}</span></button>
+            : <div key={x.id} className="mg-item locked"><b>?</b><span>not met yet</span></div>
+        })}
+      </div>
+      <div className="mg-detail">
+        <div className="mg-top">
+          <MoleculeView key={m.id} geo={m.geo} size={210} />
+          <div>
+            <h3>{m.name} <span className="mg-formula">{m.formula}</span></h3>
+            <dl>
+              <dt>Shape</dt><dd>{m.shape}</dd>
+              <dt>Hybridization</dt><dd>{m.hybrid}</dd>
+              <dt>Bond angles</dt><dd>{m.angles}</dd>
+              <dt>Met</dt><dd>{m.met}</dd>
+            </dl>
+          </div>
+        </div>
+        <p className="mg-fact">{m.fact}</p>
+        <p className="mg-use"><span className="mg-beyond">Beyond the book</span> {m.use}</p>
+        <p className="cite-line">{BOOK.author}, <i>{BOOK.title}</i> ({BOOK.publisher}) · §{m.section}, pp. {m.pages} · drag the model to turn it</p>
+      </div>
+    </div>
+  )
+}
+
 function Quest({ s }) {
   const world = getActiveWorld()
   const goal = world && world.map && world.map.goal ? world.map.goal() : null
@@ -132,12 +172,12 @@ export default function ItemMenu({ onTitle, onResume }) {
   if (!s.paused) return null
   const tab = s.menuTab || 'items'
   const resume = () => { setState({ paused: false }); onResume && onResume() }
-  const tabs = [['items', 'Items'], ['notes', 'Notes'], ['quest', 'Quest']]
+  const tabs = [['items', 'Items'], ['gauntlet', 'Gauntlet'], ['notes', 'Notes'], ['quest', 'Quest']]
   return (
     <div className="itemmenu" onClick={(e) => { if (e.target === e.currentTarget) resume() }}>
       <div className="im-box-outer">
         <div className="im-side">
-          <div className="im-portrait" style={{ backgroundImage: 'url(art/kai.png)' }} />
+          <div className="im-portrait" style={{ backgroundImage: 'url(art/portraits/kai.jpg)' }} />
           <div className="im-name">Kai</div>
           <div className="im-sub">carbon knight · {(s.stanceRequest || s.stance) && HYBRIDS[s.stanceRequest || s.stance].label}</div>
           <div className="im-hp">{[...Array(s.maxHp / 2)].map((_, i) => { const v = Math.max(0, Math.min(2, s.hp - i * 2)); return <span key={i} className={'heart ' + (v === 2 ? 'full' : v === 1 ? 'half' : 'empty')}>♥</span> })}</div>
@@ -149,6 +189,7 @@ export default function ItemMenu({ onTitle, onResume }) {
           </div>
           <div className="im-body">
             {tab === 'items' && <Items s={s} sel={sel} setSel={setSel} />}
+            {tab === 'gauntlet' && <Gauntlet s={s} />}
             {tab === 'notes' && <Notes s={s} />}
             {tab === 'quest' && <Quest s={s} />}
           </div>
