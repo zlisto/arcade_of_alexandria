@@ -1,9 +1,10 @@
 import { forwardRef, useImperativeHandle, useMemo, useRef } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
-import { RoundedBox } from '@react-three/drei'
+import { RoundedBox, Html } from '@react-three/drei'
 import * as THREE from 'three'
 import { rimMat, getEnv, bend } from '../engine/materials'
 import { ELEMENTS } from '../chem/rules'
+import { useGame } from '../engine/store'
 
 // Kai, modeled on assets/characters/kai.png: graphite plate armor with a high collar, layered
 // pauldrons, a V-chevron chest plate carrying a glowing node network (a central carbon gem wired to
@@ -16,6 +17,15 @@ import { ELEMENTS } from '../chem/rules'
 //   spin 0..1, block 0..1, hurt 0..1, stance 'sp3'|'sp2'|'sp', sockets [symbols], charge 0..1
 
 const CYAN = '#43e6f5'
+
+// The three hybrid forms (§1.6–1.9). Kai keeps his proportions and scales as a whole; his glows take
+// the form's colour (matching the HUD badge) and the armour picks up a light tint.
+// sp² must fit under the 1.15 m forge tunnel, so it scales to about half height.
+export const FORMS = {
+  sp3: { scale: 1, glow: '#43e6f5', armor: '#56606e', armorDark: '#353b46', label: 'sp³', detail: 'tetrahedral · 109.5°' },
+  sp2: { scale: 0.52, glow: '#ffd25e', armor: '#6a6452', armorDark: '#433e30', label: 'sp²', detail: 'trigonal planar · 120°' },
+  sp: { scale: 1.12, glow: '#b98aff', armor: '#5e5872', armorDark: '#3a3548', label: 'sp', detail: 'linear · 180°' },
+}
 
 function useKaiAssets() {
   const gl = useThree((st) => st.gl)
@@ -199,15 +209,31 @@ const KaiModel = forwardRef(function KaiModel(_, ref) {
   const nodeMats = useMemo(() => NODES.map(() => new THREE.MeshStandardMaterial({ color: CYAN, emissive: new THREE.Color(CYAN), emissiveIntensity: 1.8, toneMapped: false })), [])
   const atomRefs = useRef([])
   const trail = useRef()
+  const tag = useRef()
+  const col = useMemo(() => ({ glow: new THREE.Color(), armor: new THREE.Color(), armorDark: new THREE.Color(), blade: new THREE.Color(), white: new THREE.Color('#ffffff') }), [])
+  const hasCrystal = useGame((st) => st.save.hasCrystal)
+  const stance = useGame((st) => st.stance)
+  const form = FORMS[stance] || FORMS.sp3
 
   useFrame(({ clock }, dt) => {
     const p = pose.current
     const t = clock.elapsedTime
     const k = Math.min(1, dt * 12)
-    // stance silhouette: sp3 = full tetrahedral stance, sp2 = flattened (slips under slots), sp = narrow lance
-    const target = p.stance === 'sp2' ? [1.25, 0.58, 1.1] : p.stance === 'sp' ? [0.82, 1.06, 0.82] : [1, 1, 1]
+    // hybrid form: scale the whole body evenly, and blend every glow toward the form's colour
+    const F = FORMS[p.stance] || FORMS.sp3
     const s = body.current.scale
-    s.x += (target[0] - s.x) * k; s.y += (target[1] - s.y) * k; s.z += (target[2] - s.z) * k
+    const sc = s.x + (F.scale - s.x) * k
+    s.setScalar(sc)
+    if (tag.current) tag.current.position.y = 2.12 * sc + 0.12
+    const ck = Math.min(1, dt * 8)
+    col.glow.set(F.glow); col.armor.set(F.armor); col.armorDark.set(F.armorDark)
+    M.glow.color.lerp(col.glow, ck); M.glow.emissive.lerp(col.glow, ck)
+    M.wire.color.lerp(col.glow, ck)
+    trail.current.material.color.lerp(col.glow, ck)
+    nodeMats.forEach((m) => { m.color.lerp(col.glow, ck); m.emissive.lerp(col.glow, ck) })
+    bladeMat.emissive.lerp(col.glow, ck)
+    bladeMat.color.lerp(col.blade.copy(col.glow).lerp(col.white, 0.45), ck)
+    M.armor.color.lerp(col.armor, ck); M.armorDark.color.lerp(col.armorDark, ck)
 
     const run = p.run
     const sw = Math.sin(p.phase) * run
@@ -363,6 +389,16 @@ const KaiModel = forwardRef(function KaiModel(_, ref) {
           </group>
         </group>
       </group>
+      {/* which hybrid form Kai is in, above his head */}
+      {hasCrystal && (
+        <group ref={tag} position={[0, 2.24, 0]}>
+          <Html center distanceFactor={8} zIndexRange={[10, 0]} style={{ pointerEvents: 'none' }}>
+            <div key={stance} className="formtag" style={{ color: form.glow, borderColor: form.glow, boxShadow: `0 0 12px ${form.glow}55` }}>
+              <b>{form.label}</b><span>{form.detail}</span>
+            </div>
+          </Html>
+        </group>
+      )}
       {/* slash trail */}
       <mesh ref={trail} position={[0, 1.05, 0]} rotation={[-Math.PI / 2, 0, 0]} visible={false}>
         <ringGeometry args={[0.6, 1.55, 32, 1, 0, Math.PI * 1.25]} />

@@ -208,3 +208,9 @@ button { font: inherit; }
 }
 .portrait-badge { display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at 50% 35%, #2a2640, #0b0a10); }
 .portrait-badge span { font: 700 2.2rem Cinzel, serif; color: var(--gold, #e8c46a); text-shadow: 0 2px 8px #000; }
+
+/* Kai's hybrid-form tag (above his head) */
+.formtag { display: flex; gap: .4rem; align-items: baseline; white-space: nowrap; background: rgba(8,7,14,.8); border: 1px solid; border-radius: 999px; padding: .15rem .6rem; font: 600 13px Inter, system-ui, sans-serif; animation: formpop .35s ease-out; }
+.formtag b { font-size: 16px; }
+.formtag span { opacity: .8; font-weight: 500; font-size: 11px; }
+@keyframes formpop { 0% { transform: scale(1.6); opacity: 0; } 60% { transform: scale(.92); opacity: 1; } 100% { transform: scale(1); } }

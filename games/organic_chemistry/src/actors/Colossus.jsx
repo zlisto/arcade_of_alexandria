@@ -110,6 +110,7 @@ export default function Colossus({ world, center, active, onDefeated }) {
     setState({ bossHp: { name: 'The Unbonded Colossus', hp: PHASES.length * HITS_PER_PHASE, max: PHASES.length * HITS_PER_PHASE } })
     st.current.mode = 'rise'
     st.current.t = 0
+    if (import.meta.env.DEV) window.__valence = { ...(window.__valence || {}), boss: st.current } // for scripted playtests
     return () => { world.remove(id); setState({ bossHp: null }) }
   }, [active])
 
