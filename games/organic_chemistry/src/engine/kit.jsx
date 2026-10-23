@@ -74,7 +74,7 @@ export function Gate({ world, pos, size = [4, 4, 0.6], open, color = '#2a3550', 
 }
 
 /** A puzzle station: glowing pedestal you press E at. */
-export function Station({ world, pos, label, onUse, enabled = true, solved = false, color = '#43e6f5' }) {
+export function Station({ world, pos, label, onUse, enabled = true, solved = false, color = '#c8102e', glow = '#ff3a50' }) {
   const idRef = useRef(null)
   const cb = useRef(onUse)
   cb.current = onUse
@@ -86,13 +86,19 @@ export function Station({ world, pos, label, onUse, enabled = true, solved = fal
   useEffect(() => { const it = world.interactables.get(idRef.current); if (it) { it.enabled = enabled; it.label = label } }, [enabled, label])
   const orb = useRef()
   useFrame(({ clock }) => { if (orb.current) { orb.current.position.y = pos[1] + 1.45 + Math.sin(clock.elapsedTime * 2) * 0.08; orb.current.rotation.y += 0.02 } })
+  // an unsolved trial holds a ruby; it turns green once solved
   const c = solved ? '#6fe39a' : color
+  const light = solved ? '#6fe39a' : glow
   return (
     <group>
       <mesh position={[pos[0], pos[1] + 0.5, pos[2]]} castShadow><cylinderGeometry args={[0.38, 0.5, 1.0, 8]} /><meshStandardMaterial color="#2a2733" roughness={0.7} /></mesh>
       <mesh position={[pos[0], pos[1] + 1.02, pos[2]]}><cylinderGeometry args={[0.5, 0.42, 0.08, 8]} /><meshStandardMaterial color="#3a3644" /></mesh>
-      <mesh ref={orb} position={[pos[0], pos[1] + 1.45, pos[2]]}><octahedronGeometry args={[0.22, 0]} /><meshStandardMaterial color={c} emissive={c} emissiveIntensity={2} toneMapped={false} /></mesh>
-      <pointLight position={[pos[0], pos[1] + 1.6, pos[2]]} color={c} intensity={2.2} distance={6} />
+      <group ref={orb} position={[pos[0], pos[1] + 1.45, pos[2]]}>
+        {/* a faceted gem: deep colour on the outside, a bright core glowing through */}
+        <mesh scale={[1, 1.45, 1]}><octahedronGeometry args={[0.2, 0]} /><meshPhysicalMaterial color={c} emissive={c} emissiveIntensity={solved ? 1.4 : 0.9} roughness={0.12} metalness={0.05} clearcoat={1} clearcoatRoughness={0.05} flatShading transparent opacity={0.9} /></mesh>
+        <mesh scale={[1, 1.45, 1]}><octahedronGeometry args={[0.09, 0]} /><meshBasicMaterial color={light} toneMapped={false} /></mesh>
+      </group>
+      <pointLight position={[pos[0], pos[1] + 1.6, pos[2]]} color={light} intensity={2.4} distance={6} />
     </group>
   )
 }
