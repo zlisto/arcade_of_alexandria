@@ -9,6 +9,7 @@ import HUD, { Fade } from './ui/HUD'
 import ItemMenu from './ui/ItemMenu'
 import Dialogue from './ui/Dialogue'
 import Panels from './ui/Panels'
+import LevelSelect from './ui/LevelSelect'
 import { MiniMap, FullMap } from './ui/MapView'
 import { playMusic, stopMusic, sfx } from './audio/sfx'
 
@@ -29,8 +30,9 @@ class SceneGuard extends Component {
   }
 }
 
-function Title({ onNew, onContinue }) {
+function Title({ onNew, onContinue, onLevel }) {
   const save = useGame((s) => s.save)
+  const [picking, setPicking] = useState(false)
   const canContinue = save.introSeen
   return (
     <div className="title" style={{ backgroundImage: 'url(art/cover.png)' }}>
@@ -42,9 +44,11 @@ function Title({ onNew, onContinue }) {
         <div className="title-buttons">
           {canContinue && <button className="primary" onClick={onContinue}>Continue</button>}
           <button className={canContinue ? '' : 'primary'} onClick={onNew}>{canContinue ? 'New game' : 'Start'}</button>
+          <button className="ghost" onClick={() => setPicking(true)} title="Jump to any level">Level select</button>
         </div>
         <p className="credit">Based on <i>Organic Chemistry: A Tenth Edition</i>, Chapter 1 — John McMurry, OpenStax (CC BY-NC-SA 4.0). Best with keyboard + mouse or a gamepad.</p>
       </div>
+      {picking && <LevelSelect onGo={(it) => { setPicking(false); onLevel(it) }} onClose={() => setPicking(false)} />}
     </div>
   )
 }
@@ -121,7 +125,7 @@ export default function App() {
   const go = (next) => {
     setState({ fade: 1 })
     setTimeout(() => {
-      setState({ screen: next, fade: 0, prompt: null, dialogue: null, panel: null, lockTarget: null, bossHp: null, hp: getState().maxHp, paused: false, mapOpen: false })
+      setState({ screen: next, fade: 0, prompt: null, dialogue: null, panel: null, lockTarget: null, bossHp: null, hp: getState().maxHp, paused: false, mapOpen: false, objective: '' })
       setSceneKey((k) => k + 1)
     }, 450)
   }
@@ -129,6 +133,8 @@ export default function App() {
   useEffect(() => { if (screen === 'title') stopMusic() }, [screen])
 
   const onNew = () => { resetSave(); sfx('lock'); go('intro') }
+  // level select: load that point's save, then open its scene
+  const onLevel = (it) => { resetSave(); saveGame(it.save); sfx('lock'); go(it.screen) }
   const onContinue = () => {
     const s = getState().save
     sfx('lock')
@@ -147,7 +153,7 @@ export default function App() {
         </Canvas>
         </SceneGuard>
       </div>
-      {screen === 'title' && <Title onNew={onNew} onContinue={onContinue} />}
+      {screen === 'title' && <Title onNew={onNew} onContinue={onContinue} onLevel={onLevel} />}
       {screen === 'intro' && <Intro onDone={() => { saveGame({ introSeen: true }); go('village') }} />}
       {screen === 'credits' && <Credits onTitle={() => go('title')} onKeep={() => go('caverns')} />}
       {playing && <HUD />}
