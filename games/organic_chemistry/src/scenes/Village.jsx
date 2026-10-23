@@ -77,23 +77,60 @@ function LooseH({ world, pos, taken, onTake }) {
   )
 }
 
-function Methane({ show, position }) {
-  // ball-and-stick CH4: C black, four H at the corners of a tetrahedron, 109.5° (Figure 1.12)
+// where the methane seal shows itself once the well is fixed: on a stone pedestal beside the well,
+// at eye level, where Kai can walk up and examine it
+const METHANE_AT = [WELL[0] + 2.4, WELL[2] + 0.8]
+
+function Methane({ world, show, onExamine }) {
+  // ball-and-stick CH4: C black, four H at the corners of a tetrahedron, 109.5° (§1.6, Figure 1.12)
   const g = useRef()
+  const arc = useRef()
   const dirs = useMemo(() => [[1, 1, 1], [1, -1, -1], [-1, 1, -1], [-1, -1, 1]].map((d) => new THREE.Vector3(...d).normalize()), [])
-  useFrame((_, dt) => { if (g.current) g.current.rotation.y += dt * 0.6 })
+  const mats = useMemo(() => ({
+    c: new THREE.MeshPhysicalMaterial({ color: '#2b2b31', roughness: 0.25, clearcoat: 0.8 }),
+    h: new THREE.MeshPhysicalMaterial({ color: '#f4f4f4', roughness: 0.25, clearcoat: 0.8 }),
+    bond: new THREE.MeshStandardMaterial({ color: '#b8bec8', metalness: 0.7, roughness: 0.3 }),
+    stone: new THREE.MeshStandardMaterial({ color: '#8a8678', roughness: 0.95, flatShading: true }),
+    glow: new THREE.MeshBasicMaterial({ color: '#ffe08a', transparent: true, opacity: 0.6, toneMapped: false }),
+  }), [])
+  const cb = useRef(onExamine)
+  cb.current = onExamine
+  useEffect(() => {
+    const id = world.addInteractable({ pos: [METHANE_AT[0], 0, METHANE_AT[1]], radius: 1.9, label: 'Examine the methane', onInteract: () => cb.current() })
+    const solid = world.addSolid([METHANE_AT[0] - 0.4, 0, METHANE_AT[1] - 0.4], [METHANE_AT[0] + 0.4, 0.9, METHANE_AT[1] + 0.4])
+    world.setEnabled(id, show); world.setEnabled(solid, show)
+    return () => { world.remove(id); world.remove(solid) }
+  }, [world, show])
+  useFrame(({ clock }, dt) => {
+    if (g.current) { g.current.rotation.y += dt * 0.5; g.current.position.y = 1.55 + Math.sin(clock.elapsedTime * 1.6) * 0.04 }
+    if (arc.current) arc.current.material.opacity = 0.35 + Math.sin(clock.elapsedTime * 3) * 0.2
+  })
+  // the 109.5° angle between two of the bonds, drawn as a glowing arc in their plane
+  const { angleArc, arcQ } = useMemo(() => {
+    const a = dirs[0], b = dirs[1]
+    const n = a.clone().cross(b).normalize()
+    const basis = new THREE.Matrix4().makeBasis(a, n.clone().cross(a), n)
+    return { angleArc: new THREE.TorusGeometry(0.42, 0.012, 6, 24, Math.acos(a.dot(b))), arcQ: new THREE.Quaternion().setFromRotationMatrix(basis) }
+  }, [dirs])
   if (!show) return null
   return (
-    <group ref={g} position={position}>
-      <mesh><sphereGeometry args={[0.35, 18, 14]} /><meshStandardMaterial color="#2b2b2b" roughness={0.3} /></mesh>
-      {dirs.map((d, i) => (
-        <group key={i}>
-          <mesh position={d.clone().multiplyScalar(0.45)} quaternion={new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), d)}><cylinderGeometry args={[0.06, 0.06, 0.6, 8]} /><meshStandardMaterial color="#bbb" /></mesh>
-          <mesh position={d.clone().multiplyScalar(0.85)}><sphereGeometry args={[0.22, 14, 12]} /><meshStandardMaterial color="#f4f4f4" /></mesh>
-        </group>
-      ))}
-      <Html position={[0, 1.4, 0]} center distanceFactor={9}><div className="tag3d">CH₄ · methane · 109.5°</div></Html>
-      <pointLight color="#ffe6b0" intensity={2} distance={5} />
+    <group position={[METHANE_AT[0], 0, METHANE_AT[1]]}>
+      {/* pedestal */}
+      <mesh position={[0, 0.42, 0]} material={mats.stone} castShadow><cylinderGeometry args={[0.32, 0.42, 0.84, 8]} /></mesh>
+      <mesh position={[0, 0.88, 0]} material={mats.stone}><cylinderGeometry args={[0.42, 0.36, 0.1, 8]} /></mesh>
+      <mesh position={[0, 0.94, 0]} rotation={[-Math.PI / 2, 0, 0]} material={mats.glow}><ringGeometry args={[0.2, 0.3, 32]} /></mesh>
+      <group ref={g} position={[0, 1.55, 0]} scale={0.62}>
+        <mesh material={mats.c} castShadow><sphereGeometry args={[0.35, 24, 18]} /></mesh>
+        {dirs.map((d, i) => (
+          <group key={i}>
+            <mesh position={d.clone().multiplyScalar(0.45)} quaternion={new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), d)} material={mats.bond}><cylinderGeometry args={[0.06, 0.06, 0.6, 10]} /></mesh>
+            <mesh position={d.clone().multiplyScalar(0.85)} material={mats.h} castShadow><sphereGeometry args={[0.22, 20, 14]} /></mesh>
+          </group>
+        ))}
+        <mesh ref={arc} geometry={angleArc} quaternion={arcQ} material={mats.glow} />
+      </group>
+      <Html position={[0, 2.35, 0]} center distanceFactor={9}><div className="tag3d">CH₄ · methane · 109.5°</div></Html>
+      <pointLight position={[0, 1.6, 0.6]} color="#ffe6b0" intensity={2} distance={5} />
     </group>
   )
 }
@@ -265,6 +302,18 @@ function VillageLevel({ world, onExit }) {
     if (sockets.length === 4) toast('Four bonds — every socket full. Now Kai has an octet, like the C in CH₄.', 'good', 4200)
   }
 
+  const examineMethane = async () => {
+    if (busyRef.current) return
+    busyRef.current = true
+    sfx('lock')
+    await say([
+      { who: 'Pi', text: "That's methane, CH₄ — the seal you made. One carbon holding four hydrogens: carbon needs four bonds to fill its octet, and each hydrogen needs just one (§1.4)." },
+      { who: 'Pi', text: 'Carbon mixes its one 2s and three 2p orbitals into four identical sp³ hybrid orbitals. They point to the corners of a tetrahedron, so every H–C–H angle is 109.5° — see the glowing arc (§1.6).' },
+      { who: 'Pi', text: 'Each C–H bond is 109 pm long and takes 439 kJ/mol to break. Four equal, strong bonds — that is why the seal holds.' },
+    ])
+    busyRef.current = false
+  }
+
   const useWell = async () => {
     if (busyRef.current) return
     const s = getState()
@@ -343,8 +392,8 @@ function VillageLevel({ world, onExit }) {
         <mesh position={[0, 2.35, 0]} rotation={[0, 0, Math.PI / 2]}><coneGeometry args={[0.9, 2.8, 4]} /><meshStandardMaterial color="#9a4a3a" /></mesh>
       </group>
       <Block world={world} pos={[WELL[0], 0.5, WELL[2]]} size={[2.4, 1, 2.4]} visible={false} />
-      <WellStation world={world} onUse={useWell} label={() => (getState().save.well ? null : getState().sockets.length >= 4 ? 'Seal the well with CH₄' : 'Examine the broken well')} />
-      <Methane show={save.well} position={[WELL[0], 3.6, WELL[2]]} />
+      <WellStation world={world} done={!!save.well} onUse={useWell} label={() => (getState().save.well ? null : getState().sockets.length >= 4 ? 'Seal the well with CH₄' : 'Examine the broken well')} />
+      <Methane world={world} show={!!save.well} onExamine={examineMethane} />
       {/* villagers: hydrogens, so they go about in pairs (H₂) */}
       <NPC world={world} pos={[WELL[0] - 4.2, WELL[2] + 2.6]} name="Elder Proton" hat="#4a4a8a" kind="elder" onTalk={talkElder} />
       <NPC world={world} pos={[-4, 13]} name="Hilda & Hal" pair onTalk={() => say([{ who: 'Hilda', text: "We hydrogens can only hold one hand each. So we go about in twos — H₂, the two of us." }, { who: 'Hal', text: 'Four bonds, though? Kai, you must be exhausted.' }])} />
@@ -363,13 +412,16 @@ function VillageLevel({ world, onExit }) {
   )
 }
 
-function WellStation({ world, onUse, label }) {
+function WellStation({ world, onUse, label, done }) {
   const cb = useRef(onUse)
   cb.current = onUse
+  const id = useRef(null)
   useEffect(() => {
-    const id = world.addInteractable({ pos: WELL, radius: 3.4, label, onInteract: () => cb.current() })
-    return () => world.remove(id)
+    id.current = world.addInteractable({ pos: WELL, radius: 3.4, label, onInteract: () => cb.current() })
+    return () => world.remove(id.current)
   }, [world])
+  // once sealed, the well has nothing more to say — let E reach the methane beside it
+  useEffect(() => { world.setEnabled(id.current, !done) }, [done])
   return null
 }
 
