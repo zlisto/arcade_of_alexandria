@@ -270,6 +270,7 @@ const KaiModel = forwardRef(function KaiModel(_, ref) {
     if (p.swing !== 0) { rx = -1.35; ry = p.swing * 1.6 * p.swingSide; re = -0.15 }
     if (p.spin > 0) { rx = -1.5; ry = 0; re = -0.1 }
     if (p.charge > 0) { rx = -0.45; rz = -0.9; re = -0.7 }
+    if (p.aim) { rx = -1.5; ry = 0; rz = -0.05; re = -0.05 } // hookshot: arm straight out
     if (tuck > 0) { rx = rx * (1 - tuck) - 0.9 * tuck; re = re * (1 - tuck) - 1.7 * tuck }
     armR.current.rotation.set(rx, ry, rz)
     elbowR.current.rotation.x = re

@@ -82,6 +82,10 @@ const SFX = {
     tone({ f: 2350, type: 'triangle', dur: 0.3, vol: 0.035, delay: 0.1 })
     noise({ dur: 0.18, vol: 0.03, hp: 6000, delay: 0.1 })
   },
+  // Curved-Arrow Hookshot: a zip out, a bright clank when it bites, a dull clink when it finds nothing
+  hookFire: () => { tone({ f: 500, f2: 1900, type: 'square', dur: 0.22, vol: 0.05, filter: 3000 }); noise({ dur: 0.18, vol: 0.05, hp: 3500 }) },
+  hookHit: () => { tone({ f: 1400, type: 'triangle', dur: 0.12, vol: 0.12 }); tone({ f: 2100, type: 'triangle', dur: 0.18, vol: 0.08, delay: 0.05 }); noise({ dur: 0.06, vol: 0.12, hp: 2500 }) },
+  hookClink: () => { tone({ f: 380, f2: 300, type: 'square', dur: 0.08, vol: 0.08, filter: 1500 }); tone({ f: 260, type: 'square', dur: 0.1, vol: 0.06, filter: 1200, delay: 0.08 }) },
   spin: () => { noise({ dur: 0.35, vol: 0.18, hp: 1200 }); tone({ f: 300, f2: 900, type: 'sawtooth', dur: 0.35, vol: 0.06, filter: 2000 }) },
   hit: () => { tone({ f: 180, f2: 60, type: 'square', dur: 0.12, vol: 0.18, filter: 900 }); noise({ dur: 0.08, vol: 0.2, filter: 3000 }) },
   hurt: () => tone({ f: 330, f2: 110, type: 'square', dur: 0.25, vol: 0.18, filter: 1400 }),
@@ -114,6 +118,7 @@ const MOODS = {
   village: { chords: [[261.6, 329.6, 392], [220, 261.6, 329.6], [174.6, 220, 261.6], [196, 246.9, 293.7]], arp: true, tempo: 2.4, type: 'triangle' },
   cave: { chords: [[146.8, 174.6, 220], [130.8, 164.8, 196], [116.5, 146.8, 174.6], [110, 138.6, 164.8]], arp: true, tempo: 3.2, type: 'sine' },
   boss: { chords: [[110, 130.8, 164.8], [103.8, 123.5, 155.6], [98, 116.5, 146.8], [110, 130.8, 164.8]], arp: true, tempo: 1.2, type: 'sawtooth' },
+  temple: { chords: [[220, 261.6, 329.6], [196, 246.9, 293.7], [174.6, 220, 261.6], [164.8, 207.7, 246.9]], arp: true, tempo: 2.8, type: 'sine' },
   intro: { chords: [[146.8, 185, 220], [130.8, 164.8, 196], [123.5, 146.8, 185], [110, 138.6, 164.8]], arp: false, tempo: 3.5, type: 'sine' },
 }
 let musicTimer = null

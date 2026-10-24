@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { setState, useGame, getState, saveGame } from '../engine/store'
 import { LESSONS } from '../data/lessons'
+import { Polarity, Dipole, Formal, Resonance, PKa, HBond, ResonanceCheck } from './Panels2'
 import { setInputEnabled, releaseMouse } from '../engine/input'
 import { sfx } from '../audio/sfx'
 import {
@@ -18,8 +19,9 @@ export default function Panels() {
   // the first time a trial opens, its lesson card comes first
   useEffect(() => { if (p) setLesson(!!LESSONS[p.kind] && !(getState().save.lessonsSeen || {})[p.kind]) }, [p])
   if (!p) return null
-  const close = (ok) => { const f = p.onClose; setState({ panel: null }); setTimeout(() => f && f(ok), 0) }
-  const C = { atomForge: AtomForge, shells: Shells, octet: OctetBridge, well: EnergyWell, skeleton: Skeleton, hybridCheck: HybridCheck }[p.kind]
+  // only close the panel this render belongs to (a trial's delayed done() must not close the next one)
+  const close = (ok) => { if (getState().panel !== p) return; const f = p.onClose; setState({ panel: null }); setTimeout(() => f && f(ok), 0) }
+  const C = { atomForge: AtomForge, shells: Shells, octet: OctetBridge, well: EnergyWell, skeleton: Skeleton, hybridCheck: HybridCheck, polarity: Polarity, dipole: Dipole, formal: Formal, resonance: Resonance, pka: PKa, hbond: HBond, resonanceCheck: ResonanceCheck }[p.kind]
   const L = LESSONS[p.kind]
   const gotIt = () => { saveGame({ lessonsSeen: { ...(getState().save.lessonsSeen || {}), [p.kind]: true } }); setLesson(false); sfx('lock') }
   return (

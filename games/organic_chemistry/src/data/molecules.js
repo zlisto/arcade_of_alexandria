@@ -153,6 +153,67 @@ export const MOLECULES = [
       tetra(a.map((x) => -x), 0.3).forEach((d) => from(c3, d, 'H', len.CH))
     }),
   },
+  // ---------------------------------------------------------------- Chapter 2 · the Tide Coast and Temple
+  {
+    id: 'water', name: 'Water', formula: 'H₂O', unlocked: (s) => s.coastSeen,
+    met: 'Wanda and the water-folk of the Tide Coast',
+    shape: 'Bent', hybrid: 'Oxygen sp³ (two lone pairs)', angles: 'H–O–H 104.5°', section: '2.2', pages: '40–42',
+    fact: 'Oxygen is much more electronegative than hydrogen, and the molecule is bent, so the two O–H bond dipoles add up: a large dipole moment, μ = 1.85 D.',
+    use: 'Covers most of the Earth; nearly every reaction in a living cell happens in it.',
+    geo: build(({ at, from }) => { const o = at('O', [0, 0, 0]); const a = (104.5 / 2) * Math.PI / 180; [-1, 1].forEach((s) => from(o, [Math.sin(s * a), -Math.cos(a), 0], 'H', len.OH)) }),
+  },
+  {
+    id: 'co2', name: 'Carbon dioxide', formula: 'CO₂', unlocked: (s) => s.solved['2-1'],
+    met: 'The Tug-of-War Hall (2-1)',
+    shape: 'Linear', hybrid: 'Carbon sp', angles: 'O=C=O 180°', section: '2.2', pages: '40–42',
+    fact: 'Both C=O bonds are polar, but they point in exactly opposite directions and cancel. Carbon dioxide has no net dipole moment: μ = 0 D.',
+    use: 'The gas you breathe out; plants build sugar from it.',
+    geo: build(({ at, from }) => { const c = at('C', [0, 0, 0]); from(c, X, 'O', 1.16, 2); from(c, NX, 'O', 1.16, 2) }),
+  },
+  {
+    id: 'nh3', name: 'Ammonia', formula: 'NH₃', unlocked: (s) => s.solved['2-1'],
+    met: 'The Tug-of-War Hall (2-1)',
+    shape: 'Trigonal pyramid', hybrid: 'Nitrogen sp³ (one lone pair)', angles: 'H–N–H 107.3°', section: '2.2', pages: '40–42',
+    fact: 'The three N–H dipoles and the lone pair all point the same way, so ammonia has a sizable dipole moment, μ = 1.47 D.',
+    use: 'Made by the million tonnes for fertilizer.',
+    geo: build(({ at, from }) => { const n = at('N', [0, 0, 0]); T.slice(1).forEach((d) => from(n, d, 'H', len.NH)) }),
+  },
+  {
+    id: 'h3o', name: 'Hydronium ion', formula: 'H₃O⁺', unlocked: (s) => s.solved['2-2'],
+    met: 'The Hall of Accounts (2-2), and the Hydronium Crabs',
+    shape: 'Trigonal pyramid', hybrid: 'Oxygen sp³ (one lone pair)', angles: 'a little under 109.5°', section: '2.3, 2.7', pages: '42–44, 48–49',
+    fact: 'Oxygen normally makes two bonds. With three bonds and one lone pair its formal charge is 6 − 2 − 3 = +1. It is what an acid forms when it gives H⁺ to water.',
+    use: 'Its concentration in water sets the pH.',
+    geo: build(({ at, from }) => { const o = at('O', [0, 0, 0]); T.slice(1).forEach((d) => from(o, d, 'H', len.OH)) }),
+  },
+  {
+    id: 'acetate', name: 'Acetate ion', formula: 'CH₃CO₂⁻', unlocked: (s) => s.solved['2-3'],
+    met: 'The Resonance Tidepools (2-3)',
+    shape: 'Flat at the CO₂ group', hybrid: 'Carboxylate carbon sp², methyl carbon sp³', angles: 'about 120° at the CO₂ carbon', section: '2.4–2.6', pages: '44–48',
+    fact: 'Two resonance forms, but the real ion is their hybrid: both C–O bonds are 127 pm, halfway between a single and a double bond, and the negative charge is shared by both oxygens.',
+    use: 'Vinegar is acetic acid in water; acetate is what is left when it gives up its H⁺.',
+    geo: build(({ at, from }) => {
+      const c1 = at('C', [0, 0, 0]); const me = from(c1, NX, 'C', len.CC)
+      const [a, b] = trig(NX); from(c1, a, 'O', 1.27, 2); from(c1, b, 'O', 1.27)
+      tetra(X, 0.4).forEach((d) => from(me, d, 'H', len.CH))
+    }),
+  },
+  {
+    id: 'bf3', name: 'Boron trifluoride', formula: 'BF₃', unlocked: (s) => s.solved['2-5'],
+    met: 'The Lewis Docks (2-5)',
+    shape: 'Trigonal planar (flat)', hybrid: 'Boron sp² (one empty p orbital)', angles: 'F–B–F 120°', section: '2.11', pages: '55–58',
+    fact: 'Boron has only six valence electrons around it, leaving an empty p orbital. That makes BF₃ a Lewis acid: it accepts an electron pair from a Lewis base.',
+    use: 'Used as a catalyst in making plastics and medicines.',
+    geo: build(({ at, from }) => { const b = at('B', [0, 0, 0]); [0, 1, 2].forEach((k) => { const a = (k * 2 * Math.PI) / 3; from(b, [Math.cos(a), Math.sin(a), 0], 'F', 1.31) }) }),
+  },
+  {
+    id: 'carbonate', name: 'Carbonate ion', formula: 'CO₃²⁻', unlocked: (s) => s.solved.boss2,
+    met: 'The Resonance Hydra, boss of the Tide Temple',
+    shape: 'Trigonal planar (flat)', hybrid: 'Carbon sp²', angles: 'O–C–O 120°', section: '2.4–2.6', pages: '44–48',
+    fact: 'Three equivalent resonance forms, each with the C=O on a different oxygen. None of them is the real ion: the real carbonate is the hybrid, with three identical C–O bonds.',
+    use: 'Limestone, chalk and seashells are calcium carbonate.',
+    geo: build(({ at, from }) => { const c = at('C', [0, 0, 0]); [0, 1, 2].forEach((k) => { const a = Math.PI / 2 + (k * 2 * Math.PI) / 3; from(c, [Math.cos(a), Math.sin(a), 0], 'O', 1.28, k === 0 ? 2 : 1) }) }),
+  },
 ]
 
 // the ring needs its bonds and hydrogens added after the carbons are placed

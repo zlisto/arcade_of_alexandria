@@ -4,6 +4,7 @@ import { getActiveWorld } from '../engine/active'
 import { ELEMENTS, HYBRIDS } from '../chem/rules'
 import { CODEX, BOOK } from '../data/codex'
 import { ROOMS } from '../data/dungeon1'
+import { ROOMS2 } from '../data/dungeon2'
 import { sfx } from '../audio/sfx'
 import { MOLECULES } from '../data/molecules'
 import MoleculeView from './MoleculeView'
@@ -22,6 +23,7 @@ const Icon = {
   blade: <svg viewBox="0 0 40 40"><rect x="18.5" y="4" width="3" height="24" rx="1" fill="#43e6f5" /><rect x="12" y="27" width="16" height="3" rx="1" fill="#8a93a3" /><rect x="18" y="30" width="4" height="7" rx="1" fill="#3a3a3a" /></svg>,
   shield: <svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="14" fill="#2c3038" stroke="#8a93a3" strokeWidth="2" /><circle cx="20" cy="20" r="8" fill="none" stroke="#43e6f5" strokeWidth="1.5" /></svg>,
   crystal: <svg viewBox="0 0 40 40"><polygon points="20,3 31,17 20,37 9,17" fill="#43e6f5" opacity=".85" /><polygon points="20,3 31,17 20,20 9,17" fill="#bff6ff" opacity=".8" /></svg>,
+  hookshot: <svg viewBox="0 0 40 40"><path d="M7 32 C 10 12, 26 8, 32 9" fill="none" stroke="#4aa8ff" strokeWidth="3" strokeLinecap="round" /><polygon points="33,4 37,12 28,11" fill="#cfe6ff" /><circle cx="7" cy="32" r="3.5" fill="#ffd760" /><circle cx="12" cy="31" r="3.5" fill="#ffd760" /></svg>,
   locked: <svg viewBox="0 0 40 40"><polygon points="20,3 31,17 20,37 9,17" fill="none" stroke="#4a4458" strokeWidth="2" strokeDasharray="3 3" /><text x="20" y="25" textAnchor="middle" fill="#5a5468" fontSize="13" fontWeight="700">?</text></svg>,
 }
 
@@ -33,7 +35,10 @@ function Items({ s, sel, setSel }) {
     hasCrystal
       ? { id: 'crystal', name: 'Hybrid Crystal', icon: Icon.crystal, text: 'Mixes carbon’s 2s and 2p orbitals into hybrids. Pick a form below, or press R in play to cycle sp³ → sp² → sp.' }
       : { id: 'crystal', name: '???', icon: Icon.locked, text: 'Something waits deep in the Orbital Caverns.' },
-  ]
+    s.save.hasHookshot
+      ? { id: 'hookshot', name: 'Curved-Arrow Hookshot', icon: Icon.hookshot, text: 'Press Q. Like a curved arrow in a mechanism, it flies from your electron pair to an electron-poor target (a blue ring) and pulls you there. Lewis bases give pairs; Lewis acids take them (§2.11).' }
+      : s.save.shards >= 1 ? { id: 'hookshot', name: '???', icon: Icon.locked, text: 'Something waits in the Tide Temple.' } : null,
+  ].filter(Boolean)
   const cur = cards.find((c) => c.id === sel) || cards[0]
   const pickForm = (f) => {
     if (!hasCrystal) return
@@ -60,6 +65,17 @@ function Items({ s, sel, setSel }) {
               <span className="im-fu">{f.use}</span>
             </button>
           ))}
+        </div>
+      )}
+      {(s.screen === 'temple' || s.save.solved['t2-map']) && (
+        <div className="im-box im-dungeon">
+          <h4>Tide Temple</h4>
+          <div className="im-ditems">
+            <span className={s.save.solved['t2-map'] ? 'got' : ''}>🗺 Dungeon Map</span>
+            <span className={s.save.solved['t2-compass'] ? 'got' : ''}>🧭 Compass</span>
+            <span className={s.save.t2key ? 'got' : ''}>🗝 Small Key ×{s.save.t2key ? 1 : 0}</span>
+            <span className={s.save.t2bossKey ? 'got' : ''}>🔑 Boss Key</span>
+          </div>
         </div>
       )}
       <div className="im-row">
@@ -161,6 +177,15 @@ function Quest({ s }) {
           {ROOMS.filter((r) => r.id !== 'entrance').map((r) => <li key={r.id} className={r.exitNeeds.every((id) => solved[id]) ? 'done' : ''}>{r.title}{r.sections.length ? <span className="sec"> §{r.sections[0]}{r.sections.length > 1 ? '–' + r.sections[r.sections.length - 1] : ''}</span> : null}</li>)}
           <li className={s.save.shards >= 1 ? 'done' : ''}>Recover Bond Shard 1</li>
         </ul>
+        {s.save.shards >= 1 && (<>
+          <h4>The Tide Temple · Chapter 2</h4>
+          <ul className="im-steps">
+            <li className={s.save.fieldSeen ? 'done' : ''}>Take the east road across the Valence Fields</li>
+            <li className={s.save.lighthouseLit ? 'done' : ''}>Light the Tide Lighthouse <span className="sec"> §2.1</span></li>
+            {ROOMS2.map((r) => <li key={r.id} className={r.needs.every((id) => solved[id]) ? 'done' : ''}>{r.title}{r.sections.length ? <span className="sec"> §{r.sections[0]}{r.sections.length > 1 ? '–' + r.sections[r.sections.length - 1] : ''}</span> : null}</li>)}
+            <li className={s.save.shards >= 2 ? 'done' : ''}>Recover Bond Shard 2</li>
+          </ul>
+        </>)}
       </div>
     </div>
   )

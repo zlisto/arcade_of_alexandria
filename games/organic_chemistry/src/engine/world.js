@@ -10,6 +10,8 @@ export function createWorld() {
     triggers: new Map(), // id -> { min, max, onEnter, onExit, inside }
     targets: new Map(), // id -> { pos:()=>Vector3-like, radius, hp?, alive:()=>bool, onHit(dir, dmg, kind) }
     interactables: new Map(), // id -> { pos:[x,y,z], radius, label, onInteract, enabled }
+    // hookshot targets: { pos:()=>[x,y,z] | [x,y,z], kind:'pull'|'hit', land?:[x,y,z], onHook?(), accepts?()=>true|string, enabled }
+    hooks: new Map(),
     player: null, // set by Player: { pos, vel, state }
     time: 0,
     hitStop: 0,
@@ -22,8 +24,9 @@ export function createWorld() {
 
   w.addSolid = (min, max) => { const id = nextId++; w.solids.set(id, { min, max, enabled: true }); return id }
   w.addFloor = (minX, minZ, maxX, maxZ, y = 0) => { const id = nextId++; w.floors.set(id, { min: [minX, minZ], max: [maxX, maxZ], y, enabled: true }); return id }
-  w.remove = (id) => { w.solids.delete(id); w.floors.delete(id); w.triggers.delete(id); w.targets.delete(id); w.interactables.delete(id) }
-  w.setEnabled = (id, on) => { const s = w.solids.get(id) || w.floors.get(id) || w.interactables.get(id); if (s) s.enabled = on }
+  w.remove = (id) => { w.solids.delete(id); w.floors.delete(id); w.triggers.delete(id); w.targets.delete(id); w.interactables.delete(id); w.hooks.delete(id) }
+  w.addHook = (h) => { const id = nextId++; w.hooks.set(id, { enabled: true, kind: 'pull', ...h }); return id }
+  w.setEnabled = (id, on) => { const s = w.solids.get(id) || w.floors.get(id) || w.interactables.get(id) || w.hooks.get(id); if (s) s.enabled = on }
   w.addTrigger = (min, max, onEnter, onExit) => { const id = nextId++; w.triggers.set(id, { min, max, onEnter, onExit, inside: false }); return id }
   w.addTarget = (t) => { const id = nextId++; w.targets.set(id, t); return id }
   w.addInteractable = (it) => { const id = nextId++; w.interactables.set(id, { enabled: true, radius: 1.8, ...it }); return id }

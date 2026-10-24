@@ -223,6 +223,7 @@ function VillageLevel({ world, onExit }) {
           if (wolves.length) { const w = wolves[0].pos(); return { pos: [w[0], w[2]], label: 'Drive off the Radical Wolves' } }
           return { pos: [5, 4], label: 'Drive off the Radical Wolves' }
         }
+        if (s.save.shards >= 1) return { pos: [41, 0], label: 'Take the east road to the Valence Fields' }
         return { pos: [CAVE[0], CAVE[2] - 5], label: 'Enter the Orbital Caverns' }
       },
     }
@@ -232,7 +233,7 @@ function VillageLevel({ world, onExit }) {
   // boundary walls + cave hill
   useEffect(() => {
     const ids = [
-      world.addSolid([-44, 0, -46], [-42, 6, 44]), world.addSolid([42, 0, -46], [44, 6, 44]),
+      world.addSolid([-44, 0, -46], [-42, 6, 44]), world.addSolid([42, 0, -46], [44, 6, -3.2]), world.addSolid([42, 0, 3.2], [44, 6, 44]),
       world.addSolid([-44, 0, 42], [44, 6, 44]), world.addSolid([-44, 0, -46], [44, 6, -44]),
       // the hill around the cave mouth
       world.addSolid([-16, 0, -54], [-2.2, 12, -39]), world.addSolid([2.2, 0, -54], [16, 12, -39]), world.addSolid([-2.2, 4.1, -54], [2.2, 12, -39]),
@@ -245,6 +246,17 @@ function VillageLevel({ world, onExit }) {
   useEffect(() => { plug.current = world.addSolid([-2.2, 0, -40.2], [2.2, 4.1, -39]); return () => world.remove(plug.current) }, [world])
   useEffect(() => { world.setEnabled(plug.current, !save.wolvesCleared) }, [save.wolvesCleared])
 
+  // the east road: brambles until the first shard is won, then out to the Valence Fields (World 2)
+  const bramble = useRef(null)
+  useEffect(() => {
+    bramble.current = world.addSolid([42, 0, -3.2], [44, 6, 3.2])
+    world.setEnabled(bramble.current, getState().save.shards < 1)
+    const t = world.addTrigger([41.2, 0, -3], [44, 4, 3], () => { if (getState().save.shards >= 1) onExit('field', { scene: 'field', at: 'village' }) })
+    const near = world.addTrigger([36, 0, -4], [41, 4, 4], () => { if (getState().save.shards < 1) toast('Brambles block the east road. It only opens for someone carrying a Bond Shard.', 'info', 3400) })
+    return () => { world.remove(bramble.current); world.remove(t); world.remove(near) }
+  }, [world])
+  useEffect(() => { world.setEnabled(bramble.current, save.shards < 1) }, [save.shards])
+
   // the cave entrance
   useEffect(() => {
     const t = world.addTrigger([-2.2, 0, -44], [2.2, 4, -40.3], () => { if (getState().save.wolvesCleared) onExit('caverns') })
@@ -255,7 +267,7 @@ function VillageLevel({ world, onExit }) {
   useEffect(() => {
     playMusic('village')
     const sv = getState().save
-    setState({ objective: !sv.well ? 'Talk to the Elder at the well' : !sv.wolvesCleared ? 'Drive off the Radical Wolves' : 'Enter the glowing cave north of the village' })
+    setState({ objective: !sv.well ? 'Talk to the Elder at the well' : !sv.wolvesCleared ? 'Drive off the Radical Wolves' : sv.shards >= 1 ? 'Take the east road to the Valence Fields' : 'Enter the glowing cave north of the village' })
     if (!sv.piMet) {
       saveGame({ piMet: true })
       setTimeout(async () => {
@@ -359,6 +371,7 @@ function VillageLevel({ world, onExit }) {
     const x = Math.cos(a) * d
     const z = Math.sin(a) * d
     if (z < -30 && Math.abs(x) < 18) return null
+    if (x > 20 && Math.abs(z) < 7) return null // keep the east road clear
     return [x, z, 0.9 + r() * 0.9, r() * 6]
   }), [])
   const rocks = useMemo(() => scatter(40, 11, (r) => [(r() - 0.5) * 70, (r() - 0.5) * 70, 0.4 + r() * 0.8, r() * 6]).filter(([x, z]) => Math.hypot(x, z - 3) > 8 && Math.hypot(x - WELL[0], z - WELL[2]) > 4), [])
@@ -374,6 +387,8 @@ function VillageLevel({ world, onExit }) {
       {/* path to the cave and the well */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, -14]} receiveShadow><planeGeometry args={[3.2, 52]} /><meshStandardMaterial color="#b49c74" roughness={1} /></mesh>
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[3.5, 0.012, -3]} receiveShadow><planeGeometry args={[7, 2.6]} /><meshStandardMaterial color="#b49c74" roughness={1} /></mesh>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[26, 0.011, 0]} receiveShadow><planeGeometry args={[36, 2.8]} /><meshStandardMaterial color="#b49c74" roughness={1} /></mesh>
+      <EastGate open={save.shards >= 1} />
       <Cottage world={world} pos={[-8, 8]} rot={0.4} />
       <Cottage world={world} pos={[-14, -4]} rot={1.2} roof="#3a6ab2" />
       <Cottage world={world} pos={[14, 10]} rot={-0.6} roof="#c08a2a" />
@@ -487,11 +502,28 @@ export function PiFollower({ world }) {
   return <group ref={g}><Pi /></group>
 }
 
+function EastGate({ open }) {
+  return (
+    <group position={[43, 0, 0]}>
+      {[-1, 1].map((s) => (
+        <group key={s} position={[0, 0, s * 3.6]}>
+          <mesh position={[0, 1.6, 0]} castShadow><boxGeometry args={[1.2, 3.2, 1.2]} /><meshStandardMaterial color="#8a8474" roughness={0.95} flatShading /></mesh>
+          <mesh position={[0, 3.35, 0]}><boxGeometry args={[1.5, 0.3, 1.5]} /><meshStandardMaterial color="#6a6458" roughness={0.9} /></mesh>
+        </group>
+      ))}
+      <mesh position={[0, 3.6, 0]}><boxGeometry args={[0.5, 0.4, 8.4]} /><meshStandardMaterial color="#6a4a32" roughness={0.9} /></mesh>
+      {!open && [...Array(9)].map((_, k) => <mesh key={k} position={[(k % 3 - 1) * 0.4, 0.5 + (k % 2) * 0.5, -2.6 + k * 0.65]} castShadow><icosahedronGeometry args={[0.7, 0]} /><meshStandardMaterial color="#3d5a2a" roughness={1} flatShading /></mesh>)}
+      <Html position={[-1.5, 2.6, 2.6]} center distanceFactor={11}><div className="tag3d">{open ? 'East road → Valence Fields' : 'East road · overgrown'}</div></Html>
+    </group>
+  )
+}
+
 export default function Village({ onExit }) {
   const save = getState().save
-  const start = save.wolvesCleared ? [0, 0, -20] : START
+  const fromEast = save.checkpoint && save.checkpoint.scene === 'village' && save.checkpoint.at === 'east'
+  const start = fromEast ? [38, 0, 0] : save.wolvesCleared ? [0, 0, -20] : START
   return (
-    <GameScene start={start} startFacing={Math.PI} background="#9ec3e6">
+    <GameScene start={start} startFacing={fromEast ? -Math.PI / 2 : Math.PI} background="#9ec3e6">
       {(world) => <VillageLevel world={world} onExit={onExit} />}
     </GameScene>
   )

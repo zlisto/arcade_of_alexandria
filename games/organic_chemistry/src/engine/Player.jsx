@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import KaiModel from '../actors/KaiModel'
@@ -12,6 +12,10 @@ import { sfx } from '../audio/sfx'
 const GRAV = -30
 const R = 0.38
 const STEP = 0.45
+const HOOK_RANGE = 14 // metres
+const HOOK_SPEED = 30 // arrow flight, m/s
+const HOOK_PULL = 16 // pull speed, m/s
+
 export const STANCE = {
   sp3: { speed: 6.4, height: 1.75, label: 'sp³ · tetrahedral' },
   sp2: { speed: 7.2, height: 0.95, label: 'sp² · flat' },
@@ -165,6 +169,29 @@ export default function Player({ world, start = [0, 0, 0], startFacing = 0 }) {
       }
     }
 
+    // ---- Curved-Arrow Hookshot (Q): an arrow from Kai's electron pair to an electron sink (2.6, 2.11)
+    if (!busy && inp.hook && (s.mode === 'move' || s.mode === 'block') && s.grounded && gs.save.hasHookshot) {
+      let fx = Math.sin(s.facing), fz = Math.cos(s.facing)
+      if (lockPos) { const dx = lockPos[0] - s.pos.x, dz = lockPos[2] - s.pos.z, l = Math.hypot(dx, dz) || 1; fx = dx / l; fz = dz / l }
+      let best = null, bestScore = Infinity, bestPos = null
+      for (const h of world.hooks.values()) {
+        if (!h.enabled) continue
+        const hp = typeof h.pos === 'function' ? h.pos() : h.pos
+        const dx = hp[0] - s.pos.x, dz = hp[2] - s.pos.z, d = Math.hypot(dx, dz)
+        if (d > HOOK_RANGE || d < 1) continue
+        const ang = Math.acos(Math.max(-1, Math.min(1, (dx * fx + dz * fz) / d)))
+        if (ang > 0.55) continue
+        const score = ang * 6 + d * 0.15
+        if (score < bestScore) { bestScore = score; best = h; bestPos = hp }
+      }
+      const from = [s.pos.x + fx * 0.4, s.pos.y + 1.25, s.pos.z + fz * 0.4]
+      const to = best ? bestPos : [s.pos.x + fx * HOOK_RANGE * 0.75, s.pos.y + 1.3, s.pos.z + fz * HOOK_RANGE * 0.75]
+      s.hook = { target: best, from, to, dist: Math.hypot(to[0] - from[0], to[1] - from[1], to[2] - from[2]) }
+      s.facing = Math.atan2(to[0] - s.pos.x, to[2] - s.pos.z)
+      s.mode = 'hookfire'; s.modeT = 0; s.vel.x = 0; s.vel.z = 0
+      sfx('hookFire')
+    }
+
     // ---- roll / sidestep / backhop / sp dash
     if (!busy && inp.roll && (s.mode === 'move' || s.mode === 'block') && s.grounded) {
       if (stance === 'sp') {
@@ -266,6 +293,50 @@ export default function Player({ world, start = [0, 0, 0], startFacing = 0 }) {
         if (k >= 1) s.mode = 'move'
         break
       }
+      case 'hookfire': {
+        // the arrow flies out; on arrival it pulls, hits, or clinks back
+        const H = s.hook
+        const k = Math.min(1, (s.modeT * HOOK_SPEED) / Math.max(0.5, H.dist))
+        world.hookFx = { on: true, from: H.from, to: H.to, k }
+        if (k >= 1) {
+          const tg = H.target
+          const ok = tg ? (tg.accepts ? tg.accepts() : true) : false
+          if (tg && ok === true) {
+            sfx('hookHit')
+            if (tg.kind === 'pull') {
+              const land = tg.land ? (typeof tg.land === 'function' ? tg.land() : tg.land) : [H.to[0], H.to[1] - 1.2, H.to[2]]
+              s.pullTo = new THREE.Vector3(...land)
+              s.mode = 'hookpull'; s.modeT = 0
+            } else {
+              if (tg.onHook) tg.onHook()
+              s.mode = 'hookback'; s.modeT = 0
+            }
+          } else {
+            sfx('hookClink')
+            if (typeof ok === 'string') toast(ok, 'warn', 2600)
+            s.mode = 'hookback'; s.modeT = 0
+          }
+        }
+        break
+      }
+      case 'hookpull': {
+        // ride the arrow to the anchor: over water and gaps, untouchable on the way
+        const d = s.pullTo.clone().sub(s.pos)
+        const l = d.length()
+        s.iframes = Math.max(s.iframes, 0.1)
+        const step = Math.min(l, HOOK_PULL * dt)
+        if (l > 0.001) s.pos.addScaledVector(d, step / l)
+        s.vel.set(0, 0, 0)
+        world.hookFx = { on: true, from: [s.pos.x, s.pos.y + 1.25, s.pos.z], to: s.hook.to, k: 1 }
+        if (l < 0.25 || s.modeT > 2.5) { s.pos.copy(s.pullTo); s.mode = 'move'; s.grounded = true; s.lastSafe.copy(s.pos); world.hookFx = { on: false } }
+        break
+      }
+      case 'hookback': {
+        const k = Math.max(0, 1 - s.modeT / 0.2)
+        world.hookFx = { on: k > 0, from: [s.pos.x + Math.sin(s.facing) * 0.4, s.pos.y + 1.25, s.pos.z + Math.cos(s.facing) * 0.4], to: s.hook.to, k }
+        if (k <= 0) { s.mode = 'move'; world.hookFx = { on: false } }
+        break
+      }
       case 'hurt': {
         hx = s.knock.x * (1 - s.modeT / 0.35); hz = s.knock.z * (1 - s.modeT / 0.35)
         if (s.modeT > 0.35) s.mode = 'move'
@@ -282,7 +353,8 @@ export default function Player({ world, start = [0, 0, 0], startFacing = 0 }) {
     s.vel.x = burst ? hx : s.vel.x + (hx - s.vel.x) * Math.min(1, dt * accel)
     s.vel.z = burst ? hz : s.vel.z + (hz - s.vel.z) * Math.min(1, dt * accel)
 
-    // ---- integrate + collide
+    // ---- integrate + collide (skipped while the hookshot pulls Kai along)
+    if (s.mode !== 'hookpull') {
     const wasGrounded = s.grounded
     let nx = s.pos.x + s.vel.x * dt
     let nz = s.pos.z + s.vel.z * dt
@@ -324,6 +396,8 @@ export default function Player({ world, start = [0, 0, 0], startFacing = 0 }) {
       toast('Fell into the abyss!', 'warn', 1600)
     }
 
+    }
+
     world.updateTriggers([s.pos.x, s.pos.y, s.pos.z])
 
     // ---- interact prompt
@@ -344,6 +418,7 @@ export default function Player({ world, start = [0, 0, 0], startFacing = 0 }) {
       pose.stance = stance
       pose.sockets = gs.sockets
       pose.charge = s.attackHeld > 0.65 ? 1 : s.attackHeld > 0.2 ? (s.attackHeld - 0.2) / 0.45 : 0
+      pose.aim = s.mode === 'hookfire' || s.mode === 'hookpull' || s.mode === 'hookback' ? 1 : 0
     }
     s.hurtT = Math.max(0, s.hurtT - dt)
     group.current.position.copy(s.pos)
@@ -358,9 +433,55 @@ export default function Player({ world, start = [0, 0, 0], startFacing = 0 }) {
   })
 
   return (
-    <group ref={group}>
-      <KaiModel ref={model} />
-      <pointLight position={[0, 1.4, 0.6]} intensity={1.4} distance={4.5} color="#43e6f5" />
+    <>
+      <group ref={group}>
+        <KaiModel ref={model} />
+        <pointLight position={[0, 1.4, 0.6]} intensity={1.4} distance={4.5} color="#43e6f5" />
+      </group>
+      <HookshotFx world={world} />
+    </>
+  )
+}
+
+// The hookshot's curved arrow: a glowing arc from Kai's hand to the tip, a double-barbed head, and
+// the two electrons of the pair riding along it.
+const HOOK_N = 16
+function HookshotFx({ world }) {
+  const g = useRef()
+  const dots = useRef([])
+  const head = useRef()
+  const pair = useRef([])
+  const mats = useMemo(() => ({
+    arc: new THREE.MeshBasicMaterial({ color: '#7ff4ff', toneMapped: false }),
+    head: new THREE.MeshStandardMaterial({ color: '#d8b060', metalness: 0.9, roughness: 0.3, emissive: new THREE.Color('#43e6f5'), emissiveIntensity: 0.6 }),
+    e: new THREE.MeshBasicMaterial({ color: '#ffffff', toneMapped: false }),
+  }), [])
+  const v = useMemo(() => ({ a: new THREE.Vector3(), b: new THREE.Vector3(), c: new THREE.Vector3(), p: new THREE.Vector3() }), [])
+  useFrame(({ clock }) => {
+    const fx = world.hookFx
+    if (!g.current) return
+    g.current.visible = !!(fx && fx.on)
+    if (!g.current.visible) return
+    v.a.set(...fx.from)
+    v.b.set(...fx.to).sub(v.a).multiplyScalar(fx.k).add(v.a) // current tip
+    const len = v.a.distanceTo(v.b)
+    v.c.copy(v.a).add(v.b).multiplyScalar(0.5); v.c.y += len * 0.22 // control point: the arrow curves up
+    const at = (t, out) => out.copy(v.a).multiplyScalar((1 - t) * (1 - t)).addScaledVector(v.c, 2 * (1 - t) * t).addScaledVector(v.b, t * t)
+    for (let i = 0; i < HOOK_N; i++) { const m = dots.current[i]; if (m) at((i + 0.5) / HOOK_N, m.position) }
+    at(1, head.current.position)
+    at(0.96, v.p); head.current.lookAt(v.p); head.current.rotateX(-Math.PI / 2)
+    const t = clock.elapsedTime
+    pair.current.forEach((m, i) => { if (m) at((t * 1.6 + i * 0.12) % 1, m.position) })
+  })
+  return (
+    <group ref={g} visible={false}>
+      {[...Array(HOOK_N)].map((_, i) => <mesh key={i} ref={(m) => (dots.current[i] = m)} material={mats.arc}><sphereGeometry args={[0.035, 8, 6]} /></mesh>)}
+      <group ref={head}>
+        <mesh material={mats.head}><coneGeometry args={[0.07, 0.22, 8]} /></mesh>
+        {[-1, 1].map((sd) => <mesh key={sd} position={[sd * 0.06, -0.08, 0]} rotation={[0, 0, sd * 0.7]} material={mats.head}><coneGeometry args={[0.035, 0.14, 6]} /></mesh>)}
+      </group>
+      {[0, 1].map((i) => <mesh key={i} ref={(m) => (pair.current[i] = m)} material={mats.e}><sphereGeometry args={[0.055, 10, 8]} /></mesh>)}
+      <pointLight color="#7ff4ff" intensity={1.2} distance={3} />
     </group>
   )
 }

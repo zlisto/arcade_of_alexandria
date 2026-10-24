@@ -25,6 +25,14 @@ function draw(ctx, w, h, world, view, opts) {
   ctx.clearRect(0, 0, w, h)
   ctx.fillStyle = m.pit || '#07060b'
   ctx.fillRect(0, 0, w, h)
+  // Ocarina-style: without the Dungeon Map, only the stretches (z-ranges) you've visited are drawn
+  const mask = m.mask && m.mask()
+  ctx.save()
+  if (mask) {
+    ctx.beginPath()
+    for (const [za, zb] of mask) ctx.rect(0, Y(Math.min(za, zb)), w, (Math.abs(za - zb)) * scale)
+    ctx.clip()
+  }
   // walkable floor
   ctx.fillStyle = m.floor || '#3b3850'
   for (const f of world.floors.values()) {
@@ -62,6 +70,7 @@ function draw(ctx, w, h, world, view, opts) {
     ctx.fillStyle = '#c070ff'
     ctx.beginPath(); ctx.arc(X(p[0]), Y(p[2]), opts.full ? 4 : 3, 0, Math.PI * 2); ctx.fill()
   }
+  ctx.restore()
   // goal
   const goal = m.goal && m.goal()
   if (goal) {

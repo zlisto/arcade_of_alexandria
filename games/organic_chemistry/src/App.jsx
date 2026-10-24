@@ -6,6 +6,9 @@ import { initInput, releaseMouse, wasIntentionalRelease, captureMouse } from './
 import Intro, { IntroScene } from './scenes/Intro'
 import Village from './scenes/Village'
 import Caverns from './scenes/Caverns'
+import Field from './scenes/Field'
+import Coast from './scenes/Coast'
+import Temple from './scenes/Temple'
 import HUD, { Fade } from './ui/HUD'
 import ItemMenu from './ui/ItemMenu'
 import Dialogue from './ui/Dialogue'
@@ -13,6 +16,10 @@ import Panels from './ui/Panels'
 import LevelSelect from './ui/LevelSelect'
 import { MiniMap, FullMap } from './ui/MapView'
 import { playMusic, stopMusic, sfx } from './audio/sfx'
+
+// screens with Kai walking around in them
+const GAME = ['village', 'caverns', 'field', 'coast', 'temple']
+const inGameScreen = (sc) => GAME.includes(sc)
 
 // If a 3D scene throws, show a way back instead of a black screen.
 class SceneGuard extends Component {
@@ -47,14 +54,14 @@ function Title({ onNew, onContinue, onLevel }) {
           <button className={canContinue ? '' : 'primary'} onClick={onNew}>{canContinue ? 'New game' : 'Start'}</button>
           <button className="ghost" onClick={() => setPicking(true)} title="Jump to any level">Level select</button>
         </div>
-        <p className="credit">Based on <i>Organic Chemistry: A Tenth Edition</i>, Chapter 1 — John McMurry, OpenStax (CC BY-NC-SA 4.0). Best with keyboard + mouse or a gamepad.</p>
+        <p className="credit">Based on <i>Organic Chemistry: A Tenth Edition</i>, Chapters 1–2 — John McMurry, OpenStax (CC BY-NC-SA 4.0). Best with keyboard + mouse or a gamepad.</p>
       </div>
       {picking && <LevelSelect onGo={(it) => { setPicking(false); onLevel(it) }} onClose={() => setPicking(false)} />}
     </div>
   )
 }
 
-function Credits({ onTitle, onKeep }) {
+function Credits({ onTitle, onKeep, onOn }) {
   return (
     <div className="credits">
       <div className="cbox">
@@ -67,9 +74,34 @@ function Credits({ onTitle, onKeep }) {
           <li>Hybrid orbitals: sp³ 109.5°, sp² 120° + π, sp 180° + 2π (§1.6–1.10)</li>
           <li>Skeletal structures: carbons at corners, hydrogens implied (§1.12)</li>
         </ul>
-        <p className="small">Next: the road to Carbon Castle and the Tide Temple (Chapter 2) — coming soon.</p>
+        <p className="small">Next: the east road out of Hydrogen Village, across the Valence Fields to the Tide Coast (Chapter 2).</p>
         <div className="title-buttons">
-          <button className="primary" onClick={onKeep}>Keep exploring the caverns</button>
+          <button className="primary" onClick={onOn}>Continue the journey</button>
+          <button onClick={onKeep}>Keep exploring the caverns</button>
+          <button onClick={onTitle}>Back to title</button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function Credits2({ onTitle, onKeep }) {
+  return (
+    <div className="credits">
+      <div className="cbox">
+        <h1>Bond Shard 2 of 12</h1>
+        <p>You cleared <b>The Tide Temple</b> — Chapter 2, <i>Polar Covalent Bonds; Acids and Bases</i>.</p>
+        <ul>
+          <li>Electronegativity: the more electronegative atom in a bond is δ− (§2.1)</li>
+          <li>Dipole moments: bond dipoles add up in bent H₂O and NH₃, and cancel in linear CO₂ and symmetric CCl₄ (§2.2)</li>
+          <li>Formal charge = valence electrons − lone-pair electrons − bonds (§2.3)</li>
+          <li>Resonance: the real molecule is the hybrid; only electrons move, never atoms (§2.4–2.6)</li>
+          <li>Brønsted–Lowry acids and pKa: H⁺ goes from the stronger acid to the stronger base (§2.7–2.10)</li>
+          <li>Lewis acids accept an electron pair (BF₃, Mg²⁺, H⁺); hydrogen bonds need H on O or N (§2.11–2.12)</li>
+        </ul>
+        <p className="small">Next: Carbon Castle and Chapter 3 — coming soon.</p>
+        <div className="title-buttons">
+          <button className="primary" onClick={onKeep}>Back to the Tide Coast</button>
           <button onClick={onTitle}>Back to title</button>
         </div>
       </div>
@@ -90,10 +122,10 @@ export default function App() {
     const off = initInput(el)
     const click = () => {
       const s = getState()
-      const playing = s.screen === 'village' || s.screen === 'caverns'
+      const playing = inGameScreen(s.screen)
       if (playing && !s.dialogue && !s.panel && !s.paused && !s.mapOpen) captureMouse(el)
     }
-    const inGame = (s) => s.screen === 'village' || s.screen === 'caverns'
+    const inGame = (s) => inGameScreen(s.screen)
     // The item menu is the pause screen. Esc while the mouse is captured never reaches the page
     // (the browser spends it on releasing the mouse), so a release we didn't ask for opens the menu.
     let lastUnlock = 0
@@ -121,7 +153,7 @@ export default function App() {
     document.addEventListener('pointerlockchange', lockChange)
     return () => { off(); el.removeEventListener('click', click); window.removeEventListener('keydown', key); document.removeEventListener('pointerlockchange', lockChange) }
   }, [])
-  useEffect(() => { if (screen !== 'village' && screen !== 'caverns') releaseMouse() }, [screen])
+  useEffect(() => { if (!inGameScreen(screen)) releaseMouse() }, [screen])
 
   const go = (next) => {
     setState({ fade: 1 })
@@ -138,7 +170,7 @@ export default function App() {
   const logged = useRef(null)
   useEffect(() => {
     const now = new Set(MOLECULES.filter((m) => { try { return !!m.unlocked(save) } catch { return false } }).map((m) => m.id))
-    if (logged.current && (screen === 'village' || screen === 'caverns')) {
+    if (logged.current && inGameScreen(screen)) {
       const fresh = MOLECULES.filter((m) => now.has(m.id) && !logged.current.has(m.id))
       if (fresh.length) setTimeout(() => toast(`Logged in your Molecule Gauntlet: ${fresh.map((m) => `${m.name} (${m.formula})`).join(', ')} — press Esc to see it`, 'good', 4200), 1800)
     }
@@ -151,9 +183,11 @@ export default function App() {
   const onContinue = () => {
     const s = getState().save
     sfx('lock')
-    go(s.checkpoint && s.checkpoint.scene === 'caverns' ? 'caverns' : 'village')
+    go(s.checkpoint && inGameScreen(s.checkpoint.scene) ? s.checkpoint.scene : 'village')
   }
-  const playing = screen === 'village' || screen === 'caverns'
+  const playing = inGameScreen(screen)
+  // leaving a scene: remember where to come back in, then fade to the next one
+  const exitTo = (to, cp) => { if (cp) saveGame({ checkpoint: cp }); go(to) }
   const show3d = screen === 'intro' || playing
   return (
     <div className="app">
@@ -161,14 +195,18 @@ export default function App() {
         <SceneGuard onReset={() => go('title')}>
         <Canvas shadows dpr={[1, 1.5]} camera={{ fov: 50, near: 0.1, far: 300, position: [0, 4, 16] }} gl={{ antialias: true, powerPreference: 'high-performance' }} frameloop={show3d && !mapOpen && !paused ? 'always' : 'never'}>
           {screen === 'intro' && <IntroScene />}
-          {screen === 'village' && <Village key={sceneKey} onExit={(to) => { saveGame({ checkpoint: { scene: 'caverns', room: 'entrance' } }); go(to) }} />}
+          {screen === 'village' && <Village key={sceneKey} onExit={(to, cp) => exitTo(to, cp || { scene: 'caverns', room: 'entrance' })} />}
           {screen === 'caverns' && <Caverns key={sceneKey} onExit={(to) => go(to)} />}
+          {screen === 'field' && <Field key={sceneKey} onExit={exitTo} />}
+          {screen === 'coast' && <Coast key={sceneKey} onExit={exitTo} />}
+          {screen === 'temple' && <Temple key={sceneKey} onExit={exitTo} />}
         </Canvas>
         </SceneGuard>
       </div>
       {screen === 'title' && <Title onNew={onNew} onContinue={onContinue} onLevel={onLevel} />}
       {screen === 'intro' && <Intro onDone={() => { saveGame({ introSeen: true }); go('village') }} />}
-      {screen === 'credits' && <Credits onTitle={() => go('title')} onKeep={() => go('caverns')} />}
+      {screen === 'credits' && <Credits onTitle={() => go('title')} onKeep={() => go('caverns')} onOn={() => exitTo('village', { scene: 'village' })} />}
+      {screen === 'credits2' && <Credits2 onTitle={() => go('title')} onKeep={() => exitTo('coast', { scene: 'coast', at: 'dock' })} />}
       {playing && <HUD />}
       {playing && <Panels />}
       {playing && <MiniMap />}

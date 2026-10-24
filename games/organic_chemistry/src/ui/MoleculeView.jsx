@@ -6,7 +6,8 @@ import { ELEMENTS } from '../chem/rules'
 
 const R = { H: 0.28, C: 0.42, N: 0.4, O: 0.4 }
 // carbon's usual near-black would vanish on the dark panel, so it's drawn charcoal here
-const col = (el) => (el === 'C' ? '#5a5a66' : ELEMENTS[el]?.color || '#ccc')
+const EXTRA = { B: '#f0b0a0', Mg: '#8adf6a' } // not in the Chapter 1 element table
+const col = (el) => (el === 'C' ? '#5a5a66' : ELEMENTS[el]?.color || EXTRA[el] || '#ccc')
 
 export default function MoleculeView({ geo, size = 220 }) {
   const [a, setA] = useState(0.6)

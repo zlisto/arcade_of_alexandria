@@ -265,3 +265,37 @@ button { font: inherit; }
 .mg-use { color: #bbb; font-size: .88rem; margin: 0 0 .4rem; }
 .mg-beyond { display: inline-block; font-size: .68rem; text-transform: uppercase; letter-spacing: .08em; color: #c79bff; border: 1px solid #5a4480; border-radius: 4px; padding: 0 .35rem; margin-right: .3rem; }
 @media (max-width: 760px) { .im-gauntlet { grid-template-columns: 1fr; } }
+
+/* ---------- World 2 panels */
+.en-row { display: flex; gap: .4rem; flex-wrap: wrap; margin: .2rem 0 .7rem; }
+.en-chip { background: #14121d; border: 1px solid #2a2636; border-radius: 999px; padding: .15rem .6rem; font-size: .85rem; color: #ccc; }
+.en-chip b { color: var(--cyan); margin-right: .25rem; }
+.bond-list { display: flex; flex-direction: column; gap: .4rem; margin-bottom: .6rem; }
+.bond-row { display: flex; align-items: center; gap: .45rem; }
+.bond-line { color: #888; }
+.atom-btn { min-width: 3.2rem; background: #1a1724; color: #eee; border: 1px solid #3a3448; border-radius: 8px; padding: .4rem .6rem; cursor: pointer; font-weight: 700; }
+.atom-btn.sel { background: #3a1820; border-color: #e0453b; color: #ffb3b3; }
+.atom-btn.non { font-weight: 500; color: #aaa; }
+.atom-btn.non.sel { background: #1f2a24; border-color: var(--green); color: var(--green); }
+.dipole-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: .45rem; margin-bottom: .6rem; }
+.dipole-card { background: #14121d; border: 1px solid #2a2636; border-radius: 8px; padding: .5rem .6rem; }
+.dipole-card b { display: block; margin-bottom: .35rem; color: var(--gold); font-size: 1.05rem; }
+.dipole-card button, .formal-btns button, .res-opts button { background: #1a1724; color: #ddd; border: 1px solid #3a3448; border-radius: 7px; padding: .3rem .55rem; margin: 0 .3rem .3rem 0; cursor: pointer; font-size: .85rem; }
+.dipole-card button.sel, .formal-btns button.sel { background: #10303a; border-color: var(--cyan); color: var(--cyan); }
+.formal-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: .45rem; margin-bottom: .6rem; }
+.formal-card { background: #14121d; border: 1px solid #2a2636; border-radius: 8px; padding: .4rem; text-align: center; }
+.atom-sketch { width: 80px; height: 80px; }
+.formal-name { font-size: .78rem; color: #bbb; min-height: 2.2em; }
+.res-row { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+.res-row .small { text-align: center; color: #888; font-size: .75rem; margin: 0; }
+.res-arrow { font-size: 1.6rem; color: var(--gold); }
+.res-q { margin: .6rem 0 .3rem; }
+.res-opts { display: flex; flex-direction: column; align-items: flex-start; }
+.res-opts button { text-align: left; font-size: .9rem; padding: .45rem .7rem; }
+.res-opts button:hover, .dipole-card button:hover, .formal-btns button:hover { border-color: var(--cyan); }
+
+/* Tide Temple dungeon items in the item menu */
+.im-dungeon { margin: 10px 0; }
+.im-ditems { display: flex; flex-wrap: wrap; gap: 8px; }
+.im-ditems span { padding: 4px 10px; border-radius: 6px; background: rgba(255,255,255,.05); color: #6a6478; font-size: 13px; }
+.im-ditems span.got { color: #ffe9a8; background: rgba(255,215,106,.12); }

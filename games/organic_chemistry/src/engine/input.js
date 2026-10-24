@@ -88,6 +88,7 @@ export function poll() {
     g.block = b(5)
     g.stanceP = edge(3)
     g.interactP = g.roll
+    g.hookP = edge(1)
   }
   const k = (c) => keys.has(c)
   const p = (c) => pressed.has(c)
@@ -105,6 +106,7 @@ export function poll() {
     block: k('ShiftLeft') || k('ShiftRight') || g.block,
     stance: p('KeyR') || g.stanceP,
     interact: p('KeyE') || g.interactP,
+    hook: p('KeyQ') || !!g.hookP,
     item: ['Digit1', 'Digit2', 'Digit3', 'Digit4'].findIndex((c) => p(c)),
     advance: p('Space') || p('Enter') || p('KeyE') || g.roll,
     pause: p('Escape') || p('KeyP'),
@@ -115,7 +117,7 @@ export function poll() {
   mouseDX = mouseDY = 0
   lmbPressed = lmbReleased = rmbPressed = false
   if (!enabled) {
-    return { ...out, moveX: 0, moveY: 0, lookX: 0, lookY: 0, attack: false, attackPressed: false, attackReleased: false, roll: false, lockHeld: false, lockPressed: false, block: false, stance: false, interact: false, item: -1 }
+    return { ...out, moveX: 0, moveY: 0, lookX: 0, lookY: 0, attack: false, attackPressed: false, attackReleased: false, roll: false, lockHeld: false, lockPressed: false, block: false, stance: false, interact: false, hook: false, item: -1 }
   }
   return out
 }

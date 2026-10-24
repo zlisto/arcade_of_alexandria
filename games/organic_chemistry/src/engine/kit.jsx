@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
+import { Html } from '@react-three/drei'
 
 // Reusable scene pieces. Each piece that blocks or carries Kai registers itself with the world.
 
@@ -208,5 +209,73 @@ export function Motes({ count = 120, area = [40, 8, 40], center = [0, 2, 0], col
     <points ref={ref} geometry={geo}>
       <pointsMaterial color={color} size={size} transparent opacity={0.8} depthWrite={false} toneMapped={false} />
     </points>
+  )
+}
+
+/** Hookshot anchor: a blue δ+ ring on a post — an electron sink the Curved-Arrow Hookshot can latch onto.
+ *  land = where Kai ends up. accepts() may return a message string to refuse (a decoy). */
+export function HookTarget({ world, pos, land, enabled = true, accepts, color = '#4aa8ff', post = true, label }) {
+  const id = useRef(null)
+  const ring = useRef()
+  const acc = useRef(accepts)
+  acc.current = accepts
+  useEffect(() => {
+    id.current = world.addHook({ pos: [pos[0], pos[1] + 1.6, pos[2]], land: land || [pos[0], pos[1], pos[2] + 1.1], kind: 'pull', accepts: () => (acc.current ? acc.current() : true) })
+    return () => world.remove(id.current)
+  }, [world])
+  useEffect(() => { world.setEnabled(id.current, enabled) }, [enabled])
+  useFrame(({ clock }) => { if (ring.current) { ring.current.rotation.z = clock.elapsedTime * 0.8; ring.current.scale.setScalar(1 + Math.sin(clock.elapsedTime * 3) * 0.06) } })
+  return (
+    <group position={pos}>
+      {post && <mesh position={[0, 0.8, 0]} castShadow><cylinderGeometry args={[0.12, 0.16, 1.6, 8]} /><meshStandardMaterial color="#5a6270" metalness={0.6} roughness={0.4} /></mesh>}
+      <group position={[0, 1.6, 0]}>
+        <mesh ref={ring}><torusGeometry args={[0.32, 0.07, 10, 28]} /><meshStandardMaterial color={color} emissive={color} emissiveIntensity={enabled ? 1.6 : 0.2} toneMapped={false} /></mesh>
+        <mesh><sphereGeometry args={[0.1, 12, 10]} /><meshStandardMaterial color="#cfe6ff" emissive={color} emissiveIntensity={enabled ? 1 : 0.1} /></mesh>
+        {label && <Html position={[0, 0.65, 0]} center distanceFactor={9}><div className="tag3d">{label}</div></Html>}
+      </group>
+      {enabled && <pointLight position={[0, 1.6, 0.3]} color={color} intensity={1.6} distance={4} />}
+    </group>
+  )
+}
+
+/** Treasure chest (Ocarina style): press E, the lid swings open, onOpen() runs once. */
+export function Chest({ world, pos, rotY = 0, opened, onOpen, show = true, big = false, label = 'Open the chest' }) {
+  const lid = useRef()
+  const cb = useRef(onOpen)
+  cb.current = onOpen
+  const openedRef = useRef(opened)
+  openedRef.current = opened
+  useEffect(() => {
+    if (!show) return
+    const it = world.addInteractable({ pos, radius: 1.9, label: () => (openedRef.current ? null : label), onInteract: () => { if (!openedRef.current) cb.current && cb.current() } })
+    const s = world.addSolid([pos[0] - 0.55, pos[1], pos[2] - 0.45], [pos[0] + 0.55, pos[1] + 0.8, pos[2] + 0.45])
+    return () => { world.remove(it); world.remove(s) }
+  }, [world, show])
+  useFrame((_, dt) => { if (lid.current) lid.current.rotation.x += ((opened ? -1.9 : 0) - lid.current.rotation.x) * Math.min(1, dt * 6) })
+  if (!show) return null
+  const sc = big ? 1.35 : 1
+  const wood = big ? '#3a2a50' : '#6a4426'
+  const trim = big ? '#c9a3ff' : '#d8b060'
+  return (
+    <group position={pos} rotation={[0, rotY, 0]} scale={sc}>
+      <mesh position={[0, 0.3, 0]} castShadow><boxGeometry args={[1, 0.6, 0.75]} /><meshStandardMaterial color={wood} roughness={0.8} /></mesh>
+      {[-0.42, 0.42].map((x) => <mesh key={x} position={[x, 0.3, 0]}><boxGeometry args={[0.08, 0.62, 0.78]} /><meshStandardMaterial color={trim} metalness={0.8} roughness={0.3} /></mesh>)}
+      <group ref={lid} position={[0, 0.6, -0.375]}>
+        <mesh position={[0, 0.12, 0.375]} rotation={[0, 0, Math.PI / 2]} castShadow><cylinderGeometry args={[0.37, 0.37, 1, 14, 1, false, 0, Math.PI]} /><meshStandardMaterial color={wood} roughness={0.8} /></mesh>
+        <mesh position={[0, 0.04, 0.76]}><boxGeometry args={[0.16, 0.18, 0.05]} /><meshStandardMaterial color={trim} metalness={0.8} roughness={0.3} /></mesh>
+      </group>
+      {opened && <pointLight position={[0, 1.2, 0]} color={trim} intensity={2} distance={4} />}
+    </group>
+  )
+}
+
+/** Wooden signpost with a floating label. */
+export function Signpost({ pos, rotY = 0, text }) {
+  return (
+    <group position={pos} rotation={[0, rotY, 0]}>
+      <mesh position={[0, 0.7, 0]} castShadow><cylinderGeometry args={[0.07, 0.08, 1.4, 6]} /><meshStandardMaterial color="#6a4a32" roughness={0.9} /></mesh>
+      <mesh position={[0, 1.3, 0]} castShadow><boxGeometry args={[1.1, 0.42, 0.08]} /><meshStandardMaterial color="#8a6440" roughness={0.85} /></mesh>
+      <Html position={[0, 1.95, 0]} center distanceFactor={11}><div className="tag3d">{text}</div></Html>
+    </group>
   )
 }
