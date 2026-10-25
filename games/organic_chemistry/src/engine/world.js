@@ -12,6 +12,8 @@ export function createWorld() {
     interactables: new Map(), // id -> { pos:[x,y,z], radius, label, onInteract, enabled }
     // hookshot targets: { pos:()=>[x,y,z] | [x,y,z], kind:'pull'|'hit', land?:[x,y,z], onHook?(), accepts?()=>true|string, enabled }
     hooks: new Map(),
+    // Newman Lantern targets (World 3): { pos:()=>[x,y,z] | [x,y,z], radius, label, onLantern(), enabled }
+    lanterns: new Map(),
     player: null, // set by Player: { pos, vel, state }
     time: 0,
     hitStop: 0,
@@ -24,9 +26,10 @@ export function createWorld() {
 
   w.addSolid = (min, max) => { const id = nextId++; w.solids.set(id, { min, max, enabled: true }); return id }
   w.addFloor = (minX, minZ, maxX, maxZ, y = 0) => { const id = nextId++; w.floors.set(id, { min: [minX, minZ], max: [maxX, maxZ], y, enabled: true }); return id }
-  w.remove = (id) => { w.solids.delete(id); w.floors.delete(id); w.triggers.delete(id); w.targets.delete(id); w.interactables.delete(id); w.hooks.delete(id) }
+  w.remove = (id) => { w.solids.delete(id); w.floors.delete(id); w.triggers.delete(id); w.targets.delete(id); w.interactables.delete(id); w.hooks.delete(id); w.lanterns.delete(id) }
+  w.addLantern = (l) => { const id = nextId++; w.lanterns.set(id, { enabled: true, radius: 3.2, ...l }); return id }
   w.addHook = (h) => { const id = nextId++; w.hooks.set(id, { enabled: true, kind: 'pull', ...h }); return id }
-  w.setEnabled = (id, on) => { const s = w.solids.get(id) || w.floors.get(id) || w.interactables.get(id) || w.hooks.get(id); if (s) s.enabled = on }
+  w.setEnabled = (id, on) => { const s = w.solids.get(id) || w.floors.get(id) || w.interactables.get(id) || w.hooks.get(id) || w.lanterns.get(id); if (s) s.enabled = on }
   w.addTrigger = (min, max, onEnter, onExit) => { const id = nextId++; w.triggers.set(id, { min, max, onEnter, onExit, inside: false }); return id }
   w.addTarget = (t) => { const id = nextId++; w.targets.set(id, t); return id }
   w.addInteractable = (it) => { const id = nextId++; w.interactables.set(id, { enabled: true, radius: 1.8, ...it }); return id }
@@ -91,6 +94,7 @@ export function createWorld() {
     let bd = Infinity
     for (const it of w.interactables.values()) {
       if (!it.enabled) continue
+      if (typeof it.label === 'function' && !it.label()) continue
       const pos = typeof it.pos === 'function' ? it.pos() : it.pos
       const d = Math.hypot(p[0] - pos[0], p[2] - pos[2])
       if (d < it.radius && d < bd && Math.abs(p[1] - pos[1]) < 2.5) { bd = d; best = it }

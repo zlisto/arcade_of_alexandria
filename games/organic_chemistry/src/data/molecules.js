@@ -30,6 +30,33 @@ function build(fn) {
 const X = [1, 0, 0], NX = [-1, 0, 0]
 const T = [[1, 1, 1], [1, -1, -1], [-1, 1, -1], [-1, -1, 1]].map(norm)
 
+
+// an all-anti zigzag of n sp³ carbons (bond 1.54 Å, 109.5°), with a methyl on each carbon index in `branches`
+function zigzag(n, branches = []) {
+  return build(({ at, from, atoms, bonds }) => {
+    const dx = 1.257, dy = 0.889
+    const C = [...Array(n)].map((_, i) => at('C', [i * dx, (i % 2) * dy, 0]))
+    for (let i = 0; i + 1 < n; i++) bonds.push([C[i], C[i + 1], 1])
+    const p = (i) => atoms[C[i]][1]
+    const sub = (a, b) => a.map((x, k) => x - b[k])
+    C.forEach((ci, i) => {
+      const nb = []
+      if (i > 0) nb.push(norm(sub(p(i - 1), p(i))))
+      if (i < n - 1) nb.push(norm(sub(p(i + 1), p(i))))
+      let free
+      if (nb.length === 1) free = tetra(nb[0].map((x) => x), i ? 0 : 0.5)
+      else {
+        const m = norm(nb[0].map((x, k) => -(x + nb[1][k]))), z = norm(cross(nb[0], nb[1]))
+        free = [1, -1].map((s) => norm(add(m.map((x) => x * 0.577), z, s * 0.816)))
+      }
+      free.forEach((d, k) => {
+        if (branches.includes(i) && k === 0) { const m = from(ci, d, 'C', len.CC); tetra(d.map((x) => -x), 0.3).forEach((h) => from(m, h, 'H', len.CH)) }
+        else from(ci, d, 'H', len.CH)
+      })
+    })
+  })
+}
+
 export const MOLECULES = [
   {
     id: 'h2', name: 'Hydrogen', formula: 'H₂', unlocked: (s) => s.introSeen,
@@ -213,6 +240,66 @@ export const MOLECULES = [
     fact: 'Three equivalent resonance forms, each with the C=O on a different oxygen. None of them is the real ion: the real carbonate is the hybrid, with three identical C–O bonds.',
     use: 'Limestone, chalk and seashells are calcium carbonate.',
     geo: build(({ at, from }) => { const c = at('C', [0, 0, 0]); [0, 1, 2].forEach((k) => { const a = Math.PI / 2 + (k * 2 * Math.PI) / 3; from(c, [Math.cos(a), Math.sin(a), 0], 'O', 1.28, k === 0 ? 2 : 1) }) }),
+  },
+  // ---------------------------------------------------------------- Chapter 3 · the Chain Labyrinth
+  {
+    id: 'dme', name: 'Dimethyl ether', formula: 'CH₃OCH₃', unlocked: (s) => !!(s.t3placed && s.t3placed.dme),
+    met: 'The Hall of Families (3-1)',
+    shape: 'Bent at the oxygen; tetrahedral at each carbon', hybrid: 'Carbons sp³, oxygen sp³ (two lone pairs)', angles: 'C–O–C about 110°', section: '3.1, 3.2', pages: '72–81',
+    fact: 'An ether: its oxygen sits between two carbons. It has the same formula as ethanol, C₂H₆O, but different connections: a constitutional isomer in a different family.',
+    use: 'Studied as a clean-burning fuel and used as an aerosol propellant.',
+    geo: build(({ at, from }) => {
+      const o = at('O', [0, 0, 0]); const a = (110 / 2) * Math.PI / 180
+      ;[-1, 1].forEach((s) => { const d = [Math.sin(s * a), -Math.cos(a), 0]; const c = from(o, d, 'C', len.CO); tetra(d.map((x) => -x), s * 0.5).forEach((h) => from(c, h, 'H', len.CH)) })
+    }),
+  },
+  {
+    id: 'pentane', name: 'Pentane', formula: 'C₅H₁₂', unlocked: (s) => s.solved['3-2a'],
+    met: 'The Isomer Garden (3-2)',
+    shape: 'Zigzag chain', hybrid: 'All carbons sp³', angles: 'about 109.5°', section: '3.2, 3.5', pages: '78–81, 89–90',
+    fact: 'The straight-chain C₅H₁₂. Its long shape gives more surface for dispersion forces than its branched isomers: it boils at 36.1 °C.',
+    use: 'A solvent, and a blowing agent for foam plastics.',
+    geo: zigzag(5),
+  },
+  {
+    id: 'isopentane', name: '2-Methylbutane', formula: 'C₅H₁₂', unlocked: (s) => s.solved['3-2a'],
+    met: 'The Isomer Garden (3-2)',
+    shape: 'Branched chain', hybrid: 'All carbons sp³', angles: 'about 109.5°', section: '3.2, 3.4', pages: '78–89',
+    fact: 'Also called isopentane. A four-carbon parent chain with a methyl on carbon 2 — and its carbon 2 is tertiary (3°).',
+    use: 'Found in gasoline and used as a solvent.',
+    geo: zigzag(4, [1]),
+  },
+  {
+    id: 'neopentane', name: '2,2-Dimethylpropane', formula: 'C₅H₁₂', unlocked: (s) => s.solved['3-2a'],
+    met: 'The Isomer Garden (3-2)',
+    shape: 'A central carbon with four carbons around it', hybrid: 'All carbons sp³', angles: 'C–C–C 109.5°', section: '3.2, 3.3, 3.5', pages: '78–90',
+    fact: 'Neopentane: its central carbon is quaternary (4°). Compact and nearly spherical, it has little surface for dispersion forces and boils at only 9.5 °C.',
+    use: 'A gas on a warm day — the textbook case of branching lowering a boiling point.',
+    geo: build(({ at, from }) => { const c = at('C', [0, 0, 0]); T.forEach((d, k) => { const m = from(c, d, 'C', len.CC); tetra(d.map((x) => -x), k).forEach((h) => from(m, h, 'H', len.CH)) }) }),
+  },
+  {
+    id: 'isobutane', name: 'Isobutane', formula: 'C₄H₁₀', unlocked: (s) => s.t3shelf,
+    met: 'Iupaca\'s Shelf of Ten lesson',
+    shape: 'Three carbons around a central one', hybrid: 'All carbons sp³', angles: '109.5°', section: '3.2', pages: '78–81',
+    fact: 'Also called 2-methylpropane. Same formula as butane, C₄H₁₀, but branched: the book\'s first pair of constitutional isomers.',
+    use: 'A refrigerant gas and an aerosol propellant.',
+    geo: zigzag(3, [1]),
+  },
+  {
+    id: 'hexane', name: 'Hexane', formula: 'C₆H₁₄', unlocked: (s) => s.t3forestBats,
+    met: 'The bats\' roost by the Library of Names (a secret)',
+    shape: 'Zigzag chain (all anti)', hybrid: 'All carbons sp³', angles: 'about 109.5°', section: '3.2, 3.7', pages: '78–81, 92–96',
+    fact: 'Six carbons in a row. Like the decane of Fig 3.11, its most stable shape is the all-anti zigzag. C₆H₁₄ has five constitutional isomers; hexane is a component of gasoline.',
+    use: 'A common lab solvent, used to extract oils from seeds.',
+    geo: zigzag(6),
+  },
+  {
+    id: 'butane', name: 'Butane', formula: 'C₄H₁₀', unlocked: (s) => s.solved['3-4c'] || s.solved.boss3,
+    met: 'The butane door, and the Gauche Serpent',
+    shape: 'Zigzag (shown anti)', hybrid: 'All carbons sp³', angles: 'about 109.5°', section: '3.7', pages: '92–96',
+    fact: 'Rotating about C2–C3: anti (CH₃ groups 180° apart) is lowest; gauche is 3.8 kJ/mol higher; eclipsed CH₃↔CH₃ is 19 kJ/mol higher.',
+    use: 'Lighter fuel and camping-stove gas.',
+    geo: zigzag(4),
   },
 ]
 

@@ -246,7 +246,7 @@ function TempleLevel({ world, onExit }) {
     if (busy.current) return
     busy.current = true
     await say([
-      { who: 'Tablet', text: 'BY ORDER OF MALRADIX: A molecule is exactly the one drawing you make of it. Its electrons sit still, right where the lines put them. Any other teaching is forbidden.' },
+      { who: "Malradix's decree", text: 'BY ORDER OF MALRADIX: A molecule is exactly the one drawing you make of it. Its electrons sit still, right where the lines put them. Any other teaching is forbidden.' },
       { who: 'Pi', text: "Electrons sitting still? That doesn't sound right… The Ferrymen said we'd learn better out here." },
       { who: 'Pi', text: 'Look — chests! Ocarina rules: find the Dungeon Map and the Compass and the temple stops being a maze.' },
     ])
@@ -349,6 +349,7 @@ function TempleLevel({ world, onExit }) {
     await say([
       { who: 'Princess Octavia', text: 'Kai… the second shard. I can hear the sea through it.' },
       { who: 'Princess Octavia', text: "Malradix wants everyone to believe a molecule is one fixed picture. You've shown it's more than any single drawing." },
+      { who: 'Princess Octavia', text: 'The next shard lies north-west, in the Chain Forest. The archivist there keeps the kingdom\'s names.' },
       { who: 'Lowry', text: 'And you sent every proton the right way. Come on, little carbon — the boat is waiting.' },
       { who: 'Pi', text: 'Two down, ten to go!' },
     ])

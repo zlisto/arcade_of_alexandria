@@ -3,6 +3,7 @@ import { ELEMENTS } from '../chem/rules'
 import { STANCE } from '../engine/Player'
 import { setMuted, isMuted } from '../audio/sfx'
 import { useState } from 'react'
+import NewmanHud from './Newman'
 
 function Hearts({ hp, max }) {
   const hearts = []
@@ -42,6 +43,8 @@ export default function HUD({ scene }) {
         <div className="bossbar"><div className="bossname">{s.bossHp.name}</div><div className="bar"><div style={{ width: `${(100 * s.bossHp.hp) / s.bossHp.max}%` }} /></div></div>
       )}
       {s.prompt && !s.dialogue && !s.panel && <div className="prompt"><span className="key">E</span> {s.prompt}</div>}
+      {!s.prompt && s.lanternPrompt && !s.dialogue && !s.panel && <div className="prompt"><span className="key">G</span> {s.lanternPrompt}</div>}
+      {s.newman && !s.dialogue && !s.panel && <NewmanHud n={s.newman} />}
       {s.lockTarget && !s.dialogue && <div className="locktip">Locked on · <span className="key">Space</span> + direction to sidestep / backhop · <span className="key">Tab</span> release</div>}
       {s.toast && <div className={'toast ' + s.toast.kind}>{s.toast.text}</div>}
       {showHelp && (
@@ -58,6 +61,8 @@ export default function HUD({ scene }) {
             <tr><td>Interact / talk</td><td>E · A</td></tr>
             <tr><td>Hybrid stance (sp³ → sp² → sp)</td><td>R · Y</td></tr>
             <tr><td>sp dash (in sp stance)</td><td>Space</td></tr>
+            <tr><td>Curved-Arrow Hookshot (once found)</td><td>Q · B</td></tr>
+            <tr><td>Newman Lantern: turn a bond +60° / −60° (once found)</td><td>G · Shift+G · LB</td></tr>
             <tr><td>Map (shows where to go next)</td><td>M</td></tr>
             <tr><td>Item menu · pause (items, notes, quest)</td><td>Esc / P</td></tr>
           </tbody></table>

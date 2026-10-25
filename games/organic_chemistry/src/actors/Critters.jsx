@@ -85,7 +85,8 @@ export function ImpPack({ world, spawns, active = true }) {
         m.cd -= dt
         if (m.cd <= 0) {
           // hop toward Kai if he's near, otherwise wander around home
-          const aim = p && d < 14 ? to.clone().normalize() : m.home.clone().sub(m.pos).add(new THREE.Vector3(Math.random() - 0.5, 0, Math.random() - 0.5).multiplyScalar(4)).setY(0).normalize()
+          const leash = m.pos.distanceTo(m.home) > 9
+          const aim = p && d < 14 && !leash ? to.clone().normalize() : m.home.clone().sub(m.pos).add(new THREE.Vector3(Math.random() - 0.5, 0, Math.random() - 0.5).multiplyScalar(4)).setY(0).normalize()
           m.vel.copy(aim).multiplyScalar(p && d < 14 ? 3.4 : 1.6); m.vel.y = 3.6
           m.cd = 0.75 + Math.random() * 0.3
           m.state = 'hop'

@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useRef } from 'react'
-import { useFrame } from '@react-three/fiber'
+import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import { Html } from '@react-three/drei'
 
@@ -276,6 +276,24 @@ export function Signpost({ pos, rotY = 0, text }) {
       <mesh position={[0, 0.7, 0]} castShadow><cylinderGeometry args={[0.07, 0.08, 1.4, 6]} /><meshStandardMaterial color="#6a4a32" roughness={0.9} /></mesh>
       <mesh position={[0, 1.3, 0]} castShadow><boxGeometry args={[1.1, 0.42, 0.08]} /><meshStandardMaterial color="#8a6440" roughness={0.85} /></mesh>
       <Html position={[0, 1.95, 0]} center distanceFactor={11}><div className="tag3d">{text}</div></Html>
+    </group>
+  )
+}
+
+/** A floating label that stays readable: it fades out when the camera is very close (so it never fills
+ *  the screen) or far away, and it always sits beneath the HUD and dialogue. */
+const _tagV = new THREE.Vector3()
+export function Tag({ position, children, df = 10, near = 3.2, far = 24, className = '' }) {
+  const g = useRef(), el = useRef()
+  const camera = useThree((st) => st.camera)
+  useFrame(() => {
+    if (!g.current || !el.current) return
+    const d = camera.position.distanceTo(g.current.getWorldPosition(_tagV))
+    el.current.style.opacity = d < near || d > far ? '0' : d < near + 1 ? String(d - near) : '1'
+  })
+  return (
+    <group ref={g} position={position}>
+      <Html center distanceFactor={df} zIndexRange={[5, 0]} style={{ pointerEvents: 'none' }}><div ref={el} className={'tag3d ' + className}>{children}</div></Html>
     </group>
   )
 }

@@ -2,7 +2,7 @@
 //
 // Keyboard/mouse: WASD move · mouse look (click the game to capture the mouse) · Left click attack (hold to charge)
 // Right click / Tab lock-on · Space roll (sidestep/backhop when locked) · Shift block · E interact
-// R switch hybrid stance · 1–4 items · Esc release mouse / pause.
+// R switch hybrid stance · Q hookshot · G Newman Lantern · 1–4 items · Esc release mouse / pause.
 // Gamepad: left stick move · right stick camera · X attack · A roll/interact · LT lock-on · RB block · Y stance.
 
 const keys = new Set()
@@ -89,6 +89,7 @@ export function poll() {
     g.stanceP = edge(3)
     g.interactP = g.roll
     g.hookP = edge(1)
+    g.lanternP = edge(4)
   }
   const k = (c) => keys.has(c)
   const p = (c) => pressed.has(c)
@@ -107,6 +108,9 @@ export function poll() {
     stance: p('KeyR') || g.stanceP,
     interact: p('KeyE') || g.interactP,
     hook: p('KeyQ') || !!g.hookP,
+    lantern: p('KeyG') || !!g.lanternP,
+    // Shift+G (or LB while blocking) turns the Lantern the other way
+    lanternRev: k('ShiftLeft') || k('ShiftRight') || g.block,
     item: ['Digit1', 'Digit2', 'Digit3', 'Digit4'].findIndex((c) => p(c)),
     advance: p('Space') || p('Enter') || p('KeyE') || g.roll,
     pause: p('Escape') || p('KeyP'),
@@ -117,7 +121,7 @@ export function poll() {
   mouseDX = mouseDY = 0
   lmbPressed = lmbReleased = rmbPressed = false
   if (!enabled) {
-    return { ...out, moveX: 0, moveY: 0, lookX: 0, lookY: 0, attack: false, attackPressed: false, attackReleased: false, roll: false, lockHeld: false, lockPressed: false, block: false, stance: false, interact: false, hook: false, item: -1 }
+    return { ...out, moveX: 0, moveY: 0, lookX: 0, lookY: 0, attack: false, attackPressed: false, attackReleased: false, roll: false, lockHeld: false, lockPressed: false, block: false, stance: false, interact: false, hook: false, lantern: false, item: -1 }
   }
   return out
 }

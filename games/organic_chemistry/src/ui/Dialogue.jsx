@@ -15,6 +15,11 @@ export const PORTRAITS = {
   'Malradix the Unpaired': 'art/portraits/malradix.jpg',
   'Princess Octavia': 'art/portraits/octavia.jpg',
   Octavia: 'art/portraits/octavia.jpg',
+  'Archivist Iupaca': 'art/portraits/iupaca.jpg',
+  "Malradix's decree": 'art/portraits/malradix.jpg',
+  Tablet: 'art/portraits/malradix.jpg',
+  Brønsted: 'art/portraits/bronsted.jpg',
+  Lowry: 'art/portraits/lowry.jpg',
 }
 // fetch them up front, so the first line of dialogue already has its face
 if (typeof window !== 'undefined') Object.values(PORTRAITS).forEach((src) => { const im = new Image(); im.src = src })

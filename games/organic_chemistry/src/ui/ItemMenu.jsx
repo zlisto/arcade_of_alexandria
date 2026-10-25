@@ -5,6 +5,7 @@ import { ELEMENTS, HYBRIDS } from '../chem/rules'
 import { CODEX, BOOK } from '../data/codex'
 import { ROOMS } from '../data/dungeon1'
 import { ROOMS2 } from '../data/dungeon2'
+import { ROOMS3 } from '../data/dungeon3'
 import { sfx } from '../audio/sfx'
 import { MOLECULES } from '../data/molecules'
 import MoleculeView from './MoleculeView'
@@ -24,6 +25,7 @@ const Icon = {
   shield: <svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="14" fill="#2c3038" stroke="#8a93a3" strokeWidth="2" /><circle cx="20" cy="20" r="8" fill="none" stroke="#43e6f5" strokeWidth="1.5" /></svg>,
   crystal: <svg viewBox="0 0 40 40"><polygon points="20,3 31,17 20,37 9,17" fill="#43e6f5" opacity=".85" /><polygon points="20,3 31,17 20,20 9,17" fill="#bff6ff" opacity=".8" /></svg>,
   hookshot: <svg viewBox="0 0 40 40"><path d="M7 32 C 10 12, 26 8, 32 9" fill="none" stroke="#4aa8ff" strokeWidth="3" strokeLinecap="round" /><polygon points="33,4 37,12 28,11" fill="#cfe6ff" /><circle cx="7" cy="32" r="3.5" fill="#ffd760" /><circle cx="12" cy="31" r="3.5" fill="#ffd760" /></svg>,
+  lantern: <svg viewBox="0 0 40 40"><rect x="15" y="4" width="10" height="4" rx="1" fill="#b8904a" /><circle cx="20" cy="21" r="13" fill="#b8904a" /><circle cx="20" cy="21" r="9" fill="#ffd8a0" /><g stroke="#2fd8f0" strokeWidth="1.6"><line x1="20" y1="21" x2="20" y2="13" /><line x1="20" y1="21" x2="13" y2="25" /><line x1="20" y1="21" x2="27" y2="25" /></g><circle cx="20" cy="21" r="5" fill="none" stroke="#2fd8f0" strokeWidth="1.2" /></svg>,
   locked: <svg viewBox="0 0 40 40"><polygon points="20,3 31,17 20,37 9,17" fill="none" stroke="#4a4458" strokeWidth="2" strokeDasharray="3 3" /><text x="20" y="25" textAnchor="middle" fill="#5a5468" fontSize="13" fontWeight="700">?</text></svg>,
 }
 
@@ -38,6 +40,9 @@ function Items({ s, sel, setSel }) {
     s.save.hasHookshot
       ? { id: 'hookshot', name: 'Curved-Arrow Hookshot', icon: Icon.hookshot, text: 'Press Q. Like a curved arrow in a mechanism, it flies from your electron pair to an electron-poor target (a blue ring) and pulls you there. Lewis bases give pairs; Lewis acids take them (§2.11).' }
       : s.save.shards >= 1 ? { id: 'hookshot', name: '???', icon: Icon.locked, text: 'Something waits in the Tide Temple.' } : null,
+    s.save.hasLantern
+      ? { id: 'lantern', name: 'Newman Lantern', icon: Icon.lantern, text: 'Press G facing a bond — a round door, a bat roost, a serpent\'s knot — to see it end-on as a Newman projection and turn the back carbon 60°. The dial shows the strain in kJ/mol (§3.6–3.7).' }
+      : s.save.shards >= 2 ? { id: 'lantern', name: '???', icon: Icon.locked, text: 'Something waits in the Chain Labyrinth.' } : null,
   ].filter(Boolean)
   const cur = cards.find((c) => c.id === sel) || cards[0]
   const pickForm = (f) => {
@@ -67,7 +72,18 @@ function Items({ s, sel, setSel }) {
           ))}
         </div>
       )}
-      {(s.screen === 'temple' || s.save.solved['t2-map']) && (
+      {s.screen === 'labyrinth' && (
+        <div className="im-box im-dungeon">
+          <h4>Chain Labyrinth</h4>
+          <div className="im-ditems">
+            <span className={s.save.solved['t3-map'] ? 'got' : ''}>🗺 Dungeon Map</span>
+            <span className={s.save.solved['t3-compass'] ? 'got' : ''}>🧭 Compass</span>
+            <span className={s.save.t3key ? 'got' : ''}>🗝 Small Key ×{s.save.t3key ? 1 : 0}</span>
+            <span className={s.save.t3bossKey ? 'got' : ''}>🔑 Boss Key</span>
+          </div>
+        </div>
+      )}
+      {s.screen === 'temple' && (
         <div className="im-box im-dungeon">
           <h4>Tide Temple</h4>
           <div className="im-ditems">
@@ -184,6 +200,15 @@ function Quest({ s }) {
             <li className={s.save.lighthouseLit ? 'done' : ''}>Light the Tide Lighthouse <span className="sec"> §2.1</span></li>
             {ROOMS2.map((r) => <li key={r.id} className={r.needs.every((id) => solved[id]) ? 'done' : ''}>{r.title}{r.sections.length ? <span className="sec"> §{r.sections[0]}{r.sections.length > 1 ? '–' + r.sections[r.sections.length - 1] : ''}</span> : null}</li>)}
             <li className={s.save.shards >= 2 ? 'done' : ''}>Recover Bond Shard 2</li>
+          </ul>
+        </>)}
+        {s.save.shards >= 2 && (<>
+          <h4>The Chain Labyrinth · Chapter 3</h4>
+          <ul className="im-steps">
+            <li className={s.save.forestSeen ? 'done' : ''}>Take the forest road to the Chain Forest</li>
+            <li className={s.save.t3shelf ? 'done' : ''}>Shelve the first ten alkanes for Iupaca <span className="sec"> §3.2</span></li>
+            {ROOMS3.map((r) => <li key={r.id} className={r.needs.every((id) => solved[id]) ? 'done' : ''}>{r.title}{r.sections.length ? <span className="sec"> §{r.sections[0]}{r.sections.length > 1 ? '–' + r.sections[r.sections.length - 1] : ''}</span> : null}</li>)}
+            <li className={s.save.shards >= 3 ? 'done' : ''}>Recover Bond Shard 3</li>
           </ul>
         </>)}
       </div>

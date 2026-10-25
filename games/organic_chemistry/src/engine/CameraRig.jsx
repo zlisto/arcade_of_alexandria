@@ -35,6 +35,7 @@ export default function CameraRig({ world, dist = 6.2, height = 1.5 }) {
       look.lerp(tmp.set(lockPos[0], lockPos[1] + 1, lockPos[2]), 0.35)
       d = dist + Math.min(4, Math.hypot(pos.x - lockPos[0], pos.z - lockPos[2]) * 0.2)
     }
+    if (world.camBoost && !lockPos) { d += world.camBoost.dist || 0; pitch = Math.max(pitch, world.camBoost.pitch || 0) }
     if (world.camOverride) {
       const o = world.camOverride
       tmp.set(...o.pos)

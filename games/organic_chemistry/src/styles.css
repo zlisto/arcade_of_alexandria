@@ -299,3 +299,51 @@ button { font: inherit; }
 .im-ditems { display: flex; flex-wrap: wrap; gap: 8px; }
 .im-ditems span { padding: 4px 10px; border-radius: 6px; background: rgba(255,255,255,.05); color: #6a6478; font-size: 13px; }
 .im-ditems span.got { color: #ffe9a8; background: rgba(255,215,106,.12); }
+
+/* ---- World 3: Newman Lantern HUD and Chapter 3 panels */
+.newman-hud { position: absolute; top: 118px; left: 16px; background: rgba(10,16,22,.88); border: 1px solid rgba(207,230,255,.35); border-radius: 12px; padding: 6px 12px 8px; color: #e8e2d0; text-align: center; pointer-events: none; z-index: 13; min-width: 200px; max-width: 260px; }
+.newman-hud svg { width: 128px; height: 128px; }
+.nm-num small { font-size: 10px; color: #9aa4b0; }
+.tag3d.maze-num { font: 800 20px Inter, system-ui, sans-serif; background: #ffcf6a; color: #1a1208; border-color: #ffe9a8; padding: 0 9px; }
+.tag3d.crest { font-size: 15px; font-weight: 700; padding: 4px 10px; }
+.tag3d.ch3 { color: #ff9ad0; border-color: #ff6fb3; font-weight: 700; }
+.nm-title { font-family: 'Cinzel', serif; color: #ffd98a; font-size: 14px; margin-bottom: 2px; }
+.nm-row { display: flex; align-items: center; gap: 12px; justify-content: center; }
+.nm-row.center { margin: 8px 0; }
+.nm-energy { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.nm-bar { width: 16px; height: 110px; background: rgba(255,255,255,.08); border-radius: 8px; display: flex; align-items: flex-end; overflow: hidden; }
+.nm-bar i { width: 100%; border-radius: 8px; transition: height .25s; }
+.nm-num { font-size: 12px; } .nm-num b { font-size: 18px; color: #fff; }
+.nm-name { font-weight: 700; color: #cfe6ff; font-size: 14px; text-align: center; }
+.nm-note { font-size: 12px; color: #ffe9a8; margin-top: 4px; max-width: 280px; }
+.shelf-books { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; min-height: 36px; }
+.book { background: #5a3c26; color: #f2e6cc; border: 1px solid #8a6440; padding: 6px 10px; border-radius: 4px; font-weight: 700; }
+.book.sel { outline: 2px solid #ffd760; background: #7a5432; }
+.shelf-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.shelf-slot { min-height: 46px; background: rgba(255,255,255,.04); border: 1px dashed rgba(255,255,255,.25); color: #f2e6cc; border-radius: 6px; font-weight: 700; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.shelf-slot .n { font-size: 11px; color: #9aa4b0; }
+.shelf-slot.full { background: rgba(111,227,154,.12); border-style: solid; border-color: #6fe39a; }
+.fam-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 12px 0; }
+.fam-grid div { background: rgba(255,255,255,.05); border-radius: 8px; padding: 8px; text-align: center; display: flex; flex-direction: column; }
+.fam-grid span { font-size: 18px; color: #ffd98a; margin-top: 4px; }
+.iso-wrap { display: flex; gap: 16px; align-items: flex-start; margin: 10px 0; flex-wrap: wrap; }
+.iso-grid { display: grid; gap: 4px; }
+.iso-cell { width: 34px; height: 34px; border-radius: 6px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12); color: #fff; font-weight: 800; position: relative; padding: 0; }
+.iso-cell.on { background: #3a3f4a; border-color: #cfd6e0; }
+.iso-cell .b-r { position: absolute; right: -7px; top: 15px; width: 10px; height: 3px; background: #cfd6e0; }
+.iso-cell .b-d { position: absolute; bottom: -7px; left: 15px; width: 3px; height: 10px; background: #cfd6e0; }
+.iso-found { list-style: none; padding: 0; margin: 0; font-size: 14px; color: #8a8f9a; }
+.iso-found li { padding: 4px 0; } .iso-found li.got { color: #6fe39a; }
+.badge-row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin: 8px 0; }
+.badge-mol { display: flex; flex-direction: column; align-items: center; font-size: 13px; color: #cfd6e0; }
+.law-list { margin: 8px 0 12px 18px; line-height: 1.6; }
+.tile-out { min-height: 34px; font-size: 20px; font-weight: 800; color: #ffe9a8; background: rgba(0,0,0,.3); border-radius: 8px; padding: 6px 10px; margin: 8px 0; }
+.tiles { display: flex; flex-wrap: wrap; gap: 6px; }
+.tiles button, .tile-ctl button { background: #2a3442; color: #fff; border: 1px solid #4a5a70; border-radius: 6px; padding: 6px 10px; font-weight: 700; }
+.tile-ctl { display: flex; gap: 8px; margin: 8px 0; justify-content: center; }
+
+/* the Lantern HUD shrinks on short screens so it never reaches the prompt or the boss bar */
+@media (max-height: 620px) { .newman-hud { transform: scale(.72); transform-origin: top left; top: 104px; } }
+
+/* the boss bar steps left of the minimap on narrow screens */
+@media (max-width: 900px) { .bossbar { left: 16px; transform: none; width: calc(100vw - 220px); } }

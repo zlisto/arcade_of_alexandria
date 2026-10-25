@@ -105,6 +105,48 @@ export const CODEX = [
     unlocked: (s) => s.shards >= 2,
     text: 'The carbonate ion has three resonance forms, each with the C=O on a different oxygen. The forms are imaginary; the real ion is their hybrid, with three identical C–O bonds and the charge spread over all three oxygens.',
   },
+  {
+    title: 'The first ten alkanes',
+    section: '3.2', pages: '78–81',
+    unlocked: (s) => s.t3shelf,
+    text: 'Alkanes are saturated hydrocarbons, CₙH₂ₙ₊₂: only C, H and single bonds. Methane, ethane, propane, butane, then pentane, hexane, heptane, octane, nonane, decane (5 to 10 carbons). They are the parent names of nearly everything else.',
+  },
+  {
+    title: 'Functional groups make families',
+    section: '3.1', pages: '72–77',
+    unlocked: (s) => s.solved['3-1'],
+    text: 'A functional group behaves nearly the same in every molecule that has it, so molecules fall into families: alkenes (C=C), alcohols (C–OH), ethers (C–O–C), amines (C–N) and more (Table 3.1). Ethylene and menthene both add Br₂ across their C=C (Fig 3.2).',
+  },
+  {
+    title: 'Constitutional isomers',
+    section: '3.2', pages: '78–81',
+    unlocked: (s) => s.solved['3-2a'],
+    text: 'Same formula, different connections. C₅H₁₂ has three: pentane, 2-methylbutane and 2,2-dimethylpropane. Ethanol and dimethyl ether (both C₂H₆O) are isomers too. Redrawing or bending a chain never makes a new compound (Fig 3.3).',
+  },
+  {
+    title: '1°, 2°, 3°, 4° carbons',
+    section: '3.3', pages: '81–84',
+    unlocked: (s) => s.solved['3-2b'],
+    text: 'A carbon is primary, secondary, tertiary or quaternary when it is bonded to one, two, three or four other carbons. Hydrogens take the class of their carbon (there is no 4° hydrogen). R stands for the rest of a molecule.',
+  },
+  {
+    title: 'Naming alkanes',
+    section: '3.4', pages: '84–89',
+    unlocked: (s) => s.solved['3-3walkA'],
+    text: 'Find the longest continuous chain, even if it turns corners (ties: the more branched one). Number from the end nearer the first branch. Give each substituent its number, list them alphabetically, and write one word: 4-ethyl-2-methyloctane.',
+  },
+  {
+    title: 'Conformations and torsional strain',
+    section: '3.6', pages: '90–92',
+    unlocked: (s) => s.solved['3-4a'],
+    text: 'Groups spin around a C–C single bond, making conformations. In a Newman projection the front carbon is a dot and the back one a circle. Staggered ethane is 12 kJ/mol lower than eclipsed: about 4 kJ/mol per eclipsed H↔H pair (Fig 3.8). Propane\'s barrier is 14.',
+  },
+  {
+    title: 'Butane: anti, gauche, eclipsed',
+    section: '3.7', pages: '92–96',
+    unlocked: (s) => s.solved['3-4c'],
+    text: 'About butane\'s C2–C3 bond: anti (CH₃ groups 180° apart) is lowest; gauche (60°) is 3.8 kJ/mol higher from steric strain; eclipsed is 16 kJ/mol (CH₃↔H) or 19 kJ/mol (CH₃↔CH₃) higher (Fig 3.10, Table 3.5). The costs add: 19 = 11 (CH₃↔CH₃) + 2 × 4.0 (H↔H). At any moment, more molecules are anti than in any other shape.',
+  },
 ]
 
 export const BOOK = { title: 'Organic Chemistry, 10th edition', author: 'John McMurry', publisher: 'OpenStax', license: 'CC BY-NC-SA 4.0' }

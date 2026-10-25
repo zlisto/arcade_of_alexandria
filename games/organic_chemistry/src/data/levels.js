@@ -3,6 +3,7 @@
 // so gates are open and bridges raised behind you.
 import { GOALS } from './dungeon1'
 import { GOALS2, ROOMS2 } from './dungeon2'
+import { GOALS3, ROOMS3, SPIRITS } from './dungeon3'
 
 const VILLAGE_DONE = { introSeen: true, villageDone: true, well: true, wolvesCleared: true, piMet: true }
 const solvedBefore = (id) => {
@@ -28,6 +29,26 @@ const temple = (room, upTo, extra = {}) => {
       hasHookshot: !!done['t2-hookshot'], t2key: !!done['t2-key'] && !done['t2-door'], t2bossKey: !!done['t2-bosskey'],
       t2seen: Object.fromEntries(ROOMS2.slice(0, r + 1).map((x) => [x.id, true])),
       checkpoint: { scene: 'temple', room }, ...extra,
+    },
+  }
+}
+
+// World 3 starts from a finished World 2
+const W2_DONE = () => ({ ...temple('boss', null).save, shards: 2 })
+const lab = (room, upTo, extra = {}) => {
+  const base = W2_DONE()
+  const i = upTo ? GOALS3.findIndex((g) => g.id === upTo) : GOALS3.length
+  const done = Object.fromEntries(GOALS3.slice(0, i).map((g) => [g.id, true]))
+  const r = ROOMS3.findIndex((x) => x.id === room)
+  return {
+    screen: 'labyrinth',
+    save: {
+      ...base, forestSeen: true, metIupaca: true, t3shelf: true,
+      solved: { ...base.solved, ...done, 't3-map': true, 't3-decree': true },
+      t3placed: done['3-1'] ? Object.fromEntries(SPIRITS.map((sp) => [sp.id, sp.group])) : {},
+      hasLantern: !!done['t3-lantern'], t3key: !!done['t3-key'] && !done['t3-door'], t3bossKey: !!done['t3-bosskey'],
+      t3seen: Object.fromEntries(ROOMS3.slice(0, r + 1).map((x) => [x.id, true])),
+      checkpoint: { scene: 'labyrinth', room }, ...extra,
     },
   }
 }
@@ -77,10 +98,28 @@ export const LEVELS = [
     ],
   },
   {
+    group: 'World 3 · The Chain Labyrinth',
+    items: [
+      { label: 'Fields · the forest road (shard 2 in hand)', screen: 'field', save: { ...W2_DONE(), thornsSeen: true, checkpoint: { scene: 'field', at: 'forest' } } },
+      { label: 'Chain Forest · meet Iupaca', screen: 'forest', save: { ...W2_DONE(), checkpoint: { scene: 'forest', at: 'south' } } },
+      { label: 'Chain Forest · the Shelf of Ten · §3.2', screen: 'forest', save: { ...W2_DONE(), forestSeen: true, metIupaca: true, checkpoint: { scene: 'forest', at: 'south' } } },
+      { label: 'Labyrinth entrance · map chest', ...lab('entrance', '3-1') },
+      { label: '3-1 Hall of Families · §3.1', ...lab('3-1', '3-1') },
+      { label: '3-2 Isomer Garden · §3.2–3.3', ...lab('3-2', '3-2a') },
+      { label: '3-3 Naming Maze · §3.4', ...lab('3-3', '3-3walkA') },
+      { label: '3-3 Naming Maze, second floor', ...lab('3-3', '3-3walkB') },
+      { label: '3-4 Turning Halls · the Lantern chest', ...lab('3-4', 't3-lantern') },
+      { label: '3-4 Turning Halls · Newman doors · §3.6–3.7', ...lab('3-4', '3-4a') },
+      { label: 'Boss · The Gauche Serpent', ...lab('boss', 'boss3') },
+      { label: 'Bond Shard 3 (boss beaten)', ...lab('boss', null) },
+    ],
+  },
+  {
     group: 'Credits',
     items: [
       { label: 'Chapter 1 credits', screen: 'credits', save: { ...VILLAGE_DONE, solved: solvedBefore(null), hasCrystal: true, bossDone: true, shards: 1 } },
       { label: 'Chapter 2 credits', screen: 'credits2', save: { ...temple('boss', null).save, shards: 2, checkpoint: { scene: 'coast', at: 'dock' } } },
+      { label: 'Chapter 3 credits', screen: 'credits3', save: { ...lab('boss', null).save, shards: 3, checkpoint: { scene: 'forest', at: 'gate' } } },
     ],
   },
 ]

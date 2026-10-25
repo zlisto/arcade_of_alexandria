@@ -231,6 +231,7 @@ const KaiModel = forwardRef(function KaiModel(_, ref) {
   const col = useMemo(() => ({ glow: new THREE.Color(), armor: new THREE.Color(), armorDark: new THREE.Color(), blade: new THREE.Color(), white: new THREE.Color('#ffffff') }), [])
   const hasCrystal = useGame((st) => st.save.hasCrystal)
   const stance = useGame((st) => st.stance)
+  const busyTag = useGame((st) => !!(st.prompt || st.lanternPrompt || st.dialogue || st.newman || st.carrying))
   const form = FORMS[stance] || FORMS.sp3
 
   useFrame(({ clock }, dt) => {
@@ -433,8 +434,8 @@ const KaiModel = forwardRef(function KaiModel(_, ref) {
       </group>
       {/* which hybrid form Kai is in, above his head */}
       {hasCrystal && (
-        <group ref={tag} position={[0, 2.24, 0]}>
-          <Html center distanceFactor={8} zIndexRange={[10, 0]} style={{ pointerEvents: 'none' }}>
+        <group ref={tag} position={[0, 2.24, 0]} visible={!busyTag}>
+          <Html center distanceFactor={5} zIndexRange={[10, 0]} style={{ pointerEvents: 'none', display: busyTag ? 'none' : 'block' }}>
             <div key={stance} className="formtag" style={{ color: form.glow, borderColor: form.glow, boxShadow: `0 0 12px ${form.glow}55` }}>
               <b>{form.label}</b><span>{form.detail}</span>
             </div>

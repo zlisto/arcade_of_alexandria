@@ -9,6 +9,8 @@ import Caverns from './scenes/Caverns'
 import Field from './scenes/Field'
 import Coast from './scenes/Coast'
 import Temple from './scenes/Temple'
+import Forest from './scenes/Forest'
+import Labyrinth from './scenes/Labyrinth'
 import HUD, { Fade } from './ui/HUD'
 import ItemMenu from './ui/ItemMenu'
 import Dialogue from './ui/Dialogue'
@@ -18,7 +20,7 @@ import { MiniMap, FullMap } from './ui/MapView'
 import { playMusic, stopMusic, sfx } from './audio/sfx'
 
 // screens with Kai walking around in them
-const GAME = ['village', 'caverns', 'field', 'coast', 'temple']
+const GAME = ['village', 'caverns', 'field', 'coast', 'temple', 'forest', 'labyrinth']
 const inGameScreen = (sc) => GAME.includes(sc)
 
 // If a 3D scene throws, show a way back instead of a black screen.
@@ -54,7 +56,7 @@ function Title({ onNew, onContinue, onLevel }) {
           <button className={canContinue ? '' : 'primary'} onClick={onNew}>{canContinue ? 'New game' : 'Start'}</button>
           <button className="ghost" onClick={() => setPicking(true)} title="Jump to any level">Level select</button>
         </div>
-        <p className="credit">Based on <i>Organic Chemistry: A Tenth Edition</i>, Chapters 1–2 — John McMurry, OpenStax (CC BY-NC-SA 4.0). Best with keyboard + mouse or a gamepad.</p>
+        <p className="credit">Based on <i>Organic Chemistry: A Tenth Edition</i>, Chapters 1–3 — John McMurry, OpenStax (CC BY-NC-SA 4.0). Best with keyboard + mouse or a gamepad.</p>
       </div>
       {picking && <LevelSelect onGo={(it) => { setPicking(false); onLevel(it) }} onClose={() => setPicking(false)} />}
     </div>
@@ -85,7 +87,7 @@ function Credits({ onTitle, onKeep, onOn }) {
   )
 }
 
-function Credits2({ onTitle, onKeep }) {
+function Credits2({ onTitle, onKeep, onOn }) {
   return (
     <div className="credits">
       <div className="cbox">
@@ -99,9 +101,34 @@ function Credits2({ onTitle, onKeep }) {
           <li>Brønsted–Lowry acids and pKa: H⁺ goes from the stronger acid to the stronger base (§2.7–2.10)</li>
           <li>Lewis acids accept an electron pair (BF₃, Mg²⁺, H⁺); hydrogen bonds need H on O or N (§2.11–2.12)</li>
         </ul>
-        <p className="small">Next: Carbon Castle and Chapter 3 — coming soon.</p>
+        <p className="small">Next: the forest road north-west of the Valence Fields, to the Chain Labyrinth (Chapter 3).</p>
         <div className="title-buttons">
-          <button className="primary" onClick={onKeep}>Back to the Tide Coast</button>
+          <button className="primary" onClick={onOn}>Continue the journey</button>
+          <button onClick={onKeep}>Back to the Tide Coast</button>
+          <button onClick={onTitle}>Back to title</button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function Credits3({ onTitle, onKeep }) {
+  return (
+    <div className="credits">
+      <div className="cbox">
+        <h1>Bond Shard 3 of 12</h1>
+        <p>You cleared <b>The Chain Labyrinth</b> — Chapter 3, <i>Organic Compounds: Alkanes and Their Stereochemistry</i>.</p>
+        <ul>
+          <li>Functional groups: same group, same behavior, whatever the size (§3.1)</li>
+          <li>The first ten alkanes, methane to decane; constitutional isomers differ in connections, not drawings (§3.2)</li>
+          <li>Carbons are 1°, 2°, 3° or 4° by how many carbons they bond to (§3.3)</li>
+          <li>IUPAC names: longest chain, number from the end nearer the first branch, substituents alphabetical (§3.4)</li>
+          <li>Conformations: staggered beats eclipsed (ethane 12 kJ/mol, propane 14) (§3.6)</li>
+          <li>Butane: anti lowest; gauche +3.8 (steric strain); eclipsed +16 and +19 kJ/mol; the costs add up (§3.7)</li>
+        </ul>
+        <p className="small">Next: the Chair Fortress and Chapter 4 — coming soon.</p>
+        <div className="title-buttons">
+          <button className="primary" onClick={onKeep}>Back to the Chain Forest</button>
           <button onClick={onTitle}>Back to title</button>
         </div>
       </div>
@@ -200,13 +227,16 @@ export default function App() {
           {screen === 'field' && <Field key={sceneKey} onExit={exitTo} />}
           {screen === 'coast' && <Coast key={sceneKey} onExit={exitTo} />}
           {screen === 'temple' && <Temple key={sceneKey} onExit={exitTo} />}
+          {screen === 'forest' && <Forest key={sceneKey} onExit={exitTo} />}
+          {screen === 'labyrinth' && <Labyrinth key={sceneKey} onExit={exitTo} />}
         </Canvas>
         </SceneGuard>
       </div>
       {screen === 'title' && <Title onNew={onNew} onContinue={onContinue} onLevel={onLevel} />}
       {screen === 'intro' && <Intro onDone={() => { saveGame({ introSeen: true }); go('village') }} />}
       {screen === 'credits' && <Credits onTitle={() => go('title')} onKeep={() => go('caverns')} onOn={() => exitTo('village', { scene: 'village' })} />}
-      {screen === 'credits2' && <Credits2 onTitle={() => go('title')} onKeep={() => exitTo('coast', { scene: 'coast', at: 'dock' })} />}
+      {screen === 'credits2' && <Credits2 onTitle={() => go('title')} onKeep={() => exitTo('coast', { scene: 'coast', at: 'dock' })} onOn={() => exitTo('field', { scene: 'field', at: 'coast' })} />}
+      {screen === 'credits3' && <Credits3 onTitle={() => go('title')} onKeep={() => exitTo('forest', { scene: 'forest', at: 'gate' })} />}
       {playing && <HUD />}
       {playing && <Panels />}
       {playing && <MiniMap />}

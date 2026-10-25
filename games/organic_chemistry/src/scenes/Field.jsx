@@ -7,7 +7,7 @@ import { Slab, Scatter, scatter, Motes, Signpost } from '../engine/kit'
 import WolfPack from '../actors/WolfPack'
 import { ImpPack, CrabPack } from '../actors/Critters'
 import { PiFollower } from './Village'
-import { getState, setState, saveGame, say, useGame } from '../engine/store'
+import { getState, setState, saveGame, say, toast, useGame } from '../engine/store'
 import { playMusic } from '../audio/sfx'
 
 // The Valence Fields: the overworld between Hydrogen Village (west), the Tide Coast (north-east),
@@ -18,6 +18,7 @@ const HALF = 70
 const COAST_GATE = [62, -43] // the gap in the sea wall (z −46 … −40)
 const CASTLE_GATE = [0, -66]
 const VILLAGE_GATE = [-68, 0]
+const FOREST_GATE = [-40, -68] // north-west: the forest road to the Chain Forest (World 3)
 const SEA_X = 58 // east of this is beach, then sea
 
 function Road({ pts, width = 4.2, color = '#9a8462' }) {
@@ -87,6 +88,7 @@ function FieldLevel({ world, onExit }) {
     if (Math.abs(z) < 5 && x < 20) return null
     if (Math.hypot(x - COAST_GATE[0], z - COAST_GATE[1]) < 12 || Math.hypot(x - CASTLE_GATE[0], z - CASTLE_GATE[1]) < 10) return null
     if (Math.abs(x) < 4 && z < 0 && z > -66) return null // the castle road
+    { const t = Math.max(0, Math.min(1, ((x + 20) * -20 + z * -68) / (400 + 4624))); if (Math.hypot(x - (-20 - 20 * t), z - (-68 * t)) < 5) return null } // the forest road
     return [x, z, 0.8 + r() * 0.9, r() * 6]
   }).filter(Boolean), [])
   const rocks = useMemo(() => scatter(70, 43, (r) => [(r() - 0.5) * 120, (r() - 0.5) * 120, 0.4 + r() * 1.1, r() * 6]).filter(([x, z]) => x < SEA_X - 3 && !(Math.abs(z) < 4 && x < 20)), [])
@@ -97,18 +99,26 @@ function FieldLevel({ world, onExit }) {
     playMusic('village')
     const ids = [
       world.addSolid([-HALF - 2, 0, -HALF - 2], [-HALF, 6, -3.2]), world.addSolid([-HALF - 2, 0, 3.2], [-HALF, 6, HALF + 2]),
-      world.addSolid([-HALF, 0, HALF], [HALF, 6, HALF + 2]), world.addSolid([-HALF, 0, -HALF - 2], [-3.2, 6, -HALF]), world.addSolid([3.2, 0, -HALF - 2], [HALF, 6, -HALF]),
+      world.addSolid([-HALF, 0, HALF], [HALF, 6, HALF + 2]), world.addSolid([-HALF, 0, -HALF - 2], [FOREST_GATE[0] - 3.2, 6, -HALF]), world.addSolid([FOREST_GATE[0] + 3.2, 0, -HALF - 2], [-3.2, 6, -HALF]), world.addSolid([3.2, 0, -HALF - 2], [HALF, 6, -HALF]),
       world.addSolid([HALF, 0, -HALF], [HALF + 2, 6, HALF]),
       world.addSolid([-3.2, 0, -HALF - 1], [3.2, 6, -HALF + 1.2]), // the castle gate is sealed
       // the sea: wade no further than the surf
       world.addSolid([SEA_X + 8, 0, -HALF], [HALF, 6, COAST_GATE[1] - 3]), world.addSolid([SEA_X + 8, 0, COAST_GATE[1] + 3], [HALF, 6, HALF]),
     ]
+    // thorny roots across the forest road until two shards are held
+    const thorns = world.addSolid([FOREST_GATE[0] - 3.2, 0, -HALF - 1], [FOREST_GATE[0] + 3.2, 6, -HALF + 0.8])
+    world.setEnabled(thorns, (getState().save.shards || 0) < 2)
+    ids.push(thorns)
     // hills are solid mounds
     hills.forEach(([x, z, rr]) => ids.push(world.addSolid([x - rr * 0.6, 0, z - rr * 0.6], [x + rr * 0.6, 4, z + rr * 0.6])))
     const toVillage = world.addTrigger([-HALF - 1, 0, -3.2], [-HALF + 1.4, 4, 3.2], () => onExit('village', { scene: 'village', at: 'east' }))
     const toCoast = world.addTrigger([HALF - 3, 0, COAST_GATE[1] - 3], [HALF, 4, COAST_GATE[1] + 3], () => onExit('coast', { scene: 'coast', at: 'road' }))
     const castle = world.addTrigger([-4, 0, -HALF + 1], [4, 4, -HALF + 4], () => setState({ toast: { text: 'Carbon Castle is sealed by Malradix. The sages say the crown must be rebuilt shard by shard.', kind: 'info', id: Date.now() } }))
-    ids.push(toVillage, toCoast, castle)
+    const toForest = world.addTrigger([FOREST_GATE[0] - 3, 0, -HALF - 1], [FOREST_GATE[0] + 3, 4, -HALF + 1.4], () => {
+      if ((getState().save.shards || 0) >= 2) onExit('forest', { scene: 'forest', at: 'south' })
+      else toast('Thorny roots. Two Bond Shards will part them.', 'info', 3200)
+    })
+    ids.push(toVillage, toCoast, castle, toForest)
     return () => ids.forEach((i) => world.remove(i))
   }, [world])
 
@@ -121,10 +131,12 @@ function FieldLevel({ world, onExit }) {
         { pos: [COAST_GATE[0] - 6, COAST_GATE[1] + 6], text: 'Tide Coast →', align: 'right' },
         { pos: [CASTLE_GATE[0], CASTLE_GATE[1] + 6], text: 'Carbon Castle (sealed)', align: 'center' },
         { pos: [SEA_X + 4, 20], text: 'Beach', align: 'center' },
+        { pos: [FOREST_GATE[0], FOREST_GATE[1] + 6], text: 'Chain Forest ↑', align: 'center' },
       ],
       goal: () => {
         const s = getState().save
         if ((s.shards || 0) < 2) return { pos: [HALF - 2, COAST_GATE[1]], label: 'Head to the Tide Coast' }
+        if ((s.shards || 0) < 3) return { pos: [FOREST_GATE[0], FOREST_GATE[1] + 1], label: 'Take the forest road to the Chain Forest' }
         return { pos: [VILLAGE_GATE[0] + 2, 0], label: 'Back to Hydrogen Village' }
       },
     }
@@ -134,7 +146,8 @@ function FieldLevel({ world, onExit }) {
   // first visit
   useEffect(() => {
     const s = getState().save
-    setState({ objective: (s.shards || 0) < 2 ? 'Cross the Valence Fields to the Tide Coast' : 'The Valence Fields' })
+    setState({ objective: (s.shards || 0) < 2 ? 'Cross the Valence Fields to the Tide Coast' : (s.shards || 0) < 3 ? 'Take the forest road north-west to the Chain Forest' : 'The Valence Fields' })
+    if ((s.shards || 0) >= 2 && !s.thornsSeen) { saveGame({ thornsSeen: true }); setTimeout(() => toast('Pi: The forest-road thorns pulled back! Two shards — the road north-west is open.', 'good', 4200), 1500) }
     if (!s.fieldSeen) {
       saveGame({ fieldSeen: true })
       setTimeout(() => say([
@@ -157,6 +170,7 @@ function FieldLevel({ world, onExit }) {
       <Road pts={[[-HALF, 0], [-20, 0], [10, -8], [35, -30], [HALF, COAST_GATE[1]]]} />
       <Road pts={[[-20, 0], [-10, -30], [0, -66]]} width={3.6} />
       <Road pts={[[10, -8], [30, 20], [SEA_X - 2, 30]]} width={3.2} />
+      <Road pts={[[-20, 0], [-40, -68]]} width={3.4} />
       <mesh position={[18, 0.025, 0]} rotation={[-Math.PI / 2, 0, 0.25]}><planeGeometry args={[5, 150]} /><meshStandardMaterial color="#3f8fb0" roughness={0.2} transparent opacity={0.85} /></mesh>
       <group position={[16, 0, -3.5]} rotation={[0, 0.25 + Math.PI / 2, 0]}>
         <mesh position={[0, 0.3, 0]} castShadow><boxGeometry args={[7.5, 0.25, 4.2]} /><meshStandardMaterial color="#7a5a3a" roughness={0.9} /></mesh>
@@ -167,6 +181,7 @@ function FieldLevel({ world, onExit }) {
       <Gatehouse pos={[HALF - 1.5, 0, COAST_GATE[1]]} rotY={Math.PI / 2} label="Tide Coast" color="#c7b48a" />
       <Gatehouse pos={[0, 0, -HALF + 0.4]} label="Carbon Castle — sealed" sealed />
       <Gatehouse pos={[-HALF + 0.6, 0, 0]} rotY={Math.PI / 2} label="Hydrogen Village" />
+      <Gatehouse pos={[FOREST_GATE[0], 0, -HALF + 0.4]} label={(save.shards || 0) >= 2 ? 'Chain Forest' : 'Chain Forest — thorny roots'} sealed={(save.shards || 0) < 2} color="#6a5a44" />
       <Castle />
       <Ruin pos={[-30, 0, -32]} rot={0.4} /><Ruin pos={[30, 0, 40]} rot={-0.8} /><Ruin pos={[-45, 0, 38]} rot={1.6} />
       <Signpost pos={[-17, 0, 3.5]} rotY={0.3} text="← Village · Castle ↑ · Tide Coast →" />
@@ -190,8 +205,8 @@ function FieldLevel({ world, onExit }) {
 
 export default function Field({ onExit }) {
   const cp = getState().save.checkpoint || {}
-  const start = cp.at === 'coast' ? [HALF - 7, 0, COAST_GATE[1]] : [-HALF + 5, 0, 0]
-  const facing = cp.at === 'coast' ? -Math.PI / 2 : Math.PI / 2
+  const start = cp.at === 'coast' ? [HALF - 7, 0, COAST_GATE[1]] : cp.at === 'forest' ? [FOREST_GATE[0], 0, -HALF + 5] : [-HALF + 5, 0, 0]
+  const facing = cp.at === 'coast' ? -Math.PI / 2 : cp.at === 'forest' ? 0 : Math.PI / 2
   return (
     <GameScene start={start} startFacing={facing} background="#a8cfe8" camDist={6.4}>
       {(world) => <FieldLevel world={world} onExit={onExit} />}

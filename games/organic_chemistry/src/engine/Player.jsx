@@ -406,6 +406,26 @@ export default function Player({ world, start = [0, 0, 0], startFacing = 0 }) {
     if (gs.prompt !== label) setState({ prompt: label })
     if (near && inp.interact && !busy) near.onInteract()
 
+    // ---- Newman Lantern (G): turn the bond of whatever axle Kai faces by 60° (§3.6–3.7)
+    let lt = null
+    if (!busy && gs.save.hasLantern && world.lanterns.size) {
+      let bd = Infinity
+      for (const l of world.lanterns.values()) {
+        if (!l.enabled) continue
+        if (typeof l.label === 'function' && !l.label()) continue
+        const lp = typeof l.pos === 'function' ? l.pos() : l.pos
+        const dx = lp[0] - s.pos.x, dz = lp[2] - s.pos.z, d = Math.hypot(dx, dz)
+        if (d > l.radius || Math.abs(lp[1] - s.pos.y) > 4) continue
+        const ang = d < 0.8 ? 0 : Math.acos(Math.max(-1, Math.min(1, (dx * Math.sin(s.facing) + dz * Math.cos(s.facing)) / d)))
+        if (ang > 1.2) continue
+        const score = d - (l.priority || 0) * 10 // a higher-priority target (the boss's knot) wins over nearby ones
+        if (score < bd) { bd = score; lt = l }
+      }
+    }
+    const lprompt = !label && lt ? (typeof lt.label === 'function' ? lt.label() : lt.label) : null
+    if (gs.lanternPrompt !== lprompt) setState({ lanternPrompt: lprompt })
+    if (lt && inp.lantern && !busy) { sfx('stance'); lt.onLantern(inp.lanternRev ? -1 : 1) }
+
     // ---- pose
     const speedNow = Math.hypot(s.vel.x, s.vel.z)
     s.run += ((s.mode === 'move' || s.mode === 'block' ? Math.min(1, speedNow / 6) : 0) - s.run) * Math.min(1, dt * 10)

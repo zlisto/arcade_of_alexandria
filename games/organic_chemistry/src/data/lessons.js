@@ -140,4 +140,87 @@ export const LESSONS = {
     ],
     example: 'Striking one head of the Hydra did nothing, because no single form is the real carbonate ion.',
   },
+  shelf: {
+    title: 'The first ten alkanes',
+    section: '3.2', pages: '78–81',
+    points: [
+      'Alkanes are saturated hydrocarbons: only carbon and hydrogen, only single bonds. Their formula is CₙH₂ₙ₊₂.',
+      'The first four have old names: methane (1 C), ethane (2), propane (3), butane (4).',
+      'From five on, the name counts in Greek: pentane (5), hexane (6), heptane (7), octane (8), nonane (9), decane (10).',
+      'These names are the parents of nearly every name you will meet, so they are worth memorizing.',
+    ],
+    example: 'Octane, C₈H₁₈: eight carbons, and 2 × 8 + 2 = 18 hydrogens.',
+  },
+  families: {
+    title: 'Functional groups',
+    section: '3.1', pages: '72–77',
+    points: [
+      'A functional group is a group of atoms that behaves nearly the same way in every molecule that contains it.',
+      'So molecules sort into families by their groups, whatever their size: alkenes (C=C), alcohols (C–OH), ethers (C–O–C), amines (C–N) and more (Table 3.1).',
+      'Ethylene and menthene look nothing alike, but both have a C=C, so both add Br₂ across it the same way (Fig 3.2).',
+    ],
+    example: 'Ethanol (CH₃CH₂OH) and dimethyl ether (CH₃OCH₃) share the formula C₂H₆O, but one is an alcohol and the other an ether.',
+  },
+  isomers: {
+    title: 'Constitutional isomers',
+    section: '3.2', pages: '78–81',
+    points: [
+      'Isomers share a formula but differ in structure. Constitutional isomers differ in how their atoms are connected.',
+      'From four carbons on, the carbons can join in a straight chain or with branches: butane and isobutane are both C₄H₁₀.',
+      'A molecule is the same compound however you draw it. Bending or rotating a chain changes the picture, not the connections (Fig 3.3).',
+    ],
+    example: 'C₅H₁₂ has three constitutional isomers. Count them yourself in the garden.',
+  },
+  badges: {
+    title: 'Primary, secondary, tertiary, quaternary',
+    section: '3.3', pages: '81–84',
+    points: [
+      'Classify a carbon by how many other carbons it is bonded to.',
+      'Primary (1°): one other carbon. Secondary (2°): two. Tertiary (3°): three. Quaternary (4°): four.',
+      'Hydrogens take the class of the carbon they are on (there is no 4° hydrogen: a 4° carbon has no H). R stands for the rest of the molecule.',
+    ],
+    example: 'In 2-methylbutane, the carbon carrying the branch is bonded to three carbons, so it is 3°.',
+  },
+  namingRules: {
+    title: 'Naming alkanes (IUPAC)',
+    section: '3.4', pages: '84–89',
+    points: [
+      'A name is locants + prefixes + parent + suffix: where the branches are, what they are, how long the main chain is.',
+      'Step 1: find the longest continuous chain. It does not have to be straight; it can turn corners.',
+      'Step 2: number it from the end nearer the first branch.',
+      'Step 3–4: give each substituent a number, and write the name as one word with substituents in alphabetical order.',
+    ],
+    example: 'A six-carbon chain with a one-carbon branch on carbon 3 is 3-methylhexane, not 4-methylhexane.',
+  },
+  nameTiles: {
+    title: 'Writing the name',
+    section: '3.4', pages: '84–89',
+    points: [
+      'Each substituent gets its locant and a hyphen: 2-methyl, 4-ethyl.',
+      'List substituents alphabetically (ethyl before methyl). Prefixes like di- and tri- don\'t count for the alphabet.',
+      'Write it all as one word, ending in the parent name.',
+    ],
+    example: '3-Ethyl-2-methylhexane: e before m, numbers with hyphens, parent last.',
+  },
+  newman: {
+    title: 'Conformations and Newman projections',
+    section: '3.6', pages: '90–92',
+    points: [
+      'Groups can rotate around a C–C single bond. The shapes this makes are conformations; they change too fast to separate.',
+      'A Newman projection looks straight down the bond: the front carbon is a dot, the back carbon a circle.',
+      'Staggered (back bonds between the front ones) is lowest in energy. Eclipsed (back bonds hidden behind the front ones) costs 12 kJ/mol in ethane: torsional strain.',
+    ],
+    example: 'Turning ethane\'s back carbon by 60° switches staggered ↔ eclipsed; the energy rises and falls every 120° (Fig 3.8).',
+  },
+  butaneCheck: {
+    title: 'Butane\'s conformations',
+    section: '3.7', pages: '92–96',
+    points: [
+      'Anti: the two CH₃ groups are 180° apart. Lowest energy (0 kJ/mol).',
+      'Gauche: CH₃ groups 60° apart. 3.8 kJ/mol higher, from steric strain as they crowd.',
+      'Eclipsed: 16 kJ/mol when each CH₃ hides behind an H; 19 kJ/mol when CH₃ hides behind CH₃, the highest (Fig 3.10).',
+      'The costs add up (Table 3.5): H↔H eclipsed 4.0, H↔CH₃ 6.0, CH₃↔CH₃ 11 kJ/mol. Gauche\'s 3.8 is steric strain: the CH₃ groups crowd.',
+    ],
+    example: 'All the conformations interconvert rapidly, but at any moment more butane molecules are in the anti form than in any other.',
+  },
 }
