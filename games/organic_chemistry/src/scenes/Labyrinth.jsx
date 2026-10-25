@@ -600,7 +600,7 @@ function LabyrinthLevel({ world, onExit }) {
       {/* ---- 3-2 Isomer Garden */}
       {HEDGES.map((hg, i) => <Hedge key={i} pos={[-5 + i * 5, 0, -50]} atoms={hg.atoms} bonds={hg.bonds} label={hg.label} show={!!solved['3-2a'] || (save.t3isomers || []).includes(hg.key)} />)}
       {[-5, 0, 5].map((x, i) => !(solved['3-2a'] || (save.t3isomers || []).includes(HEDGES[i].key)) && <mesh key={x} position={[x, 0.15, -50]}><cylinderGeometry args={[1.6, 1.7, 0.3, 16]} /><meshStandardMaterial color="#5a4030" roughness={1} /></mesh>)}
-      <Chest world={world} pos={[0, 0, -56]} rotY={Math.PI} opened={!!solved['t3-key']} show={!!solved['3-2b']} onOpen={() => openChest('t3-key')} label="Open the small chest" />
+      <Chest world={world} pos={[0, 0, -56]} opened={!!solved['t3-key']} show={!!solved['3-2b']} onOpen={() => openChest('t3-key')} label="Open the small chest" />
       <ImpPack world={world} spawns={[[-6, -45], [6, -46], [0, -53.5]]} active />
       <Gate world={world} pos={[0, 0, -60]} size={[2 * W, 7, 0.8]} open={!!solved['t3-door']} color="#5a4020" glow="#ffcf6a" />
       <Tag position={[0, 7.8, -59.6]} df={13}>{solved['t3-door'] ? 'unlocked' : 'locked · small key'}</Tag>
@@ -616,10 +616,10 @@ function LabyrinthLevel({ world, onExit }) {
       <Gate world={world} pos={[0, 0, -104]} size={[2 * W, 7, 0.8]} open={!!solved['3-3b']} color="#3a2a1e" glow="#7ff4d8" />
 
       {/* ---- 3-4 The Turning Halls */}
-      <Chest world={world} pos={[0, 0, -108]} rotY={Math.PI} big opened={!!solved['t3-lantern']} onOpen={() => openChest('t3-lantern')} label="Open the big chest" />
+      <Chest world={world} pos={[0, 0, -108]} big opened={!!solved['t3-lantern']} onOpen={() => openChest('t3-lantern')} label="Open the big chest" />
       {DOORS3.map((d, i) => <NewmanDoor key={d.id} world={world} door={d} open={!!solved[d.id]} angle={doorAngles[i]} />)}
       <EclipsedBats world={world} roosts={ROOSTS3} active={!!save.hasLantern || !!solved['t3-lantern']} saved={save.t3bats} onTurn={(i, d) => { const b = [...(getState().save.t3bats || [0, 0, 0])]; b[i] = d; saveGame({ t3bats: b }) }} />
-      <Chest world={world} pos={[0, 0, -137.5]} rotY={Math.PI} big opened={!!solved['t3-bosskey']} onOpen={() => openChest('t3-bosskey')} label="Open the big chest" />
+      <Chest world={world} pos={[0, 0, -137.5]} big opened={!!solved['t3-bosskey']} onOpen={() => openChest('t3-bosskey')} label="Open the big chest" />
       <Gate world={world} pos={[0, 0, -140]} size={[2 * W, 7, 0.8]} open={!!solved['t3-bossdoor']} color="#3a2a50" glow="#c9a3ff" />
 
       {/* ---- stations */}

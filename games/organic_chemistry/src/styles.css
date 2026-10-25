@@ -347,3 +347,6 @@ button { font: inherit; }
 
 /* the boss bar steps left of the minimap on narrow screens */
 @media (max-width: 900px) { .bossbar { left: 16px; transform: none; width: calc(100vw - 220px); } }
+
+/* the boss core's carbon: the key line of the fight, readable at any distance */
+.coretag { font-size: 16px !important; padding: 4px 10px !important; }

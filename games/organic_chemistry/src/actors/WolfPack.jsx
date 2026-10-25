@@ -135,16 +135,19 @@ export default function WolfPack({ world, spawns, onCleared, active = true, tuto
           }
         }
         if (w.state === 'knocked' && w.t > 0.75) {
-          // propagation: alone, it abstracts an atom and leaves another radical behind
+          // alone, a radical just passes its unpaired electron along — still one radical, as angry as before.
+          // The very last one, with no partner left, finally meets a stray H· and pairs with it (H–R).
+          const others = list.filter((o) => o && o !== w && pairable(o)).length
+          if (others === 0) {
+            w.state = 'pairing'; w.t = 0; w.pairAt = w.pos.clone(); sfx('pair')
+            world.emit('pair', { at: [w.pos.x, w.pos.y, w.pos.z] })
+            if (tutorial) toast('The last radical grabbed a stray H· — two unpaired electrons, one bond. Gone!', 'good', 3600)
+            continue
+          }
           w.state = 'chase'
           w.t = 0
-          const alive = list.filter((o) => o && o.state !== 'gone' && o.state !== 'pairing').length
-          if (alive < MAX) {
-            const a = Math.random() * Math.PI * 2
-            const nw = spawnWolf(w.pos.x + Math.cos(a) * 1.6, w.pos.z + Math.sin(a) * 1.6)
-            if (nw) { nw.flash = 0.4; sfx('split') }
-            if (tutorial && !told.current.split) { told.current.split = true; toast('Hitting a lone radical just made another one! Lock on and knock a wolf toward another wolf — it will fly into it and they pair up.', 'warn', 5600) }
-          }
+          w.flash = 0.4; sfx('split')
+          if (tutorial && !told.current.split) { told.current.split = true; toast('Alone, it just passes its spark on — still a radical! Knock it into another wolf.', 'warn', 4600) }
         }
       } else if (p) {
         // chase / circle / lunge

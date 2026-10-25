@@ -26,7 +26,7 @@ export function identifyAtom({ protons, neutrons, electrons }) {
   }
 }
 
-// Stable isotopes the game accepts (natural carbon 12, 13; 14 is trace; §1.1 mentions all three).
+// Naturally occurring isotopes the game accepts (natural carbon 12, 13; 14 is trace; §1.1 mentions all three).
 export const KNOWN_ISOTOPES = { 1: [1, 2, 3], 6: [12, 13, 14], 7: [14, 15], 8: [16, 17, 18] }
 
 // §1.3 — orbitals in Aufbau order for the first two shells (enough for H–Ne).

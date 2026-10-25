@@ -60,10 +60,13 @@ const Row = ({ label, v, set, color }) => (
     <button onClick={() => set((x) => Math.max(0, x - 1))}>−</button><b className="num">{v}</b><button onClick={() => set((x) => Math.min(10, x + 1))}>+</button></div>
 )
 
-function AtomForge({ goal, done }) {
-  const [pr, setPr] = useState(1)
+function AtomForge({ goal: one, goals, done }) {
+  const list = goals || [one]
+  const [step, setStep] = useState(0)
+  const goal = list[step]
+  const [pr, setPr] = useState(0)
   const [ne, setNe] = useState(0)
-  const [el, setEl] = useState(1)
+  const [el, setEl] = useState(0)
   const [fb, setFb] = useState(null)
   const info = identifyAtom({ protons: pr, neutrons: ne, electrons: el })
   const check = () => {
@@ -75,14 +78,15 @@ function AtomForge({ goal, done }) {
       sfx('wrong'); return setFb({ ok: false, text: `Right element, but this gate wants mass number A = ${goal.massNumber}. A = protons + neutrons; you have A = ${info.massNumber}.` })
     }
     const iso = KNOWN_ISOTOPES[pr] || []
-    if (!iso.includes(info.massNumber)) { sfx('wrong'); return setFb({ ok: false, text: `${info.name}-${info.massNumber} isn't a natural isotope — that nucleus has the wrong number of neutrons to be stable. ${pr === 6 ? 'Natural carbon is carbon-12, -13, or a trace of -14.' : ''}` }) }
+    if (!iso.includes(info.massNumber)) { sfx('wrong'); return setFb({ ok: false, text: `${info.name}-${info.massNumber} isn't one of its naturally occurring isotopes. ${pr === 6 ? 'Carbon occurs naturally as carbon-12, -13 and a trace of -14 (§1.1).' : ''}` }) }
     sfx('right')
     setFb({ ok: true, text: goal.massNumber ? `${info.name}-${info.massNumber}: same element, same chemistry, different mass. That's an isotope.` : `${info.name}-${info.massNumber}: Z = ${pr}, A = ${info.massNumber}, neutral.` })
-    setTimeout(done, 1400)
+    if (step + 1 < list.length) setTimeout(() => { setStep(step + 1); setFb(null) }, 1600)
+    else setTimeout(done, 1400)
   }
   return (
     <div>
-      <h2>Nucleus Forge</h2>
+      <h2>Nucleus Forge{list.length > 1 ? ` · gate ${step + 1} of ${list.length}` : ''}</h2>
       <p className="ins">{goal.prompt} <span className="cite">§1.1</span></p>
       <div className="forge">
         <svg viewBox="-60 -60 120 120" className="atomsvg">
@@ -94,7 +98,7 @@ function AtomForge({ goal, done }) {
           <Row label="Protons" v={pr} set={setPr} color="#e0453b" />
           <Row label="Neutrons" v={ne} set={setNe} color="#9aa3ad" />
           <Row label="Electrons" v={el} set={setEl} color="#43e6f5" />
-          <div className="readout">Z = {pr} · A = {info.massNumber} · charge {info.charge > 0 ? '+' : ''}{info.charge}<br /><b>{info.name ? `${info.name}-${info.massNumber}` : 'unknown element'}</b></div>
+          <div className="readout">Z = {pr} · A = {info.massNumber} · charge {info.charge > 0 ? '+' : ''}{info.charge}<br /><small>The gate names the element when you offer it.</small></div>
         </div>
       </div>
       <button className="go" onClick={check}>Offer to the gate</button>
@@ -104,8 +108,10 @@ function AtomForge({ goal, done }) {
 }
 
 // ---------- 1-2 Hall of Shells: electron configuration (§1.3)
-function Shells({ symbol, done }) {
-  const el = ELEMENTS[symbol]
+function Shells({ symbol: one, symbols, done }) {
+  const list = symbols || [one]
+  const [step, setStep] = useState(0)
+  const el = ELEMENTS[list[step]]
   const empty = () => Object.fromEntries(ORBITALS.map((o) => [o.id, [...Array(o.boxes)].map(() => [false, false])]))
   const [fill, setFill] = useState(empty)
   const [fb, setFb] = useState(null)
@@ -123,13 +129,17 @@ function Shells({ symbol, done }) {
   }
   const check = () => {
     const r = checkConfiguration(fill, el.z)
-    if (r.ok) { sfx('right'); setFb({ ok: true, text: `${el.name}: ${configString(fill)}. ${r.message}` }); setTimeout(done, 1500) }
+    if (r.ok) {
+      sfx('right'); setFb({ ok: true, text: `${el.name}: ${configString(fill)}. ${r.message}` })
+      if (step + 1 < list.length) setTimeout(() => { setStep(step + 1); setFill(empty()); setFb(null) }, 1700)
+      else setTimeout(done, 1500)
+    }
     else { sfx('wrong'); setFb({ ok: false, text: r.message }) }
   }
   const total = ORBITALS.reduce((s, o) => s + fill[o.id].reduce((t, b) => t + b[0] + b[1], 0), 0)
   return (
     <div>
-      <h2>Hall of Shells</h2>
+      <h2>Hall of Shells{list.length > 1 ? ` · ${list.map((x, i) => (i < step ? '✓' : x)).join(' · ')}` : ''}</h2>
       <p className="ins">Light the lamps for <b>{el.name}</b> ({el.z} electrons). Click a lamp to add an electron (first ↑, then ↓). Lowest energy fills first; two per lamp, opposite spins; spread out before pairing. <span className="cite">§1.3</span></p>
       <div className="shells">
         {[...ORBITALS].reverse().map((o) => (
@@ -158,25 +168,29 @@ const BRIDGES = [
 ]
 function OctetBridge({ index = 0, done }) {
   const m = BRIDGES[index]
-  const [els, setEls] = useState(m.nodes.map(() => 'C'))
+  const [els, setEls] = useState(m.nodes.map(() => null)) // blank: choose every heavy atom yourself
   const [fb, setFb] = useState(null)
+  const [tested, setTested] = useState(false)
   const cycle = (i) => { const order = ['C', 'N', 'O']; setEls((cur) => cur.map((x, k) => (k === i ? order[(order.indexOf(x) + 1) % 3] : x))); setFb(null) }
-  const atoms = [...els, ...m.hs.map(() => 'H')]
+  const blank = els.some((x) => !x)
+  const atoms = [...els.map((x) => x || 'C'), ...m.hs.map(() => 'H')]
   const bonds = [...m.bonds, ...m.hs.map(([n], k) => [n, els.length + k, 1])]
   const check = () => {
+    if (blank) { sfx('wrong'); return setFb({ ok: false, text: 'Choose an element for every stone first (click a stone: C, N, O).' }) }
+    setTested(true)
     const r = checkOctets(atoms, bonds)
     if (r.ok) { sfx('right'); setFb({ ok: true, text: `Every atom has the bonds it needs: H 1, C 4, N 3, O 2. ${m.name} holds the bridge.` }); setTimeout(done, 1500) }
     else {
       sfx('wrong')
       const b = r.bad.find((x) => x.i < els.length) || r.bad[0]
-      setFb({ ok: false, text: `${ELEMENTS[b.s].name} needs ${b.need} bond${b.need > 1 ? 's' : ''} to reach an octet, but this spot has ${b.got}. Try another element here.` })
+      setFb({ ok: false, text: `The ${ELEMENTS[b.s].name.toLowerCase()} stone breaks: its bond lines don't match the bonds a ${ELEMENTS[b.s].name.toLowerCase()} makes. Count them, then pick another element.` })
     }
   }
   const got = atoms.map(() => 0)
   bonds.forEach(([i, j, o]) => { got[i] += o; got[j] += o })
   return (
     <div>
-      <h2>Socket Bridge</h2>
+      <h2>Socket Bridge · stone {['I', 'II', 'III'][index]}</h2>
       <p className="ins">Each bridge stone is an atom. Click a heavy-atom stone to change it (C, N, O). The bridge holds only when every atom forms exactly as many bonds as it needs for an octet. <span className="cite">§1.4</span></p>
       <svg viewBox="0 0 300 160" className="molsvg">
         {m.bonds.map(([i, j, o], k) => {
@@ -185,15 +199,15 @@ function OctetBridge({ index = 0, done }) {
         })}
         {m.hs.map(([n, x, y], k) => <g key={'h' + k}><line x1={m.nodes[n].x} y1={m.nodes[n].y} x2={x} y2={y} className="bnd" /><circle cx={x} cy={y} r="11" fill="#f4f4f4" /><text x={x} y={y + 4} textAnchor="middle" className="hl">H</text></g>)}
         {m.nodes.map((nd, i) => {
-          const ok = got[i] === ELEMENTS[els[i]].valence
-          return <g key={i} onClick={() => cycle(i)} style={{ cursor: 'pointer' }}>
-            <circle cx={nd.x} cy={nd.y} r="20" fill={ELEMENTS[els[i]].color} stroke={ok ? '#43e6f5' : '#c0394b'} strokeWidth="3" />
-            <text x={nd.x} y={nd.y + 6} textAnchor="middle" className="al">{els[i]}</text>
-            <text x={nd.x} y={nd.y + 38} textAnchor="middle" className="cnt">{got[i]}/{ELEMENTS[els[i]].valence}</text>
+          const ok = !!els[i] && got[i] === ELEMENTS[els[i]].valence
+          // count the bond lines yourself; the bridge only tells you once you test it
+          return <g key={i} onClick={() => { cycle(i); setTested(false) }} style={{ cursor: 'pointer' }}>
+            <circle cx={nd.x} cy={nd.y} r="20" fill={els[i] ? ELEMENTS[els[i]].color : '#2a2f3a'} stroke={!tested ? '#8a93a3' : ok ? '#43e6f5' : '#c0394b'} strokeWidth="3" />
+            <text x={nd.x} y={nd.y + 6} textAnchor="middle" className="al">{els[i] || '?'}</text>
           </g>
         })}
       </svg>
-      <p className="mname">{m.name.split(',')[0].replace(/./g, (c, i) => (i === 0 ? c : c))} — bonds shown under each stone</p>
+      <p className="mname">{tested && fb && fb.ok ? m.name : 'Count each stone’s bond lines (a double line counts as two). The molecule is named when the bridge holds.'}</p>
       <button className="go" onClick={check}>Cross the bridge</button>
       <Feedback fb={fb} />
     </div>
@@ -252,7 +266,7 @@ function Skeleton({ index = 0, done }) {
   const check = () => {
     const wrong = hs.findIndex((h, i) => h !== answer[i])
     if (wrong < 0) { sfx('right'); setFb({ ok: true, text: `${m.name}, ${m.formula}. Every corner and line end is a carbon; carbon makes four bonds, so the drawing hides the rest as hydrogens.` }); setTimeout(done, 1700) }
-    else { sfx('wrong'); setFb({ ok: false, text: `Check the highlighted carbon: the lines drawn to it add up to ${orders[wrong].reduce((s, o) => s + o, 0)} bond${orders[wrong].reduce((s, o) => s + o, 0) > 1 ? 's' : ''}${orders[wrong].includes(2) ? ' (a double line counts as two)' : ''}, so it needs ${answer[wrong]} hidden hydrogen${answer[wrong] === 1 ? '' : 's'} to make four.` }) }
+    else { sfx('wrong'); setFb({ ok: false, text: `Check the highlighted carbon: the lines drawn to it add up to ${orders[wrong].reduce((s, o) => s + o, 0)} bond${orders[wrong].reduce((s, o) => s + o, 0) > 1 ? 's' : ''}${orders[wrong].includes(2) ? ' (a double line counts as two)' : ''}, and carbon always makes four. How many are hidden?` }) }
   }
   const wrongIdx = fb && !fb.ok ? hs.findIndex((h, i) => h !== answer[i]) : -1
   return (
@@ -280,24 +294,27 @@ function Skeleton({ index = 0, done }) {
 
 // ---------- Learning check: hybridization of propene's carbons (§1.8)
 function HybridCheck({ done }) {
-  // propene CH3–CH=CH2: carbon bond orders (C–H count as single bonds)
-  const carbons = [{ label: 'CH₃', orders: [1, 1, 1, 1] }, { label: 'CH', orders: [1, 2, 1] }, { label: 'CH₂', orders: [2, 1, 1] }]
+  // propene CH₃–CH=CH₂ and propyne CH₃–C≡CH: carbon bond orders (C–H count as single bonds) (§1.8–1.9)
+  const carbons = [
+    { label: 'CH₃', mol: 'propene', orders: [1, 1, 1, 1] }, { label: 'CH', mol: 'propene', orders: [1, 2, 1] }, { label: 'CH₂', mol: 'propene', orders: [2, 1, 1] },
+    { label: 'CH₃', mol: 'propyne', orders: [1, 1, 1, 1] }, { label: 'C', mol: 'propyne', orders: [1, 3] }, { label: 'CH', mol: 'propyne', orders: [3, 1] },
+  ]
   const [pick, setPick] = useState(carbons.map(() => null))
   const [fb, setFb] = useState(null)
   const opts = ['sp3', 'sp2', 'sp']
   const check = () => {
     const ans = carbons.map((c) => carbonHybridization(c.orders))
     const bad = pick.findIndex((p, i) => p !== ans[i])
-    if (bad < 0) { sfx('right'); setFb({ ok: true, text: 'CH₃ is sp³ (four single bonds, 109.5°); both double-bond carbons are sp² (120°, one π bond each).' }); setTimeout(done, 1800) }
-    else { sfx('wrong'); setFb({ ok: false, text: `Carbon ${bad + 1} (${carbons[bad].label}) has ${carbons[bad].orders.some((o) => o === 2) ? 'a double bond — one π bond needs one unhybridized p orbital' : 'only single bonds — four equivalent hybrid orbitals'}.` }) }
+    if (bad < 0) { sfx('right'); setFb({ ok: true, text: 'Both CH₃ carbons are sp³ (no π bonds). The C=C carbons are sp² (one π bond). The C≡C carbons are sp (two π bonds).' }); setTimeout(done, 2200) }
+    else { sfx('wrong'); setFb({ ok: false, text: `Look again at the ${carbons[bad].label} in ${carbons[bad].mol}. Count its π bonds — a double bond has one, a triple bond two — and each π bond needs one leftover p orbital.` }) }
   }
   return (
     <div>
       <h2>Pi's Challenge</h2>
-      <p className="ins">Build propene, CH₃–CH=CH₂: pick the hybrid shape of each carbon. <span className="cite">§1.6–1.8</span></p>
+      <p className="ins">Propene, CH₃–CH=CH₂, and propyne, CH₃–C≡CH: pick the hybrid of each carbon. <span className="cite">§1.6–1.9</span></p>
       <div className="propene">
         {carbons.map((c, i) => (
-          <div key={i} className="ccol"><div className="clab">{c.label}</div>
+          <div key={i} className="ccol"><div className="clab">{c.label}<small> · {c.mol}</small></div>
             {opts.map((o) => <button key={o} className={pick[i] === o ? 'sel' : ''} onClick={() => { setPick((cur) => cur.map((x, k) => (k === i ? o : x))); setFb(null) }}>{HYBRIDS[o].label}</button>)}
           </div>
         ))}

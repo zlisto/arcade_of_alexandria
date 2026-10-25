@@ -48,12 +48,12 @@ export default function Player({ world, start = [0, 0, 0], startFacing = 0 }) {
       get mode() { return s.mode },
       get rolling() { return s.mode === 'roll' || s.mode === 'dash' },
       teleport(p, facing) { s.pos.set(...p); s.vel.set(0, 0, 0); s.lastSafe.set(...p); if (facing !== undefined) { s.facing = facing; world.cam.yaw = facing + Math.PI } },
-      hurt(dmg, from) {
+      hurt(dmg, from, unblockable = false) {
         if (s.iframes > 0 || getState().dialogue || getState().panel) return false
         // shield: frontal hits are blocked while holding block
         const dir = new THREE.Vector3(s.pos.x - from[0], 0, s.pos.z - from[2]).normalize()
         const fwd = new THREE.Vector3(Math.sin(s.facing), 0, Math.cos(s.facing))
-        if (s.mode === 'block' && fwd.dot(dir) < -0.35) { sfx('block'); s.knock.copy(dir).multiplyScalar(4); return false }
+        if (!unblockable && s.mode === 'block' && fwd.dot(dir) < -0.35) { sfx('block'); s.knock.copy(dir).multiplyScalar(4); return false }
         const hp = Math.max(0, getState().hp - dmg)
         setState({ hp })
         sfx('hurt')
@@ -385,11 +385,18 @@ export default function Player({ world, start = [0, 0, 0], startFacing = 0 }) {
     s.pos.y = ny
     if (s.grounded && ground > -Infinity && s.mode === 'move') {
       s.safeT += dt
-      if (s.safeT > 0.5) { s.lastSafe.copy(s.pos); s.safeT = 0 }
+      if (s.safeT > 0.5) {
+        // only remember spots with floor all round, so a fall never respawns Kai right on the lip again
+        const y0 = s.pos.y + STEP
+        const firm = [[1.4, 0], [-1.4, 0], [0, 1.4], [0, -1.4]].every(([dx, dz]) => world.groundAt(s.pos.x + dx, s.pos.z + dz, y0) > -Infinity)
+        if (firm) { s.lastSafe.copy(s.pos); s.lastSafeFacing = s.facing }
+        s.safeT = 0
+      }
     }
     if (s.pos.y < world.killY) {
       s.pos.copy(s.lastSafe)
       s.vel.set(0, 0, 0)
+      if (s.lastSafeFacing !== undefined) { s.facing = s.lastSafeFacing; if (world.cam) world.cam.yaw = s.facing + Math.PI }
       const hp = Math.max(1, getState().hp - 1)
       setState({ hp })
       sfx('hurt')

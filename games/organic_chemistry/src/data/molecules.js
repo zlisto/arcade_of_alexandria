@@ -112,7 +112,7 @@ export const MOLECULES = [
     id: 'ethane', name: 'Ethane', formula: 'C₂H₆', unlocked: (s) => s.solved['1-4tetra'],
     met: 'The tetrahedral seal, Forge of Hybrids (1-4)',
     shape: 'Tetrahedral at each carbon', hybrid: 'Both carbons sp³', angles: '109.5°', section: '1.7', pages: '18–19',
-    fact: 'Two sp³ carbons share a C–C σ bond; each also bonds three hydrogens. The two ends can rotate around the single bond.',
+    fact: 'Two sp³ carbons share a C–C σ bond (153 pm); each also bonds three hydrogens. Every angle is close to 109.5°.',
     use: 'Found in natural gas; turned into ethylene to make plastics.',
     geo: build(({ at, from }) => {
       const c1 = at('C', [0, 0, 0]); const c2 = from(c1, X, 'C', len.CC)
@@ -124,7 +124,7 @@ export const MOLECULES = [
     id: 'ethylene', name: 'Ethylene', formula: 'C₂H₄', unlocked: (s) => s.solved['1-4pi'],
     met: 'The π door, Forge of Hybrids (1-4)',
     shape: 'Flat — all six atoms in one plane', hybrid: 'Both carbons sp²', angles: 'about 120°', section: '1.8', pages: '19–21',
-    fact: 'The C=C is a σ bond plus a π bond. The π bond needs the two leftover p orbitals parallel, which keeps the molecule flat.',
+    fact: 'The C=C is a σ bond plus a π bond, made by the two leftover p orbitals overlapping side by side. All six atoms lie in one plane, about 120° apart.',
     use: 'A plant hormone that ripens fruit; the raw material for polyethylene.',
     geo: build(({ at, from }) => {
       const c1 = at('C', [0, 0, 0]); const c2 = from(c1, X, 'C', len['C=C'], 2)
@@ -133,7 +133,7 @@ export const MOLECULES = [
   },
   {
     id: 'acetylene', name: 'Acetylene', formula: 'C₂H₂', unlocked: (s) => s.solved.boss,
-    met: 'The Colossus\'s last core — the sp shape (boss)',
+    met: 'The Colossus\'s core: a carbon with two π bonds (boss)',
     shape: 'Linear', hybrid: 'Both carbons sp', angles: '180°', section: '1.9', pages: '21–22',
     fact: 'The C≡C triple bond is one σ bond and two π bonds, from two leftover p orbitals on each carbon.',
     use: 'Burned with oxygen in welding torches.',
@@ -158,7 +158,7 @@ export const MOLECULES = [
   {
     id: 'methylcyclohexane', name: 'Methylcyclohexane', formula: 'C₇H₁₄', unlocked: (s) => s.solved['1-5b'],
     met: 'A painting in the Skeleton Gallery (1-5)',
-    shape: 'A six-carbon ring (puckered, "chair")', hybrid: 'All carbons sp³', angles: 'about 109.5°', section: '1.12', pages: '25–27',
+    shape: 'A six-carbon ring (not flat — Chapter 4 shows its shape)', hybrid: 'All carbons sp³', angles: 'about 109.5°', section: '1.12', pages: '25–27',
     fact: 'Drawn as a hexagon with one line sticking out. Each ring corner hides 2 H, except the one holding the methyl, which hides 1.',
     use: 'A solvent, and a component of fuels.',
     geo: build(({ at, from }) => {

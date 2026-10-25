@@ -422,13 +422,13 @@ function TempleLevel({ world, onExit }) {
 
       {/* ---- 2-2 Hall of Accounts */}
       <Chest world={world} pos={[6, 0, -40]} rotY={-Math.PI / 2} opened={!!solved['t2-compass']} onOpen={() => openChest('t2-compass')} />
-      <Chest world={world} pos={[3, 0, -51]} rotY={Math.PI} opened={!!solved['t2-key']} show={!!solved['2-2']} onOpen={() => openChest('t2-key')} label="Open the small chest" />
+      <Chest world={world} pos={[3, 0, -51]} opened={!!solved['t2-key']} show={!!solved['2-2']} onOpen={() => openChest('t2-key')} label="Open the small chest" />
       <Gate world={world} pos={[0, 0, -54]} size={[2 * W, 7, 0.8]} open={!!solved['t2-door']} color="#5a4020" glow="#ffcf6a" />
       <Html position={[0, 7.8, -53.6]} center distanceFactor={13}><div className="tag3d">{solved['t2-door'] ? 'unlocked' : 'locked · small key'}</div></Html>
 
       {/* ---- 2-3 Resonance Tidepools: the Hookshot, then hook across the water */}
       <ImpPack world={world} spawns={[[-4, -58], [4, -59], [0, -60.5]]} active />
-      <Chest world={world} pos={[0, 0, -57.5]} rotY={Math.PI} big opened={!!solved['t2-hookshot']} onOpen={() => openChest('t2-hookshot')} label="Open the big chest" />
+      <Chest world={world} pos={[0, 0, -57.5]} big opened={!!solved['t2-hookshot']} onOpen={() => openChest('t2-hookshot')} label="Open the big chest" />
       <HookTarget world={world} pos={[-4, 0, -73.2]} land={[-4, 0, -72.6]} label="δ+" />
       <HookTarget world={world} pos={[4, 0, -73.2]} land={[4, 0, -72.6]} label="δ+" />
       <HookTarget world={world} pos={[0, 0, -60.8]} land={[0, 0, -61.3]} />

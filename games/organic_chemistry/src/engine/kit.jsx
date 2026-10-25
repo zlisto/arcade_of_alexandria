@@ -264,7 +264,7 @@ export function Chest({ world, pos, rotY = 0, opened, onOpen, show = true, big =
         <mesh position={[0, 0.12, 0.375]} rotation={[0, 0, Math.PI / 2]} castShadow><cylinderGeometry args={[0.37, 0.37, 1, 14, 1, false, 0, Math.PI]} /><meshStandardMaterial color={wood} roughness={0.8} /></mesh>
         <mesh position={[0, 0.04, 0.76]}><boxGeometry args={[0.16, 0.18, 0.05]} /><meshStandardMaterial color={trim} metalness={0.8} roughness={0.3} /></mesh>
       </group>
-      {opened && <pointLight position={[0, 1.2, 0]} color={trim} intensity={2} distance={4} />}
+      {opened ? <pointLight position={[0, 1.2, 0]} color={trim} intensity={2} distance={4} /> : <pointLight position={[0, 1.4, 0.8]} color={trim} intensity={1.2} distance={3.5} />}
     </group>
   )
 }
@@ -290,10 +290,25 @@ export function Tag({ position, children, df = 10, near = 3.2, far = 24, classNa
     if (!g.current || !el.current) return
     const d = camera.position.distanceTo(g.current.getWorldPosition(_tagV))
     el.current.style.opacity = d < near || d > far ? '0' : d < near + 1 ? String(d - near) : '1'
+    // readable at every distance: shrink gently with distance, but never below ~11 px or above ~18 px
+    el.current.style.transform = `scale(${Math.min(1.45, Math.max(0.95, (df * 1.1) / Math.max(1, d)))})`
   })
   return (
     <group ref={g} position={position}>
-      <Html center distanceFactor={df} zIndexRange={[5, 0]} style={{ pointerEvents: 'none' }}><div ref={el} className={'tag3d ' + className}>{children}</div></Html>
+      <Html center zIndexRange={[5, 0]} style={{ pointerEvents: 'none' }}><div ref={el} className={'tag3d ' + className}>{children}</div></Html>
     </group>
   )
+}
+
+/** A side-on dialogue camera framing Kai and whoever he's talking to (set world.camOverride; clear after). */
+export function twoShot(world, npc, dist = 3.8) {
+  const p = world.player && world.player.pos
+  if (!p) return null
+  const mx = (p.x + npc[0]) / 2, mz = (p.z + npc[2]) / 2
+  let dx = npc[0] - p.x, dz = npc[2] - p.z
+  const l = Math.hypot(dx, dz) || 1
+  dx /= l; dz /= l
+  if (world.player.teleport) world.player.teleport([p.x, p.y, p.z], Math.atan2(dx, dz))
+  // stand off to the side of the line between them, a little toward Kai's back so both faces show
+  return { pos: [mx - dz * dist - dx * 1.2, 2.0, mz + dx * dist - dz * 1.2], look: [mx, 1.45, mz] }
 }

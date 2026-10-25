@@ -26,6 +26,7 @@ if (typeof window !== 'undefined') Object.values(PORTRAITS).forEach((src) => { c
 
 function Portrait({ who }) {
   const src = PORTRAITS[who]
+  if (!who) return null // narration ("You got…!") has no speaker
   const [failed, setFailed] = useState(false)
   useEffect(() => setFailed(false), [src])
   if (src && !failed) return <img className="portrait" src={src} alt="" onError={() => setFailed(true)} />

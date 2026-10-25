@@ -4,20 +4,27 @@ import { Html } from '@react-three/drei'
 import * as THREE from 'three'
 import { getState, setState, toast } from '../engine/store'
 import { sfx } from '../audio/sfx'
-import { HYBRIDS } from '../chem/rules'
 import { ColossusBody, useColossusAssets, socketCount } from './ColossusModel'
 
 // The Unbonded Colossus (boss of the Orbital Caverns; book §1.4, §1.6–1.9).
 // A giant of loose atoms with empty sockets. Pattern: stomp shockwave (roll through it or hop over it),
 // arm sweep (block or dodge), then it kneels and exposes its core: a carbon that needs one bonding geometry.
-// Kai must strike the core in the matching hybrid stance. Three phases: sp³ → sp² → sp.
+// The core names a carbon from a real Chapter 1 molecule; Kai works out its hybrid from its bonds (§1.6–1.9)
+// and strikes in that stance. The three hybrids come in a random order. A wrong strike shocks Kai and
+// closes the opening; at most two hits land per kneel. In the last phase the stomp comes twice.
 
-const PHASES = [
-  { need: 'sp3', why: 'A carbon with four single bonds: tetrahedral, 109.5°. Strike in sp³!', speed: 1 },
-  { need: 'sp2', why: 'A carbon in a double bond: three σ bonds at 120° plus one π bond. Strike in sp²!', speed: 1.25 },
-  { need: 'sp', why: 'A carbon in a triple bond: two σ bonds at 180° plus two π bonds. Strike in sp!', speed: 1.5 },
-]
-const HITS_PER_PHASE = 3
+// carbons the core can ask for, by the hybrid they need (molecules from §1.6–1.10)
+const FRAGMENTS = {
+  sp3: [{ f: 'the C in CH₄', hint: 'four single bonds, no π bonds' }, { f: 'a C in CH₃–CH₃', hint: 'four single bonds, no π bonds' }, { f: 'the C in CH₃OH', hint: 'four single bonds, no π bonds' }],
+  sp2: [{ f: 'the C in H₂C=O', hint: 'three σ bonds and one π bond (a double bond)' }, { f: 'a C in H₂C=CH₂', hint: 'three σ bonds and one π bond (a double bond)' }],
+  sp: [{ f: 'the C≡N carbon in CH₃C≡N', hint: 'two σ bonds and two π bonds (a triple bond)' }, { f: 'a C in HC≡CH', hint: 'two σ bonds and two π bonds (a triple bond)' }],
+}
+// phases only set the pace; the carbon the core asks for is drawn fresh at every kneel (never the same
+// hybrid twice running), so the shape can't be learned once and repeated
+const PHASES = [{ speed: 1 }, { speed: 1.25 }, { speed: 1.5 }]
+const HYBRID_KEYS = ['sp3', 'sp2', 'sp']
+const HITS_PER_PHASE = 2
+const HITS_PER_OPENING = 2
 
 // The core shows the bonding geometry it is asking for (§1.6–1.9): bond sticks for the σ framework and
 // translucent lobes for the unhybridized p orbitals that make π bonds.
@@ -60,7 +67,7 @@ export default function Colossus({ world, center, active, onDefeated }) {
   const core = useRef()
   const coreMat = useRef()
   const wave = useRef()
-  const st = useRef({ phase: 0, hits: 0, mode: 'idle', t: 0, waveR: 0, waveOn: false, facing: 0, pos: new THREE.Vector3(center[0], 0, center[2]), cycle: 0, dead: false, flinch: 0 })
+  const st = useRef({ phase: 0, hits: 0, openHits: 0, frag: null, wrong: false, mode: 'idle', t: 0, waveR: 0, waveOn: false, facing: 0, pos: new THREE.Vector3(center[0], 0, center[2]), cycle: 0, dead: false, flinch: 0 })
   const [label, setLabel] = useState(null)
   const A = useColossusAssets()
   const orbit = useRef()
@@ -77,13 +84,18 @@ export default function Colossus({ world, center, active, onDefeated }) {
         const s = st.current
         if (s.dead) return false
         if (s.mode !== 'exposed') { sfx('block'); return false }
-        const need = PHASES[s.phase].need
+        const need = s.need
         if (stance !== need) {
+          // a wrong shape: the core shocks Kai and seals up — read the bonds next time
           sfx('wrong')
-          toast(`The core rejects a ${HYBRIDS[stance].label} strike. ${PHASES[s.phase].why} (press R to change shape)`, 'warn', 3200)
+          s.wrong = true
+          if (world.player) world.player.hurt(1, [s.pos.x, 0, s.pos.z])
+          toast(`Wrong shape! ${s.frag.f[0].toUpperCase() + s.frag.f.slice(1)} has ${s.frag.hint}. Which hybrid makes that?`, 'warn', 4200)
+          s.mode = 'rise'; s.t = 0; setLabel(null)
           return false
         }
         s.hits++
+        s.openHits++
         s.flinch = 0.25
         sfx('hit')
         setState({ bossHp: { name: 'The Unbonded Colossus', hp: PHASES.length * HITS_PER_PHASE - (s.phase * HITS_PER_PHASE + s.hits), max: PHASES.length * HITS_PER_PHASE } })
@@ -93,17 +105,18 @@ export default function Colossus({ world, center, active, onDefeated }) {
           sfx('bond')
           if (s.phase >= PHASES.length) {
             s.dead = true
+            world.hitStop = 0.7; world.shake = 0.8
             s.mode = 'dying'
             s.t = 0
             setLabel(null)
             setState({ bossHp: null })
             setTimeout(() => onDefeated && onDefeated(), 2200)
           } else {
-            toast(`The atoms lock into place — every one with a full octet. It rises again, faster!`, 'good', 2800)
+            toast('Locked: every atom has a filled shell. It rises again, faster!', 'good', 3200)
             s.mode = 'rise'; s.t = 0
             setLabel(null)
           }
-        }
+        } else if (s.openHits >= HITS_PER_OPENING) { s.mode = 'rise'; s.t = 0; setLabel(null); toast('It shudders up again. Make it kneel once more.', 'info', 2600) }
         return true
       },
     })
@@ -138,7 +151,8 @@ export default function Colossus({ world, center, active, onDefeated }) {
           break
         case 'stomp':
           if (s.t > 0.9 && !s.waveOn && s.t < 1.0) { s.waveOn = true; s.waveR = 1; sfx('stomp') }
-          if (s.t > 2.0) { s.mode = 'idle'; s.t = 0 }
+          if (s.phase === PHASES.length - 1 && s.t > 2.3 && !s.second) { s.second = true; s.waveOn = true; s.waveR = 1; sfx('stomp') }
+          if (s.t > (s.phase === PHASES.length - 1 ? 3.4 : 2.0)) { s.mode = 'idle'; s.t = 0; s.second = false }
           break
         case 'sweep': {
           if (s.t > 0.8 && s.t < 1.05 && !s.swept) {
@@ -152,9 +166,17 @@ export default function Colossus({ world, center, active, onDefeated }) {
         }
         case 'kneel':
           if (s.t > 0.8) {
-            s.mode = 'exposed'; s.t = 0
-            setLabel(PHASES[s.phase].need)
-            if (s.phase === 0 && !s.toldExpose) { s.toldExpose = true; toast(PHASES[0].why, 'info', 3600) }
+            s.mode = 'exposed'; s.t = 0; s.openHits = 0
+            // after a wrong strike, the same carbon comes back with its bond-shape sketch as a hint; otherwise a new one
+            const hint = s.wrong && s.frag && s.need
+            if (!hint) {
+              const pool = HYBRID_KEYS.filter((k) => k !== s.need)
+              s.need = pool[Math.floor(Math.random() * pool.length)]
+              const list = FRAGMENTS[s.need]; s.frag = list[Math.floor(Math.random() * list.length)]
+            }
+            setLabel({ need: s.need, frag: s.frag, shape: hint })
+            s.wrong = false
+            if (!s.toldExpose) { s.toldExpose = true; toast('The core names a carbon. Count its bonds: which shape fits? R to change, then strike!', 'info', 4200) }
           }
           break
         case 'exposed':
@@ -166,7 +188,7 @@ export default function Colossus({ world, center, active, onDefeated }) {
       if (s.waveOn) {
         s.waveR += dt * 9 * sp
         const d = Math.hypot(p.pos.x - s.pos.x, p.pos.z - s.pos.z)
-        if (Math.abs(d - s.waveR) < 0.6 && p.pos.y < 0.4 && !p.rolling) p.hurt(2, [s.pos.x, 0, s.pos.z])
+        if (Math.abs(d - s.waveR) < 0.6 && p.pos.y < 0.4 && !p.rolling) p.hurt(2, [s.pos.x, 0, s.pos.z], true)
         if (s.waveR > 16) s.waveOn = false
       }
     }
@@ -184,7 +206,7 @@ export default function Colossus({ world, center, active, onDefeated }) {
     const exposed = s.mode === 'exposed'
     core.current.position.y = exposed ? 3.6 : 4.4
     core.current.scale.setScalar(exposed ? 1.35 + Math.sin(t * 6) * 0.08 : 0.8)
-    coreMat.current.emissiveIntensity = exposed ? 3 : 0.6
+    coreMat.current.emissiveIntensity = exposed ? (label && label.shape ? 1.1 : 3) : 0.6
     wave.current.visible = s.waveOn
     if (s.waveOn) { wave.current.position.set(s.pos.x, 0.08, s.pos.z); wave.current.scale.setScalar(s.waveR) }
     if (s.mode === 'dying') g.current.scale.setScalar(Math.max(0.01, 1 - s.t * 0.35))
@@ -202,10 +224,10 @@ export default function Colossus({ world, center, active, onDefeated }) {
         <group ref={core} position={[0, 4.4, 0.9]}>
           <mesh><icosahedronGeometry args={[0.55, 1]} /><meshStandardMaterial ref={coreMat} color="#1a1a1a" emissive="#43e6f5" emissiveIntensity={0.6} roughness={0.2} toneMapped={false} /></mesh>
           <pointLight color="#43e6f5" intensity={4} distance={8} />
-          {label && <CoreShape kind={label} />}
+          {label && label.shape && <CoreShape kind={label.need} />}
           {label && (
-            <Html position={[0, 1.4, 0]} center distanceFactor={12}>
-              <div className="coretag">needs <b>{HYBRIDS[label].label}</b> · {HYBRIDS[label].angle}°</div>
+            <Html position={[0, 1.6, 0]} center zIndexRange={[5, 0]}>
+              <div className="coretag">needs the shape of <b>{label.frag.f}</b></div>
             </Html>
           )}
         </group>

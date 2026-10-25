@@ -11,7 +11,7 @@ export const LESSONS = {
       'Protons + neutrons = the mass number, A. Atoms of one element with different A are isotopes.',
       'A neutral atom has as many electrons as protons.',
     ],
-    example: 'Carbon-13: Z = 6, so 6 protons and 6 electrons. A = 13, so 13 − 6 = 7 neutrons.',
+    example: 'Nitrogen-15 (an example beyond the book): Z = 7, so 7 protons and 7 electrons. A = 15, so 15 − 7 = 8 neutrons.',
   },
   shells: {
     title: 'Filling electron shells',
@@ -22,7 +22,7 @@ export const LESSONS = {
       'An orbital holds at most two electrons, and they must have opposite spins (↑↓).',
       'For orbitals of equal energy (the three 2p), put one electron in each, same spin, before pairing any up.',
     ],
-    example: 'Nitrogen has 7 electrons: 1s² 2s² 2p³, with one unpaired electron in each of the three 2p orbitals.',
+    example: 'Boron has 5 electrons: 1s² 2s² 2p¹. The lone 2p electron sits in one orbital; the other two stay empty.',
   },
   octet: {
     title: 'How many bonds an atom makes',
@@ -34,7 +34,7 @@ export const LESSONS = {
       'Valence electrons not used in bonds are lone pairs: nitrogen keeps one pair, oxygen two.',
       'A double bond counts as two bonds.',
     ],
-    example: 'Methylamine, CH₃NH₂: the carbon bonds to 3 H and the N (4 bonds); the nitrogen bonds to the C and 2 H (3 bonds) and keeps a lone pair.',
+    example: 'Water, H₂O: the oxygen bonds to 2 H (2 bonds) and keeps two lone pairs. Each H has its one bond.',
   },
   well: {
     title: 'Bond length and bond strength',

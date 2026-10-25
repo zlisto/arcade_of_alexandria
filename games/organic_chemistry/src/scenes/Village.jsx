@@ -3,7 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import { Sky, Html } from '@react-three/drei'
 import * as THREE from 'three'
 import GameScene from '../engine/GameScene'
-import { Block, Slab, Scatter, scatter, Motes, Torch } from '../engine/kit'
+import { Block, Slab, Scatter, scatter, Motes, Torch, twoShot } from '../engine/kit'
 import { Pi, Villager } from '../actors/Figures'
 import WolfPack from '../actors/WolfPack'
 import { getState, setState, saveGame, say, toast, useGame } from '../engine/store'
@@ -274,7 +274,7 @@ function VillageLevel({ world, onExit }) {
         await say([
           { who: 'Pi', text: "Kai! Kai, wake up! Something's wrong — the bonds are breaking all over the village!" },
           { who: 'Pi', text: "I'm Pi. A π-electron cloud — I float above and below things, so I see where electrons are." },
-          { who: 'Pi', text: "And you're a carbon. See the four glowing sockets on your armor? Nobody else in Hydrogen Village can hold more than one bond. You can hold four." },
+          { who: 'Pi', text: 'And you\'re carbon. See your four sockets? Villagers hold one bond each. You can hold four.' },
           { who: 'Pi', text: 'Run with WASD. Click the game to steer the camera with the mouse. The Elder is by the well — let\'s go!' },
         ])
       }, 700)
@@ -285,33 +285,35 @@ function VillageLevel({ world, onExit }) {
     if (busyRef.current) return
     busyRef.current = true
     const s = getState()
+    world.camOverride = twoShot(world, [WELL[0] - 4.2, 0, WELL[2] + 2.6])
     if (s.save.well) {
-      await say([{ who: 'Elder Proton', text: 'Our well holds again, thanks to you. Mind those wolves, and mind the cave — old Aufbau lives down there.' }])
+      await say([{ who: 'Elder Proton', text: 'Those sparks shout that carbon bonds any which way. Our seal says otherwise. Mind the cave — old Aufbau\'s down there.' }])
     } else if (quest === 'none') {
       await say([
-        { who: 'Elder Proton', text: "Kai, my boy. The violet sparks came in the night and tore the methane seal off our well." },
-        { who: 'Elder Proton', text: 'The seal is one carbon heart holding four hydrogens. Every hydrogen in the village fence that snapped loose is floating about.' },
-        { who: 'Elder Proton', text: "Bring four loose hydrogens to the well. We villagers can only hold one bond each — but you're carbon. You can carry four." },
-        { who: 'Pi', text: 'Walk up to a glowing hydrogen and press E to bond it into one of your sockets.' },
+        { who: 'Elder Proton', text: 'Kai, my boy. Those violet sparks came in the night and tore the methane seal off our well. Look at them still crackling.' },
+        { who: 'Elder Proton', text: 'The seal was one carbon heart holding four hydrogens. The sparks tore them loose. They\'re drifting by the fence.' },
+        { who: 'Elder Proton', text: 'Bring me four. We hold one bond apiece, but you\'re carbon, lad. You can carry four.' },
+        { who: 'Pi', text: 'Walk up to a glowing hydrogen and press E to bond it into a socket.' },
       ])
       setQuest('gather')
       setState({ objective: `Bond 4 loose hydrogens (${getState().sockets.filter((x) => x === 'H').length}/4)` })
     } else {
       await say([{ who: 'Elder Proton', text: `${4 - getState().sockets.length} more to go. Carbon makes four bonds — no more, no less.` }])
     }
+    world.camOverride = null
     busyRef.current = false
   }
 
   const take = (i) => {
     const s = getState()
     if (quest === 'none') { say([{ who: 'Pi', text: "That's a hydrogen from the fence. Let's hear what the Elder needs first." }]); return }
-    if (s.sockets.length >= 4) { sfx('wrong'); toast('All four sockets are full. Carbon forms four bonds — no more (§1.4).', 'warn'); return }
+    if (s.sockets.length >= 4) { sfx('wrong'); toast('Sockets full. Carbon makes exactly four bonds (§1.4).', 'warn'); return }
     sfx('pickup')
     const sockets = [...s.sockets, 'H']
     setState({ sockets, objective: `Bond 4 loose hydrogens (${sockets.length}/4) — then bring them to the well` })
     setTaken((t) => t.map((x, k) => (k === i ? true : x)))
-    if (sockets.length === 1) toast('Bonded! One H in one socket. Hydrogen makes one bond; carbon makes four.', 'good')
-    if (sockets.length === 4) toast('Four bonds — every socket full. Now Kai has an octet, like the C in CH₄.', 'good', 4200)
+    if (sockets.length === 1) toast('Bonded! Hydrogen makes one bond. Carbon makes four.', 'good')
+    if (sockets.length === 4) { setState({ objective: 'Bring your four hydrogens to the well' }); toast('Four bonds, every socket full: an octet, like the C in CH₄.', 'good', 4200) }
   }
 
   const examineMethane = async () => {
@@ -319,9 +321,10 @@ function VillageLevel({ world, onExit }) {
     busyRef.current = true
     sfx('lock')
     await say([
-      { who: 'Pi', text: "That's methane, CH₄ — the seal you made. One carbon holding four hydrogens: carbon needs four bonds to fill its octet, and each hydrogen needs just one (§1.4)." },
-      { who: 'Pi', text: 'Carbon mixes its one 2s and three 2p orbitals into four identical sp³ hybrid orbitals. They point to the corners of a tetrahedron, so every H–C–H angle is 109.5° — see the glowing arc (§1.6).' },
-      { who: 'Pi', text: 'Each C–H bond is 109 pm long and takes 439 kJ/mol to break. Four equal, strong bonds — that is why the seal holds.' },
+      { who: 'Pi', text: 'Methane, CH₄: your seal. Carbon needs four bonds for its octet; each hydrogen needs one (§1.4).' },
+      { who: 'Pi', text: 'Carbon mixes one 2s and three 2p orbitals into four identical sp³ hybrids (§1.6).' },
+      { who: 'Pi', text: 'They point to a tetrahedron\'s corners. Every H–C–H angle is 109.5°. See the arc?' },
+      { who: 'Pi', text: 'Each C–H bond is 109 pm long and takes 439 kJ/mol to break. Four equal, strong bonds.' },
     ])
     busyRef.current = false
   }
@@ -338,8 +341,6 @@ function VillageLevel({ world, onExit }) {
     saveGame({ well: true })
     setQuest('done')
     await say([
-      { who: 'Pi', text: 'Look! A carbon heart with four hydrogens — methane, CH₄. All four bonds point to the corners of a tetrahedron, 109.5° apart.' },
-      { who: 'Pi', text: 'Drawing every atom is slow, so chemists use line-bond structures: a line for each shared pair of electrons. H–C–H, four times over.' },
       { who: 'Elder Proton', text: 'The seal holds! Bless you, lad—' },
       { who: 'Pi', text: 'Kai — wolves! Violet ones! Those are Malradix\'s radicals!' },
     ])
@@ -347,8 +348,8 @@ function VillageLevel({ world, onExit }) {
     setWolvesOn(true)
     setState({ objective: 'Drive off the Radical Wolves' })
     setTimeout(() => say([
-      { who: 'Pi', text: 'Each wolf has one unpaired electron burning in its chest. Hit one with your sword (left click) and see what happens…' },
-      { who: 'Pi', text: 'Right click (or Tab) locks on, so you can aim. Space rolls out of the way — and while locked on, Space plus a direction sidesteps or hops back.' },
+      { who: 'Pi', text: 'Each wolf burns with one unpaired electron. Hit one (left click) and watch…' },
+      { who: 'Pi', text: 'Right click or Tab locks on. Space rolls. Locked on, Space plus a direction sidesteps.' },
     ]), 400)
   }
 
@@ -356,11 +357,12 @@ function VillageLevel({ world, onExit }) {
     saveGame({ wolvesCleared: true, villageDone: true, checkpoint: { scene: 'village' } })
     setWolvesOn(false)
     await say([
-      { who: 'Pi', text: 'They paired up and vanished! A radical only stops when it meets another radical — two unpaired electrons become one shared bond.' },
-      { who: 'Pi', text: "Hitting one alone just made another. That's how Malradix's spells spread: a chain reaction." },
-      { who: 'Pi', text: '…Do you feel that rumble? The hill to the north!' },
+      { who: 'Pi', text: 'They paired up and vanished! Two unpaired electrons became one shared bond — like two H atoms making H₂ (§1.5).' },
+      { who: 'Pi', text: 'Hit alone, one just passed its spark along. That\'s how Malradix\'s spells spread.' },
     ])
-    sfx('open')
+    world.shake = 0.9
+    sfx('stomp'); sfx('open')
+    await say([{ who: 'Pi', text: 'That rumble — the hill! The last spark fled into the old cave!' }])
     setState({ objective: 'Enter the glowing cave north of the village' })
     toast('The cave to the north has opened.', 'good')
   }
@@ -409,13 +411,14 @@ function VillageLevel({ world, onExit }) {
       <Block world={world} pos={[WELL[0], 0.5, WELL[2]]} size={[2.4, 1, 2.4]} visible={false} />
       <WellStation world={world} done={!!save.well} onUse={useWell} label={() => (getState().save.well ? null : getState().sockets.length >= 4 ? 'Seal the well with CH₄' : 'Examine the broken well')} />
       <Methane world={world} show={!!save.well} onExamine={examineMethane} />
+      {!save.well && <Motes count={70} area={[5, 3, 5]} center={[WELL[0], 0.6, WELL[2]]} color="#c070ff" size={0.12} />}
       {/* villagers: hydrogens, so they go about in pairs (H₂) */}
       <NPC world={world} pos={[WELL[0] - 4.2, WELL[2] + 2.6]} name="Elder Proton" hat="#4a4a8a" kind="elder" onTalk={talkElder} />
       <NPC world={world} pos={[-4, 13]} name="Hilda & Hal" pair onTalk={() => say([{ who: 'Hilda', text: "We hydrogens can only hold one hand each. So we go about in twos — H₂, the two of us." }, { who: 'Hal', text: 'Four bonds, though? Kai, you must be exhausted.' }])} />
-      <NPC world={world} pos={[16, 2]} name="Old Deut" hat="#2a6a4a" kind="deut" onTalk={() => say([{ who: 'Old Deut', text: "I'm a hydrogen with an extra neutron in my nucleus. Heavier — deuterium, they call it — but the same element. Same one bond." }, { who: 'Pi', text: 'An isotope: same number of protons (atomic number), different mass number.' }])} />
-      <NPC world={world} pos={[-10, -10]} name="Pip" hat="#c08a2a" kind="kid" onTalk={() => say([{ who: 'Pip', text: "The sage in the cave once told me carbon's electrons fill up from the bottom like water in a jug. 1s first, then 2s, then 2p." }])} />
+      <NPC world={world} pos={[16, 2]} name="Old Deut" hat="#2a6a4a" kind="deut" onTalk={() => say([{ who: 'Old Deut', text: 'Extra neutron in my nucleus: deuterium. Heavier, but the same element. Same one bond.' }, { who: 'Pi', text: 'An isotope: same number of protons (atomic number), different mass number.' }])} />
+      <NPC world={world} pos={[-10, -10]} name="Pip" hat="#c08a2a" kind="kid" onTalk={() => say([{ who: 'Pip', text: 'The cave sage says electrons fill from the bottom, like water in a jug: 1s, then 2s, then 2p.' }])} />
       {LOOSE_H.map((p, i) => <LooseH key={i} world={world} pos={p} taken={taken[i]} onTake={() => take(i)} />)}
-      <WolfPack world={world} spawns={[[2, 2], [9, 7]]} active={wolvesOn} onCleared={cleared} />
+      <WolfPack world={world} spawns={[[2, 2], [9, 7], [5, 9]]} active={wolvesOn} onCleared={cleared} />
       <CaveMouth open={save.wolvesCleared} />
       <Scatter items={trees} kind="tree" />
       <Scatter items={rocks} kind="rock" color="#8a8580" />

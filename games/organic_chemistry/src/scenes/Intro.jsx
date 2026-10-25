@@ -9,11 +9,12 @@ import { setState, useGame } from '../engine/store'
 // Opening cutscene. Each caption holds until the player clicks / presses Space (or Skip).
 const BEATS = [
   { cap: 'In the Kingdom of Valence, everything is made of molecules: the houses, the rivers, the beasts, the people.', cam: [[0, 4, 16], [0, 2.5, 0]] },
-  { cap: 'They hold together by one law — the Law of the Octet — kept by the Crown of Tetravalence: four bonds of light around a carbon heart.', cam: [[2.2, 3.6, 4.6], [0, 3, 0]] },
+  { cap: 'Their law is the Octet, kept by the Crown of Tetravalence: four bonds of light around a carbon heart.', cam: [[2.2, 3.6, 4.6], [0, 3, 0]] },
   { cap: 'But one sorcerer refused to share.', who: 'Malradix', cam: [[2.5, 2.8, 0.5], [0, 2.2, 7]], mal: 1 },
   { cap: 'Malradix the Unpaired: “Sharing is weakness. I keep my electron to myself — and I will break every bond in this kingdom.”', who: 'Malradix', cam: [[-1.6, 2.7, -0.4], [0, 2.4, 2.4]], mal: 2 },
   { cap: 'He struck the crown. It shattered into twelve Bond Shards, and they streaked away to the twelve corners of the kingdom.', cam: [[0, 4.5, 11], [0, 4, -1]], shatter: true },
-  { cap: 'Princess Octavia: “Find the one who can carry four bonds…”', who: 'Octavia', cam: [[3, 2.4, 3.2], [-1.5, 2, -1]], taken: true },
+  { cap: 'Princess Octavia: “Find the one who can carry four bonds…” Then the dark took her.', who: 'Octavia', cam: [[-4, 2.4, 2.5], [-1.6, 1.8, -0.8]], taken: true },
+  { cap: 'Without the crown, Malradix’s violet sparks went hunting through the kingdom, tearing bonds apart.', cam: [[0, 6, 14], [0, 3, -2]], sparks: true },
   { cap: 'Far away, in quiet Hydrogen Village, a young carbon named Kai woke to the sound of bonds breaking.', cam: [[0, 9, 18], [0, 3, 0]], end: true },
 ]
 
@@ -76,10 +77,11 @@ function Hall({ beat, tBeat }) {
       <mesh position={[0, 1.6, -1.6]}><boxGeometry args={[0.6, 0.8, 0.6]} /><meshStandardMaterial color="#3a3442" /></mesh>
       <Crown position={[0, 3, -1.6]} shatter={shatter} />
       <group ref={shards}>{[...Array(12)].map((_, i) => <mesh key={i} scale={[0.6, 1.6, 0.6]}><octahedronGeometry args={[0.28, 0]} /><meshBasicMaterial color="#ffd76a" toneMapped={false} /></mesh>)}</group>
-      <group ref={oct}><Octavia position={[-1.6, 0, -0.8]} rotation={[0, 0.5, 0]} /></group>
+      <group ref={oct} position={[-1.6, 0, -0.8]}><Octavia rotation={[0, 0.5, 0]} /></group>
       <group ref={mal} position={[0, 0, 14]}><Malradix rotation={[0, Math.PI, 0]} /></group>
       <Motes count={140} area={[20, 9, 30]} center={[0, 0.5, 2]} color="#ffd9a0" size={0.05} />
       {beat >= 5 && <pointLight position={[-1.6, 2, -0.8]} color="#a06bff" intensity={8} distance={6} />}
+      {BEATS[beat].sparks && <Motes count={160} area={[18, 6, 18]} center={[0, 0.5, 0]} color="#c070ff" size={0.14} />}
     </group>
   )
 }

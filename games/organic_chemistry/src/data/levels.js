@@ -74,7 +74,7 @@ export const LEVELS = [
       { label: '1-3 Wolf arena', ...cave('1-3', '1-3wolves') },
       { label: '1-4 Forge of Hybrids · §1.6–1.10', ...cave('1-4', '1-4crystal') },
       { label: '1-4 Forge, Hybrid Crystal in hand', ...cave('1-4', '1-4tetra', { hasCrystal: true }) },
-      { label: '1-5 Skeleton Gallery · §1.11–1.12', ...cave('1-5', '1-5a', { hasCrystal: true }) },
+      { label: '1-5 Skeleton Gallery · §1.12', ...cave('1-5', '1-5a', { hasCrystal: true }) },
       { label: 'Boss · The Unbonded Colossus', ...cave('boss', 'boss', { hasCrystal: true }) },
       { label: 'Bond Shard (boss beaten)', ...cave('boss', null, { hasCrystal: true, bossDone: true }) },
     ],
