@@ -1,6 +1,7 @@
 import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
+import { softDot } from '../engine/materials'
 
 // Procedural cast members, modeled on their Gemini portraits (assets/characters/*.png).
 
@@ -20,7 +21,8 @@ export function Crown({ shatter = 0, glow = 1, ...props }) {
     <group ref={g} {...props}>
       {shatter < 1 && (
         <>
-          <mesh scale={1 - shatter}><icosahedronGeometry args={[0.28, 1]} /><meshStandardMaterial color="#222" metalness={0.6} roughness={0.25} emissive="#6a7cff" emissiveIntensity={1.4} /></mesh>
+          <mesh scale={1 - shatter}><icosahedronGeometry args={[0.24, 1]} /><meshStandardMaterial color="#3a3020" metalness={0.8} roughness={0.2} emissive="#ffb830" emissiveIntensity={1.2} flatShading toneMapped={false} /></mesh>
+          <sprite scale={1.6 * (1 - shatter) + 0.001}><spriteMaterial map={softDot()} color="#ffd76a" transparent opacity={0.5} depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} /></sprite>
           {dirs.map((d, i) => (
             <mesh key={i} position={d.clone().multiplyScalar(0.55 * (1 + shatter * 4))} quaternion={new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), d)}>
               <cylinderGeometry args={[0.05, 0.05, 0.7, 8]} />

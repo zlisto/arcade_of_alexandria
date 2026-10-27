@@ -6,12 +6,14 @@ import GameScene from '../engine/GameScene'
 import { Block, Slab, Scatter, scatter, Motes, Torch, twoShot } from '../engine/kit'
 import { Pi, Villager } from '../actors/Figures'
 import WolfPack from '../actors/WolfPack'
-import { useModelParts, ModelPart, InstancedPart } from '../engine/models'
+import { useModelParts, ModelPart, InstancedPart, preloadModels } from '../engine/models'
 import { getState, setState, saveGame, say, toast, useGame } from '../engine/store'
 import { playMusic, sfx } from '../audio/sfx'
 
 // Hydrogen Village — the tutorial. Teaches movement and the bond sockets (§1.4), the line-bond
 // shorthand (§1.12), and the radical rule (§6.6) with the first wolf fight. Then the cave opens.
+
+preloadModels('village', 'wolf', 'pi', 'caverns', 'aufbau', 'colossus') // the cave loads while you're still in the village
 
 const START = [0, 0, 10]
 const WELL = [7, 0, -3]

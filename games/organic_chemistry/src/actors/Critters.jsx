@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
-import { rimMat } from '../engine/materials'
+import { rimMat, softDot } from '../engine/materials'
+import { Part } from '../engine/models'
 import { sfx } from '../audio/sfx'
 import { toast } from '../engine/store'
 
@@ -10,6 +11,8 @@ import { toast } from '../engine/store'
 // • Hydronium Crabs (§2.7–2.9): blue crabs flinging protons. Their shell shrugs off the sword; block
 //   (Shift) a proton and it flies back and knocks the crab out — a strong acid getting its own H⁺ back.
 
+// Both are built in Blender (tools/critters_blender.py → public/models/critters.glb); the pair, the
+// proton and the puffs stay procedural.
 const told = { imp: false, crab: false, crabHit: false }
 
 // ---------------------------------------------------------------- Lone-Pair Imps
@@ -17,17 +20,11 @@ function ImpModel({ refCb, M }) {
   return (
     <group ref={refCb} visible={false}>
       <group name="body">
-        <mesh position={[0, 0.32, 0]} scale={[1, 1.1, 0.95]} material={M.red} castShadow><sphereGeometry args={[0.22, 16, 12]} /></mesh>
-        <mesh position={[0, 0.62, 0.02]} material={M.red} castShadow><sphereGeometry args={[0.19, 16, 12]} /></mesh>
-        {[-1, 1].map((s) => <mesh key={'e' + s} position={[s * 0.2, 0.68, 0]} rotation={[0, 0, -s * 1.1]} scale={[0.55, 1, 0.3]} material={M.redDark}><coneGeometry args={[0.12, 0.3, 8]} /></mesh>)}
-        {[-1, 1].map((s) => <mesh key={'h' + s} position={[s * 0.08, 0.82, 0.02]} rotation={[0.2, 0, -s * 0.35]} material={M.horn}><coneGeometry args={[0.03, 0.12, 6]} /></mesh>)}
-        {[-1, 1].map((s) => <mesh key={'y' + s} position={[s * 0.065, 0.66, 0.16]} scale={[1, 1.3, 0.5]} material={M.eye}><sphereGeometry args={[0.035, 10, 8]} /></mesh>)}
-        <mesh position={[0, 0.56, 0.17]} rotation={[0.3, 0, Math.PI]} material={M.dark}><torusGeometry args={[0.05, 0.01, 6, 12, Math.PI]} /></mesh>
-        <mesh position={[0, 0.25, -0.24]} rotation={[-0.9, 0, 0]} material={M.redDark}><coneGeometry args={[0.03, 0.3, 6]} /></mesh>
-        {[-1, 1].map((s) => <mesh key={'l' + s} position={[s * 0.1, 0.08, 0]} material={M.redDark}><capsuleGeometry args={[0.045, 0.08, 3, 6]} /></mesh>)}
+        <Part model="critters" name="imp_body" mats={M} />
         {/* the lone pair, held out in both hands */}
         <group name="pair" position={[0, 0.38, 0.24]}>
-          {[-1, 1].map((s) => <mesh key={s} position={[s * 0.07, 0, 0]} material={M.pair}><sphereGeometry args={[0.05, 10, 8]} /></mesh>)}
+          {[-1, 1].map((s) => <mesh key={s} position={[s * 0.055, 0, 0]} material={M.pair}><sphereGeometry args={[0.05, 10, 8]} /></mesh>)}
+          <sprite scale={0.42}><spriteMaterial map={softDot()} color="#ffe9a0" transparent opacity={0.7} depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} /></sprite>
         </group>
       </group>
       <mesh name="puff" visible={false}><sphereGeometry args={[0.5, 12, 10]} /><meshBasicMaterial color="#ffd0d0" transparent opacity={0.6} /></mesh>
@@ -40,8 +37,10 @@ export function ImpPack({ world, spawns, active = true }) {
     red: rimMat({ color: '#d0303c', roughness: 0.55 }, '#ffb0a0', 0.35),
     redDark: rimMat({ color: '#8a1c26', roughness: 0.6 }, '#ffb0a0', 0.3),
     horn: new THREE.MeshStandardMaterial({ color: '#2a1a1a', roughness: 0.4 }),
-    eye: new THREE.MeshBasicMaterial({ color: '#fff3a0', toneMapped: false }),
+    eye: new THREE.MeshBasicMaterial({ color: '#f4e8ff', toneMapped: false }),
     dark: new THREE.MeshBasicMaterial({ color: '#2a0a0a' }),
+    wing: rimMat({ color: '#a8323e', roughness: 0.7, side: THREE.DoubleSide }, '#ffb0a0', 0.3),
+    teeth: new THREE.MeshStandardMaterial({ color: '#fff6e8', roughness: 0.4 }),
     pair: new THREE.MeshStandardMaterial({ color: '#fff7c0', emissive: new THREE.Color('#ffd760'), emissiveIntensity: 2, toneMapped: false }),
   }), [])
   const refs = useRef([])
@@ -124,19 +123,12 @@ function CrabModel({ refCb, M }) {
   return (
     <group ref={refCb} visible={false}>
       <group name="body">
-        <mesh position={[0, 0.3, 0]} scale={[1, 0.5, 0.8]} material={M.shell} castShadow><sphereGeometry args={[0.42, 20, 14]} /></mesh>
-        {/* three hydrogens on the shell: H₃O⁺ */}
-        {[0, 1, 2].map((k) => { const a = (k / 3) * Math.PI * 2; return <mesh key={k} position={[Math.cos(a) * 0.17, 0.5, Math.sin(a) * 0.14]} material={M.h}><sphereGeometry args={[0.07, 12, 10]} /></mesh> })}
-        {[-1, 1].map((s) => <group key={'st' + s} position={[s * 0.12, 0.45, 0.28]}><mesh position={[0, 0.06, 0]} material={M.shellDark}><cylinderGeometry args={[0.018, 0.018, 0.14, 6]} /></mesh><mesh position={[0, 0.15, 0]} material={M.eye}><sphereGeometry args={[0.04, 8, 6]} /></mesh></group>)}
-        {[-1, 1].map((s) => [0, 1, 2].map((k) => <mesh key={s + '-' + k} position={[s * 0.38, 0.14, -0.15 + k * 0.15]} rotation={[0, 0, s * 0.9]} material={M.shellDark}><capsuleGeometry args={[0.025, 0.22, 3, 6]} /></mesh>))}
-        {/* claws; the right one holds up the proton */}
-        {[-1, 1].map((s) => (
-          <group key={'c' + s} name={s > 0 ? 'clawR' : 'clawL'} position={[s * 0.36, 0.32, 0.3]}>
-            <mesh position={[0, 0, 0.1]} scale={[1, 0.7, 1.3]} material={M.shell}><sphereGeometry args={[0.11, 12, 10]} /></mesh>
-            <mesh position={[s * 0.03, 0.03, 0.24]} rotation={[0.4, 0, 0]} material={M.shellDark}><coneGeometry args={[0.04, 0.14, 6]} /></mesh>
-          </group>
-        ))}
-        <mesh name="proton" position={[0.36, 0.62, 0.4]} material={M.proton}><sphereGeometry args={[0.08, 12, 10]} /></mesh>
+        <Part model="critters" name="crab_body" mats={M} />
+        <group name="clawL" position={[-0.36, 0.32, 0.3]}><Part model="critters" name="crab_clawL" mats={M} /></group>
+        <group name="clawR" position={[0.36, 0.32, 0.3]}>
+          <Part model="critters" name="crab_clawR" mats={M} />
+          <mesh name="proton" position={[0.02, 0.14, 0.34]} material={M.proton}><sphereGeometry args={[0.08, 12, 10]} /></mesh>
+        </group>
       </group>
       <mesh name="puff" visible={false}><sphereGeometry args={[0.6, 12, 10]} /><meshBasicMaterial color="#cfe8ff" transparent opacity={0.6} /></mesh>
     </group>
@@ -147,8 +139,9 @@ export function CrabPack({ world, spawns, active = true }) {
   const M = useMemo(() => ({
     shell: rimMat({ color: '#2f6fd8', roughness: 0.25, metalness: 0.2 }, '#bfe0ff', 0.45),
     shellDark: rimMat({ color: '#1d4592', roughness: 0.35 }, '#bfe0ff', 0.3),
-    h: new THREE.MeshStandardMaterial({ color: '#ffffff', roughness: 0.3, emissive: new THREE.Color('#9fd0ff'), emissiveIntensity: 0.4 }),
+    h: new THREE.MeshStandardMaterial({ color: '#ffffff', roughness: 0.3, emissive: new THREE.Color('#bfe4ff'), emissiveIntensity: 1.2, toneMapped: false }),
     eye: new THREE.MeshBasicMaterial({ color: '#101820' }),
+    crabEye: new THREE.MeshBasicMaterial({ color: '#7ff0ff', toneMapped: false }),
     proton: new THREE.MeshStandardMaterial({ color: '#ffffff', emissive: new THREE.Color('#ffeedd'), emissiveIntensity: 2.5, toneMapped: false }),
   }), [])
   const refs = useRef([])

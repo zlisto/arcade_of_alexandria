@@ -3,6 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import { Html } from '@react-three/drei'
 import * as THREE from 'three'
 import { rimMat } from '../engine/materials'
+import { Part } from '../engine/models'
 import { setState, toast } from '../engine/store'
 import { sfx } from '../audio/sfx'
 
@@ -15,22 +16,15 @@ import { sfx } from '../audio/sfx'
 const PHASES = [{ speed: 1 }, { speed: 1.25 }, { speed: 1.5 }]
 const HITS = 3
 const NAME = 'The Resonance Hydra · CO₃²⁻'
+// The trunk, heads, jaws and neck segments are built in Blender (tools/hydra_blender.py → public/models/hydra.glb).
 const FORM_LABELS = ['form 1 · C=O up', 'form 2 · C=O left', 'form 3 · C=O right']
 
 function Head({ refCb, M, k, showLabel }) {
   return (
     <group ref={refCb}>
       <group name="skull">
-        <mesh scale={[0.75, 0.62, 1.15]} material={M.skin} castShadow><sphereGeometry args={[0.62, 20, 16]} /></mesh>
-        <mesh position={[0, 0.18, 0.15]} scale={[0.85, 0.35, 1]} material={M.fin}><sphereGeometry args={[0.55, 14, 10]} /></mesh>
-        {[-1, 1].map((s) => <mesh key={'e' + s} position={[s * 0.27, 0.2, 0.42]} material={M.eye}><sphereGeometry args={[0.09, 12, 10]} /></mesh>)}
-        {[-1, 1].map((s) => <mesh key={'c' + s} position={[s * 0.32, 0.36, -0.2]} rotation={[-0.9, 0, s * 0.5]} material={M.fin}><coneGeometry args={[0.1, 0.55, 6]} /></mesh>)}
-        {/* this form's double-bonded oxygen glows on the brow */}
-        <mesh position={[0, 0.5, 0.25]} material={M.oxy}><sphereGeometry args={[0.16, 14, 12]} /></mesh>
-        <group name="jaw" position={[0, -0.12, 0.2]}>
-          <mesh position={[0, -0.08, 0.3]} scale={[0.6, 0.22, 0.9]} material={M.skinDark}><sphereGeometry args={[0.55, 16, 10]} /></mesh>
-          {[-1, 1].map((s) => [0, 1, 2].map((t) => <mesh key={s + '-' + t} position={[s * 0.18, 0.05, 0.25 + t * 0.17]} rotation={[0, 0, Math.PI]} material={M.tooth}><coneGeometry args={[0.035, 0.12, 5]} /></mesh>))}
-        </group>
+        <Part model="hydra" name="hyd_skull" mats={M} />
+        <group name="jaw" position={[0, -0.12, 0.2]}><Part model="hydra" name="hyd_jaw" mats={M} /></group>
         <group name="ring" position={[0, 0.95, 0]}>
           <mesh><torusGeometry args={[0.36, 0.07, 10, 26]} /><meshStandardMaterial name="ringMat" color="#4aa8ff" emissive="#4aa8ff" emissiveIntensity={1.6} toneMapped={false} /></mesh>
         </group>
@@ -49,6 +43,8 @@ export default function Hydra({ world, center, pool, active, onDefeated }) {
     tooth: new THREE.MeshStandardMaterial({ color: '#f2efe6', roughness: 0.4 }),
     oxy: new THREE.MeshStandardMaterial({ color: '#ff5050', emissive: new THREE.Color('#ff3030'), emissiveIntensity: 1.8, toneMapped: false }),
     neck: rimMat({ color: '#2a7a8a', roughness: 0.4 }, '#a8f0ff', 0.35),
+    belly: rimMat({ color: '#9ad8c8', roughness: 0.5 }, '#e0fff8', 0.2),
+    gold: new THREE.MeshStandardMaterial({ color: '#c9a24a', metalness: 0.9, roughness: 0.3 }),
     spit: new THREE.MeshStandardMaterial({ color: '#bff6ff', emissive: new THREE.Color('#43c8e6'), emissiveIntensity: 1.6, transparent: true, opacity: 0.85, toneMapped: false }),
     core: new THREE.MeshStandardMaterial({ color: '#ffffff', emissive: new THREE.Color('#ffd76a'), emissiveIntensity: 1.6, toneMapped: false }),
     coreO: new THREE.MeshStandardMaterial({ color: '#ff7070', emissive: new THREE.Color('#ff3030'), emissiveIntensity: 1.2, toneMapped: false }),
@@ -298,14 +294,12 @@ export default function Hydra({ world, center, pool, active, onDefeated }) {
     <group>
       <group ref={body}>
         {/* the trunk: the central carbon, rising out of the pool */}
-        <mesh position={[0, 0.6, 0]} scale={[1.6, 1.3, 1.6]} material={M.skin} castShadow><sphereGeometry args={[1, 24, 18]} /></mesh>
-        <mesh position={[0, 0.2, 0]} scale={[2.2, 0.5, 2.2]} material={M.skinDark}><sphereGeometry args={[1, 20, 12]} /></mesh>
-        {[...Array(8)].map((_, k) => { const a = (k / 8) * Math.PI * 2; return <mesh key={k} position={[Math.sin(a) * 1.4, 1.2, Math.cos(a) * 1.4]} rotation={[Math.cos(a) * 0.5, 0, -Math.sin(a) * 0.5]} material={M.fin}><coneGeometry args={[0.18, 0.7, 6]} /></mesh> })}
+        <Part model="hydra" name="hyd_trunk" mats={M} />
         <Html position={[0, 3.2, 0]} center distanceFactor={14}><div className="tag3d">CO₃²⁻</div></Html>
       </group>
       {[0, 1, 2].map((i) => (
         <group key={i}>
-          {[...Array(7)].map((_, b) => <mesh key={b} ref={(m) => (neckRefs.current[i][b] = m)} material={M.neck} castShadow><sphereGeometry args={[0.42 - b * 0.025, 14, 10]} /></mesh>)}
+          {[...Array(7)].map((_, b) => <group key={b} ref={(m) => (neckRefs.current[i][b] = m)} scale={0.42 - b * 0.025}><Part model="hydra" name="hyd_bead" mats={M} /></group>)}
           <Head k={i} M={M} showLabel={!coreUp} refCb={(g) => (headRefs.current[i] = g)} />
         </group>
       ))}

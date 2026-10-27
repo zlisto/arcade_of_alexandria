@@ -239,3 +239,21 @@ export default function Colossus({ world, center, active, onDefeated }) {
     </group>
   )
 }
+
+/** The Colossus asleep in its chamber before the fight: kneeling, its core dim, its lightning still. */
+export function ColossusDormant({ center }) {
+  const A = useColossusAssets()
+  const armL = useRef(), armR = useRef(), orbit = useRef(), bolts = useRef()
+  useFrame(({ clock }) => {
+    const t = clock.elapsedTime
+    if (armL.current) armL.current.rotation.set(-0.15, 0, 0.35)
+    if (armR.current) armR.current.rotation.set(-0.15, 0, -0.35)
+    if (orbit.current) { orbit.current.rotation.y = t * 0.12; orbit.current.position.y = -0.4 + Math.sin(t * 0.6) * 0.1 }
+    if (bolts.current) bolts.current.visible = false
+  })
+  return (
+    <group position={[center[0], -1.6, center[2]]}>
+      <ColossusBody A={A} armL={armL} armR={armR} orbit={orbit} bolts={bolts} filled={0} />
+    </group>
+  )
+}

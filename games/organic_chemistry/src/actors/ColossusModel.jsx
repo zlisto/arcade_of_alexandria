@@ -3,13 +3,15 @@ import { useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import { getEnv } from '../engine/materials'
 import { part, merge, bolt, stick } from '../engine/geo'
+import { Part } from '../engine/models'
 
 // The Unbonded Colossus as a ball-and-stick giant: glossy atoms in model-kit colours (C charcoal,
 // O red, N blue, H white) joined by metal bond sticks — a chair-cyclohexane pelvis, a spine and an open
 // rib cage around the carbon core, oxygen shoulders, atom-chain arms with clustered fists, and a carbon
 // head crowned with hydrogens. Dangling bonds end in empty sockets (violet); as each phase locks into an
 // octet, a third of them fill (cyan). Loose atoms orbit it, with Malradix's violet lightning between.
-// Atoms of one element in one moving part are merged into a single mesh.
+// The atoms, bonds and rock crust are built in Blender (tools/colossus_blender.py → public/models/colossus.glb,
+// the same layout as below); this file keeps the layout for the sockets, the loose atoms and the lightning.
 
 const EL = { C: '#2b2b31', O: '#d8403a', N: '#3f70e2', H: '#eeeeee' }
 const R = { C: 0.41, O: 0.39, N: 0.35, H: 0.22 }
@@ -120,16 +122,18 @@ export function useColossusAssets() {
       socketFull: new THREE.MeshBasicMaterial({ color: '#43e6f5', toneMapped: false }),
       bolt: new THREE.MeshBasicMaterial({ color: '#c08bff', transparent: true, opacity: 0.9, toneMapped: false }),
       eye: new THREE.MeshBasicMaterial({ color: '#f0d8ff', toneMapped: false }),
+      rock: new THREE.MeshStandardMaterial({ color: '#4a6e7a', roughness: 0.85, flatShading: true, emissive: new THREE.Color('#0a1418') }),
+      rockDark: new THREE.MeshStandardMaterial({ color: '#2c3e48', roughness: 0.9, flatShading: true }),
+      vein: new THREE.MeshBasicMaterial({ color: '#a06bff', toneMapped: false }),
     }
     return { M, ...build(), ring: new THREE.TorusGeometry(0.2, 0.05, 8, 18), dot: new THREE.SphereGeometry(0.09, 10, 8) }
   }, [gl])
 }
 
-function Cluster({ c, A, filled = 0, offset = 0 }) {
+function Cluster({ c, A, part: name, filled = 0, offset = 0 }) {
   return (
     <group>
-      {Object.entries(c.geo).map(([el, g]) => <mesh key={el} geometry={g} material={A.M[el]} castShadow />)}
-      {c.bonds && <mesh geometry={c.bonds} material={A.M.bond} castShadow />}
+      <Part model="colossus" name={name} mats={A.M} />
       {c.sockets.map((s, k) => {
         const full = k + offset < filled
         const q = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), new THREE.Vector3(...s.dir))
@@ -150,12 +154,12 @@ export function ColossusBody({ A, armL, armR, orbit, bolts, filled = 0, children
   const nBody = A.body.sockets.length
   return (
     <group>
-      <Cluster c={A.body} A={A} filled={filled} />
+      <Cluster c={A.body} A={A} part="col_body" filled={filled} />
       {/* violet eyes in the carbon head */}
       {[-1, 1].map((s) => <mesh key={s} position={[s * 0.26, 7.22, 0.56]} rotation={[0, 0, s * -0.35]} scale={[1.3, 0.5, 0.5]} material={A.M.eye}><sphereGeometry args={[0.13, 12, 8]} /></mesh>)}
       <pointLight position={[0, 7.2, 1.2]} color="#b48cff" intensity={3} distance={5} />
-      <group ref={armL} position={[-2.1, 5.6, 0]}><Cluster c={A.armL} A={A} filled={filled} offset={nBody} /></group>
-      <group ref={armR} position={[2.1, 5.6, 0]}><Cluster c={A.armR} A={A} filled={filled} offset={nBody + 1} /></group>
+      <group ref={armL} position={[-2.1, 5.6, 0]}><Cluster c={A.armL} A={A} part="col_armL" filled={filled} offset={nBody} /></group>
+      <group ref={armR} position={[2.1, 5.6, 0]}><Cluster c={A.armR} A={A} part="col_armR" filled={filled} offset={nBody + 1} /></group>
       <group ref={orbit}>
         {Object.entries(A.looseGeo).map(([el, g]) => <mesh key={el} geometry={g} material={A.M[el]} />)}
         <mesh geometry={A.orbitBoltGeo} material={A.M.bolt} />

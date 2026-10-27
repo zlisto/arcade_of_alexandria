@@ -391,3 +391,109 @@ def preview(objs, placements, shots, out_dir, sky='#9ec3e6', sun=(30, 40, 20), g
         cam.rotation_euler = ((C @ Vector(look)) - cam.location).to_track_quat('-Z', 'Y').to_euler()
         sc.render.filepath = os.path.join(out_dir, f)
         bpy.ops.render.render(write_still=True)
+
+# ---------------------------------------------------------------- metaballs (organic bodies) and colour passes
+_mb_count = [0]
+def meta(elements, res=0.035, threshold=0.6):
+    """Blend ellipsoids [(center, (rx, ry, rz), (rotx, roty, rotz))] (game coords) into one smooth mesh (bmesh, game coords)."""
+    _mb_count[0] += 1
+    name = 'mb%dx' % _mb_count[0]  # a unique family name so separate parts never melt together
+    mb = bpy.data.metaballs.new(name)
+    mb.resolution = res
+    mb.render_resolution = res
+    mb.threshold = threshold
+    ob = bpy.data.objects.new(name, mb)
+    bpy.context.scene.collection.objects.link(ob)
+    for (c, r, rot) in elements:
+        el = mb.elements.new(type='ELLIPSOID')
+        el.co = C @ Vector(c)
+        el.radius = 1.0
+        k = 1.745  # at threshold 0.6 / stiffness 2 a metaball surface sits at 0.573 of its size
+        el.size_x, el.size_y, el.size_z = r[0] * k, r[2] * k, r[1] * k
+        el.rotation = (C @ R3(*rot) @ Ci).to_quaternion()
+        el.stiffness = 2.0
+    dg = bpy.context.evaluated_depsgraph_get()
+    me = bpy.data.meshes.new_from_object(ob.evaluated_get(dg))
+    bpy.data.objects.remove(ob)
+    bpy.data.metaballs.remove(mb)
+    me.transform(Ci)
+    bm = bmesh.new()
+    bm.from_mesh(me)
+    bpy.data.meshes.remove(me)
+    bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=0.002)
+    bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+    return bm
+
+_r = [12345]
+def rnd():
+    _r[0] = (_r[0] * 16807) % 2147483647
+    return _r[0] / 2147483647
+
+def colour_pass(ob, fn):
+    """Write a grey shade fn(game_xyz) -> a into the 'AO' vertex colour (used instead of a bake on big surfaces)."""
+    me = ob.data
+    attr = me.color_attributes.get('AO') or me.color_attributes.new('AO', 'FLOAT_COLOR', 'POINT')
+    me.color_attributes.active_color = attr
+    for i, v in enumerate(me.vertices):
+        a = fn((v.co.x, v.co.z, -v.co.y))
+        attr.data[i].color = (a, a, a, 1.0)
+
+def head_shape(v, jaw_narrow=0.18, nose=0.16, socket=0.055, brow=0.05, cheek=0.03, gaunt=0.0, chin=0.0):
+    """Shape a unit sphere into a face (front +z). gaunt hollows the cheeks; chin points it."""
+    x, y, z = v.x, v.y, v.z
+    jaw = max(0.0, -y)
+    x *= 0.9 * (1 - jaw_narrow * jaw ** 1.4)
+    z *= 0.97 * (1 - 0.1 * jaw)
+    if z > 0.68:
+        z = 0.68 + (z - 0.68) * 0.72
+    if y < -0.82:
+        y = -0.82 + (y + 0.82) * (0.5 + chin)
+    if z > 0.2:
+        for sx in (-0.37, 0.37):
+            d2 = (x - sx) ** 2 / 0.022 + (y - 0.02) ** 2 / 0.012
+            z -= socket * math.exp(-d2)
+        z += brow * math.exp(-((y - 0.17) ** 2) / 0.006) * (1 - min(1, abs(x) / 0.6))
+        z += nose * math.exp(-(x / 0.06) ** 2 - ((y + 0.12) / 0.2) ** 2)
+        z += 0.05 * math.exp(-(x / 0.09) ** 2 - ((y + 0.3) / 0.06) ** 2)
+        z += cheek * math.exp(-((abs(x) - 0.48) ** 2) / 0.01 - ((y + 0.12) ** 2) / 0.02)
+    if gaunt and abs(x) > 0.3 and -0.6 < y < -0.1:
+        k = math.exp(-((y + 0.33) / 0.15) ** 2)
+        x *= 1 - gaunt * k
+    return (x, y * 1.1, z)
+
+
+# ---------------------------------------------------------------- road ribbons (from the village script)
+def catmull(pts, step=0.6):
+    out = []
+    P = [Vector((p[0], 0, p[1])) for p in pts]
+    P = [P[0]] + P + [P[-1]]
+    for i in range(1, len(P) - 2):
+        p0, p1, p2, p3 = P[i - 1], P[i], P[i + 1], P[i + 2]
+        n = max(2, int((p2 - p1).length / step))
+        for k in range(n):
+            t = k / n
+            t2, t3 = t * t, t * t * t
+            out.append(0.5 * ((2 * p1) + (-p0 + p2) * t + (2 * p0 - 5 * p1 + 4 * p2 - p3) * t2 + (-p0 + 3 * p1 - 3 * p2 + p3) * t3))
+    out.append(P[-2])
+    return out
+def ribbon(pts, half=1.4, rim=0.32, y=0.018, seed=0):
+    c = catmull(pts)
+    road, edge = bmesh.new(), bmesh.new()
+    L, Rr, LR, RR = [], [], [], []
+    for i, p in enumerate(c):
+        t = (c[min(i + 1, len(c) - 1)] - c[max(i - 1, 0)]).normalized()
+        n = Vector((-t.z, 0, t.x))
+        w = half * (1 + 0.12 * vnoise((p.x + seed, 0, p.z), 0.7)) * min(1.0, 0.35 + i / 8.0) * min(1.0, 0.35 + (len(c) - 1 - i) / 8.0)
+        L.append(road.verts.new(p + n * w + Vector((0, y, 0))))
+        Rr.append(road.verts.new(p - n * w + Vector((0, y, 0))))
+        LR.append((edge.verts.new(p + n * w + Vector((0, y - 0.001, 0))), edge.verts.new(p + n * (w + rim * (0.7 + 0.6 * vnoise((p.z, 0, p.x + seed), 1.3))) + Vector((0, y - 0.004, 0)))))
+        RR.append((edge.verts.new(p - n * w + Vector((0, y - 0.001, 0))), edge.verts.new(p - n * (w + rim * (0.7 + 0.6 * vnoise((p.x, 0, p.z - seed), 1.3))) + Vector((0, y - 0.004, 0)))))
+    for i in range(len(c) - 1):
+        road.faces.new((L[i], Rr[i], Rr[i + 1], L[i + 1]))
+        edge.faces.new((LR[i][1], LR[i][0], LR[i + 1][0], LR[i + 1][1]))
+        edge.faces.new((RR[i][0], RR[i][1], RR[i + 1][1], RR[i + 1][0]))
+    for b in (road, edge):
+        for f in b.faces:
+            if f.normal.y < 0:
+                f.normal_flip()
+    return road, edge

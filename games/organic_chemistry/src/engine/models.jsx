@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo, useRef } from 'react'
+import { Suspense, useLayoutEffect, useMemo, useRef } from 'react'
 import { useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
 
@@ -7,6 +7,8 @@ import * as THREE from 'three'
 // Components that call useModelParts must sit inside a <Suspense>.
 
 export const modelUrl = (name) => `${import.meta.env.BASE_URL}models/${name}.glb`
+/** Start downloading models before a scene needs them (so it never opens empty). */
+export const preloadModels = (...names) => names.forEach((n) => useGLTF.preload(modelUrl(n)))
 
 export function useModelParts(name) {
   const { scene } = useGLTF(modelUrl(name))
@@ -64,4 +66,46 @@ export function InstancedPart({ parts, name, items, colors, castShadow = false, 
       ))}
     </group>
   )
+}
+
+// A copy of a game material that also multiplies in the baked occlusion (the glb's vertex colours).
+// Glowing and unlit materials are left alone (they don't need shading, and the game animates them).
+const aoCache = new WeakMap()
+export function withAO(m) {
+  if (!m || !m.isMeshStandardMaterial || (m.emissiveIntensity > 0.5 && m.emissive && m.emissive.getHex() !== 0)) return m
+  let c = aoCache.get(m)
+  if (!c) {
+    c = m.clone()
+    c.vertexColors = true
+    c.onBeforeCompile = m.onBeforeCompile
+    if (m.customProgramCacheKey !== Object.getPrototypeOf(m).customProgramCacheKey) {
+      const k = m.customProgramCacheKey
+      c.customProgramCacheKey = () => k.call(m) + '-ao'
+    }
+    aoCache.set(m, c)
+  }
+  return c
+}
+
+function PartInner({ model, name, mats, ao = true, oneSided = false, castShadow = true, receiveShadow = false, ...props }) {
+  const parts = useModelParts(model)
+  const list = parts[name]
+  // the glb's own materials are double-sided; a closed set (a cave) only needs its inner faces, and a camera
+  // that slips inside a wall should see through it
+  if (oneSided && list) list.forEach((p) => { if (p.material.side !== THREE.FrontSide) { p.material.side = THREE.FrontSide; p.material.needsUpdate = true } })
+  if (!list) return null
+  return (
+    <group {...props}>
+      {list.map((p, i) => {
+        let m = (mats && mats[p.material.name]) || p.material
+        if (m !== p.material && ao && p.geometry.attributes.color) m = withAO(m)
+        return <mesh key={i} geometry={p.geometry} material={m} castShadow={castShadow} receiveShadow={receiveShadow} />
+      })}
+    </group>
+  )
+}
+
+/** One part of a Blender model, with the game's materials swapped in by name (mats), inside its own Suspense. */
+export function Part(props) {
+  return <Suspense fallback={null}><PartInner {...props} /></Suspense>
 }

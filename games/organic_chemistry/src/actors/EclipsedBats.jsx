@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { rimMat } from '../engine/materials'
+import { Part } from '../engine/models'
 import { sfx } from '../audio/sfx'
 import { toast, getState } from '../engine/store'
 import { conformerName } from '../chem/rules3'
@@ -18,43 +19,26 @@ import { flashNewman } from '../ui/Newman'
 const ROD_Y = 2.8
 const busyNow = () => { const s = getState(); return !!(s.dialogue || s.panel || s.newman) } // and while the Lantern view is up
 
-function Wing({ M, s }) {
-  // a big torn wing: a fan of three membranes between finger bones
-  return (
-    <group position={[s * 0.12, -0.12, 0]} rotation={[0, 0, s * 0.1]}>
-      {[0, 1, 2].map((k) => (
-        <mesh key={k} position={[s * (0.2 + k * 0.17), -0.55 - k * 0.08, -0.01 * k]} rotation={[0, 0, s * (0.08 + k * 0.1)]} material={M.wing} castShadow>
-          <planeGeometry args={[0.36, 1.25 - k * 0.12]} />
-        </mesh>
-      ))}
-      {[0, 1, 2, 3].map((k) => <mesh key={'b' + k} position={[s * (0.08 + k * 0.17), -0.55, 0.01]} rotation={[0, 0, s * (0.05 + k * 0.1)]} material={M.claw}><boxGeometry args={[0.025, 1.3, 0.025]} /></mesh>)}
-      {[0, 1].map((k) => <mesh key={'h' + k} position={[s * (0.3 + k * 0.2), -0.7 - k * 0.2, 0.02]} material={M.hole}><circleGeometry args={[0.04, 8]} /></mesh>)}
-    </group>
-  )
-}
-
+// The bat is built in Blender (tools/creatures3_blender.py → public/models/creatures3.glb).
 function Bat({ M, refCb }) {
   return (
     <group ref={refCb}>
-      <mesh position={[0, -0.05, 0]} material={M.claw}><boxGeometry args={[0.05, 0.12, 0.05]} /></mesh>
-      <mesh position={[0, -0.42, 0]} scale={[0.75, 1.15, 0.7]} material={M.fur} castShadow><sphereGeometry args={[0.24, 14, 12]} /></mesh>
-      <group name="head" position={[0, -0.78, 0.02]}>
-        <mesh material={M.fur}><sphereGeometry args={[0.16, 14, 12]} /></mesh>
-        {[-1, 1].map((s) => <mesh key={s} position={[s * 0.1, -0.13, 0]} rotation={[0, 0, Math.PI + s * 0.35]} material={M.wingSolid}><coneGeometry args={[0.06, 0.16, 6]} /></mesh>)}
-        {[-1, 1].map((s) => <mesh key={'e' + s} position={[s * 0.06, 0.02, 0.13]} material={M.eye}><sphereGeometry args={[0.03, 8, 6]} /></mesh>)}
-        <mesh position={[0, 0.08, 0.13]} material={M.claw}><coneGeometry args={[0.03, 0.06, 5]} /></mesh>
-      </group>
-      <group name="wingL"><Wing M={M} s={-1} /></group>
-      <group name="wingR"><Wing M={M} s={1} /></group>
+      <Part model="creatures3" name="bat_body" mats={M} />
+      <group name="head" position={[0, -0.78, 0.02]}><Part model="creatures3" name="bat_head" mats={M} /></group>
+      <group name="wingL"><Part model="creatures3" name="bat_wingL" mats={M} /></group>
+      <group name="wingR"><Part model="creatures3" name="bat_wingR" mats={M} /></group>
     </group>
   )
 }
 
 export default function EclipsedBats({ world, roosts, active = true, decor = false, saved, onTurn, onSleep }) {
   const M = useMemo(() => ({
-    fur: rimMat({ color: '#6a2a3a', roughness: 0.85 }, '#ffb0c8', 0.15),
-    wing: rimMat({ color: '#7a3448', roughness: 0.6, side: THREE.DoubleSide, transparent: true, opacity: 0.95 }, '#ffb0c8', 0.12),
-    wingSolid: rimMat({ color: '#7a3448', roughness: 0.6 }, '#ffb0c8', 0.12),
+    fur: rimMat({ color: '#a8486a', roughness: 0.8 }, '#ffc0d8', 0.7, 2.0),
+    furDark: rimMat({ color: '#6a2a3c', roughness: 0.9 }, '#ffb0c8', 0.3),
+    fang: new THREE.MeshStandardMaterial({ color: '#f2efe6', roughness: 0.4 }),
+    mouth: new THREE.MeshBasicMaterial({ color: '#140a10' }),
+    wing: rimMat({ color: '#b04e66', roughness: 0.6, side: THREE.DoubleSide }, '#ffc0d8', 0.55, 2.0),
+    wingSolid: rimMat({ color: '#8a3a50', roughness: 0.6 }, '#ffb0c8', 0.3),
     hole: new THREE.MeshBasicMaterial({ color: '#0e1a14', side: THREE.DoubleSide }),
     claw: new THREE.MeshStandardMaterial({ color: '#2a1a1a', roughness: 0.5 }),
     eye: new THREE.MeshBasicMaterial({ color: '#d070ff', toneMapped: false }),

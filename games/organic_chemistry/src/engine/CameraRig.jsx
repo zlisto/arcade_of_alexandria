@@ -36,7 +36,11 @@ export default function CameraRig({ world, dist = 6.2, height = 1.5 }) {
       look.lerp(tmp.set(lockPos[0], lockPos[1] + 1, lockPos[2]), 0.35)
       d = dist + Math.min(4, Math.hypot(pos.x - lockPos[0], pos.z - lockPos[2]) * 0.2)
     }
-    if (world.camBoost) { d += world.camBoost.dist || 0; pitch = Math.max(pitch, world.camBoost.pitch || 0) }
+    if (world.camBoost) {
+      d += world.camBoost.dist || 0
+      pitch = world.camBoost.pitchSet !== undefined ? world.camBoost.pitchSet : Math.max(pitch, world.camBoost.pitch || 0)
+      if (world.camBoost.lookY) look.y += world.camBoost.lookY // look up at something tall (a boss)
+    }
     if (world.camOverride) {
       const o = world.camOverride
       tmp.set(...o.pos)
@@ -59,6 +63,7 @@ export default function CameraRig({ world, dist = 6.2, height = 1.5 }) {
       }
       tmp.copy(from).addScaledVector(dir, free)
       if (world.camMaxY !== undefined) tmp.y = Math.min(tmp.y, world.camMaxY)
+      if (world.camMaxZ !== undefined) tmp.z = Math.min(tmp.z, world.camMaxZ) // keep the camera on Kai's side of a wall it may pass through
     }
     if (!init.current) { smoothPos.current.copy(tmp); smoothLook.current.copy(look); init.current = true }
     const k = world.camOverride ? Math.min(1, dt * 3) : Math.min(1, dt * 10)

@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useRef } from 'react'
+import { Suspense, useEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Sky, Html } from '@react-three/drei'
 import * as THREE from 'three'
 import GameScene from '../engine/GameScene'
-import { Slab, Scatter, scatter, Motes, Signpost } from '../engine/kit'
+import { Slab, scatter, Motes, Signpost } from '../engine/kit'
+import { Part, useModelParts, InstancedPart, preloadModels } from '../engine/models'
 import WolfPack from '../actors/WolfPack'
 import { ImpPack, CrabPack } from '../actors/Critters'
 import { PiFollower } from './Village'
@@ -13,22 +14,16 @@ import { playMusic } from '../audio/sfx'
 // The Valence Fields: the overworld between Hydrogen Village (west), the Tide Coast (north-east),
 // and Carbon Castle (north, sealed). Roads, a stream with a bridge, hills, ruins, the sea to the east.
 // Enemies roam (Radical Wolves, Lone-Pair Imps, Hydronium Crabs on the beach) and return each visit.
+// The land, roads, beach, horizon, bridge, gatehouses, castle, ruins, hills and fences are built in Blender
+// (tools/field_blender.py → public/models/field.glb); trees, rocks and flowers reuse the village kit.
 
 const HALF = 70
+preloadModels('field', 'critters', 'hydra')
 const COAST_GATE = [62, -43] // the gap in the sea wall (z −46 … −40)
 const CASTLE_GATE = [0, -66]
 const VILLAGE_GATE = [-68, 0]
 const FOREST_GATE = [-40, -68] // north-west: the forest road to the Chain Forest (World 3)
 const SEA_X = 58 // east of this is beach, then sea
-
-function Road({ pts, width = 4.2, color = '#9a8462' }) {
-  // dirt road segments between points (visual only)
-  return pts.slice(1).map((b, i) => {
-    const a = pts[i]
-    const dx = b[0] - a[0], dz = b[1] - a[1], l = Math.hypot(dx, dz)
-    return <mesh key={i} position={[(a[0] + b[0]) / 2, 0.03, (a[1] + b[1]) / 2]} rotation={[-Math.PI / 2, 0, -Math.atan2(dz, dx)]} receiveShadow><planeGeometry args={[l + width, width]} /><meshStandardMaterial color={color} roughness={1} /></mesh>
-  })
-}
 
 function Sea() {
   // the sea east of the beach, with a gentle swell
@@ -45,13 +40,9 @@ function Sea() {
 
 function Castle() {
   // Carbon Castle in the north distance, beyond the sealed gate
-  const stone = '#5a5f6e', dark = '#3a3e4a', roof = '#2d3a5a'
   return (
     <group position={[0, 0, -118]}>
-      <mesh position={[0, 9, 0]}><boxGeometry args={[30, 18, 16]} /><meshStandardMaterial color={stone} roughness={0.9} /></mesh>
-      {[-15, 15].map((x) => <group key={x} position={[x, 0, 8]}><mesh position={[0, 12, 0]}><cylinderGeometry args={[3.2, 3.6, 24, 12]} /><meshStandardMaterial color={dark} roughness={0.9} /></mesh><mesh position={[0, 26, 0]}><coneGeometry args={[4, 7, 12]} /><meshStandardMaterial color={roof} /></mesh></group>)}
-      <mesh position={[0, 24, -2]}><cylinderGeometry args={[4.5, 5, 30, 12]} /><meshStandardMaterial color={stone} roughness={0.9} /></mesh>
-      <mesh position={[0, 42, -2]}><coneGeometry args={[6, 10, 12]} /><meshStandardMaterial color={roof} /></mesh>
+      <Part model="field" name="fld_castle" castShadow={false} />
       {/* the empty crown cradle at the top glows faintly: four arms of light, all broken */}
       <mesh position={[0, 49, -2]}><icosahedronGeometry args={[1.4, 1]} /><meshStandardMaterial color="#111" emissive="#ffcf4a" emissiveIntensity={0.6} /></mesh>
       <pointLight position={[0, 48, 4]} color="#ffd76a" intensity={8} distance={40} />
@@ -60,21 +51,47 @@ function Castle() {
 }
 
 function Ruin({ pos, rot = 0 }) {
+  return <Part model="field" name="fld_ruin" position={pos} rotation={[0, rot, 0]} />
+}
+
+const gateMats = {}
+function Gatehouse({ pos, rotY = 0, label, sealed = false, color = '#8a8474' }) {
   return (
-    <group position={pos} rotation={[0, rot, 0]}>
-      {[[-1.5, 2.6], [1.5, 1.4], [0, 3.2]].map(([x, h], i) => <mesh key={i} position={[x, h / 2, i === 2 ? -1.6 : 0]} castShadow><cylinderGeometry args={[0.45, 0.55, h, 8]} /><meshStandardMaterial color="#bdb6a4" roughness={0.9} flatShading /></mesh>)}
-      <mesh position={[0, 0.25, -0.6]} rotation={[0, 0.4, 0.1]} castShadow><boxGeometry args={[3.4, 0.5, 1]} /><meshStandardMaterial color="#a8a190" roughness={0.95} flatShading /></mesh>
+    <group position={pos} rotation={[0, rotY, 0]}>
+      <Part model="field" name="fld_gate" mats={(gateMats[color] = gateMats[color] || { stone: new THREE.MeshStandardMaterial({ color, roughness: 0.9 }) })} />
+      {sealed && <mesh position={[0, 2.4, 0]}><boxGeometry args={[4.6, 4.8, 0.3]} /><meshStandardMaterial color="#3a2a50" emissive="#a06bff" emissiveIntensity={0.5} transparent opacity={0.85} /></mesh>}
+      <Html position={[0, 6.6, 0]} center distanceFactor={14}><div className="tag3d">{label}</div></Html>
     </group>
   )
 }
 
-function Gatehouse({ pos, rotY = 0, label, sealed = false, color = '#8a8474' }) {
+const FLOWER_COLORS = ['#ffd760', '#ff8aa8', '#ffffff', '#cfa8ff'].map((c) => new THREE.Color(c))
+function FieldNature({ trees, rocks, flowers, hills }) {
+  const parts = useModelParts('village')
+  const field = useModelParts('field')
+  const sets = useMemo(() => {
+    const pine = [], oak = [], r = [[], [], []]
+    trees.forEach(([x, z, sc, rot], i) => (i % 3 === 0 ? oak.push([x, 0, z, sc * 1.15, rot]) : pine.push([x, 0, z, sc * 1.05, rot])))
+    rocks.forEach(([x, z, sc, rot], i) => r[i % 3].push([x, 0, z, sc * 0.6, rot]))
+    const fl = flowers.map(([x, z, c], i) => [x, 0, z, 0.8 + c * 0.6, i])
+    const tufts = scatter(2600, 53, (rn) => {
+      const x = (rn() - 0.5) * 2 * (HALF - 1), z = (rn() - 0.5) * 2 * (HALF - 1)
+      if (x > SEA_X - 4 || (Math.abs(z) < 3 && x < 20)) return null
+      if (hills.some(([hx, hz, rr]) => Math.hypot(x - hx, z - hz) < rr * 0.8)) return null
+      return [x, 0, z, 0.7 + rn() * 0.6, rn() * 6.3]
+    })
+    const fences = [...Array(10)].map((_, i) => [-60 + i * 4, 0, 3.6, 1, 0])
+    return { pine, oak, r, fl, tufts, fences }
+  }, [trees, rocks, flowers, hills])
   return (
-    <group position={pos} rotation={[0, rotY, 0]}>
-      {[-3, 3].map((x) => <mesh key={x} position={[x, 2.5, 0]} castShadow><boxGeometry args={[1.4, 5, 1.4]} /><meshStandardMaterial color={color} roughness={0.9} flatShading /></mesh>)}
-      <mesh position={[0, 5.4, 0]} castShadow><boxGeometry args={[8, 1.1, 1.6]} /><meshStandardMaterial color={color} roughness={0.9} flatShading /></mesh>
-      {sealed && <mesh position={[0, 2.4, 0]}><boxGeometry args={[4.6, 4.8, 0.3]} /><meshStandardMaterial color="#3a2a50" emissive="#a06bff" emissiveIntensity={0.5} transparent opacity={0.85} /></mesh>}
-      <Html position={[0, 6.6, 0]} center distanceFactor={14}><div className="tag3d">{label}</div></Html>
+    <group>
+      <InstancedPart parts={parts} name="pine" items={sets.pine} castShadow />
+      <InstancedPart parts={parts} name="oak" items={sets.oak} castShadow />
+      {sets.r.map((items, k) => <InstancedPart key={k} parts={parts} name={'rock' + k} items={items} castShadow />)}
+      <InstancedPart parts={parts} name="tuft" items={sets.tufts} />
+      <InstancedPart parts={parts} name="flowerHead" items={sets.fl} colors={FLOWER_COLORS} />
+      <InstancedPart parts={parts} name="flowerStem" items={sets.fl} />
+      <InstancedPart parts={field} name="fld_fence" items={sets.fences} castShadow />
     </group>
   )
 }
@@ -110,7 +127,7 @@ function FieldLevel({ world, onExit }) {
     world.setEnabled(thorns, (getState().save.shards || 0) < 2)
     ids.push(thorns)
     // hills are solid mounds
-    hills.forEach(([x, z, rr]) => ids.push(world.addSolid([x - rr * 0.6, 0, z - rr * 0.6], [x + rr * 0.6, 4, z + rr * 0.6])))
+    hills.forEach(([x, z, rr]) => ids.push(world.addSolid([x - rr * 0.84, 0, z - rr * 0.84], [x + rr * 0.84, 4, z + rr * 0.84])))
     const toVillage = world.addTrigger([-HALF - 1, 0, -3.2], [-HALF + 1.4, 4, 3.2], () => onExit('village', { scene: 'village', at: 'east' }))
     const toCoast = world.addTrigger([HALF - 3, 0, COAST_GATE[1] - 3], [HALF, 4, COAST_GATE[1] + 3], () => onExit('coast', { scene: 'coast', at: 'road' }))
     const castle = world.addTrigger([-4, 0, -HALF + 1], [4, 4, -HALF + 4], () => setState({ toast: { text: 'Carbon Castle is sealed by Malradix. The sages say the crown must be rebuilt shard by shard.', kind: 'info', id: Date.now() } }))
@@ -163,19 +180,16 @@ function FieldLevel({ world, onExit }) {
       <Sky sunPosition={[60, 40, -30]} turbidity={6} rayleigh={1.4} />
       <hemisphereLight args={['#dff0ff', '#6a8a4a', 0.9]} />
       <directionalLight position={[30, 40, 18]} intensity={1.5} castShadow shadow-mapSize={[2048, 2048]} shadow-camera-left={-60} shadow-camera-right={60} shadow-camera-top={60} shadow-camera-bottom={-60} />
-      <fog attach="fog" args={['#cfe2f0', 70, 190]} />
+      <fog attach="fog" args={['#cfe2f0', 95, 340]} />
       {/* ground, beach, roads, stream */}
-      <Slab world={world} x0={-HALF} z0={-HALF} x1={HALF} z1={HALF} y={0} color="#6f9a4e" />
-      <mesh position={[SEA_X + 4, 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow><planeGeometry args={[16, HALF * 2]} /><meshStandardMaterial color="#e3d3a0" roughness={1} /></mesh>
-      <Road pts={[[-HALF, 0], [-20, 0], [10, -8], [35, -30], [HALF, COAST_GATE[1]]]} />
-      <Road pts={[[-20, 0], [-10, -30], [0, -66]]} width={3.6} />
-      <Road pts={[[10, -8], [30, 20], [SEA_X - 2, 30]]} width={3.2} />
-      <Road pts={[[-20, 0], [-40, -68]]} width={3.4} />
+      <Slab world={world} x0={-HALF} z0={-HALF} x1={HALF} z1={HALF} y={0} color="#6f9a4e" visible={false} />
+      <Part model="field" name="fld_ground" castShadow={false} receiveShadow />
+      <Part model="field" name="fld_roads" castShadow={false} receiveShadow />
+      <Part model="field" name="fld_beach" castShadow={false} receiveShadow />
+      <Part model="field" name="fld_banks" castShadow={false} receiveShadow />
+      <Part model="field" name="fld_horizon" castShadow={false} />
       <mesh position={[18, 0.025, 0]} rotation={[-Math.PI / 2, 0, 0.25]}><planeGeometry args={[5, 150]} /><meshStandardMaterial color="#3f8fb0" roughness={0.2} transparent opacity={0.85} /></mesh>
-      <group position={[16, 0, -3.5]} rotation={[0, 0.25 + Math.PI / 2, 0]}>
-        <mesh position={[0, 0.3, 0]} castShadow><boxGeometry args={[7.5, 0.25, 4.2]} /><meshStandardMaterial color="#7a5a3a" roughness={0.9} /></mesh>
-        {[-1.9, 1.9].map((z) => <mesh key={z} position={[0, 0.8, z]}><boxGeometry args={[7.5, 0.12, 0.12]} /><meshStandardMaterial color="#5a4028" /></mesh>)}
-      </group>
+      <Part model="field" name="fld_bridge" position={[16, 0, -3.5]} rotation={[0, 0.25 + Math.PI / 2, 0]} />
       <Sea />
       {/* gates, landmarks */}
       <Gatehouse pos={[HALF - 1.5, 0, COAST_GATE[1]]} rotY={Math.PI / 2} label="Tide Coast" color="#c7b48a" />
@@ -186,12 +200,8 @@ function FieldLevel({ world, onExit }) {
       <Ruin pos={[-30, 0, -32]} rot={0.4} /><Ruin pos={[30, 0, 40]} rot={-0.8} /><Ruin pos={[-45, 0, 38]} rot={1.6} />
       <Signpost pos={[-17, 0, 3.5]} rotY={0.3} text="← Village · Castle ↑ · Tide Coast →" />
       <Signpost pos={[38, 0, -27]} rotY={-0.6} text="Tide Coast →" />
-      {hills.map(([x, z, rr, h], i) => <mesh key={i} position={[x, h / 2 - 0.4, z]} castShadow receiveShadow><coneGeometry args={[rr, h, 9]} /><meshStandardMaterial color={i % 2 ? '#5f8a46' : '#6a9450'} roughness={0.95} flatShading /></mesh>)}
-      <Scatter items={trees} kind="tree" />
-      <Scatter items={rocks} kind="rock" color="#8a8580" />
-      {flowers.map(([x, z, c], i) => <mesh key={i} position={[x, 0.12, z]}><sphereGeometry args={[0.1, 6, 5]} /><meshStandardMaterial color={c < 0.33 ? '#ffd760' : c < 0.66 ? '#ff8aa8' : '#ffffff'} /></mesh>)}
-      {/* fences along the main road */}
-      {[...Array(10)].map((_, i) => <mesh key={i} position={[-60 + i * 4, 0.5, 3.6]} castShadow><boxGeometry args={[3.6, 0.12, 0.12]} /><meshStandardMaterial color="#7a5a3a" /></mesh>)}
+      {hills.map(([x, z, rr, h], i) => <Part key={i} model="field" name="fld_hill" position={[x, -0.4, z]} scale={[rr * 0.78, h, rr * 0.78]} receiveShadow />)}
+      <Suspense fallback={null}><FieldNature trees={trees} rocks={rocks} flowers={flowers} hills={hills} /></Suspense>
       <Motes count={90} area={[120, 6, 120]} center={[0, 0.4, 0]} color="#fff6c0" size={0.08} />
       {/* creatures */}
       <WolfPack world={world} spawns={[[-28, 14], [-22, 18]]} tutorial={false} />

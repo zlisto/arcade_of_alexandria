@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Sky, Html } from '@react-three/drei'
 import * as THREE from 'three'
 import GameScene from '../engine/GameScene'
-import { Slab, Scatter, scatter, Station, Signpost, Motes } from '../engine/kit'
+import { scatter, Station, Signpost, Motes } from '../engine/kit'
+import { Part, useModelParts, InstancedPart, preloadModels } from '../engine/models'
 import { Ferrymen, WaterFolk } from '../actors/Coastfolk'
 import { PiFollower } from './Village'
 import { getState, setState, saveGame, say, toast, openPanel, useGame } from '../engine/store'
@@ -11,7 +12,10 @@ import { playMusic, sfx } from '../audio/sfx'
 
 // The Tide Coast — World 2's dungeon prep. The Proton Ferrymen won't row to the Tide Temple until the
 // lighthouse burns again; lighting it means reading which end of each bond is δ− (§2.1).
+// The cove, dock, spit, lighthouse, stilt houses, palms, props and the temple on the horizon are built in
+// Blender (tools/coast_blender.py → public/models/coast.glb).
 
+preloadModels('coast', 'temple', 'coastfolk')
 const SEA_Z = -18 // sea north of this
 const DOCK = { x: [-1.6, 1.6], z: [-34, SEA_Z] }
 const SPIT = { x: [17, 27], z: [-31, SEA_Z] }
@@ -19,14 +23,14 @@ const LIGHT = [22, 0, -27]
 const FERRY = [0, 0, -36.5]
 
 function Water() {
-  const geo = useMemo(() => new THREE.PlaneGeometry(140, 70, 56, 28), [])
+  const geo = useMemo(() => new THREE.PlaneGeometry(260, 220, 64, 50), [])
   const base = useMemo(() => geo.attributes.position.array.slice(), [geo])
   useFrame(({ clock }) => {
     const p = geo.attributes.position, t = clock.elapsedTime
     for (let i = 0; i < p.count; i++) p.setZ(i, Math.sin(base[i * 3] * 0.3 + t * 1.1) * 0.14 + Math.cos(base[i * 3 + 1] * 0.22 + t * 0.8) * 0.12)
     p.needsUpdate = true
   })
-  return <mesh geometry={geo} position={[0, -0.35, SEA_Z - 35]} rotation={[-Math.PI / 2, 0, 0]}><meshStandardMaterial color="#1f8aa8" roughness={0.2} metalness={0.15} transparent opacity={0.9} /></mesh>
+  return <mesh geometry={geo} position={[0, -0.35, SEA_Z - 110]} rotation={[-Math.PI / 2, 0, 0]}><meshStandardMaterial color="#1f8aa8" roughness={0.2} metalness={0.15} transparent opacity={0.9} /></mesh>
 }
 
 function Lighthouse({ lit }) {
@@ -34,12 +38,8 @@ function Lighthouse({ lit }) {
   useFrame(({ clock }) => { if (beam.current) beam.current.rotation.y = clock.elapsedTime * 1.2 })
   return (
     <group position={LIGHT}>
-      <mesh position={[0, 0.6, 0]}><cylinderGeometry args={[3.4, 4, 1.2, 10]} /><meshStandardMaterial color="#6a6458" roughness={1} flatShading /></mesh>
-      {[0, 1, 2, 3, 4].map((k) => <mesh key={k} position={[0, 2 + k * 2, 0]} castShadow><cylinderGeometry args={[1.6 - k * 0.12, 1.7 - k * 0.12, 2, 16]} /><meshStandardMaterial color={k % 2 ? '#c0394b' : '#f2efe6'} roughness={0.7} /></mesh>)}
-      <mesh position={[0, 11.4, 0]}><cylinderGeometry args={[1.4, 1.4, 0.3, 16]} /><meshStandardMaterial color="#2a2a33" metalness={0.6} /></mesh>
+      <Part model="coast" name="cst_lighthouse" />
       <mesh position={[0, 12.4, 0]}><cylinderGeometry args={[1, 1, 1.8, 12, 1, true]} /><meshStandardMaterial color={lit ? '#fff2c0' : '#4a5260'} emissive={lit ? '#ffcf6a' : '#000'} emissiveIntensity={lit ? 2.5 : 0} transparent opacity={0.85} toneMapped={!lit} /></mesh>
-      <mesh position={[0, 13.8, 0]}><coneGeometry args={[1.5, 1.4, 12]} /><meshStandardMaterial color="#2a2a33" metalness={0.6} /></mesh>
-      <mesh position={[0, 1.6, 1.62]}><boxGeometry args={[0.9, 1.8, 0.1]} /><meshStandardMaterial color="#5a3c26" /></mesh>
       {lit && (
         <group ref={beam} position={[0, 12.4, 0]}>
           <mesh position={[0, 0, 9]} rotation={[Math.PI / 2, 0, 0]}><coneGeometry args={[2.4, 18, 16, 1, true]} /><meshBasicMaterial color="#fff2c0" transparent opacity={0.16} side={THREE.DoubleSide} depthWrite={false} /></mesh>
@@ -50,35 +50,22 @@ function Lighthouse({ lit }) {
   )
 }
 
+const roofMats = {}
 function StiltHouse({ pos, rot = 0, roof = '#2f6fd8' }) {
-  return (
-    <group position={pos} rotation={[0, rot, 0]}>
-      {[[-1.6, -1.4], [1.6, -1.4], [-1.6, 1.4], [1.6, 1.4]].map(([x, z], i) => <mesh key={i} position={[x, 0.9, z]}><cylinderGeometry args={[0.14, 0.16, 1.8, 6]} /><meshStandardMaterial color="#6a4a32" /></mesh>)}
-      <mesh position={[0, 1.95, 0]} castShadow><boxGeometry args={[4, 0.25, 3.6]} /><meshStandardMaterial color="#8a6440" roughness={0.9} /></mesh>
-      <mesh position={[0, 3.1, 0]} castShadow><boxGeometry args={[3.4, 2, 3]} /><meshStandardMaterial color="#e8dcc0" roughness={0.9} /></mesh>
-      <mesh position={[0, 4.6, 0]} rotation={[0, Math.PI / 4, 0]} castShadow><coneGeometry args={[3, 1.6, 4]} /><meshStandardMaterial color={roof} roughness={0.8} /></mesh>
-      <mesh position={[0, 2.8, 1.52]}><boxGeometry args={[0.8, 1.4, 0.05]} /><meshStandardMaterial color="#5a3c26" /></mesh>
-      <mesh position={[-1, 3.3, 1.52]}><boxGeometry args={[0.6, 0.6, 0.05]} /><meshStandardMaterial color="#ffe3a0" emissive="#ffcf6a" emissiveIntensity={0.5} /></mesh>
-    </group>
-  )
+  const mats = (roofMats[roof] = roofMats[roof] || { roof: new THREE.MeshStandardMaterial({ color: roof, roughness: 0.8, flatShading: true }) })
+  return <Part model="coast" name="cst_stilt" mats={mats} position={pos} rotation={[0, rot, 0]} />
 }
 
-function Palm({ pos, h = 5, lean = 0.2 }) {
-  return (
-    <group position={pos} rotation={[0, 0, lean]}>
-      <mesh position={[0, h / 2, 0]} castShadow><cylinderGeometry args={[0.16, 0.26, h, 7]} /><meshStandardMaterial color="#8a6a46" roughness={0.9} /></mesh>
-      {[...Array(7)].map((_, k) => { const a = (k / 7) * Math.PI * 2; return <mesh key={k} position={[Math.cos(a) * 0.9, h - 0.1, Math.sin(a) * 0.9]} rotation={[Math.sin(a) * 0.9, -a, Math.cos(a) * 0.9 * 0 + 0.5]} castShadow><boxGeometry args={[2.2, 0.06, 0.55]} /><meshStandardMaterial color="#3f8a3a" roughness={0.8} /></mesh> })}
-    </group>
-  )
+function Palms({ items }) {
+  const parts = useModelParts('coast')
+  return <InstancedPart parts={parts} name="cst_palm" items={items} castShadow />
 }
 
 function TempleOnHorizon() {
-  // the Tide Temple far out at sea: red and blue pillars, a stepped tower
+  // the Tide Temple far out at sea: red and blue pillars, a stepped tower, its orb glowing
   return (
     <group position={[10, -0.3, -120]}>
-      <mesh position={[0, 2, 0]}><boxGeometry args={[34, 4, 20]} /><meshStandardMaterial color="#6a7a86" roughness={0.9} /></mesh>
-      {[...Array(10)].map((_, i) => <mesh key={i} position={[-15 + i * 3.3, 7, 9]}><cylinderGeometry args={[0.9, 1, 8, 10]} /><meshStandardMaterial color={i % 2 ? '#2f6fd8' : '#c0394b'} /></mesh>)}
-      {[0, 1, 2, 3].map((k) => <mesh key={k} position={[0, 6 + k * 3, -2]}><boxGeometry args={[14 - k * 3, 3, 10 - k * 2]} /><meshStandardMaterial color="#8a96a0" roughness={0.9} /></mesh>)}
+      <Part model="coast" name="cst_temple" castShadow={false} />
       <pointLight position={[0, 20, 6]} color="#7ff4ff" intensity={6} distance={50} />
     </group>
   )
@@ -88,7 +75,6 @@ function CoastLevel({ world, onExit }) {
   const save = useGame((s) => s.save)
   const busy = useRef(false)
   const palms = useMemo(() => scatter(14, 61, (r) => [(r() - 0.5) * 56, -10 + r() * 34, 4 + r() * 2.5, (r() - 0.5) * 0.5]).filter(([x, z]) => Math.abs(x) > 4 && !(x > 14 && z < -8)), [])
-  const shells = useMemo(() => scatter(40, 63, (r) => [(r() - 0.5) * 60, SEA_Z + 1 + r() * 36, 0.3 + r() * 0.4, r() * 6]), [])
 
   useEffect(() => {
     playMusic('village')
@@ -190,18 +176,10 @@ function CoastLevel({ world, onExit }) {
       <hemisphereLight args={['#e6f4ff', '#c9b88a', 0.95]} />
       <directionalLight position={[-20, 30, 10]} intensity={1.4} castShadow shadow-mapSize={[2048, 2048]} shadow-camera-left={-40} shadow-camera-right={40} shadow-camera-top={40} shadow-camera-bottom={-40} />
       <fog attach="fog" args={['#d6eaf4', 60, 170]} />
-      <Slab world={{ addFloor: () => 0, remove: () => {} }} x0={-34} z0={SEA_Z} x1={34} z1={32} color="#e3d3a0" />
-      <mesh position={[0, 0.02, 26]} rotation={[-Math.PI / 2, 0, 0]}><planeGeometry args={[68, 10]} /><meshStandardMaterial color="#7a9a56" roughness={1} /></mesh>
-      <mesh position={[-20, 0.03, 10]} rotation={[-Math.PI / 2, 0, 0]}><planeGeometry args={[30, 4]} /><meshStandardMaterial color="#b89a6a" roughness={1} /></mesh>
+      <Part model="coast" name="cst_land" castShadow={false} receiveShadow />
       <Water />
-      {/* the dock */}
-      <group>
-        <mesh position={[0, 0.25, (DOCK.z[0] + DOCK.z[1]) / 2]} receiveShadow><boxGeometry args={[3.2, 0.2, DOCK.z[1] - DOCK.z[0]]} /><meshStandardMaterial color="#8a6440" roughness={0.9} /></mesh>
-        {[...Array(9)].map((_, k) => [-1.5, 1.5].map((x) => <mesh key={k + '-' + x} position={[x, -0.4, DOCK.z[1] - k * 2]}><cylinderGeometry args={[0.13, 0.13, 1.6, 6]} /><meshStandardMaterial color="#5a3c26" /></mesh>))}
-      </group>
-      {/* the spit out to the lighthouse */}
-      <mesh position={[(SPIT.x[0] + SPIT.x[1]) / 2, 0.01, (SPIT.z[0] + SPIT.z[1]) / 2]} rotation={[-Math.PI / 2, 0, 0]}><planeGeometry args={[SPIT.x[1] - SPIT.x[0], SPIT.z[1] - SPIT.z[0]]} /><meshStandardMaterial color="#cfc09a" roughness={1} /></mesh>
-      {[[18, -20], [26, -22], [19, -30], [27, -29]].map(([x, z], i) => <mesh key={i} position={[x, 0.5, z]} scale={[1.6, 1, 1.3]} castShadow><dodecahedronGeometry args={[1, 0]} /><meshStandardMaterial color="#7a7468" roughness={1} flatShading /></mesh>)}
+      <Part model="coast" name="cst_dock" receiveShadow />
+      <Part model="coast" name="cst_spit" castShadow={false} receiveShadow />
       <Lighthouse lit={!!save.lighthouseLit} />
       <Station world={world} pos={[LIGHT[0], 0, LIGHT[2] + 3.6]} label={save.lighthouseLit ? null : 'Light the lamp'} enabled={!save.lighthouseLit} solved={!!save.lighthouseLit} onUse={lightLighthouse} />
       <Ferrymen position={FERRY} />
@@ -209,12 +187,8 @@ function CoastLevel({ world, onExit }) {
       <StiltHouse pos={[-20, 0, -6]} rot={0.3} />
       <StiltHouse pos={[-10, 0, 10]} rot={-0.2} roof="#c0394b" />
       <StiltHouse pos={[12, 0, 12]} rot={0.5} />
-      {palms.map(([x, z, h, l], i) => <Palm key={i} pos={[x, 0, z]} h={h} lean={l} />)}
-      <Scatter items={shells} kind="rock" color="#f0e6d0" />
-      {/* nets, crates, beached boat */}
-      <mesh position={[-6, 0.4, -10]} castShadow><boxGeometry args={[1, 0.8, 1]} /><meshStandardMaterial color="#8a6440" /></mesh>
-      <mesh position={[-4.8, 0.3, -9.4]} castShadow><boxGeometry args={[0.8, 0.6, 0.8]} /><meshStandardMaterial color="#7a5636" /></mesh>
-      <mesh position={[8, 0.3, -12]} rotation={[0, 0.6, Math.PI / 2]} scale={[1, 1, 0.5]}><cylinderGeometry args={[0.5, 0.5, 3, 14, 1, true, 0, Math.PI]} /><meshStandardMaterial color="#2f6fd8" side={THREE.DoubleSide} /></mesh>
+      <Suspense fallback={null}><Palms items={palms.map(([x, z, h], i) => [x, 0, z, h / 5, i * 1.7])} /></Suspense>
+      <Part model="coast" name="cst_props" />
       {/* water-folk */}
       <WaterFolk position={[-8, 0, -4]} rotation={[0, 0.6, 0]} hat="#2f6fd8" />
       <WaterFolk position={[6, 0, 2]} rotation={[0, -0.8, 0]} hat="#d8b060" />

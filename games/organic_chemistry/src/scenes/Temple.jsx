@@ -3,7 +3,8 @@ import { useFrame } from '@react-three/fiber'
 import { Html, Sky } from '@react-three/drei'
 import * as THREE from 'three'
 import GameScene from '../engine/GameScene'
-import { Slab, Gate, Station, Torch, Motes, HookTarget, Chest } from '../engine/kit'
+import { Gate, Station, Torch, Motes, HookTarget, Chest } from '../engine/kit'
+import { Part, preloadModels } from '../engine/models'
 import { ImpPack, CrabPack } from '../actors/Critters'
 import { Ferrymen } from '../actors/Coastfolk'
 import Hydra from '../actors/Hydra'
@@ -15,9 +16,12 @@ import { W2 as W, ROOMS2, STATIONS2, LADDER, BUOYS, GOALS2, HYDRA } from '../dat
 // Dungeon 2 — The Tide Temple (Chapter 2, Polar Covalent Bonds; Acids and Bases).
 // Ocarina-style: a Dungeon Map and Compass in chests, a small key for a locked door, the dungeon item
 // (the Curved-Arrow Hookshot) in a big chest, then a Boss Key and the boss. The sea runs under it all.
+// Floors, walls, pillars, the pool rim, the threshold arch and the tower on the horizon are built in
+// Blender (tools/temple_blender.py → public/models/temple.glb), one part per room.
+const TEMPLE_PARTS = ['entrance', '2-1', '2-2', '2-3', '2-4', '2-5', 'boss', 'horizon']
 
+preloadModels('temple', 'hydra', 'critters', 'coastfolk')
 const has = (id) => !!getState().save.solved[id]
-const ghost = { addFloor: () => 0, remove: () => {} } // visual-only Slab
 const STONE = '#6f8590', STONE_DARK = '#4c5f6a'
 const ARENA = { x: 13, z: [-140, -176] }
 
@@ -32,23 +36,6 @@ function Sea() {
   return <mesh geometry={geo} position={[0, -0.55, -85]} rotation={[-Math.PI / 2, 0, 0]}><meshStandardMaterial color="#1b7290" roughness={0.15} metalness={0.2} transparent opacity={0.92} /></mesh>
 }
 
-/** A row of temple pillars: red for electron-rich (δ−), blue for electron-poor (δ+), like the book's potential maps. */
-function Pillars({ z0, z1, x = W - 0.4, y = 0, step = 4 }) {
-  const items = []
-  for (let z = z0 - 1; z > z1; z -= step) items.push(z)
-  return (
-    <group>
-      {items.map((z, i) => [-1, 1].map((s) => (
-        <group key={i + '-' + s} position={[s * x, y, z]}>
-          <mesh position={[0, 3, 0]} castShadow><cylinderGeometry args={[0.42, 0.48, 6, 12]} /><meshStandardMaterial color={(i + (s > 0 ? 1 : 0)) % 2 ? '#c0394b' : '#2f6fd8'} roughness={0.55} /></mesh>
-          <mesh position={[0, 6.15, 0]}><boxGeometry args={[1.2, 0.3, 1.2]} /><meshStandardMaterial color="#d8d0bc" roughness={0.8} /></mesh>
-          <mesh position={[0, 0.12, 0]}><boxGeometry args={[1.1, 0.24, 1.1]} /><meshStandardMaterial color="#d8d0bc" roughness={0.8} /></mesh>
-        </group>
-      )))}
-    </group>
-  )
-}
-
 /** Side walls for a stretch of the temple. Low (so the camera sees over), with a cornice. */
 function Walls({ world, z0, z1, half = W, h = 7, y = 0 }) {
   const len = Math.abs(z1 - z0), zc = (z0 + z1) / 2
@@ -57,16 +44,7 @@ function Walls({ world, z0, z1, half = W, h = 7, y = 0 }) {
     const b = world.addSolid([half, y - 4, Math.min(z0, z1)], [half + 2, y + h, Math.max(z0, z1)])
     return () => { world.remove(a); world.remove(b) }
   }, [world])
-  return (
-    <group>
-      {[-1, 1].map((s) => (
-        <group key={s}>
-          <mesh position={[s * (half + 1), y + h / 2 - 2, zc]} receiveShadow><boxGeometry args={[2, h + 4, len]} /><meshStandardMaterial color={STONE_DARK} roughness={0.95} /></mesh>
-          <mesh position={[s * (half + 1), y + h + 0.15, zc]}><boxGeometry args={[2.6, 0.3, len]} /><meshStandardMaterial color="#d8d0bc" roughness={0.8} /></mesh>
-        </group>
-      ))}
-    </group>
-  )
+  return null // the walls themselves are drawn by the Blender temple
 }
 
 /** A floating molecule statue for the Tug-of-War Hall: shows its bond dipoles and whether they cancel. */
@@ -209,6 +187,9 @@ function TempleLevel({ world, onExit }) {
       world.addSolid([-ARENA.x - 2, -4, ARENA.z[1] - 2], [ARENA.x + 2, 8, ARENA.z[1]]),
       world.addSolid([-ARENA.x, -4, -141], [-W, 8, -139]), world.addSolid([W, -4, -141], [ARENA.x, 8, -139]),
     ]
+    // the pillars are solid: the same rows the Blender temple draws them in
+    const rows = [[4, -62, W - 0.4, 4], [-72, -84, W - 0.4, 4], [-116, -121, W - 0.4, 3], [-134, -140, W - 0.4, 3], [-140, -176, ARENA.x - 0.6, 4.5]]
+    rows.forEach(([z0, z1, x, step]) => { for (let z = z0 - 1; z > z1; z -= step) [-1, 1].forEach((sd) => s.push(world.addSolid([sd * x - 0.55, 0, z - 0.55], [sd * x + 0.55, 6.5, z + 0.55]))) })
     // room checkpoints, titles, "rooms seen" for the map, and a word from Pi the first time
     const HINTS = {
       '2-1': 'Tug-of-War Hall. Some molecules pull their electrons one way overall, and some cancel out.',
@@ -375,22 +356,8 @@ function TempleLevel({ world, onExit }) {
       <fog attach="fog" args={['#bcd6e0', 40, 120]} />
       <Sea />
 
-      {/* ---- floors (visual) */}
-      <Slab world={ghost} x0={-3} z0={4} x1={3} z1={9} color="#8a6440" thick={1.2} />
-      <Slab world={ghost} x0={-W} z0={4} x1={W} z1={-62} color={STONE} thick={2} />
-      <Slab world={ghost} x0={-W} z0={-72} x1={W} z1={-84} color={STONE} thick={2} />
-      {LADDER.tiers.map((t, i) => (
-        <group key={i}>
-          <Slab world={ghost} x0={-W} z0={i === 0 ? -84 : LADDER.locks[i - 1].z - 1.6} x1={W} z1={t.z[1]} y={t.y} color={i % 2 ? '#7a909a' : STONE} thick={t.y + 2} />
-          {i > 0 && [0.4, 0.8].map((dy, k) => <Slab key={k} world={ghost} x0={-W} z0={LADDER.locks[i - 1].z - k * 0.8} x1={W} z1={LADDER.locks[i - 1].z - (k + 1) * 0.8} y={LADDER.tiers[i - 1].y + dy} color="#d8d0bc" thick={LADDER.tiers[i - 1].y + dy + 2} />)}
-        </group>
-      ))}
-      <Slab world={ghost} x0={-W} z0={-116} x1={W} z1={-121} color={STONE} thick={2} />
-      <Slab world={ghost} x0={-W} z0={-134} x1={W} z1={-140} color={STONE} thick={2} />
-      <Slab world={ghost} x0={-ARENA.x} z0={-140} x1={ARENA.x} z1={P.z[1]} color="#5f7480" thick={2} />
-      <Slab world={ghost} x0={-ARENA.x} z0={P.z[0]} x1={ARENA.x} z1={ARENA.z[1]} color="#5f7480" thick={2} />
-      <Slab world={ghost} x0={-ARENA.x} z0={P.z[1]} x1={P.x[0]} z1={P.z[0]} color="#5f7480" thick={2} />
-      <Slab world={ghost} x0={P.x[1]} z0={P.z[1]} x1={ARENA.x} z1={P.z[0]} color="#5f7480" thick={2} />
+      {/* ---- the temple itself: floors, walls, pillars (Blender) */}
+      {TEMPLE_PARTS.map((r) => <Part key={r} model="temple" name={'tmp_' + r} castShadow={r !== 'horizon'} receiveShadow oneSided />)}
       {/* the pool glows */}
       <mesh position={[0, -0.4, (P.z[0] + P.z[1]) / 2]} rotation={[-Math.PI / 2, 0, 0]}><planeGeometry args={[P.x[1] - P.x[0], P.z[1] - P.z[0]]} /><meshBasicMaterial color="#2fb8c8" transparent opacity={0.5} /></mesh>
       <pointLight position={[0, 1, -158]} color="#43e6f5" intensity={8} distance={16} />
@@ -400,15 +367,12 @@ function TempleLevel({ world, onExit }) {
       <Walls world={world} z0={-84} z1={-110} h={10} />
       <Walls world={world} z0={-116} z1={-140} />
       <Walls world={world} z0={-140} z1={-176} half={ARENA.x} h={8} />
-      <Pillars z0={4} z1={-62} /><Pillars z0={-72} z1={-84} /><Pillars z0={-116} z1={-121} step={3} /><Pillars z0={-134} z1={-140} step={3} />
-      <Pillars z0={-140} z1={-176} x={ARENA.x - 0.6} step={4.5} />
 
       {/* ---- entrance */}
       <Ferrymen position={[0, -0.2, 11]} rotation={[0, Math.PI, 0]} />
       <Html position={[0, 3.6, 11]} center distanceFactor={11}><div className="tag3d">Brønsted & Lowry</div></Html>
       <group position={[5, 0, -11]}>
-        <mesh position={[0, 0.8, 0]} castShadow><boxGeometry args={[1.2, 1.6, 0.8]} /><meshStandardMaterial color="#3a3644" roughness={0.9} /></mesh>
-        <mesh position={[0, 1.2, 0.41]}><planeGeometry args={[0.9, 0.7]} /><meshBasicMaterial color="#a06bff" transparent opacity={0.6} /></mesh>
+        <mesh position={[0, 1.37, 0.14]} rotation={[-Math.PI / 2 + 0.45, 0, 0]}><planeGeometry args={[0.95, 0.7]} /><meshBasicMaterial color="#a06bff" transparent opacity={0.7} /></mesh>
         <Html position={[0, 2.1, 0]} center distanceFactor={10}><div className="tag3d">Malradix's decree</div></Html>
       </group>
       <Chest world={world} pos={[-6, 0, -10]} rotY={Math.PI / 2} opened={!!solved['t2-map']} onOpen={() => openChest('t2-map')} />

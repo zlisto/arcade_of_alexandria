@@ -5,8 +5,9 @@ import * as THREE from 'three'
 import GameScene from '../engine/GameScene'
 import { Block, Slab, Gate, Station, Scatter, scatter, Torch, Motes, Chest, Tag, twoShot } from '../engine/kit'
 import { Aufbau } from '../actors/Figures'
+import { Part } from '../engine/models'
 import WolfPack from '../actors/WolfPack'
-import Colossus from '../actors/Colossus'
+import Colossus, { ColossusDormant } from '../actors/Colossus'
 import { PiFollower } from './Village'
 import { getState, setState, saveGame, markSolved, say, toast, openPanel, useGame } from '../engine/store'
 import { playMusic, sfx } from '../audio/sfx'
@@ -17,35 +18,16 @@ import { ROOMS, STATIONS, FORGE, BOSS, GOALS } from '../data/dungeon1'
 const W = 8 // half width of the halls
 const has = (id) => !!getState().save.solved[id]
 
+// The cave itself is built in Blender (tools/caverns_blender.py → public/models/caverns.glb): a faceted
+// crystal-rock tunnel per room with shell rings of lamp dots, crossing crystal beams, crystal clusters,
+// stalactites, the pits, the Forge's slot wall and the Colossus's chamber. One part per room, so rooms
+// off screen are culled.
+const CAVE_ROOMS = ['entrance', '1-1', '1-2', '1-3', '1-4', '1-5', 'boss']
 function CaveDressing() {
-  const crystals = useMemo(() => scatter(120, 5, (r) => {
-    const z = -2 - r() * 150
-    const side = r() < 0.5 ? -1 : 1
-    if (z < -126 && z > -158) return [side * (11 + r() * 3), z, 0.6 + r() * 1.4, r() * 6]
-    return [side * (W - 0.3 - r() * 0.6), z, 0.5 + r() * 1.2, r() * 6]
-  }), [])
-  const stalac = useMemo(() => scatter(110, 9, (r) => [(r() - 0.5) * 15, -2 - r() * 155, 0.6 + r() * 1.3, r() * 6]), [])
-  const rocks = useMemo(() => scatter(70, 13, (r) => {
-    const side = r() < 0.5 ? -1 : 1
-    return [side * (W - 0.8 - r() * 1.2), -2 - r() * 120, 0.5 + r() * 0.9, r() * 6]
-  }), [])
-  const sref = useRef()
-  const dummy = useMemo(() => new THREE.Object3D(), [])
-  useEffect(() => {
-    stalac.forEach(([x, z, s], i) => { dummy.position.set(x, 9 - s * 0.8, z); dummy.rotation.set(Math.PI, 0, 0); dummy.scale.set(s * 0.5, s * 1.6, s * 0.5); dummy.updateMatrix(); sref.current.setMatrixAt(i, dummy.matrix) })
-    sref.current.instanceMatrix.needsUpdate = true
-  }, [])
   return (
     <group>
-      <Scatter items={crystals} kind="crystal" />
-      <Scatter items={rocks} kind="rock" color="#3a3848" />
-      <instancedMesh ref={sref} args={[null, null, stalac.length]}><coneGeometry args={[0.5, 1, 6]} /><meshStandardMaterial color="#2a2836" roughness={0.9} flatShading /></instancedMesh>
-      <mesh position={[0, 9.5, -78]}><boxGeometry args={[40, 1, 170]} /><meshStandardMaterial color="#1e2a34" roughness={1} /></mesh>
+      {CAVE_ROOMS.map((r) => <Part key={r} model="caverns" name={'room_' + r} castShadow={false} receiveShadow oneSided />)}
       <Motes count={260} area={[16, 8, 160]} center={[0, 0.2, -78]} color="#8fe8ff" size={0.05} />
-      {/* teal crystal veins running along both walls, like the concept art's glowing tube */}
-      {[-1, 1].map((sd) => [...Array(14)].map((_, k) => <mesh key={sd + '-' + k} position={[sd * (W - 0.02), 2.2 + (k % 3) * 1.6, -6 - k * 8.6]} rotation={[0, 0, sd * (0.5 + (k % 2) * 0.5)]}><boxGeometry args={[0.05, 3.2, 0.18]} /><meshBasicMaterial color="#43e6f5" toneMapped={false} /></mesh>))}
-      {/* a ring of lamp-dots overhead at the start of every room: shells of light */}
-      {[-14, -32, -50, -76, -112].map((z) => [...Array(16)].map((_, k) => { const a = (k / 16) * Math.PI; return <mesh key={z + '-' + k} position={[Math.cos(a) * (W - 0.4), 0.6 + Math.sin(a) * 7.6, z - 0.6]}><sphereGeometry args={[0.13, 8, 6]} /><meshBasicMaterial color="#bff6ff" toneMapped={false} /></mesh> }))}
     </group>
   )
 }
@@ -56,8 +38,8 @@ function Walls({ world, z0, z1, half = W, color = '#3a4052' }) {
   const zc = (z0 + z1) / 2
   return (
     <group>
-      <Block world={world} pos={[-half - 1, 4.5, zc]} size={[2, 9, len]} color={color} />
-      <Block world={world} pos={[half + 1, 4.5, zc]} size={[2, 9, len]} color={color} />
+      <Block world={world} pos={[-half - 1, 4.5, zc]} size={[2, 9, len]} color={color} visible={false} />
+      <Block world={world} pos={[half + 1, 4.5, zc]} size={[2, 9, len]} color={color} visible={false} />
     </group>
   )
 }
@@ -145,10 +127,9 @@ function BridgePiece({ world, z0, z1, raised }) {
     if (ref.current) { ref.current.position.y = h.current - 0.3; ref.current.visible = h.current > -5.8 }
   })
   return (
-    <mesh ref={ref} position={[0, -6, (z0 + z1) / 2]} castShadow receiveShadow>
-      <boxGeometry args={[3.8, 0.6, Math.abs(z1 - z0) - 0.1]} />
-      <meshStandardMaterial color="#3a4a5a" emissive="#43e6f5" emissiveIntensity={0.15} roughness={0.6} />
-    </mesh>
+    <group ref={ref} position={[0, -6, (z0 + z1) / 2]}>
+      <Part model="caverns" name="bridge" position={[0, 0, 0]} />
+    </group>
   )
 }
 
@@ -319,7 +300,9 @@ function CavernsLevel({ world, onExit }) {
   const talkAufbau = async () => {
     if (busy.current) return
     busy.current = true
-    world.camOverride = twoShot(world, [3, 0, -9])
+    // a lower two-shot so Aufbau's face (head at 1.2 m) reads under his helmet
+    const shot = twoShot(world, [3, 0, -9], 3.8, -0.6)
+    world.camOverride = shot && { pos: [shot.pos[0], 1.5, shot.pos[2]], look: [shot.look[0], 1.15, shot.look[2]] }
     if (!has('met-aufbau')) {
       await say([
         { who: 'Sage Aufbau', text: 'Hmph. A carbon. Took your time. I\'m Aufbau. Down here, everything fills from the bottom up.' },
@@ -468,13 +451,16 @@ function CavernsLevel({ world, onExit }) {
   }
 
   const arenaSeal = useRef(null)
-  useEffect(() => { arenaSeal.current = world.addSolid([-15, 0, -126.6], [15, 9, -125.6]); world.setEnabled(arenaSeal.current, false); return () => world.remove(arenaSeal.current) }, [world])
+  useEffect(() => { arenaSeal.current = world.addSolid([-15, 0, -126.6], [15, 9, -125.6]); world.solids.get(arenaSeal.current).noCam = true; world.setEnabled(arenaSeal.current, false); return () => world.remove(arenaSeal.current) }, [world])
   // camera help: frame the giant in the boss hall
   useFrame(() => {
     const p = world.player
     if (!p) return
     const inSlot = p.pos.z < FORGE.slot.z[0] + 1.5 && p.pos.z > FORGE.slot.z[1] - 0.5
-    world.camBoost = (bossStarted.current && !getState().save.solved.boss) ? { dist: 4.2, pitch: 0.42 } : null
+    // once Kai is through the slot, the camera stays on his side of the slot wall
+    world.camMaxZ = p.pos.z < FORGE.slot.z[1] - 0.3 && p.pos.z > FORGE.door ? FORGE.slot.z[1] - 0.5 : undefined
+    // in the fight: pull back and look up from low down, so the 8 m giant's core and head stay in frame
+    world.camBoost = (bossStarted.current && !getState().save.solved.boss) ? { dist: 4.2, pitchSet: 0.16, lookY: 2.6 } : null
   })
 
   // shard pickup interactable
@@ -493,27 +479,18 @@ function CavernsLevel({ world, onExit }) {
       <hemisphereLight args={["#6a7ab0", "#2a2232", 0.75]} />
       <directionalLight position={[6, 20, 4]} intensity={0.6} color="#9fb8ff" />
       <CaveDressing />
-      {/* visible floors */}
-      <Slab world={{ addFloor: () => 0, remove: () => {} }} x0={-W} z0={0.5} x1={W} z1={-55} color="#4a4a5c" />
-      <Slab world={{ addFloor: () => 0, remove: () => {} }} x0={-W} z0={-67} x1={W} z1={-94} color="#4a4a5c" />
-      <Slab world={{ addFloor: () => 0, remove: () => {} }} x0={-W} z0={FORGE.gap.z[1]} x1={W} z1={-126} color="#4a4a5c" />
-      <Slab world={{ addFloor: () => 0, remove: () => {} }} x0={-15} z0={-126} x1={15} z1={-158} color="#34303f" />
-      {/* chasm and gap glow */}
-      <mesh position={[0, -7, -61]} rotation={[-Math.PI / 2, 0, 0]}><planeGeometry args={[16, 12]} /><meshBasicMaterial color="#0f3a4a" /></mesh>
-      <mesh position={[0, -7, (FORGE.gap.z[0] + FORGE.gap.z[1]) / 2]} rotation={[-Math.PI / 2, 0, 0]}><planeGeometry args={[16, FORGE.gap.z[0] - FORGE.gap.z[1]]} /><meshBasicMaterial color="#0f3a4a" /></mesh>
+      {/* floors, pits and walls are all in the Blender cave (CaveDressing); the glow down in the pits: */}
+      {[[-61, 12], [(FORGE.gap.z[0] + FORGE.gap.z[1]) / 2, FORGE.gap.z[0] - FORGE.gap.z[1]]].map(([z, len]) => (
+        <mesh key={z} position={[0, -9, z]} rotation={[-Math.PI / 2, 0, 0]}><planeGeometry args={[16.6, len]} /><meshBasicMaterial color="#1fa7c4" transparent opacity={0.22} depthWrite={false} blending={THREE.AdditiveBlending} /></mesh>
+      ))}
       <pointLight position={[0, -4, -61]} color="#43e6f5" intensity={6} distance={14} />
       <pointLight position={[0, -4, -97.7]} color="#43e6f5" intensity={6} distance={12} />
       {/* hall walls (the boss arena has its own) */}
       <Walls world={world} z0={0.5} z1={-126} />
-      {/* forge slot visuals */}
-      <mesh position={[(-W + FORGE.slot.x[0]) / 2, 4.5, (FORGE.slot.z[0] + FORGE.slot.z[1]) / 2]}><boxGeometry args={[W + FORGE.slot.x[0], 9, 3.5]} /><meshStandardMaterial color="#2f2b3a" /></mesh>
-      <mesh position={[(W + FORGE.slot.x[1]) / 2, 4.5, (FORGE.slot.z[0] + FORGE.slot.z[1]) / 2]}><boxGeometry args={[W - FORGE.slot.x[1], 9, 3.5]} /><meshStandardMaterial color="#2f2b3a" /></mesh>
-      <mesh position={[0, (FORGE.slot.ceiling + 9) / 2, (FORGE.slot.z[0] + FORGE.slot.z[1]) / 2]}><boxGeometry args={[FORGE.slot.x[1] - FORGE.slot.x[0], 9 - FORGE.slot.ceiling, 3.5]} /><meshStandardMaterial color="#2f2b3a" /></mesh>
-      <mesh position={[0, FORGE.slot.ceiling + 0.05, FORGE.slot.z[0] + 0.02]}><boxGeometry args={[3.2, 0.1, 0.05]} /><meshBasicMaterial color="#43e6f5" toneMapped={false} /></mesh>
+      {/* light in the slot's mouth so the low opening reads */}
+      <pointLight position={[0, 0.6, FORGE.slot.z[0] + 0.6]} color="#43e6f5" intensity={4} distance={6} />
       <Tag position={[0, 3, FORGE.slot.z[0] + 0.3]} df={10}>Ethylene arch · H₂C=CH₂ · every C has a double bond</Tag>
       <Tag position={[0, 2.2, FORGE.gap.z[0] + 0.5]} df={10}>Acetylene gap · HC≡CH · a triple bond</Tag>
-      {/* glowing lips so the slot and the gap's edges read */}
-      {[FORGE.slot.z[0] + 0.02, FORGE.slot.z[1] - 0.02].map((z) => [-1, 1].map((sd) => <mesh key={z + '' + sd} position={[sd * (FORGE.slot.x[1] + 0.05), FORGE.slot.ceiling / 2, z]}><boxGeometry args={[0.08, FORGE.slot.ceiling, 0.06]} /><meshBasicMaterial color="#43e6f5" toneMapped={false} /></mesh>))}
       {[FORGE.gap.z[0], FORGE.gap.z[1]].map((z) => <mesh key={'gl' + z} position={[0, 0.03, z]}><boxGeometry args={[2 * W, 0.04, 0.18]} /><meshBasicMaterial color="#ffcf6a" toneMapped={false} /></mesh>)}
       {/* exit gates */}
       {ROOMS.slice(0, -2).map((r) => <Gate key={r.id} world={world} pos={[0, 0, r.z[1]]} size={[2 * W, 7, 0.8]} open={gateOpen(r)} {...(r.id === '1-3' ? { color: '#5a4020', glow: '#ffcf6a' } : {})} />)}
@@ -544,8 +521,8 @@ function CavernsLevel({ world, onExit }) {
       <Chest world={world} pos={[0, 0, -122.5]} big opened={!!solved['t1-bosskey']} show={!!(solved['1-5a'] && solved['1-5b'])} onOpen={() => openChest('t1-bosskey')} label="Open the big chest" />
       <Tag position={[0, 7.8, -75.6]} df={13}>{solved['t1-door'] ? 'unlocked' : 'locked · small key'}</Tag>
       <group position={[-5, 0, -10]}>
-        <mesh position={[0, 0.8, 0]} castShadow><boxGeometry args={[1.2, 1.6, 0.8]} /><meshStandardMaterial color="#3a3644" roughness={0.9} /></mesh>
-        <mesh position={[0, 1.2, 0.41]}><planeGeometry args={[0.9, 0.7]} /><meshBasicMaterial color={solved.boss ? '#3a3046' : '#a06bff'} transparent opacity={0.6} /></mesh>
+        <Part model="caverns" name="lectern" />
+        <mesh position={[0, 1.37, 0.09]} rotation={[-Math.PI / 2 + 0.45, 0, 0]}><planeGeometry args={[0.95, 0.7]} /><meshBasicMaterial color={solved.boss ? '#3a3046' : '#a06bff'} transparent opacity={0.7} /></mesh>
         <Tag position={[0, 2.1, 0]} df={10}>{solved.boss ? "Malradix's decree — cracked" : "Malradix's decree"}</Tag>
       </group>
       <Nucleus pos={[0, 4.3, -20]} />
@@ -570,6 +547,7 @@ function CavernsLevel({ world, onExit }) {
       {[0, 1, 2, 3, 4, 5, 6, 7].map((k) => { const a = ((k + 0.5) / 8) * Math.PI * 2; return <Torch key={k} pos={[Math.cos(a) * 13.8, 0, BOSS.center[2] + Math.sin(a) * 13.8]} color="#c79bff" /> })}
       <mesh position={[0, 0.02, BOSS.center[2]]} rotation={[-Math.PI / 2, 0, 0]}><ringGeometry args={[12.5, 13, 64]} /><meshBasicMaterial color="#a06bff" toneMapped={false} /></mesh>
       <Colossus world={world} center={BOSS.center} active={bossOn && !solved.boss} onDefeated={bossDown} />
+      {!bossOn && !solved.boss && <ColossusDormant center={BOSS.center} />}
       <Shard show={!!solved.boss && save.shards < 1} pos={BOSS.center} />
       <PiFollower world={world} />
     </group>

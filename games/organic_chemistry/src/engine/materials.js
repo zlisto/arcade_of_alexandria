@@ -37,3 +37,15 @@ export function bend(geo, k) {
   return geo
 }
 
+
+// A soft round glow (radial gradient), shared by sprites, motes and flames.
+let softTex = null
+export function softDot() {
+  if (softTex) return softTex
+  const c = document.createElement('canvas'); c.width = c.height = 64
+  const g = c.getContext('2d'), grd = g.createRadialGradient(32, 32, 0, 32, 32, 32)
+  grd.addColorStop(0, 'rgba(255,255,255,1)'); grd.addColorStop(0.35, 'rgba(255,255,255,0.5)'); grd.addColorStop(1, 'rgba(255,255,255,0)')
+  g.fillStyle = grd; g.fillRect(0, 0, 64, 64)
+  softTex = new THREE.CanvasTexture(c)
+  return softTex
+}

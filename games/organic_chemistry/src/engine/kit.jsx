@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import { Html } from '@react-three/drei'
+import { softDot } from './materials'
 
 // Reusable scene pieces. Each piece that blocks or carries Kai registers itself with the world.
 
@@ -58,17 +59,17 @@ export function Gate({ world, pos, size = [4, 4, 0.6], open, color = '#2a3550', 
   return (
     <group>
       <group ref={ref} position={[pos[0], pos[1] + size[1] / 2, pos[2]]}>
-        {/* stone slab behind a portcullis of glowing bars, so it reads as a door, not a wall of light */}
-        <mesh castShadow><boxGeometry args={[size[0], size[1], size[2] * 0.5]} /><meshStandardMaterial color="#1f1d28" roughness={0.95} flatShading /></mesh>
-        {[...Array(Math.max(2, Math.round(size[0] / 0.9)))].map((_, i, a) => (
-          <mesh key={i} position={[-size[0] / 2 + (i + 0.5) * (size[0] / a.length), 0, size[2] * 0.3]}><boxGeometry args={[0.12, size[1], 0.12]} /><meshStandardMaterial color={color} metalness={0.6} roughness={0.4} emissive={glow} emissiveIntensity={0.35} /></mesh>
+        {/* a pane of dark crystal behind a portcullis of glowing bars: it reads as a door and you can glimpse the room beyond */}
+        <mesh><boxGeometry args={[size[0], size[1], size[2] * 0.4]} /><meshStandardMaterial color={color} roughness={0.2} metalness={0.3} transparent opacity={0.55} depthWrite={false} emissive={glow} emissiveIntensity={0.06} /></mesh>
+        {[...Array(Math.max(2, Math.round(size[0] / 1.6)))].map((_, i, a) => (
+          <mesh key={i} position={[-size[0] / 2 + (i + 0.5) * (size[0] / a.length), 0, size[2] * 0.3]}><boxGeometry args={[0.1, size[1], 0.1]} /><meshStandardMaterial color={color} metalness={0.6} roughness={0.35} emissive={glow} emissiveIntensity={0.9} toneMapped={false} /></mesh>
         ))}
-        {[-0.3, 0.3].map((f) => <mesh key={f} position={[0, f * size[1], size[2] * 0.3]}><boxGeometry args={[size[0], 0.14, 0.14]} /><meshStandardMaterial color={color} metalness={0.6} roughness={0.4} /></mesh>)}
+        {[-0.3, 0.3].map((f) => <mesh key={f} position={[0, f * size[1], size[2] * 0.3]}><boxGeometry args={[size[0], 0.1, 0.1]} /><meshStandardMaterial color={color} metalness={0.6} roughness={0.35} emissive={glow} emissiveIntensity={0.5} /></mesh>)}
       </group>
       {/* frame */}
-      <mesh position={[pos[0] - size[0] / 2 - 0.25, pos[1] + size[1] / 2 + 0.2, pos[2]]}><boxGeometry args={[0.5, size[1] + 0.4, size[2] + 0.4]} /><meshStandardMaterial color="#1c1a22" roughness={0.9} /></mesh>
-      <mesh position={[pos[0] + size[0] / 2 + 0.25, pos[1] + size[1] / 2 + 0.2, pos[2]]}><boxGeometry args={[0.5, size[1] + 0.4, size[2] + 0.4]} /><meshStandardMaterial color="#1c1a22" roughness={0.9} /></mesh>
-      <mesh position={[pos[0], pos[1] + size[1] + 0.25, pos[2]]}><boxGeometry args={[size[0] + 1, 0.5, size[2] + 0.4]} /><meshStandardMaterial color="#1c1a22" roughness={0.9} /></mesh>
+      <mesh position={[pos[0] - size[0] / 2 - 0.25, pos[1] + size[1] / 2 + 0.2, pos[2]]}><boxGeometry args={[0.5, size[1] + 0.4, size[2] + 0.4]} /><meshStandardMaterial color="#3a4652" roughness={0.85} /></mesh>
+      <mesh position={[pos[0] + size[0] / 2 + 0.25, pos[1] + size[1] / 2 + 0.2, pos[2]]}><boxGeometry args={[0.5, size[1] + 0.4, size[2] + 0.4]} /><meshStandardMaterial color="#3a4652" roughness={0.85} /></mesh>
+      <mesh position={[pos[0], pos[1] + size[1] + 0.25, pos[2]]}><boxGeometry args={[size[0] + 1, 0.5, size[2] + 0.4]} /><meshStandardMaterial color="#3a4652" roughness={0.85} /></mesh>
       <mesh position={[pos[0], pos[1] + size[1] + 0.25, pos[2] + size[2] / 2 + 0.21]}><boxGeometry args={[size[0] * 0.6, 0.12, 0.02]} /><meshBasicMaterial color={open ? '#2e4a3c' : glow} toneMapped={false} /></mesh>
     </group>
   )
@@ -92,8 +93,8 @@ export function Station({ world, pos, label, onUse, enabled = true, solved = fal
   const light = solved ? '#6fe39a' : glow
   return (
     <group>
-      <mesh position={[pos[0], pos[1] + 0.5, pos[2]]} castShadow><cylinderGeometry args={[0.38, 0.5, 1.0, 8]} /><meshStandardMaterial color="#2a2733" roughness={0.7} /></mesh>
-      <mesh position={[pos[0], pos[1] + 1.02, pos[2]]}><cylinderGeometry args={[0.5, 0.42, 0.08, 8]} /><meshStandardMaterial color="#3a3644" /></mesh>
+      <mesh position={[pos[0], pos[1] + 0.5, pos[2]]} castShadow><cylinderGeometry args={[0.38, 0.5, 1.0, 8]} /><meshStandardMaterial color="#d8d3c4" roughness={0.6} /></mesh>
+      <mesh position={[pos[0], pos[1] + 1.02, pos[2]]}><cylinderGeometry args={[0.5, 0.42, 0.08, 8]} /><meshStandardMaterial color="#c9a24a" metalness={0.7} roughness={0.35} /></mesh>
       <group ref={orb} position={[pos[0], pos[1] + 1.45, pos[2]]}>
         {/* a faceted gem: deep colour on the outside, a bright core glowing through */}
         <mesh scale={[1, 1.45, 1]}><octahedronGeometry args={[0.2, 0]} /><meshPhysicalMaterial color={c} emissive={c} emissiveIntensity={solved ? 1.4 : 0.9} roughness={0.12} metalness={0.05} clearcoat={1} clearcoatRoughness={0.05} flatShading transparent opacity={0.9} /></mesh>
@@ -168,7 +169,12 @@ export function Torch({ pos, color = '#ffb35a' }) {
     <group position={pos}>
       <mesh position={[0, 0.7, 0]}><cylinderGeometry args={[0.06, 0.09, 1.4, 6]} /><meshStandardMaterial color="#2a2420" /></mesh>
       <mesh position={[0, 1.45, 0]}><cylinderGeometry args={[0.18, 0.1, 0.18, 8]} /><meshStandardMaterial color="#3a3028" /></mesh>
-      <mesh ref={flame} position={[0, 1.7, 0]}><coneGeometry args={[0.14, 0.42, 8]} /><meshBasicMaterial color={color} toneMapped={false} /></mesh>
+      {/* the flame: a soft outer tongue, a hot white core and a glow, all additive */}
+      <group ref={flame} position={[0, 1.58, 0]}>
+        <mesh position={[0, 0.17, 0]} scale={[1, 1.9, 1]}><sphereGeometry args={[0.12, 10, 8]} /><meshBasicMaterial color={color} transparent opacity={0.75} depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} /></mesh>
+        <mesh position={[0, 0.12, 0]} scale={[1, 1.7, 1]}><sphereGeometry args={[0.06, 8, 6]} /><meshBasicMaterial color="#fff2c8" transparent opacity={0.9} depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} /></mesh>
+        <sprite position={[0, 0.18, 0]} scale={0.9}><spriteMaterial map={softDot()} color={color} transparent opacity={0.45} depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} /></sprite>
+      </group>
       <pointLight ref={light} position={[0, 1.8, 0]} color={color} intensity={2.4} distance={8} />
     </group>
   )
@@ -207,7 +213,7 @@ export function Motes({ count = 120, area = [40, 8, 40], center = [0, 2, 0], col
   })
   return (
     <points ref={ref} geometry={geo}>
-      <pointsMaterial color={color} size={size} transparent opacity={0.8} depthWrite={false} toneMapped={false} />
+      <pointsMaterial color={color} size={size * 1.6} map={softDot()} alphaTest={0.02} transparent opacity={0.85} depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} />
     </points>
   )
 }
@@ -301,7 +307,7 @@ export function Tag({ position, children, df = 10, near = 3.2, far = 24, classNa
 }
 
 /** A side-on dialogue camera framing Kai and whoever he's talking to (set world.camOverride; clear after). */
-export function twoShot(world, npc, dist = 3.8) {
+export function twoShot(world, npc, dist = 3.8, npcFacing) {
   const p = world.player && world.player.pos
   if (!p) return null
   const mx = (p.x + npc[0]) / 2, mz = (p.z + npc[2]) / 2
@@ -310,5 +316,11 @@ export function twoShot(world, npc, dist = 3.8) {
   dx /= l; dz /= l
   if (world.player.teleport) world.player.teleport([p.x, p.y, p.z], Math.atan2(dx, dz))
   // stand off to the side of the line between them, a little toward Kai's back so both faces show
-  return { pos: [mx - dz * dist - dx * 1.2, 2.0, mz + dx * dist - dz * 1.2], look: [mx, 1.45, mz] }
+  // either side of the line between them works; prefer the one in front of the NPC if we know where it faces
+  let side = 1
+  if (npcFacing !== undefined) {
+    const fx = Math.sin(npcFacing), fz = Math.cos(npcFacing)
+    if ((-dz) * fx + dx * fz < 0) side = -1
+  }
+  return { pos: [mx - side * dz * dist - dx * 1.2, 2.0, mz + side * dx * dist - dz * 1.2], look: [mx, 1.45, mz] }
 }

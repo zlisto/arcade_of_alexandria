@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { rimMat } from '../engine/materials'
+import { Part } from '../engine/models'
 import { Tag } from '../engine/kit'
 import { setState, getState, toast } from '../engine/store'
 import { sfx } from '../audio/sfx'
@@ -29,15 +30,11 @@ function Segment({ M, refCb, head, me, nH }) {
   const r = head ? 0.62 : 0.55
   return (
     <group ref={refCb}>
-      <mesh material={me ? M.methyl : M.carbon} castShadow><sphereGeometry args={[r, 22, 16]} /></mesh>
-      {[...Array(8)].map((_, k) => { const a = (k / 8) * Math.PI * 2; return <mesh key={k} position={[Math.cos(a) * r * 0.85, r * 0.45, Math.sin(a) * r * 0.85]} rotation={[Math.sin(a) * 0.5, 0, -Math.cos(a) * 0.5]} material={M.scale}><coneGeometry args={[0.1, 0.26, 5]} /></mesh> })}
-      {[...Array(nH)].map((_, k) => { const a = (k / nH) * Math.PI * 2 + 0.6; return <mesh key={'h' + k} position={[Math.cos(a) * r * 0.8, -r * 0.65, Math.sin(a) * r * 0.8]} material={M.h}><sphereGeometry args={[0.17, 12, 10]} /></mesh> })}
+      {/* built in Blender (tools/creatures3_blender.py): scaled segments, the CH3 head and tail */}
+      <Part model="creatures3" name={head ? 'srp_head' : me ? 'srp_tail' : 'srp_mid'} mats={M} />
       {me && <Tag position={[0, r + 0.6, 0]} df={12} className="ch3">CH₃</Tag>}
       {head && (
         <group name="face">
-          {[-1, 1].map((s) => <mesh key={s} position={[s * 0.25, 0.2, 0.5]} material={M.eye}><sphereGeometry args={[0.1, 12, 10]} /></mesh>)}
-          {[-1, 1].map((s) => <mesh key={'f' + s} position={[s * 0.16, -0.28, 0.54]} rotation={[0.3, 0, Math.PI]} material={M.fang}><coneGeometry args={[0.05, 0.24, 6]} /></mesh>)}
-          <mesh position={[0, -0.08, 0.6]} scale={[1, 0.35, 0.4]} material={M.mouth}><sphereGeometry args={[0.24, 14, 10]} /></mesh>
           <pointLight position={[0, 0.3, 0.8]} color="#ffd0e8" intensity={2} distance={5} />
         </group>
       )}
@@ -52,6 +49,8 @@ export default function Serpent({ world, center, arenaR = 13, active, onDefeated
     scale: rimMat({ color: '#5a8a64', roughness: 0.5 }, '#d8ffe0', 0.3),
     h: rimMat({ color: '#eef2ee', roughness: 0.35 }, '#ffffff', 0.25),
     eye: new THREE.MeshBasicMaterial({ color: '#ffe060', toneMapped: false }),
+    serpEye: new THREE.MeshBasicMaterial({ color: '#ffe060', toneMapped: false }),
+    methylDark: rimMat({ color: '#a8386e', roughness: 0.45 }, '#ffd0e8', 0.35),
     fang: new THREE.MeshStandardMaterial({ color: '#f2efe6', roughness: 0.4 }),
     mouth: new THREE.MeshBasicMaterial({ color: '#2a0a12' }),
     bond: rimMat({ color: '#cfd8d0', roughness: 0.45, metalness: 0.2 }, '#ffffff', 0.25),
@@ -246,7 +245,7 @@ export default function Serpent({ world, center, arenaR = 13, active, onDefeated
       <Segment M={M} nH={2} refCb={(g) => (segRefs.current[1] = g)} />
       <Segment M={M} nH={2} refCb={(g) => (segRefs.current[2] = g)} />
       <Segment M={M} me nH={3} refCb={(g) => (segRefs.current[3] = g)} />
-      {[0, 1, 2].map((k) => <mesh key={k} ref={(m) => (bondRefs.current[k] = m)} material={M.bond}><cylinderGeometry args={[0.3, 0.3, 1, 12]} /></mesh>)}
+      {[0, 1, 2].map((k) => <group key={k} ref={(m) => (bondRefs.current[k] = m)}><Part model="creatures3" name="srp_bond" mats={M} /></group>)}
       <group ref={knot}>
         <mesh material={M.knot}><torusGeometry args={[0.45, 0.1, 10, 28]} /></mesh>
         <group ref={spark}>

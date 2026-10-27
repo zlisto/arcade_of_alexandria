@@ -11,11 +11,13 @@ import EclipsedBats from '../actors/EclipsedBats'
 import { PiFollower } from './Village'
 import { getState, setState, saveGame, say, toast, openPanel, useGame } from '../engine/store'
 import { playMusic, sfx } from '../audio/sfx'
+import { preloadModels } from '../engine/models'
 
 // The Chain Forest — World 3's route and prep. Giant trees whose roots zigzag like carbon chains,
 // lanterns, green mist. Archivist Iupaca guards the library tower; she opens the root gate into the
 // Chain Labyrinth once Kai can name the first ten alkanes (§3.2).
 
+preloadModels('creatures3', 'critters')
 const HALF = 46
 const TOWER = [0, 0, -24]
 const IUPACA = [2.6, 0, -17.4]
