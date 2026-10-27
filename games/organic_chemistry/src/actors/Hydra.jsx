@@ -183,13 +183,13 @@ export default function Hydra({ world, center, pool, active, onDefeated }) {
       if (s.cycle % 2 === 0) { s.mode = 'tired'; s.t = 0; toast('The heads tire and sink to rest — hookshot them (Q)!', 'info', 2400) }
       else { s.mode = 'idle'; s.t = 0 }
     }
-    if (s.mode === 'tired' && s.t > 7 / sp && s.heads.some((h) => !h.hooked)) {
+    if (s.mode === 'tired' && s.t > 14 / sp && s.heads.some((h) => !h.hooked)) {
       s.mode = 'recover'; s.t = 0
       toast('Too slow — the forms slip free. Catch all three before they recover.', 'warn', 2600)
     }
     if (s.mode === 'exposed') {
       s.corePos.y += (1.0 - s.corePos.y) * Math.min(1, dt * 4)
-      if (s.t > 6.5 / sp) { s.mode = 'recover'; s.t = 0; setCoreUp(false); toast('The core sinks back. Catch the heads again!', 'warn', 2200) }
+      if (s.t > 13 / sp) { s.mode = 'recover'; s.t = 0; setCoreUp(false); toast('The core sinks back. Catch the heads again!', 'warn', 2200) }
     } else if (!s.dead) s.corePos.y += (-3 - s.corePos.y) * Math.min(1, dt * 3)
 
     // ---- heads

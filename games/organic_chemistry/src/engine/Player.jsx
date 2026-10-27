@@ -86,14 +86,19 @@ export default function Player({ world, start = [0, 0, 0], startFacing = 0 }) {
     world.time += dt
     const gs = getState()
     const inp = poll()
-    const busy = !!(gs.dialogue || gs.panel || gs.paused || gs.cutscene)
+    const busy = !!(gs.dialogue || gs.panel || gs.paused || gs.cutscene || gs.mapOpen)
     const cam = world.cam
 
     // ---- camera look
     if (!busy) {
       if (Math.abs(inp.lookX) > 0.0005 || Math.abs(inp.lookY) > 0.0005) cam.lastManual = world.time
       cam.yaw -= inp.lookX
-      cam.pitch = THREE.MathUtils.clamp(cam.pitch + inp.lookY, -0.15, 1.1)
+      if (!s.lockId) cam.pitch = THREE.MathUtils.clamp(cam.pitch + inp.lookY, -0.15, 1.1) // (frozen while locked, so release doesn't jump)
+      // while locked on, the mouse swings the camera round the fight (the lock keeps both in view)
+      if (s.lockId) {
+        cam.lockYaw = THREE.MathUtils.clamp((cam.lockYaw || 0) - inp.lookX, -1.3, 1.3)
+        cam.lockPitch = THREE.MathUtils.clamp((cam.lockPitch || 0) + inp.lookY, -0.3, 0.6)
+      } else { cam.lockYaw = 0; cam.lockPitch = 0 }
     }
 
     // ---- stance (Hybrid Crystal): R cycles, or the item menu asks for one (stanceRequest)
@@ -119,13 +124,31 @@ export default function Player({ world, start = [0, 0, 0], startFacing = 0 }) {
     const targets = [...world.targets.entries()].filter(([, t]) => t.lockable !== false && (!t.alive || t.alive()))
     const lockValid = s.lockId && world.targets.has(s.lockId) && (!world.targets.get(s.lockId).alive || world.targets.get(s.lockId).alive())
     if (!lockValid) s.lockId = null
-    // toggle: press to lock the nearest target in front, press again to release.
+    // press to lock the nearest target in front; press again to hop to the next target, left to right
+    // on screen; once every target has had a turn, the next press lets go.
     // With nothing to lock, the press snaps the camera behind Kai (Ocarina's Z).
     if (inp.lockPressed && !busy) {
-      if (s.lockId) s.lockId = null
-      else {
+      if (s.lockId) {
+        const view = cam.yaw + Math.PI
+        const order = targets
+          .map((e) => { const p = e[1].pos(); const dx = p[0] - s.pos.x, dz = p[2] - s.pos.z; return { e, d: Math.hypot(dx, dz), rel: Math.atan2(Math.sin(Math.atan2(dx, dz) - view), Math.cos(Math.atan2(dx, dz) - view)) } })
+          .filter((o) => o.d <= 16)
+          .sort((a, b) => b.rel - a.rel)
+          .map((o) => o.e)
+        // hop to the next target to the right that hasn't had a turn yet; when all have, let go
+        if (!s.lockSeen) s.lockSeen = new Set()
+        s.lockSeen.add(s.lockId)
+        const i = order.findIndex((e) => e[0] === s.lockId)
+        let next = null
+        for (let k = 1; k <= order.length; k++) {
+          const c = order[((i < 0 ? -1 : i) + k + order.length) % order.length]
+          if (c && !s.lockSeen.has(c[0])) { next = c; break }
+        }
+        if (!next) { s.lockId = null; s.lockSeen = null }
+        else { s.lockId = next[0]; cam.lockYaw = 0; cam.lockPitch = 0; sfx('lock') }
+      } else {
         const n = nearest(targets, s.pos, cam.yaw + Math.PI)
-        if (n) { s.lockId = n[0]; sfx('lock') }
+        if (n) { s.lockId = n[0]; s.lockSeen = null; cam.lockYaw = 0; cam.lockPitch = 0; sfx('lock') }
         else { cam.yaw = s.facing + Math.PI; cam.lastManual = world.time }
       }
     }

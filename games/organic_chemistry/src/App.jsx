@@ -165,12 +165,29 @@ export default function App() {
       if (s.mapOpen) { setState({ mapOpen: false }); return }
       openMenu(s)
     }
+    let pendingUp = null // the one waiting Esc-keyup that takes the mouse back after a resume
+    const dropUp = () => { if (pendingUp) { window.removeEventListener('keyup', pendingUp); pendingUp = null } }
     const key = (e) => {
       const s = getState()
+      if ((e.code === 'KeyP' || e.code === 'Escape') && e.repeat) return // a held key must not flip the menu open and shut
       if (e.code === 'KeyP' || e.code === 'Escape') {
         if (e.code === 'Escape' && performance.now() - lastUnlock < 400) return // already handled as the mouse release
         if (s.mapOpen) { setState({ mapOpen: false }); return }
-        if (s.paused) { setState({ paused: false }); captureMouse(el) }
+        // resume on this one press; take the mouse back only once Esc comes up, or the same press
+        // would release it again and reopen the menu
+        if (s.paused) {
+          setState({ paused: false })
+          if (e.code === 'Escape') {
+            dropUp()
+            pendingUp = (u) => {
+              if (u.code !== 'Escape') return
+              dropUp(); lastUnlock = 0
+              const n = getState()
+              if (!n.paused && !n.mapOpen && !n.dialogue && !n.panel) captureMouse(el)
+            }
+            window.addEventListener('keyup', pendingUp)
+          } else captureMouse(el)
+        }
         else openMenu(s)
       }
       if (e.code === 'KeyM' && inGame(s) && !s.panel && !s.paused) setState({ mapOpen: !s.mapOpen })
@@ -178,7 +195,7 @@ export default function App() {
     el.addEventListener('click', click)
     window.addEventListener('keydown', key)
     document.addEventListener('pointerlockchange', lockChange)
-    return () => { off(); el.removeEventListener('click', click); window.removeEventListener('keydown', key); document.removeEventListener('pointerlockchange', lockChange) }
+    return () => { dropUp(); off(); el.removeEventListener('click', click); window.removeEventListener('keydown', key); document.removeEventListener('pointerlockchange', lockChange) }
   }, [])
   useEffect(() => { if (!inGameScreen(screen)) releaseMouse() }, [screen])
 

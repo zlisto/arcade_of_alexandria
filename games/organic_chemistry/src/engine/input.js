@@ -15,6 +15,8 @@ let lmbPressed = false
 let lmbReleased = false
 let rmbPressed = false
 let enabled = true
+let cursorX = 0.5 // where the free (uncaptured) cursor sits across the window, 0..1
+let overGame = false
 const gpPrev = {}
 
 function down(code) {
@@ -29,7 +31,11 @@ export function initInput(target) {
   }
   const ku = (e) => keys.delete(e.code)
   const mm = (e) => {
-    if (document.pointerLockElement) { mouseDX += e.movementX; mouseDY += e.movementY }
+    if (document.pointerLockElement) { mouseDX += e.movementX; mouseDY += e.movementY; return }
+    // some views refuse to capture the mouse; then moving it over the game still turns the camera
+    overGame = e.target && e.target.tagName === 'CANVAS'
+    cursorX = e.clientX / Math.max(1, window.innerWidth)
+    if (overGame && !lmb) { mouseDX += e.movementX; mouseDY += e.movementY }
   }
   const md = (e) => {
     if (e.button === 0) { lmb = true; lmbPressed = true }
@@ -48,7 +54,10 @@ export function initInput(target) {
   window.addEventListener('mouseup', mu)
   target.addEventListener('contextmenu', cm)
   window.addEventListener('blur', blur)
+  const out = (e) => { if (!e.relatedTarget) overGame = false }
+  window.addEventListener('mouseout', out)
   return () => {
+    window.removeEventListener('mouseout', out)
     window.removeEventListener('keydown', kd)
     window.removeEventListener('keyup', ku)
     window.removeEventListener('mousemove', mm)
@@ -61,10 +70,15 @@ export function initInput(target) {
 
 export function setInputEnabled(v) {
   enabled = v
-  if (!v) { keys.clear(); lmb = rmb = false }
+  if (!v) { keys.clear(); lmb = rmb = false; overGame = false }
 }
 
 const DEAD = 0.18
+// with a free cursor parked at the left or right edge of the game, keep turning that way
+function edgeTurn() {
+  if (document.pointerLockElement || !overGame) return 0
+  return cursorX < 0.04 ? -0.03 : cursorX > 0.96 ? 0.03 : 0
+}
 const axis = (v) => (Math.abs(v) < DEAD ? 0 : (v - Math.sign(v) * DEAD) / (1 - DEAD))
 
 /** Snapshot of the actions for this frame. */
@@ -96,7 +110,7 @@ export function poll() {
   const out = {
     moveX: (k('KeyD') || k('ArrowRight') ? 1 : 0) - (k('KeyA') || k('ArrowLeft') ? 1 : 0) + g.mx,
     moveY: (k('KeyS') || k('ArrowDown') ? 1 : 0) - (k('KeyW') || k('ArrowUp') ? 1 : 0) + g.my,
-    lookX: mouseDX * 0.0024 + g.cx * 0.05 + ((k('KeyL') ? 1 : 0) - (k('KeyJ') ? 1 : 0)) * 0.035,
+    lookX: mouseDX * 0.0024 + edgeTurn() + g.cx * 0.05 + ((k('KeyL') ? 1 : 0) - (k('KeyJ') ? 1 : 0)) * 0.035,
     lookY: mouseDY * 0.0018 + g.cy * 0.03,
     attack: lmb || g.attack,
     attackPressed: lmbPressed || p('KeyF') || g.attackP,

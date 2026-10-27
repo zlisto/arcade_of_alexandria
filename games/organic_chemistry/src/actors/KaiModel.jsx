@@ -409,7 +409,7 @@ const KaiModel = forwardRef(function KaiModel({ noTag = false } = {}, ref) {
             <Head headRef={head} eyesRef={eyes} hairRef={hair} M={M} tufts={tufts} />
             <Arm side={-1} armRef={armL} elbowRef={elbowL} M={M} caps={caps}>
               {/* buckler on the outside of the left forearm */}
-              <group ref={shieldTwist}><group position={[-0.09, -0.24, 0.03]} rotation={[0, 0, Math.PI / 2]} scale={1.15}>
+              <group ref={shieldTwist}><group position={[-0.12, -0.22, 0.03]} rotation={[0, 0, Math.PI / 2]} scale={1.75}>
                 <mesh material={M.armorDark} castShadow><cylinderGeometry args={[0.17, 0.165, 0.03, 26]} /></mesh>
                 <mesh position={[0, 0.018, 0]} rotation={[Math.PI / 2, 0, 0]} material={M.edge}><torusGeometry args={[0.165, 0.012, 8, 30]} /></mesh>
                 <mesh position={[0, 0.02, 0]} rotation={[Math.PI / 2, 0, 0]} material={M.glow}><torusGeometry args={[0.1, 0.005, 6, 26]} /></mesh>

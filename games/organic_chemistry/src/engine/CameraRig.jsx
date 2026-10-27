@@ -29,9 +29,10 @@ export default function CameraRig({ world, dist = 6.2, height = 1.5 }) {
     if (lockPos) {
       // behind Kai, on the line away from the target, a little to the side
       const ang = Math.atan2(pos.x - lockPos[0], pos.z - lockPos[2])
-      cam.yaw += Math.atan2(Math.sin(ang + 0.25 - cam.yaw), Math.cos(ang + 0.25 - cam.yaw)) * Math.min(1, dt * 6)
+      const want = ang + 0.25 + (cam.lockYaw || 0)
+      cam.yaw += Math.atan2(Math.sin(want - cam.yaw), Math.cos(want - cam.yaw)) * Math.min(1, dt * 6)
       yaw = cam.yaw
-      pitch = 0.32
+      pitch = 0.32 + (cam.lockPitch || 0)
       look.lerp(tmp.set(lockPos[0], lockPos[1] + 1, lockPos[2]), 0.35)
       d = dist + Math.min(4, Math.hypot(pos.x - lockPos[0], pos.z - lockPos[2]) * 0.2)
     }
