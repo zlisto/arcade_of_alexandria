@@ -1,4 +1,5 @@
 import { useEffect, useMemo } from 'react'
+import { useThree } from '@react-three/fiber'
 import { createWorld } from './world'
 import Player from './Player'
 import CameraRig from './CameraRig'
@@ -9,10 +10,11 @@ import { setActiveWorld } from './active'
 // children(world) builds the level. (One WebGL context for the whole game; scenes swap inside it.)
 export default function GameScene({ children, start, startFacing = 0, background = '#87a9c9', camDist = 6.2 }) {
   const world = useMemo(() => createWorld(), [])
+  const gl = useThree((st) => st.gl)
   useEffect(() => {
     world.respawn = start
     setActiveWorld(world)
-    if (import.meta.env.DEV) window.__valence = { ...(window.__valence || {}), world, getState, setState }
+    if (import.meta.env.DEV) window.__valence = { ...(window.__valence || {}), world, getState, setState, gl } // gl: renderer stats for perf checks
     return () => setActiveWorld(null)
   }, [world])
   return (
