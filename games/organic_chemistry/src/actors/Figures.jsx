@@ -20,7 +20,7 @@ export function Crown({ shatter = 0, glow = 1, ...props }) {
     <group ref={g} {...props}>
       {shatter < 1 && (
         <>
-          <mesh scale={1 - shatter}><icosahedronGeometry args={[0.28, 1]} /><meshStandardMaterial color="#111" metalness={0.8} roughness={0.2} emissive="#2a2a40" /></mesh>
+          <mesh scale={1 - shatter}><icosahedronGeometry args={[0.28, 1]} /><meshStandardMaterial color="#222" metalness={0.6} roughness={0.25} emissive="#6a7cff" emissiveIntensity={1.4} /></mesh>
           {dirs.map((d, i) => (
             <mesh key={i} position={d.clone().multiplyScalar(0.55 * (1 + shatter * 4))} quaternion={new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), d)}>
               <cylinderGeometry args={[0.05, 0.05, 0.7, 8]} />

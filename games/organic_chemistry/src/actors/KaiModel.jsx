@@ -207,7 +207,7 @@ function Head({ headRef, eyesRef, hairRef, M, tufts }) {
   )
 }
 
-const KaiModel = forwardRef(function KaiModel(_, ref) {
+const KaiModel = forwardRef(function KaiModel({ noTag = false } = {}, ref) {
   const pose = useRef({ run: 0, phase: 0, roll: 0, swing: 0, swingSide: 1, spin: 0, block: 0, hurt: 0, stance: 'sp3', sockets: [], charge: 0 })
   useImperativeHandle(ref, () => pose.current)
   const { M, torso, chest, ridge, abBand, blade: bladeGeo, guard: guardGeo, caps, tufts, env } = useKaiAssets()
@@ -234,7 +234,7 @@ const KaiModel = forwardRef(function KaiModel(_, ref) {
   const col = useMemo(() => ({ glow: new THREE.Color(), armor: new THREE.Color(), armorDark: new THREE.Color(), blade: new THREE.Color(), white: new THREE.Color('#ffffff') }), [])
   const hasCrystal = useGame((st) => st.save.hasCrystal)
   const stance = useGame((st) => st.stance)
-  const busyTag = useGame((st) => !!(st.prompt || st.lanternPrompt || st.dialogue || st.newman || st.carrying))
+  const busyTag = useGame((st) => !!(st.prompt || st.lanternPrompt || st.dialogue || st.newman || st.carrying)) || noTag
   const form = FORMS[stance] || FORMS.sp3
 
   useFrame(({ clock }, dt) => {

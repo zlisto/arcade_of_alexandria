@@ -274,8 +274,14 @@ export default function Player({ world, start = [0, 0, 0], startFacing = 0 }) {
       case 'attack': {
         const T = s.combo === 2 ? 0.42 : 0.3
         const k = s.modeT / T
-        const lunge = k < 0.4 ? 3.2 : 0
-        hx = Math.sin(s.facing) * lunge; hz = Math.cos(s.facing) * lunge
+        // swing on the run: keep most of Kai's running speed, plus a smaller lunge; standing still he lunges as before
+        const moving = mlen > 0.1
+        const lunge = k < 0.4 ? (moving ? 1.2 : 3.2) : 0
+        // locked on, the swing only lets Kai drift (no circle-strafing a boss through a full combo)
+        const mv = moving ? SP.speed * (lockPos ? 0.45 : 0.85) : 0
+        hx = Math.sin(s.facing) * lunge + mx * mv
+        hz = Math.cos(s.facing) * lunge + mz * mv
+        if (moving && !lockPos) s.facing = angleLerp(s.facing, Math.atan2(mx, mz), Math.min(1, dt * 8))
         if (pose) { pose.swing = THREE.MathUtils.clamp(-1 + 2 * Math.min(1, k * 1.5), -1, 1); pose.swingSide = s.combo % 2 === 0 ? 1 : -1 }
         if (!s.hitDone && k > 0.35) { s.hitDone = true; swordHit(world, s, s.combo === 2 ? 2 : 1, 1.95, 1.2, 'slash') }
         if (k >= 1) {
@@ -435,7 +441,7 @@ export default function Player({ world, start = [0, 0, 0], startFacing = 0 }) {
 
     // ---- pose
     const speedNow = Math.hypot(s.vel.x, s.vel.z)
-    s.run += ((s.mode === 'move' || s.mode === 'block' ? Math.min(1, speedNow / 6) : 0) - s.run) * Math.min(1, dt * 10)
+    s.run += ((s.mode === 'move' || s.mode === 'block' || (s.mode === 'attack' && mlen > 0.1) ? Math.min(1, speedNow / 6) : 0) - s.run) * Math.min(1, dt * 10)
     s.phase += dt * (4 + speedNow * 1.6)
     if (pose) {
       pose.run = s.run
