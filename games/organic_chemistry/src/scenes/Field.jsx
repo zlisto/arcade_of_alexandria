@@ -1,5 +1,5 @@
 import { Suspense, useEffect, useMemo, useRef } from 'react'
-import { useFrame } from '@react-three/fiber'
+import { useFrame, useThree } from '@react-three/fiber'
 import { Sky, Html } from '@react-three/drei'
 import * as THREE from 'three'
 import GameScene from '../engine/GameScene'
@@ -24,6 +24,9 @@ const CASTLE_GATE = [0, -66]
 const VILLAGE_GATE = [-68, 0]
 const FOREST_GATE = [-40, -68] // north-west: the forest road to the Chain Forest (World 3)
 const SEA_X = 58 // east of this is beach, then sea
+// the stream: its centre runs x = 18 + tan(0.25)·z. A bridge stands where each road crosses it; elsewhere it is too deep to wade
+const streamX = (z) => 18 + Math.tan(0.25) * z
+const BRIDGES = [[streamX(-12.3), -12.3], [streamX(5.0), 5.0]] // the coast road, the north-east road
 
 function Sea() {
   // the sea east of the beach, with a gentle swell
@@ -66,7 +69,73 @@ function Gatehouse({ pos, rotY = 0, label, sealed = false, color = '#8a8474' }) 
 }
 
 const FLOWER_COLORS = ['#ffd760', '#ff8aa8', '#ffffff', '#cfa8ff'].map((c) => new THREE.Color(c))
-function FieldNature({ trees, rocks, flowers, hills }) {
+// Trees between the camera and Kai turn see-through: the instance is hidden and a faded copy stands in.
+const FADE_SLOTS = 4
+function TreeFader({ world, parts, sets }) {
+  const camera = useThree((s) => s.camera)
+  const pineM = useRef([]), oakM = useRef([])
+  const slots = useRef([])
+  const faded = useRef([]) // [{ kind, i }]
+  const t = useRef(0)
+  const ghost = useMemo(() => {
+    const mk = (list) => (list || []).map((p) => ({ geometry: p.geometry, material: Object.assign(p.material.clone(), { transparent: true, opacity: 0.28, depthWrite: false }) }))
+    return { pine: mk(parts.pine), oak: mk(parts.oak) }
+  }, [parts])
+  const zero = useMemo(() => new THREE.Matrix4().makeScale(0, 0, 0), [])
+  const d = useMemo(() => new THREE.Object3D(), [])
+  const setInst = (meshes, it, i, show) => {
+    if (show) { d.position.set(it[0], it[1], it[2]); d.rotation.set(0, it[4] || 0, 0); d.scale.setScalar(it[3]); d.updateMatrix() }
+    meshes.forEach((m) => { if (!m) return; m.setMatrixAt(i, show ? d.matrix : zero); m.instanceMatrix.needsUpdate = true })
+  }
+  useFrame((_, dt) => {
+    t.current -= dt
+    const p = world.player
+    if (t.current > 0 || !p) return
+    t.current = 0.1
+    const cx = camera.position.x, cz = camera.position.z, px = p.pos.x, pz = p.pos.z
+    const vx = px - cx, vz = pz - cz, L2 = vx * vx + vz * vz || 1
+    const want = []
+    for (const kind of ['pine', 'oak']) {
+      sets[kind].forEach((it, i) => {
+        const u = ((it[0] - cx) * vx + (it[2] - cz) * vz) / L2
+        if (u < 0 || u > 1.05) return
+        const ex = cx + vx * u - it[0], ez = cz + vz * u - it[2], r = 1.85 * it[3] + 0.3, rIn = 1.9 * it[3] + 1.5
+        // the camera inside the canopy: hide it outright (a see-through copy would tint the whole view)
+        const d2 = (it[0] - cx) ** 2 + (it[2] - cz) ** 2, inside = d2 < rIn * rIn
+        if (inside || ex * ex + ez * ez < r * r) want.push({ kind, i, inside, d2 })
+      })
+    }
+    want.sort((a, b) => a.d2 - b.d2)
+    want.length = Math.min(want.length, FADE_SLOTS)
+    const key = (f) => f.kind + f.i
+    const meshes = (k) => (k === 'pine' ? pineM : oakM).current
+    faded.current.forEach((f) => { if (!want.some((w) => key(w) === key(f))) setInst(meshes(f.kind), sets[f.kind][f.i], f.i, true) })
+    want.forEach((w) => { if (!faded.current.some((f) => key(f) === key(w))) setInst(meshes(w.kind), sets[w.kind][w.i], w.i, false) })
+    faded.current = want
+    slots.current.forEach((g, k) => {
+      if (!g) return
+      const w = want[k]
+      g.visible = !!w && !w.inside
+      if (!g.visible) return
+      const it = sets[w.kind][w.i]
+      g.position.set(it[0], it[1], it[2]); g.rotation.set(0, it[4] || 0, 0); g.scale.setScalar(it[3])
+      g.children.forEach((c) => { c.visible = c.userData.kind === w.kind })
+    })
+  })
+  return (
+    <group>
+      <InstancedPart parts={parts} name="pine" items={sets.pine} castShadow meshesRef={pineM} />
+      <InstancedPart parts={parts} name="oak" items={sets.oak} castShadow meshesRef={oakM} />
+      {[...Array(FADE_SLOTS)].map((_, k) => (
+        <group key={k} ref={(g) => (slots.current[k] = g)} visible={false}>
+          {['pine', 'oak'].flatMap((kind) => ghost[kind].map((p, j) => <mesh key={kind + j} userData={{ kind }} geometry={p.geometry} material={p.material} />))}
+        </group>
+      ))}
+    </group>
+  )
+}
+
+function FieldNature({ world, trees, rocks, flowers, hills }) {
   const parts = useModelParts('village')
   const field = useModelParts('field')
   const sets = useMemo(() => {
@@ -85,8 +154,7 @@ function FieldNature({ trees, rocks, flowers, hills }) {
   }, [trees, rocks, flowers, hills])
   return (
     <group>
-      <InstancedPart parts={parts} name="pine" items={sets.pine} castShadow />
-      <InstancedPart parts={parts} name="oak" items={sets.oak} castShadow />
+      <TreeFader world={world} parts={parts} sets={sets} />
       {sets.r.map((items, k) => <InstancedPart key={k} parts={parts} name={'rock' + k} items={items} castShadow />)}
       <InstancedPart parts={parts} name="tuft" items={sets.tufts} />
       <InstancedPart parts={parts} name="flowerHead" items={sets.fl} colors={FLOWER_COLORS} />
@@ -105,6 +173,7 @@ function FieldLevel({ world, onExit }) {
     if (Math.abs(z) < 5 && x < 20) return null
     if (Math.hypot(x - COAST_GATE[0], z - COAST_GATE[1]) < 12 || Math.hypot(x - CASTLE_GATE[0], z - CASTLE_GATE[1]) < 10) return null
     if (Math.abs(x) < 4 && z < 0 && z > -66) return null // the castle road
+    if (BRIDGES.some(([bx, bz]) => Math.hypot(x - bx, z - bz) < 6)) return null // the bridges
     { const t = Math.max(0, Math.min(1, ((x + 20) * -20 + z * -68) / (400 + 4624))); if (Math.hypot(x - (-20 - 20 * t), z - (-68 * t)) < 5) return null } // the forest road
     return [x, z, 0.8 + r() * 0.9, r() * 6]
   }).filter(Boolean), [])
@@ -126,6 +195,16 @@ function FieldLevel({ world, onExit }) {
     const thorns = world.addSolid([FOREST_GATE[0] - 3.2, 0, -HALF - 1], [FOREST_GATE[0] + 3.2, 6, -HALF + 0.8])
     world.setEnabled(thorns, (getState().save.shards || 0) < 2)
     ids.push(thorns)
+    // the stream: solid water except under the bridges, whose decks are low floors you step up onto
+    const gaps = BRIDGES.map(([, z]) => [z - 2.7, z + 2.7])
+    for (let z = -HALF; z < HALF; z += 1.5) {
+      let z0 = z, z1 = Math.min(HALF, z + 1.5)
+      for (const [g0, g1] of gaps) { if (z0 < g1 && z1 > g0) { if (z0 < g0) z1 = g0; else z0 = Math.max(z0, g1) } }
+      if (z1 - z0 < 0.05) continue
+      const cx = streamX((z0 + z1) / 2)
+      ids.push(world.addSolid([cx - 2.1, 0, z0], [cx + 2.1, 1, z1]))
+    }
+    BRIDGES.forEach(([x, z]) => ids.push(world.addFloor(x - 3.4, z - 2.6, x + 3.4, z + 2.6, 0.36)))
     // hills are solid mounds
     hills.forEach(([x, z, rr]) => ids.push(world.addSolid([x - rr * 0.84, 0, z - rr * 0.84], [x + rr * 0.84, 4, z + rr * 0.84])))
     const toVillage = world.addTrigger([-HALF - 1, 0, -3.2], [-HALF + 1.4, 4, 3.2], () => onExit('village', { scene: 'village', at: 'east' }))
@@ -189,7 +268,7 @@ function FieldLevel({ world, onExit }) {
       <Part model="field" name="fld_banks" castShadow={false} receiveShadow />
       <Part model="field" name="fld_horizon" castShadow={false} />
       <mesh position={[18, 0.025, 0]} rotation={[-Math.PI / 2, 0, 0.25]}><planeGeometry args={[5, 150]} /><meshStandardMaterial color="#3f8fb0" roughness={0.2} transparent opacity={0.85} /></mesh>
-      <Part model="field" name="fld_bridge" position={[16, 0, -3.5]} rotation={[0, 0.25 + Math.PI / 2, 0]} />
+      {BRIDGES.map(([x, z], i) => <Part key={i} model="field" name="fld_bridge" position={[x, 0, z]} rotation={[0, 0.25 + Math.PI / 2, 0]} scale={[1, 1, 1.25]} />)}
       <Sea />
       {/* gates, landmarks */}
       <Gatehouse pos={[HALF - 1.5, 0, COAST_GATE[1]]} rotY={Math.PI / 2} label="Tide Coast" color="#c7b48a" />
@@ -201,11 +280,11 @@ function FieldLevel({ world, onExit }) {
       <Signpost pos={[-17, 0, 3.5]} rotY={0.3} text="← Village · Castle ↑ · Tide Coast →" />
       <Signpost pos={[38, 0, -27]} rotY={-0.6} text="Tide Coast →" />
       {hills.map(([x, z, rr, h], i) => <Part key={i} model="field" name="fld_hill" position={[x, -0.4, z]} scale={[rr * 0.78, h, rr * 0.78]} receiveShadow />)}
-      <Suspense fallback={null}><FieldNature trees={trees} rocks={rocks} flowers={flowers} hills={hills} /></Suspense>
+      <Suspense fallback={null}><FieldNature world={world} trees={trees} rocks={rocks} flowers={flowers} hills={hills} /></Suspense>
       <Motes count={90} area={[120, 6, 120]} center={[0, 0.4, 0]} color="#fff6c0" size={0.08} />
       {/* creatures */}
       <WolfPack world={world} spawns={[[-28, 14], [-22, 18]]} tutorial={false} />
-      <WolfPack world={world} spawns={[[8, -40], [14, -44], [4, -46]]} tutorial={false} />
+      <WolfPack world={world} spawns={[[2, -40], [14, -44], [4, -46]]} tutorial={false} />
       <ImpPack world={world} spawns={[[24, -14], [28, -18], [20, -20], [-8, -22], [-12, -18]]} />
       <CrabPack world={world} spawns={[[SEA_X + 3, 6], [SEA_X + 5, 22], [SEA_X + 3, 38], [SEA_X + 4, -16]]} />
       <PiFollower world={world} />

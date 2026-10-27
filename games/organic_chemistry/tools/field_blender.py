@@ -98,6 +98,7 @@ for k in range(40):  # shells and pebbles on the sand
 
 # stream banks: pebbles and reeds along the stream (the water is the game's)
 ang = 0.25
+BRIDGE_Z = (-12.3, 5.0)
 for k in range(110):
     t = (k / 110) * 150 - 75
     side = 1 if k % 2 else -1
@@ -107,8 +108,8 @@ for k in range(110):
     cx = 18 + math.sin(ang) * t * -1.0
     cz = -math.cos(ang) * t  # the stream plane's long axis runs along (-sin, -cos) of its 0.25 rad turn
     px, pz = cx + math.cos(ang) * off, cz - math.sin(ang) * off
-    if abs(pz - (-3.5)) < 3.5 and abs(px - 16) < 5:
-        continue  # leave the bridge clear
+    if any(abs(pz - bz) < 3.2 and abs(px - (18 + math.tan(ang) * bz)) < 5 for bz in BRIDGE_Z):
+        continue  # leave the bridges clear (one where each road crosses: Field.jsx BRIDGES)
     add('fld_banks', rock_bm(0.25 + 0.3 * hash3(k, 5, 5), k * 1.3, 1, 0.35, 0.55), 'pebble', TRS((px, 0.02, pz), (0, hash3(k, 6, 6) * 6, 0)), smooth=False)
 
 # ================================================================ the horizon (world frame)
@@ -254,7 +255,7 @@ colour_pass(objs['fld_castle'], lambda p: 0.75 + 0.25 * min(1.0, p[1] / 10.0))
 export_glb(objs, GLB)
 if RENDERS:
     pl = [('fld_ground', TRS()), ('fld_roads', TRS()), ('fld_beach', TRS()), ('fld_banks', TRS()), ('fld_horizon', TRS()),
-          ('fld_castle', TRS((0, 0, -118))), ('fld_bridge', TRS((16, 0, -3.5), (0, 0.25 + PI / 2, 0))),
+          ('fld_castle', TRS((0, 0, -118))), ('fld_bridge', TRS((18 + math.tan(0.25) * -12.3, 0, -12.3), (0, 0.25 + PI / 2, 0))),
           ('fld_gate', TRS((0, 0, -HALF + 0.4))), ('fld_gate', TRS((HALF - 1.5, 0, -43), (0, PI / 2, 0))),
           ('fld_ruin', TRS((-30, 0, -32), (0, 0.4, 0))), ('fld_hill', TRS((-40, -0.4, 20), scl=(9, 10, 9))), ('fld_hill', TRS((45, -0.4, -55), scl=(7, 8, 7)))]
     for k in range(6):

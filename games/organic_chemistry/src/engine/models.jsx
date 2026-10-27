@@ -38,7 +38,7 @@ export function ModelPart({ parts, name, override, castShadow = true, receiveSha
 }
 
 /** Many copies of one part in a single draw call per material. items: [x, y, z, scale, rotY]; colors: optional THREE.Color per item. */
-export function InstancedPart({ parts, name, items, colors, castShadow = false, receiveShadow = true }) {
+export function InstancedPart({ parts, name, items, colors, castShadow = false, receiveShadow = true, meshesRef }) {
   const list = parts[name]
   const refs = useRef([])
   useLayoutEffect(() => {
@@ -62,7 +62,7 @@ export function InstancedPart({ parts, name, items, colors, castShadow = false, 
   return (
     <group>
       {list.map((p, i) => (
-        <instancedMesh key={i} ref={(m) => (refs.current[i] = m)} args={[p.geometry, p.material, items.length]} castShadow={castShadow} receiveShadow={receiveShadow} />
+        <instancedMesh key={i} ref={(m) => { refs.current[i] = m; if (meshesRef) meshesRef.current = refs.current }} args={[p.geometry, p.material, items.length]} castShadow={castShadow} receiveShadow={receiveShadow} />
       ))}
     </group>
   )

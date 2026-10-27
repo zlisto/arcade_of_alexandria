@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useFrame } from '@react-three/fiber'
+import { useFrame, useThree } from '@react-three/fiber'
 import { Html } from '@react-three/drei'
 import * as THREE from 'three'
 import GameScene from '../engine/GameScene'
@@ -107,11 +107,22 @@ function OrbitalMural({ pos, axis = 'x', color = '#43e6f5' }) {
 }
 
 function Painting({ pos, rotY, title, solved }) {
+  // the title is a DOM label that would show mirrored from behind: hide it when the camera is on the back side
+  const label = useRef()
+  const camera = useThree((s) => s.camera)
+  useFrame(() => {
+    if (!label.current) return
+    const front = (camera.position.x - pos[0]) * Math.sin(rotY) + (camera.position.z - pos[2]) * Math.cos(rotY) > 0
+    label.current.style.visibility = front ? 'visible' : 'hidden'
+  })
   return (
     <group position={pos} rotation={[0, rotY, 0]}>
-      <mesh><boxGeometry args={[3.2, 2.4, 0.15]} /><meshStandardMaterial color="#6a4a22" metalness={0.4} roughness={0.5} /></mesh>
+      <mesh><boxGeometry args={[3.2, 2.4, 0.15]} /><meshStandardMaterial color="#9a7038" metalness={0.4} roughness={0.5} emissive="#3a2408" emissiveIntensity={0.4} /></mesh>
+      {/* the back is seen from the boss dome: carved teal stone with a gold rim, not a black slab */}
+      <mesh position={[0, 0, -0.081]} rotation={[0, Math.PI, 0]}><planeGeometry args={[3.0, 2.2]} /><meshStandardMaterial color="#6f949a" roughness={0.7} emissive="#1d4a52" emissiveIntensity={0.5} /></mesh>
+      <mesh position={[0, 0, -0.082]} rotation={[0, Math.PI, 0]}><ringGeometry args={[0.55, 0.68, 6]} /><meshStandardMaterial color="#c9a24a" metalness={0.6} roughness={0.35} emissive="#6a4a10" emissiveIntensity={0.4} /></mesh>
       <mesh position={[0, 0, 0.09]}><planeGeometry args={[2.8, 2]} /><meshStandardMaterial color={solved ? '#f2efe6' : '#cfcabd'} emissive={solved ? '#fff3c4' : '#000'} emissiveIntensity={0.25} /></mesh>
-      <Html position={[0, 0, 0.12]} center transform distanceFactor={4} occlude={false}><div className="paint">{title}</div></Html>
+      <Html position={[0, 0, 0.12]} center transform distanceFactor={4} occlude={false}><div ref={label} className="paint">{title}</div></Html>
     </group>
   )
 }
@@ -458,9 +469,15 @@ function CavernsLevel({ world, onExit }) {
     if (!p) return
     const inSlot = p.pos.z < FORGE.slot.z[0] + 1.5 && p.pos.z > FORGE.slot.z[1] - 0.5
     // once Kai is through the slot, the camera stays on his side of the slot wall
-    world.camMaxZ = p.pos.z < FORGE.slot.z[1] - 0.3 && p.pos.z > FORGE.door ? FORGE.slot.z[1] - 0.5 : undefined
+    const wallZ = FORGE.slot.z[1] - 0.05
+    world.camMaxZ = p.pos.z < wallZ && p.pos.z > FORGE.door ? wallZ : undefined
     // in the fight: pull back and look up from low down, so the 8 m giant's core and head stay in frame
-    world.camBoost = (bossStarted.current && !getState().save.solved.boss) ? { dist: 4.2, pitchSet: 0.16, lookY: 2.6 } : null
+    // just past the slot the wall leaves only ~2 m behind Kai: aim past Kai down the hall, not at the floor
+    const behind = wallZ - p.pos.z // how far the camera can sit behind Kai
+    const nearSlotWall = behind > 0 && behind < 6.2
+    const k = Math.max(0, Math.min(1, (behind - 0.3) / 2.0)) // 0: right at the wall (look down on Kai from above) … 1: room to aim down the hall
+    world.camBoost = (bossStarted.current && !getState().save.solved.boss) ? { dist: 4.2, pitchSet: 0.16, lookY: 2.6 }
+      : nearSlotWall ? { pitchSet: 0.24 + 0.9 * (1 - k), lookAhead: 2.6 * k * k } : null
   })
 
   // shard pickup interactable
@@ -498,6 +515,8 @@ function CavernsLevel({ world, onExit }) {
       <Gate world={world} pos={[0, 0, -126]} size={[2 * W, 7, 0.8]} open={gateOpen(ROOMS[5])} color="#3a2a50" glow="#c9a3ff" />
       {/* entrance */}
       <Aufbau position={[3, 0, -9]} rotation={[0, -0.6, 0]} />
+      {/* a warm lantern glow at his side, so his leather coat reads brown in the teal cave light */}
+      <pointLight position={[2.2, 1.7, -7.9]} color="#ffb46a" intensity={3.5} distance={4.5} decay={1.6} />
       <Tag position={[3, 2.3, -9]} df={9}>Sage Aufbau</Tag>
       <Torch pos={[-6, 0, -4]} /><Torch pos={[6, 0, -4]} /><Torch pos={[-6, 0, -12]} /><Torch pos={[6, 0, -12]} />
       {/* 1-1 */}

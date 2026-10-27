@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useFrame } from '@react-three/fiber'
+import { useFrame, useThree } from '@react-three/fiber'
 import { Html } from '@react-three/drei'
 import * as THREE from 'three'
 import GameScene from '../engine/GameScene'
@@ -633,10 +633,46 @@ function LabyrinthLevel({ world, onExit }) {
       <Serpent world={world} center={SERPENT.center} arenaR={RING_R - 0.6} active={bossOn && !solved.boss3} onDefeated={bossDown} onPhase={(ph) => { if (ph >= 2) setArenaBats(true) }} />
       <EclipsedBats world={world} roosts={ARENA_ROOSTS} active={arenaBats && !solved.boss3} />
       {/* the ring fence of root stakes */}
-      {[...Array(48)].map((_, k) => { const a = (k / 48) * Math.PI * 2; const gapStake = Math.cos(a) > 0.96; if (gapStake && !(bossOn && !solved.boss3)) return null; return <mesh key={'r' + k} position={[Math.sin(a) * RING_R, 0.55, SERPENT.center[2] + Math.cos(a) * RING_R]} rotation={[0, a, (k % 2 ? 1 : -1) * 0.12]} castShadow><cylinderGeometry args={[0.2, 0.3, 1.1, 6]} /><meshStandardMaterial color={gapStake ? '#6a3a5a' : '#4a3426'} roughness={0.9} /></mesh> })}
+      <StakeRing world={world} closed={bossOn && !solved.boss3} />
       <Shard show={!!solved.boss3 && (save.shards || 0) < 3} pos={SERPENT.center} />
       <Motes count={200} area={[18, 6, 180]} center={[0, 0.2, -85]} color="#9ff8e0" size={0.06} />
       <PiFollower world={world} />
+    </group>
+  )
+}
+
+// The boss ring's fence of root stakes. Stakes near the camera, or between it and Kai, turn see-through
+// so they never wall off the bottom of the frame.
+function StakeRing({ world, closed }) {
+  const camera = useThree((s) => s.camera)
+  const refs = useRef([])
+  const mats = useMemo(() => {
+    const mk = (color, faded) => new THREE.MeshStandardMaterial({ color, roughness: 0.9, transparent: faded, opacity: faded ? 0.25 : 1, depthWrite: !faded })
+    return { root: [mk('#4a3426', false), mk('#4a3426', true)], gap: [mk('#6a3a5a', false), mk('#6a3a5a', true)] }
+  }, [])
+  const geo = useMemo(() => new THREE.CylinderGeometry(0.2, 0.3, 1.1, 6), [])
+  const stakes = useMemo(() => [...Array(48)].map((_, k) => {
+    const a = (k / 48) * Math.PI * 2
+    return { k, a, gap: Math.cos(a) > 0.96, x: Math.sin(a) * RING_R, z: SERPENT.center[2] + Math.cos(a) * RING_R }
+  }), [])
+  useFrame(() => {
+    const p = world.player
+    if (!p) return
+    const cx = camera.position.x, cz = camera.position.z, vx = p.pos.x - cx, vz = p.pos.z - cz, L2 = vx * vx + vz * vz || 1
+    stakes.forEach((st) => {
+      const m = refs.current[st.k]
+      if (!m) return
+      const u = Math.max(0, Math.min(1, ((st.x - cx) * vx + (st.z - cz) * vz) / L2))
+      const ex = cx + vx * u - st.x, ez = cz + vz * u - st.z
+      const fade = Math.hypot(st.x - cx, st.z - cz) < 5 || ex * ex + ez * ez < 1.6
+      m.material = mats[st.gap ? 'gap' : 'root'][fade ? 1 : 0]
+    })
+  })
+  return (
+    <group>
+      {stakes.map((st) => (st.gap && !closed ? null : (
+        <mesh key={st.k} ref={(m) => (refs.current[st.k] = m)} geometry={geo} material={mats[st.gap ? 'gap' : 'root'][0]} position={[st.x, 0.55, st.z]} rotation={[0, st.a, (st.k % 2 ? 1 : -1) * 0.12]} castShadow />
+      )))}
     </group>
   )
 }

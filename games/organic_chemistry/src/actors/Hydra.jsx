@@ -36,13 +36,13 @@ function Head({ refCb, M, k, showLabel }) {
 
 export default function Hydra({ world, center, pool, active, onDefeated }) {
   const M = useMemo(() => ({
-    skin: rimMat({ color: '#2f8a9a', roughness: 0.35, metalness: 0.1 }, '#a8f0ff', 0.4),
-    skinDark: rimMat({ color: '#1f5a6a', roughness: 0.45 }, '#a8f0ff', 0.3),
-    fin: rimMat({ color: '#7a3ab8', roughness: 0.4 }, '#e0b0ff', 0.35),
+    skin: rimMat({ color: '#3fa6b0', roughness: 0.35, metalness: 0.1 }, '#e8fcff', 0.9, 2.0),
+    skinDark: rimMat({ color: '#2a6f7e', roughness: 0.45 }, '#e8fcff', 0.6, 2.0),
+    fin: rimMat({ color: '#8a46cc', roughness: 0.4 }, '#f0d0ff', 0.7, 2.0),
     eye: new THREE.MeshBasicMaterial({ color: '#fff3a0', toneMapped: false }),
     tooth: new THREE.MeshStandardMaterial({ color: '#f2efe6', roughness: 0.4 }),
     oxy: new THREE.MeshStandardMaterial({ color: '#ff5050', emissive: new THREE.Color('#ff3030'), emissiveIntensity: 1.8, toneMapped: false }),
-    neck: rimMat({ color: '#2a7a8a', roughness: 0.4 }, '#a8f0ff', 0.35),
+    neck: rimMat({ color: '#3a98a4', roughness: 0.4 }, '#e8fcff', 0.85, 2.0),
     belly: rimMat({ color: '#9ad8c8', roughness: 0.5 }, '#e0fff8', 0.2),
     gold: new THREE.MeshStandardMaterial({ color: '#c9a24a', metalness: 0.9, roughness: 0.3 }),
     spit: new THREE.MeshStandardMaterial({ color: '#bff6ff', emissive: new THREE.Color('#43c8e6'), emissiveIntensity: 1.6, transparent: true, opacity: 0.85, toneMapped: false }),
@@ -256,7 +256,7 @@ export default function Hydra({ world, center, pool, active, onDefeated }) {
       for (let b = 0; b < beads.length; b++) {
         const m = beads[b]
         if (!m) continue
-        const u = (b + 1) / (beads.length + 1)
+        const u = (b + 0.5) / beads.length
         const a = base.clone().lerp(mid, u), c = mid.clone().lerp(h.pos, u)
         m.position.copy(a.lerp(c, u))
       }
@@ -299,7 +299,7 @@ export default function Hydra({ world, center, pool, active, onDefeated }) {
       </group>
       {[0, 1, 2].map((i) => (
         <group key={i}>
-          {[...Array(7)].map((_, b) => <group key={b} ref={(m) => (neckRefs.current[i][b] = m)} scale={0.42 - b * 0.025}><Part model="hydra" name="hyd_bead" mats={M} /></group>)}
+          {[...Array(10)].map((_, b) => <group key={b} ref={(m) => (neckRefs.current[i][b] = m)} scale={0.44 - b * 0.018}><Part model="hydra" name="hyd_bead" mats={M} /></group>)}
           <Head k={i} M={M} showLabel={!coreUp} refCb={(g) => (headRefs.current[i] = g)} />
         </group>
       ))}

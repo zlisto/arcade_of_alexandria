@@ -24,6 +24,7 @@ preloadModels('temple', 'hydra', 'critters', 'coastfolk')
 const has = (id) => !!getState().save.solved[id]
 const STONE = '#6f8590', STONE_DARK = '#4c5f6a'
 const ARENA = { x: 13, z: [-140, -176] }
+const HYDRA_CAM = { dist: 2.6, pitchSet: 0.2, lookY: 1.3 }
 
 function Sea() {
   const geo = useMemo(() => new THREE.PlaneGeometry(110, 210, 44, 84), [])
@@ -129,6 +130,10 @@ function TempleLevel({ world, onExit }) {
   const busy = useRef(false)
   const [bossOn, setBossOn] = useState(false)
   const bossStarted = useRef(false)
+  // in the Hydra fight: pull back and look up a little, so all three heads (up to ~4 m tall) stay in frame
+  useFrame(() => {
+    world.camBoost = (bossStarted.current && !getState().save.solved.boss2) ? HYDRA_CAM : null
+  })
 
   // ---- the map: Ocarina rules. Without the Dungeon Map only rooms you've been in show; without the
   // Compass there is no star.
@@ -430,7 +435,8 @@ function TempleLevel({ world, onExit }) {
       ))}
 
       {/* ---- boss */}
-      {[0, 1, 2, 3, 4, 5].map((k) => { const a = ((k + 0.5) / 6) * Math.PI * 2; return <Torch key={k} pos={[Math.cos(a) * 11.5, 0, -158 + Math.sin(a) * 15]} color="#7ff4ff" /> })}
+      {/* no torch on the centre line: one there sat between the start camera and Kai */}
+      {[0, 1, 2, 3, 4, 5].map((k) => { const a = (k / 6) * Math.PI * 2; return <Torch key={k} pos={[Math.cos(a) * 11.5, 0, -158 + Math.sin(a) * 15]} color="#7ff4ff" /> })}
       <Hydra world={world} center={HYDRA.center} pool={HYDRA.pool} active={bossOn && !solved.boss2} onDefeated={bossDown} />
       <Shard show={!!solved.boss2 && save.shards < 2} pos={[0, 0, -146]} />
       <Motes count={160} area={[18, 6, 180]} center={[0, 0.2, -85]} color="#e6fbff" size={0.05} />

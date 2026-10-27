@@ -70,9 +70,6 @@ def pillar(seg, x, z, y, red, h=6.0):
     for k in range(3):  # carved bands
         yy = y + 1.4 + k * (h - 2.4) / 2
         add(seg, torus(0.44, 0.05, 16, 4), 'trim', TRS((x, yy, z)))
-        for q in range(4):  # incised wave glyphs on each band
-            a = q * PI / 2 + k
-            add(seg, box(0.22, 0.06, 0.03), 'trim', TRS((x + math.sin(a) * 0.44, yy + 0.35, z + math.cos(a) * 0.44), (0, a, 0.5)))
     add(seg, lathe([(0.42, y + h - 0.45), (0.58, y + h - 0.2), (0.62, y + h - 0.1)], 16, False, False), 'trim', TRS((x, 0, z)))
     add(seg, box(1.3, 0.3, 1.3), 'trim', TRS((x, y + h + 0.05, z)), [BEVEL(0.05, 1)], smooth=False)
 

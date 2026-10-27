@@ -15,9 +15,9 @@ function useAufbauAssets() {
   return useMemo(() => {
     const env = getEnv(gl)
     return {
-      leather: rimMat({ color: '#6a4a30', roughness: 0.75 }, '#ffcf9a', 0.25),
+      leather: rimMat({ color: '#7e4a28', roughness: 0.7 }, '#ffcf9a', 0.4), // warm: the caves' teal light turns a cool brown green
       leatherDark: rimMat({ color: '#43301f', roughness: 0.8 }, '#ffcf9a', 0.2),
-      cloth: rimMat({ color: '#5f6a44', roughness: 0.9 }, '#c8e0b0', 0.2),
+      cloth: rimMat({ color: '#a8784a', roughness: 0.9 }, '#ffe0b0', 0.2),
       skin: rimMat({ color: '#d99a7e', roughness: 0.6 }, '#ffd0b0', 0.2, 3),
       nose: rimMat({ color: '#d4806c', roughness: 0.6 }, '#ffc0a0', 0.2, 3),
       beard: rimMat({ color: '#ece8e2', roughness: 0.85 }, '#ffffff', 0.35, 2),
@@ -25,7 +25,7 @@ function useAufbauAssets() {
       brass: new THREE.MeshStandardMaterial({ color: '#b08a4a', metalness: 0.85, roughness: 0.3, envMap: env, envMapIntensity: 1 }),
       wood: rimMat({ color: '#5a3c26', roughness: 0.8 }, '#ffcf9a', 0.15),
       rope: rimMat({ color: '#8a7050', roughness: 0.9 }, '#ffcf9a', 0.1),
-      trousers: rimMat({ color: '#2f3a2c', roughness: 0.9 }, '#c8e0b0', 0.15),
+      trousers: rimMat({ color: '#3e3026', roughness: 0.9 }, '#ffe0b0', 0.15),
       dark: new THREE.MeshBasicMaterial({ color: '#141010' }),
       eye: new THREE.MeshStandardMaterial({ color: '#f2eee8', roughness: 0.3 }),
       iris: new THREE.MeshBasicMaterial({ color: '#2a3a4a' }),

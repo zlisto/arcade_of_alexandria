@@ -40,6 +40,7 @@ export default function CameraRig({ world, dist = 6.2, height = 1.5 }) {
       d += world.camBoost.dist || 0
       pitch = world.camBoost.pitchSet !== undefined ? world.camBoost.pitchSet : Math.max(pitch, world.camBoost.pitch || 0)
       if (world.camBoost.lookY) look.y += world.camBoost.lookY // look up at something tall (a boss)
+      if (world.camBoost.lookAhead) { look.x -= Math.sin(yaw) * world.camBoost.lookAhead; look.z -= Math.cos(yaw) * world.camBoost.lookAhead } // aim past Kai when the camera can't back off
     }
     if (world.camOverride) {
       const o = world.camOverride

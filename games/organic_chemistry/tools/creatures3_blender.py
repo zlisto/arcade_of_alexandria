@@ -136,7 +136,7 @@ def segment(seg, r, mat, nH, head=False, tail=False, plate_mat='scale'):
     # hydrogens on the belly (the white H's of the CH3/CH2), on short stalks
     for k in range(nH):
         a = (k / nH) * PI * 2 + 0.6
-        p = Vector((math.cos(a) * r * 0.8, -r * 0.65, math.sin(a) * r * 0.8))
+        p = Vector((math.cos(a) * r * 0.9, -r * 0.42, math.sin(a) * r * 0.9))  # low on the flanks, clear of the floor
         add(seg, cyl(0.04, 0.04, 0.25, 8), 'bond', Matrix.Translation(p * 0.8) @ Vector((0, 1, 0)).rotation_difference(p.normalized()).to_matrix().to_4x4())
         add(seg, sphere(0.17, 14, 10), 'h', TRS(tuple(p)))
     if head:  # the face: snout, brow plates, slit eyes, fangs, a dark mouth
