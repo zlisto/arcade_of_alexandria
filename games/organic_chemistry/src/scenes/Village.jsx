@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Sky, Html } from '@react-three/drei'
 import * as THREE from 'three'
@@ -6,6 +6,7 @@ import GameScene from '../engine/GameScene'
 import { Block, Slab, Scatter, scatter, Motes, Torch, twoShot } from '../engine/kit'
 import { Pi, Villager } from '../actors/Figures'
 import WolfPack from '../actors/WolfPack'
+import { useModelParts, ModelPart, InstancedPart } from '../engine/models'
 import { getState, setState, saveGame, say, toast, useGame } from '../engine/store'
 import { playMusic, sfx } from '../audio/sfx'
 
@@ -17,18 +18,27 @@ const WELL = [7, 0, -3]
 const CAVE = [0, 0, -36]
 const LOOSE_H = [[-9, 2], [12, 6], [-4, -12], [15, -11]]
 
-function Cottage({ world, pos, rot = 0, roof = '#b24a3a' }) {
+const roofMats = {}
+/** A prop from the village kit. roof: tints the cottage roof tiles. */
+function KitPart({ name, roof, ...props }) {
+  const parts = useModelParts('village')
+  const override = useMemo(() => {
+    if (!roof) return null
+    if (!roofMats[roof]) {
+      const base = (parts.cottage || []).find((x) => x.material.name === 'roof')
+      if (base) { roofMats[roof] = base.material.clone(); roofMats[roof].color.set(roof) }
+    }
+    return { roof: roofMats[roof] }
+  }, [parts, roof])
+  return <ModelPart parts={parts} name={name} override={override} {...props} />
+}
+
+function Cottage({ world, pos, rot = 0, roof = '#6f8a3a' }) {
   return (
     <group>
-      <Block world={world} pos={[pos[0], 1.3, pos[1]]} size={[3.6, 2.6, 3.6]} visible={false} />
-      <group position={[pos[0], 0, pos[1]]} rotation={[0, rot, 0]}>
-        <mesh position={[0, 1.2, 0]} castShadow receiveShadow><cylinderGeometry args={[1.8, 1.9, 2.4, 14]} /><meshStandardMaterial color="#eeeae2" roughness={0.9} /></mesh>
-        <mesh position={[0, 3.05, 0]} castShadow><coneGeometry args={[2.3, 1.6, 14]} /><meshStandardMaterial color={roof} roughness={0.85} /></mesh>
-        {/* a single chimney: hydrogen makes one bond */}
-        <mesh position={[0.9, 3.6, 0.2]} castShadow><cylinderGeometry args={[0.2, 0.24, 1.1, 8]} /><meshStandardMaterial color="#8a8580" /></mesh>
-        <mesh position={[0, 0.8, 1.86]}><boxGeometry args={[0.8, 1.5, 0.12]} /><meshStandardMaterial color="#6a4a32" /></mesh>
-        <mesh position={[-1, 1.5, 1.6]}><boxGeometry args={[0.5, 0.5, 0.1]} /><meshStandardMaterial color="#ffe3a0" emissive="#ffcf6a" emissiveIntensity={0.6} /></mesh>
-      </group>
+      <Block world={world} pos={[pos[0], 1.7, pos[1]]} size={[4.6, 3.4, 4.6]} visible={false} />
+      {/* round cottage, tiled roof, a single chimney: hydrogen makes one bond */}
+      <Suspense fallback={null}><KitPart name="cottage" position={[pos[0], 0, pos[1]]} rotation={[0, rot, 0]} roof={roof} /></Suspense>
     </group>
   )
 }
@@ -44,7 +54,7 @@ function HFence({ from, to, n = 8 }) {
     <group>
       {posts.map(([x, z], i) => (
         <group key={i} position={[x, 0, z]}>
-          <mesh position={[0, 0.5, 0]} castShadow><cylinderGeometry args={[0.08, 0.1, 1, 6]} /><meshStandardMaterial color="#7a5a3a" /></mesh>
+          <Suspense fallback={null}><KitPart name="fencePost" /></Suspense>
           <mesh position={[0, 1.08, 0]}><sphereGeometry args={[0.16, 10, 8]} /><meshStandardMaterial color="#f4f4f4" /></mesh>
         </group>
       ))}
@@ -116,8 +126,7 @@ function Methane({ world, show, onExamine }) {
   return (
     <group position={[METHANE_AT[0], 0, METHANE_AT[1]]}>
       {/* pedestal */}
-      <mesh position={[0, 0.42, 0]} material={mats.stone} castShadow><cylinderGeometry args={[0.32, 0.42, 0.84, 8]} /></mesh>
-      <mesh position={[0, 0.88, 0]} material={mats.stone}><cylinderGeometry args={[0.42, 0.36, 0.1, 8]} /></mesh>
+      <Suspense fallback={null}><KitPart name="pedestal" /></Suspense>
       <mesh position={[0, 0.94, 0]} rotation={[-Math.PI / 2, 0, 0]} material={mats.glow}><ringGeometry args={[0.2, 0.3, 32]} /></mesh>
       <group ref={g} position={[0, 1.55, 0]} scale={0.62}>
         <mesh material={mats.c} castShadow><sphereGeometry args={[0.35, 24, 18]} /></mesh>
@@ -140,47 +149,28 @@ function CaveMouth({ open }) {
   // Collision (in VillageLevel) is unchanged: rock either side of x = ±2.2, overhead from y = 4.1.
   const glow = useRef()
   useFrame(({ clock }) => { if (glow.current) glow.current.material.opacity = open ? 0.5 + Math.sin(clock.elapsedTime * 2) * 0.15 : 0 })
-  const rocks = useMemo(() => scatter(46, 23, (r) => {
-    const side = r() < 0.5 ? -1 : 1
-    const sc = 1.1 + r() * 1.5
-    const x = side * (2.9 + sc * 0.9 + r() * 11) // keep clear of the mouth (|x| < 2.2)
-    return [x, r() * 6.5, 0.6 + r() * 1.2, sc, r() * 6]
-  }), [])
-  const crystals = useMemo(() => scatter(10, 31, (r) => { const a = Math.PI * (0.1 + r() * 0.8); return [Math.cos(a) * (3 + r() * 0.6), Math.sin(a) * (3 + r() * 0.6) + 0.8, 0.25 + r() * 0.35, r() * 6] }), [])
-  const rock = '#6b6658', rockDark = '#4e4a40'
+  // crystals in clusters of three, growing from the rocky rim of the tunnel mouth
+  const crystals = useMemo(() => scatter(7, 31, (r) => { const a = Math.PI * (0.12 + r() * 0.76); const x = Math.cos(a) * 2.95, y = Math.sin(a) * 4.15; return [0, 1, 2].map((k) => [x * 1.08 + (k - 1) * 0.24, y * 1.06 + (k % 2) * 0.2, 0.3 + r() * 0.3, r() * 6]) }).flat(), [])
   return (
     <group position={[CAVE[0], 0, CAVE[2] - 4]}>
-      {/* the mountain, well behind the cliff so it never covers the mouth */}
-      <mesh position={[0, 7, -17]} castShadow><coneGeometry args={[17, 16, 9]} /><meshStandardMaterial color="#5a6a4a" roughness={0.95} flatShading /></mesh>
-      <mesh position={[-10, 4, -12]}><coneGeometry args={[8, 9, 7]} /><meshStandardMaterial color="#617052" roughness={0.95} flatShading /></mesh>
-      <mesh position={[11, 3.5, -11]}><coneGeometry args={[7, 8, 7]} /><meshStandardMaterial color="#56654a" roughness={0.95} flatShading /></mesh>
-      {/* cliff face: rock either side of the mouth and a band above it */}
-      <mesh position={[-9.1, 3.5, -2.5]} castShadow><boxGeometry args={[13.8, 7, 7]} /><meshStandardMaterial color={rockDark} roughness={1} flatShading /></mesh>
-      <mesh position={[9.1, 3.5, -2.5]} castShadow><boxGeometry args={[13.8, 7, 7]} /><meshStandardMaterial color={rockDark} roughness={1} flatShading /></mesh>
-      <mesh position={[0, 5.9, -2.5]}><boxGeometry args={[4.6, 3.6, 7]} /><meshStandardMaterial color={rockDark} roughness={1} flatShading /></mesh>
-      {rocks.map(([x, y, z, sc, rot], k) => (
-        <mesh key={k} position={[x, y, 1 + z * 0.4]} rotation={[rot, rot * 1.3, 0]} scale={sc} castShadow><dodecahedronGeometry args={[1, 0]} /><meshStandardMaterial color={k % 3 ? rock : '#7a7464'} roughness={1} flatShading /></mesh>
-      ))}
-      <mesh position={[-1.5, 7.4, 0.6]} rotation={[0.3, 0.2, 0]} scale={[2.2, 1.2, 1.4]}><dodecahedronGeometry args={[1, 0]} /><meshStandardMaterial color={rock} roughness={1} flatShading /></mesh>
-      <mesh position={[1.8, 7.2, 0.5]} rotation={[0.1, 0.9, 0.3]} scale={[2, 1.1, 1.3]}><dodecahedronGeometry args={[1, 0]} /><meshStandardMaterial color={rock} roughness={1} flatShading /></mesh>
-      {/* stone arch with a keystone, and cyan crystals growing round it */}
-      <mesh position={[0, 0.2, 1.05]}><torusGeometry args={[2.55, 0.42, 6, 18, Math.PI]} /><meshStandardMaterial color="#8a8474" roughness={0.9} flatShading /></mesh>
-      {[-1, 1].map((sd) => <mesh key={sd} position={[sd * 2.55, 0.1, 1.05]}><boxGeometry args={[0.9, 0.5, 0.9]} /><meshStandardMaterial color="#8a8474" roughness={0.9} flatShading /></mesh>)}
-      <mesh position={[0, 2.85, 1.15]}><boxGeometry args={[0.7, 0.8, 0.95]} /><meshStandardMaterial color="#9a9482" roughness={0.85} flatShading /></mesh>
+      {/* the mountain, the boulder cliff and the stone arch (village kit) */}
+      <Suspense fallback={null}><KitPart name="caveHill" castShadow={false} /><KitPart name="caveCliff" /><KitPart name="caveTunnel" castShadow={false} /></Suspense>
       <mesh position={[0, 2.85, 1.64]} rotation={[0, 0, Math.PI / 4]}><boxGeometry args={[0.22, 0.22, 0.02]} /><meshBasicMaterial color={open ? '#43e6f5' : '#3a5a60'} toneMapped={false} /></mesh>
       {crystals.map(([x, y, sc, rot], k) => (
-        <mesh key={k} position={[x, y, 1.2]} rotation={[0.3, rot, Math.atan2(y - 0.8, x) - Math.PI / 2]} scale={[sc * 0.6, sc * 1.6, sc * 0.6]}><octahedronGeometry args={[1, 0]} /><meshStandardMaterial color="#9ff3ff" emissive="#43e6f5" emissiveIntensity={open ? 1.4 : 0.3} roughness={0.2} toneMapped={false} /></mesh>
+        <mesh key={k} position={[x, y, 1.45]} rotation={[0.3, rot, Math.atan2(y - 0.8, x) - Math.PI / 2]} scale={[sc * 0.7, sc * 1.6, sc * 0.7]}><octahedronGeometry args={[1, 0]} /><meshStandardMaterial color="#9ff3ff" emissive="#43e6f5" emissiveIntensity={open ? 1.4 : 0.3} roughness={0.2} toneMapped={false} /></mesh>
       ))}
       {/* the tunnel: dark walls running back into the hill, glowing at the far end */}
-      <mesh position={[0, 2.1, -3.5]} rotation={[0, 0, 0]}><boxGeometry args={[4.4, 4.2, 8]} /><meshStandardMaterial color="#1e1c22" roughness={1} side={THREE.BackSide} /></mesh>
-      <mesh position={[0, 2.0, -7.4]}><planeGeometry args={[4.2, 4]} /><meshBasicMaterial color={open ? '#0e3a46' : '#141318'} /></mesh>
-      <mesh ref={glow} position={[0, 2.0, -7.3]}><planeGeometry args={[4.2, 4]} /><meshBasicMaterial color="#43e6f5" transparent opacity={0} toneMapped={false} /></mesh>
+      <mesh position={[1.4, 1.1, -11.2]}><circleGeometry args={[1.6, 24]} /><meshBasicMaterial color={open ? '#0e3a46' : '#141318'} /></mesh>
+      <mesh ref={glow} position={[1.4, 1.1, -11.1]}><circleGeometry args={[1.6, 24]} /><meshBasicMaterial color="#43e6f5" transparent opacity={0} toneMapped={false} /></mesh>
+      {open && <pointLight position={[0.6, 1.6, -6]} color="#43e6f5" intensity={8} distance={9} />}
       {/* the rock plug while the wolves roam */}
       {!open && (
         <group position={[0, 0, 1.2]}>
-          <mesh position={[0, 1.4, 0]} scale={[1.9, 1.5, 0.9]}><dodecahedronGeometry args={[1, 0]} /><meshStandardMaterial color="#7a7464" roughness={1} flatShading /></mesh>
-          <mesh position={[-1.2, 3.0, -0.1]} scale={[1, 0.9, 0.7]}><dodecahedronGeometry args={[1, 0]} /><meshStandardMaterial color="#6e6a5e" roughness={1} flatShading /></mesh>
-          <mesh position={[1.2, 3.1, -0.1]} scale={[1, 0.9, 0.7]}><dodecahedronGeometry args={[1, 0]} /><meshStandardMaterial color="#6e6a5e" roughness={1} flatShading /></mesh>
+          <Suspense fallback={null}>
+            <KitPart name="rock0" position={[0, 0.4, 0]} scale={[2.0, 2.2, 1.0]} />
+            <KitPart name="rock1" position={[-1.2, 2.3, -0.1]} scale={[1.1, 1.2, 0.8]} />
+            <KitPart name="rock2" position={[1.2, 2.4, -0.1]} scale={[1.1, 1.2, 0.8]} />
+          </Suspense>
         </group>
       )}
       {open && <pointLight position={[0, 2.2, 0]} color="#43e6f5" intensity={10} distance={16} />}
@@ -381,32 +371,29 @@ function VillageLevel({ world, onExit }) {
 
   return (
     <group>
-      <Sky sunPosition={[60, 25, -40]} turbidity={6} rayleigh={1.4} mieCoefficient={0.006} />
-      <fog attach="fog" args={['#c7d6e3', 35, 110]} />
+      <Sky sunPosition={[80, 9, -60]} turbidity={2.2} rayleigh={1.3} mieCoefficient={0.004} mieDirectionalG={0.85} />
+      <fog attach="fog" args={['#e2dcc4', 45, 160]} />
       <hemisphereLight args={['#dbe9ff', '#5a6a3a', 0.65]} />
       <directionalLight position={[30, 40, 20]} intensity={1.9} castShadow shadow-mapSize={[2048, 2048]} shadow-camera-left={-45} shadow-camera-right={45} shadow-camera-top={45} shadow-camera-bottom={-45} shadow-bias={-0.0004} />
-      <Slab world={world} x0={-44} z0={-46} x1={44} z1={44} y={0} color="#6f9a4e" />
-      {/* path to the cave and the well */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, -14]} receiveShadow><planeGeometry args={[3.2, 52]} /><meshStandardMaterial color="#b49c74" roughness={1} /></mesh>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[3.5, 0.012, -3]} receiveShadow><planeGeometry args={[7, 2.6]} /><meshStandardMaterial color="#b49c74" roughness={1} /></mesh>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[26, 0.011, 0]} receiveShadow><planeGeometry args={[36, 2.8]} /><meshStandardMaterial color="#b49c74" roughness={1} /></mesh>
+      <Slab world={world} x0={-44} z0={-46} x1={44} z1={44} y={0} visible={false} />
+      {/* grass with soft patches, winding paths with a plaza round the well, rolling hills to the horizon */}
+      <Suspense fallback={null}>
+        <KitPart name="ground" castShadow={false} />
+        <KitPart name="paths" castShadow={false} />
+        <KitPart name="horizon" castShadow={false} receiveShadow={false} />
+      </Suspense>
       <EastGate open={save.shards >= 1} />
-      <Cottage world={world} pos={[-8, 8]} rot={0.4} />
-      <Cottage world={world} pos={[-14, -4]} rot={1.2} roof="#3a6ab2" />
-      <Cottage world={world} pos={[14, 10]} rot={-0.6} roof="#c08a2a" />
-      <Cottage world={world} pos={[18, -4]} rot={-1.4} />
-      <Cottage world={world} pos={[-6, -20]} rot={0.2} roof="#5a8a4a" />
-      <Cottage world={world} pos={[12, -20]} rot={-0.3} roof="#8a4ab2" />
+      {COTTAGES.map(([x, z, rot, roof], i) => <Cottage key={i} world={world} pos={[x, z]} rot={rot} roof={roof} />)}
+      <ChimneySmoke />
+      {/* trees among the houses (they stand in your way, like trees do) */}
+      {VILLAGE_TREES.map(([x, z], i) => <Block key={i} world={world} pos={[x, 1, z]} size={[0.8, 2, 0.8]} visible={false} />)}
       <HFence from={[-22, 18]} to={[-10, 18]} />
       <HFence from={[8, 18]} to={[22, 18]} />
       <HFence from={[-24, -8]} to={[-24, 8]} n={6} />
       {/* the well */}
       <group position={[WELL[0], 0, WELL[2]]}>
-        <mesh position={[0, 0.5, 0]} castShadow><cylinderGeometry args={[1.2, 1.3, 1, 14, 1, true]} /><meshStandardMaterial color="#8a8580" roughness={0.95} side={THREE.DoubleSide} /></mesh>
-        <mesh position={[0, 0.45, 0]} rotation={[-Math.PI / 2, 0, 0]}><circleGeometry args={[1.15, 20]} /><meshStandardMaterial color={save.well ? '#3a9ac8' : '#1d2a33'} emissive={save.well ? '#1a6a98' : '#000'} emissiveIntensity={0.6} /></mesh>
-        <mesh position={[-1.1, 1.4, 0]}><cylinderGeometry args={[0.08, 0.08, 1.8, 6]} /><meshStandardMaterial color="#6a4a32" /></mesh>
-        <mesh position={[1.1, 1.4, 0]}><cylinderGeometry args={[0.08, 0.08, 1.8, 6]} /><meshStandardMaterial color="#6a4a32" /></mesh>
-        <mesh position={[0, 2.35, 0]} rotation={[0, 0, Math.PI / 2]}><coneGeometry args={[0.9, 2.8, 4]} /><meshStandardMaterial color="#9a4a3a" /></mesh>
+        <Suspense fallback={null}><KitPart name="well" /></Suspense>
+        <mesh position={[0, 0.3, 0]} rotation={[-Math.PI / 2, 0, 0]}><circleGeometry args={[1.02, 28]} /><meshStandardMaterial color={save.well ? '#1f5a78' : '#1d2a33'} emissive={save.well ? '#123a50' : '#000'} emissiveIntensity={0.3} roughness={0.15} /></mesh>
       </group>
       <Block world={world} pos={[WELL[0], 0.5, WELL[2]]} size={[2.4, 1, 2.4]} visible={false} />
       <WellStation world={world} done={!!save.well} onUse={useWell} label={() => (getState().save.well ? null : getState().sockets.length >= 4 ? 'Seal the well with CH₄' : 'Examine the broken well')} />
@@ -420,10 +407,8 @@ function VillageLevel({ world, onExit }) {
       {LOOSE_H.map((p, i) => <LooseH key={i} world={world} pos={p} taken={taken[i]} onTake={() => take(i)} />)}
       <WolfPack world={world} spawns={[[2, 2], [9, 7], [5, 9]]} active={wolvesOn} onCleared={cleared} />
       <CaveMouth open={save.wolvesCleared} />
-      <Scatter items={trees} kind="tree" />
-      <Scatter items={rocks} kind="rock" color="#8a8580" />
-      <Flowers items={flowers} />
-      {[[-3, 4], [3, 4]].map(([x, z], i) => <Torch key={i} pos={[x, 0, z - 30]} />)}
+      <Suspense fallback={null}><VillageNature trees={trees} rocks={rocks} flowers={flowers} /></Suspense>
+      {[[-3, 4], [3, 4]].map(([x, z], i) => <VillageTorch key={i} pos={[x, 0, z - 30]} />)}
       <Motes count={80} area={[60, 6, 60]} center={[0, 0.3, 0]} color="#fff6c0" size={0.07} />
       <PiFollower world={world} />
     </group>
@@ -471,6 +456,76 @@ function NPC({ world, pos, name, onTalk, hat, pair, kind }) {
   )
 }
 
+const FLOWER_COLORS = ['#ffffff', '#ffd6e8', '#fff3a0', '#cfe8ff'].map((c) => new THREE.Color(c))
+// cottages: [x, z, turn, moss roof]
+const COTTAGES = [[-8, 8, 0.4, '#6f8a3a'], [-14, -4, 1.2, '#7d9442'], [14, 10, -0.6, '#5f7d36'], [18, -4, -1.4, '#738c3c'], [-6, -20, 0.2, '#68843a'], [12, -20, -0.3, '#7a9040']]
+const CHIMNEY = [0.75, 5.75, -0.85] // the chimney top, in a cottage's own frame
+const VILLAGE_TREES = [[-18, 12], [-20, 2], [-11, 15], [26, 15], [20, 14], [24, 4], [22, -12], [-8, -15], [7.5, -14], [-12, -14], [-20, -12], [18, -16], [8, -27], [-14, -24]]
+
+/** Smoke curling up from every chimney: one instanced batch of soft puffs. */
+function ChimneySmoke() {
+  const ref = useRef()
+  const N = 5
+  const tops = useMemo(() => COTTAGES.map(([x, z, rot]) => [x + CHIMNEY[0] * Math.cos(rot) + CHIMNEY[2] * Math.sin(rot), CHIMNEY[1], z - CHIMNEY[0] * Math.sin(rot) + CHIMNEY[2] * Math.cos(rot)]), [])
+  const d = useMemo(() => new THREE.Object3D(), [])
+  useFrame(({ clock }) => {
+    if (!ref.current) return
+    const t = clock.elapsedTime
+    tops.forEach(([x, y, z], c) => {
+      for (let k = 0; k < N; k++) {
+        const u = ((t * 0.18 + k / N + c * 0.13) % 1)
+        d.position.set(x + Math.sin(u * 5 + c) * 0.35 + u * 0.9, y + u * 3.2, z + Math.cos(u * 4 + c) * 0.25)
+        d.scale.setScalar(0.18 + u * 0.55 * (1 - u * 0.45))
+        d.updateMatrix()
+        ref.current.setMatrixAt(c * N + k, d.matrix)
+      }
+    })
+    ref.current.instanceMatrix.needsUpdate = true
+  })
+  return (
+    <instancedMesh ref={ref} args={[null, null, COTTAGES.length * N]} frustumCulled={false}>
+      <icosahedronGeometry args={[1, 3]} />
+      <meshStandardMaterial color="#f4f1ec" transparent opacity={0.28} depthWrite={false} roughness={1} />
+    </instancedMesh>
+  )
+}
+/** Trees, rocks, grass tufts and flowers from the village kit, each kind drawn in one go. */
+function VillageNature({ trees, rocks, flowers }) {
+  const parts = useModelParts('village')
+  const sets = useMemo(() => {
+    const pine = [], oak = [], r = [[], [], []]
+    trees.forEach(([x, z, sc, rot], i) => (i % 3 === 0 ? oak.push([x, 0, z, sc * 1.05, rot]) : pine.push([x, 0, z, sc * 0.92, rot])))
+    VILLAGE_TREES.forEach(([x, z], i) => (i % 2 ? oak.push([x, 0, z, 1.0 + (i % 3) * 0.12, i]) : pine.push([x, 0, z, 1.1 + (i % 3) * 0.1, i])))
+    const shrubs = []
+    COTTAGES.forEach(([cx, cz, rot]) => [1.3, 2.2, 3.7, 4.7].forEach((a, k) => { const b = a + rot; shrubs.push([cx + Math.sin(b) * 2.75, 0, cz + Math.cos(b) * 2.75, 0.8 + (k % 2) * 0.3, k + cx]) }))
+    rocks.forEach(([x, z, sc, rot], i) => r[i % 3].push([x, 0, z, sc * 0.55, rot]))
+    const fl = flowers.map(([x, z, sc, rot]) => [x, 0, z, 0.75 + sc * 2, rot])
+    // grass tufts everywhere but the paths, the houses, the well and the cave
+    const tufts = scatter(2200, 41, (rn) => {
+      const x = (rn() - 0.5) * 84, z = (rn() - 0.5) * 84
+      if (Math.abs(x) < 2.6 && z < 16 && z > -41) return null
+      if (x > 0 && x < 7.2 && Math.abs(z + 3) < 1.6) return null
+      if (x > 7 && Math.abs(z) < 1.7) return null
+      if (z < -32 && Math.abs(x) < 17) return null
+      if (Math.hypot(x - WELL[0], z - WELL[2]) < 3.4) return null
+      if (COTTAGES.some(([cx, cz]) => Math.hypot(x - cx, z - cz) < 2.6)) return null
+      return [x, 0, z, 0.6 + rn() * 0.5, rn() * 6.3]
+    })
+    return { pine, oak, r, fl, tufts, shrubs }
+  }, [trees, rocks, flowers])
+  return (
+    <group>
+      <InstancedPart parts={parts} name="pine" items={sets.pine} castShadow />
+      <InstancedPart parts={parts} name="oak" items={sets.oak} castShadow />
+      {sets.r.map((items, k) => <InstancedPart key={k} parts={parts} name={'rock' + k} items={items} castShadow />)}
+      <InstancedPart parts={parts} name="tuft" items={sets.tufts} />
+      <InstancedPart parts={parts} name="shrub" items={sets.shrubs} castShadow />
+      <InstancedPart parts={parts} name="flowerHead" items={sets.fl} colors={FLOWER_COLORS} />
+      <InstancedPart parts={parts} name="flowerStem" items={sets.fl} />
+    </group>
+  )
+}
+
 function Flowers({ items }) {
   const ref = useRef()
   const dummy = useMemo(() => new THREE.Object3D(), [])
@@ -505,17 +560,36 @@ export function PiFollower({ world }) {
   return <group ref={g}><Pi /></group>
 }
 
+const BRAMBLES = [...Array(9)].map((_, k) => [(k % 3 - 1) * 0.4, 0, -2.6 + k * 0.65, 1.1 + (k % 2) * 0.25, k])
+function Brambles() {
+  const parts = useModelParts('village')
+  return <InstancedPart parts={parts} name="bramble" items={BRAMBLES} castShadow />
+}
+
+/** A torch post from the kit with a flickering flame. */
+function VillageTorch({ pos }) {
+  const flame = useRef()
+  const light = useRef()
+  useFrame(({ clock }) => {
+    const f = 1 + Math.sin(clock.elapsedTime * 13 + pos[0]) * 0.12 + Math.sin(clock.elapsedTime * 7.3) * 0.08
+    if (flame.current) flame.current.scale.set(1, f, 1)
+    if (light.current) light.current.intensity = 3 * f
+  })
+  return (
+    <group position={pos}>
+      <Suspense fallback={null}><KitPart name="torch" /></Suspense>
+      <mesh ref={flame} position={[0, 1.72, 0]}><coneGeometry args={[0.1, 0.32, 10]} /><meshBasicMaterial color="#ffb347" toneMapped={false} /></mesh>
+      <mesh position={[0, 1.66, 0]}><sphereGeometry args={[0.08, 10, 8]} /><meshBasicMaterial color="#fff0a0" toneMapped={false} /></mesh>
+      <pointLight ref={light} position={[0, 1.9, 0]} color="#ffb35a" intensity={3} distance={8} />
+    </group>
+  )
+}
+
 function EastGate({ open }) {
   return (
     <group position={[43, 0, 0]}>
-      {[-1, 1].map((s) => (
-        <group key={s} position={[0, 0, s * 3.6]}>
-          <mesh position={[0, 1.6, 0]} castShadow><boxGeometry args={[1.2, 3.2, 1.2]} /><meshStandardMaterial color="#8a8474" roughness={0.95} flatShading /></mesh>
-          <mesh position={[0, 3.35, 0]}><boxGeometry args={[1.5, 0.3, 1.5]} /><meshStandardMaterial color="#6a6458" roughness={0.9} /></mesh>
-        </group>
-      ))}
-      <mesh position={[0, 3.6, 0]}><boxGeometry args={[0.5, 0.4, 8.4]} /><meshStandardMaterial color="#6a4a32" roughness={0.9} /></mesh>
-      {!open && [...Array(9)].map((_, k) => <mesh key={k} position={[(k % 3 - 1) * 0.4, 0.5 + (k % 2) * 0.5, -2.6 + k * 0.65]} castShadow><icosahedronGeometry args={[0.7, 0]} /><meshStandardMaterial color="#3d5a2a" roughness={1} flatShading /></mesh>)}
+      <Suspense fallback={null}><KitPart name="gate" /></Suspense>
+      {!open && <Suspense fallback={null}><Brambles /></Suspense>}
       <Html position={[-1.5, 2.6, 2.6]} center distanceFactor={11}><div className="tag3d">{open ? 'East road → Valence Fields' : 'East road · overgrown'}</div></Html>
     </group>
   )
