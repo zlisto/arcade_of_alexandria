@@ -42,7 +42,7 @@ function Driver({ kai, anim, stance, sockets }) {
     p.swingSide = 1
     p.block = anim === 'block' ? 1 : 0
     p.charge = anim === 'charge' ? 1 : 0
-    p.spin = 0; p.hurt = 0
+    p.spin = anim === 'spin' ? (t.current * 1.4) % 1 : 0; p.hurt = 0
     p.roll = anim === 'roll' ? (t.current * 1.6) % 1 : anim === 'rollfreeze' ? window.__rollAt || 0.5 : 0
   })
   return null
@@ -99,7 +99,7 @@ export default function ModelViewer() {
       <div style={{ position: 'fixed', top: 10, left: 10, display: 'flex', gap: 6, flexWrap: 'wrap', font: '13px Inter, sans-serif' }}>
         {['kai', 'wolf', 'colossus', 'octavia', 'pi', 'aufbau', 'malradix', 'villagers'].map((m) => btn(model === m, m, () => { setModel(m); setView(m === 'colossus' ? 'big' : m === 'malradix' ? 'tall' : m === 'villagers' ? 'wide' : 'full') }))}
         {btn(cave, 'cave', () => setLight('cave'))}{btn(!cave, 'day', () => setLight('day'))}
-        {['idle', 'run', 'slash', 'block', 'charge', 'roll'].map((a) => btn(anim === a, a, () => setAnim(a)))}
+        {['idle', 'run', 'slash', 'spin', 'block', 'charge', 'roll'].map((a) => btn(anim === a, a, () => setAnim(a)))}
         {['sp3', 'sp2', 'sp'].map((s) => btn(stance === s, s, () => setStance(s)))}
         {btn(sockets, 'atoms', () => setSockets(!sockets))}
         {Object.keys(VIEWS).map((v) => btn(view === v, 'cam:' + v, () => setView(v)))}

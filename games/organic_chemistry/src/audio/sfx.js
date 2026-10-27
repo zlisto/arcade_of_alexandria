@@ -51,6 +51,29 @@ function tone({ f = 440, f2, type = 'sine', dur = 0.15, vol = 0.25, attack = 0.0
   o.stop(t + dur + 0.05)
 }
 
+// a swoosh: band-passed noise whose pitch sweeps up while it swells and fades (blade through air)
+function swoosh({ dur = 0.4, vol = 0.3, f1 = 500, f2 = 2600, delay = 0 }) {
+  const c = ac()
+  if (!c || muted) return
+  const t = c.currentTime + delay
+  const buf = c.createBuffer(1, Math.floor(c.sampleRate * dur), c.sampleRate)
+  const d = buf.getChannelData(0)
+  for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1
+  const src = c.createBufferSource()
+  src.buffer = buf
+  const bq = c.createBiquadFilter()
+  bq.type = 'bandpass'; bq.Q.value = 1.6
+  bq.frequency.setValueAtTime(f1, t)
+  bq.frequency.exponentialRampToValueAtTime(f2, t + dur * 0.6)
+  bq.frequency.exponentialRampToValueAtTime(f1 * 0.8, t + dur)
+  const g = c.createGain()
+  g.gain.setValueAtTime(0.0001, t)
+  g.gain.exponentialRampToValueAtTime(vol, t + dur * 0.45)
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur)
+  src.connect(bq); bq.connect(g); g.connect(master)
+  src.start(t)
+}
+
 function noise({ dur = 0.15, vol = 0.2, filter = 1200, delay = 0, hp = 0 }) {
   const c = ac()
   if (!c || muted) return
@@ -86,7 +109,7 @@ const SFX = {
   hookFire: () => { tone({ f: 500, f2: 1900, type: 'square', dur: 0.22, vol: 0.05, filter: 3000 }); noise({ dur: 0.18, vol: 0.05, hp: 3500 }) },
   hookHit: () => { tone({ f: 1400, type: 'triangle', dur: 0.12, vol: 0.12 }); tone({ f: 2100, type: 'triangle', dur: 0.18, vol: 0.08, delay: 0.05 }); noise({ dur: 0.06, vol: 0.12, hp: 2500 }) },
   hookClink: () => { tone({ f: 380, f2: 300, type: 'square', dur: 0.08, vol: 0.08, filter: 1500 }); tone({ f: 260, type: 'square', dur: 0.1, vol: 0.06, filter: 1200, delay: 0.08 }) },
-  spin: () => { noise({ dur: 0.35, vol: 0.18, hp: 1200 }); tone({ f: 300, f2: 900, type: 'sawtooth', dur: 0.35, vol: 0.06, filter: 2000 }) },
+  spin: () => { swoosh({ dur: 0.42, vol: 0.32, f1: 420, f2: 2400 }); swoosh({ dur: 0.36, vol: 0.18, f1: 700, f2: 3200, delay: 0.16 }) },
   hit: () => { tone({ f: 180, f2: 60, type: 'square', dur: 0.12, vol: 0.18, filter: 900 }); noise({ dur: 0.08, vol: 0.2, filter: 3000 }) },
   hurt: () => tone({ f: 330, f2: 110, type: 'square', dur: 0.25, vol: 0.18, filter: 1400 }),
   block: () => { tone({ f: 900, f2: 700, type: 'triangle', dur: 0.12, vol: 0.18 }); noise({ dur: 0.05, vol: 0.12, hp: 3000 }) },

@@ -216,6 +216,9 @@ const KaiModel = forwardRef(function KaiModel(_, ref) {
   const formScale = useRef(1)
   const body = useRef()
   const upper = useRef()
+  const shieldTwist = useRef() // levels the buckler's face while blocking
+  const crouch = useRef(0) // 0..1: the low, wide stance of the spin attack
+  const wrist = useRef() // turns the sword about the forearm (flat for the spin attack)
   const legL = useRef(); const legR = useRef(); const kneeL = useRef(); const kneeR = useRef()
   const armL = useRef(); const armR = useRef(); const elbowL = useRef(); const elbowR = useRef()
   const head = useRef(); const eyes = useRef(); const hair = useRef()
@@ -255,7 +258,9 @@ const KaiModel = forwardRef(function KaiModel(_, ref) {
     bladeMat.emissive.lerp(col.glow, ck)
     M.armor.color.lerp(col.armor, ck); M.armorDark.color.lerp(col.armorDark, ck)
 
-    const run = p.run
+    crouch.current += ((p.spin > 0 ? 1 : 0) - crouch.current) * Math.min(1, dt * 25)
+    const cr = crouch.current
+    const run = p.run * (1 - cr) // the run swing fades out under the crouch
     const sw = Math.sin(p.phase) * run
     // forward roll: curl into a ball (knees to chest, arms in, head down) while turning over
     const tuck = p.roll > 0 ? Math.min(1, Math.sin(p.roll * Math.PI) * 1.6) : 0
@@ -265,27 +270,36 @@ const KaiModel = forwardRef(function KaiModel(_, ref) {
     legR.current.rotation.x = -sw * 0.85 * (1 - tuck) - 1.45 * tuck
     kneeL.current.rotation.x = (0.06 + run * (0.15 + 1.05 * Math.max(0, -c))) * (1 - tuck) + 2.3 * tuck
     kneeR.current.rotation.x = (0.06 + run * (0.15 + 1.05 * Math.max(0, c))) * (1 - tuck) + 2.3 * tuck
+    // spin attack: drop into a low, wide crouch (like Link's spin) — thighs forward, knees bent, feet flat and set apart
+    legL.current.rotation.x += -1.15 * cr; legR.current.rotation.x += -1.15 * cr
+    kneeL.current.rotation.x += 1.09 * cr; kneeR.current.rotation.x += 1.09 * cr
+    legL.current.rotation.z = -0.22 * cr; legR.current.rotation.z = 0.22 * cr
 
     // right arm holds the blade, left the buckler
     let rx = -sw * 0.7 - 0.12 - 0.15 * run, ry = 0, rz = -0.12, re = -(0.3 + 0.45 * run)
     if (p.swing !== 0) { rx = -1.35; ry = p.swing * 1.6 * p.swingSide; re = -0.15 }
-    if (p.spin > 0) { rx = -1.5; ry = 0; re = -0.1 }
+    // spin attack: arm straight out to the side, blade turned to run on down the arm so it points outward and sweeps the ring
+    if (p.spin > 0) { rx = 0; ry = 0; rz = 1.45; re = -0.02 }
     if (p.charge > 0) { rx = -0.45; rz = -0.9; re = -0.7 }
     if (p.aim) { rx = -1.5; ry = 0; rz = -0.05; re = -0.05 } // hookshot: arm straight out
     if (tuck > 0) { rx = rx * (1 - tuck) - 0.9 * tuck; re = re * (1 - tuck) - 1.7 * tuck }
     armR.current.rotation.set(rx, ry, rz)
     elbowR.current.rotation.x = re
+    if (wrist.current) wrist.current.rotation.x = p.spin > 0 ? wrist.current.rotation.x + (Math.PI / 2 - wrist.current.rotation.x) * Math.min(1, dt * 30) : 0
+    // block: forearm level across the chest so the buckler covers the body
     const b = p.block
-    armL.current.rotation.set(b > 0.1 ? -1.25 * b : (sw * 0.7 - 0.12 - 0.15 * run) * (1 - tuck) - 0.9 * tuck, b * 0.75, 0.12)
-    elbowL.current.rotation.x = b > 0.1 ? -0.95 * b : -(0.3 + 0.45 * run) * (1 - tuck) - 1.7 * tuck
+    // (the arm twists a quarter turn so the elbow bends across the body and the buckler's face points forward)
+    armL.current.rotation.set(b > 0.1 ? -0.8 * b : (sw * 0.7 - 0.12 - 0.15 * run) * (1 - tuck) - 0.9 * tuck, b > 0.1 ? (Math.PI / 2) * b : 0, b > 0.1 ? 0 : 0.12)
+    elbowL.current.rotation.x = b > 0.1 ? -1.6 * b : -(0.3 + 0.45 * run) * (1 - tuck) - 1.7 * tuck
+    if (shieldTwist.current) shieldTwist.current.rotation.y = b > 0.1 ? -0.8 * b : 0
 
     // upper body: lean into a run, twist with the slash, breathe
     const up = upper.current
-    up.rotation.x = 0.26 * run + 1.1 * tuck
+    up.rotation.x = 0.26 * run + 1.1 * tuck + 0.28 * cr
     up.rotation.y = p.swing !== 0 ? p.swing * 0.28 * p.swingSide : Math.sin(p.phase) * 0.06 * run
     up.scale.y = 1 + Math.sin(t * 2.1) * 0.008 * (1 - run)
     head.current.rotation.y = -up.rotation.y * 0.6
-    head.current.rotation.x = -0.14 * run + 0.75 * tuck
+    head.current.rotation.x = -0.14 * run + 0.75 * tuck - 0.25 * cr
     hair.current.rotation.x = -0.05 * run + Math.sin(t * 9) * 0.015 * run
     // blink every few seconds
     eyes.current.scale.y = (t % 3.7) < 0.11 ? 0.12 : 1
@@ -305,7 +319,7 @@ const KaiModel = forwardRef(function KaiModel(_, ref) {
     pivot.current.rotation.x = p.roll > 0 ? p.roll * Math.PI * 2 : p.roll < 0 ? p.roll * Math.PI : 0
     // a forward lean from the ankles that grows with speed, plus a small bob
     body.current.rotation.x = 0.13 * run * (1 - tuck)
-    r.position.y = p.roll > 0 ? -0.12 * tuck * sc : Math.abs(Math.sin(p.phase)) * 0.07 * run
+    r.position.y = (p.roll > 0 ? -0.12 * tuck * sc : Math.abs(Math.sin(p.phase)) * 0.07 * run) - 0.23 * cr * sc
     r.rotation.y = p.spin > 0 ? -p.spin * Math.PI * 2 : 0
     body.current.rotation.z = p.hurt * 0.3 * Math.sin(t * 40)
 
@@ -395,18 +409,18 @@ const KaiModel = forwardRef(function KaiModel(_, ref) {
             <Head headRef={head} eyesRef={eyes} hairRef={hair} M={M} tufts={tufts} />
             <Arm side={-1} armRef={armL} elbowRef={elbowL} M={M} caps={caps}>
               {/* buckler on the outside of the left forearm */}
-              <group position={[-0.085, -0.15, 0.02]} rotation={[0, 0, Math.PI / 2]}>
+              <group ref={shieldTwist}><group position={[-0.09, -0.24, 0.03]} rotation={[0, 0, Math.PI / 2]} scale={1.15}>
                 <mesh material={M.armorDark} castShadow><cylinderGeometry args={[0.17, 0.165, 0.03, 26]} /></mesh>
                 <mesh position={[0, 0.018, 0]} rotation={[Math.PI / 2, 0, 0]} material={M.edge}><torusGeometry args={[0.165, 0.012, 8, 30]} /></mesh>
                 <mesh position={[0, 0.02, 0]} rotation={[Math.PI / 2, 0, 0]} material={M.glow}><torusGeometry args={[0.1, 0.005, 6, 26]} /></mesh>
                 <mesh position={[0, 0.026, 0]} material={M.edge}><sphereGeometry args={[0.04, 14, 10, 0, Math.PI * 2, 0, Math.PI / 2]} /></mesh>
                 {[0, 1, 2, 3].map((i) => { const a = (i / 4) * Math.PI * 2 + Math.PI / 4; return <mesh key={i} position={[Math.cos(a) * 0.1, 0.024, Math.sin(a) * 0.1]} material={M.glow}><sphereGeometry args={[0.012, 8, 6]} /></mesh> })}
-              </group>
+              </group></group>
             </Arm>
             <Arm side={1} armRef={armR} elbowRef={elbowR} M={M} caps={caps}>
               {/* the sword, held in the right gauntlet, pointing forward: steel blade, curved
                   crossguard with a gem, leather-wrapped grip, faceted pommel */}
-              <group position={[0, -0.29, 0.03]} rotation={[Math.PI / 2, 0, 0]}>
+              <group ref={wrist} position={[0, -0.29, 0.03]}><group rotation={[Math.PI / 2, 0, 0]}>
                 <mesh position={[0, -0.135, 0]} material={M.edge}><octahedronGeometry args={[0.026, 1]} /></mesh>
                 <mesh position={[0, -0.112, 0]} material={M.armorDark}><cylinderGeometry args={[0.02, 0.016, 0.02, 10]} /></mesh>
                 <mesh position={[0, -0.04, 0]} material={M.leather}><cylinderGeometry args={[0.016, 0.018, 0.14, 10]} /></mesh>
@@ -425,7 +439,7 @@ const KaiModel = forwardRef(function KaiModel(_, ref) {
                     {[0, 1].map((k) => <mesh key={k} rotation={[0, 0, k * Math.PI / 2]} material={M.glow}><boxGeometry args={[0.012, 0.11, 0.004]} /></mesh>)}
                   </group>
                 </group>
-              </group>
+              </group></group>
             </Arm>
           </group>
         </group>
