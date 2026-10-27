@@ -63,78 +63,6 @@ function Title({ onNew, onContinue, onLevel }) {
   )
 }
 
-function Credits({ onTitle, onKeep, onOn }) {
-  return (
-    <div className="credits">
-      <div className="cbox">
-        <h1>Bond Shard 1 of 12</h1>
-        <p>You cleared <b>The Orbital Caverns</b> — Chapter 1, <i>Structure and Bonding</i>.</p>
-        <ul>
-          <li>Atoms: protons set the element (Z); isotopes differ only in neutrons (§1.1)</li>
-          <li>Electron configurations: Aufbau, Pauli, Hund (§1.3)</li>
-          <li>Bonds needed for an octet: H 1, C 4, N 3, O 2; bond length at the energy minimum (§1.4–1.5)</li>
-          <li>Hybrid orbitals: sp³ 109.5°, sp² 120° + π, sp 180° + 2π (§1.6–1.10)</li>
-          <li>Skeletal structures: carbons at corners, hydrogens implied (§1.12)</li>
-        </ul>
-        <p className="small">Next: the east road out of Hydrogen Village, across the Valence Fields to the Tide Coast (Chapter 2).</p>
-        <div className="title-buttons">
-          <button className="primary" onClick={onOn}>Continue the journey</button>
-          <button onClick={onKeep}>Keep exploring the caverns</button>
-          <button onClick={onTitle}>Back to title</button>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function Credits2({ onTitle, onKeep, onOn }) {
-  return (
-    <div className="credits">
-      <div className="cbox">
-        <h1>Bond Shard 2 of 12</h1>
-        <p>You cleared <b>The Tide Temple</b> — Chapter 2, <i>Polar Covalent Bonds; Acids and Bases</i>.</p>
-        <ul>
-          <li>Electronegativity: the more electronegative atom in a bond is δ− (§2.1)</li>
-          <li>Dipole moments: bond dipoles add up in bent H₂O and NH₃, and cancel in linear CO₂ and symmetric CCl₄ (§2.2)</li>
-          <li>Formal charge = valence electrons − lone-pair electrons − bonds (§2.3)</li>
-          <li>Resonance: the real molecule is the hybrid; only electrons move, never atoms (§2.4–2.6)</li>
-          <li>Brønsted–Lowry acids and pKa: H⁺ goes from the stronger acid to the stronger base (§2.7–2.10)</li>
-          <li>Lewis acids accept an electron pair (BF₃, Mg²⁺, H⁺); hydrogen bonds need H on O or N (§2.11–2.12)</li>
-        </ul>
-        <p className="small">Next: the forest road north-west of the Valence Fields, to the Chain Labyrinth (Chapter 3).</p>
-        <div className="title-buttons">
-          <button className="primary" onClick={onOn}>Continue the journey</button>
-          <button onClick={onKeep}>Back to the Tide Coast</button>
-          <button onClick={onTitle}>Back to title</button>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function Credits3({ onTitle, onKeep }) {
-  return (
-    <div className="credits">
-      <div className="cbox">
-        <h1>Bond Shard 3 of 12</h1>
-        <p>You cleared <b>The Chain Labyrinth</b> — Chapter 3, <i>Organic Compounds: Alkanes and Their Stereochemistry</i>.</p>
-        <ul>
-          <li>Functional groups: same group, same behavior, whatever the size (§3.1)</li>
-          <li>The first ten alkanes, methane to decane; constitutional isomers differ in connections, not drawings (§3.2)</li>
-          <li>Carbons are 1°, 2°, 3° or 4° by how many carbons they bond to (§3.3)</li>
-          <li>IUPAC names: longest chain, number from the end nearer the first branch, substituents alphabetical (§3.4)</li>
-          <li>Conformations: staggered beats eclipsed (ethane 12 kJ/mol, propane 14) (§3.6)</li>
-          <li>Butane: anti lowest; gauche +3.8 (steric strain); eclipsed +16 and +19 kJ/mol; the costs add up (§3.7)</li>
-        </ul>
-        <p className="small">Next: the Chair Fortress and Chapter 4 — coming soon.</p>
-        <div className="title-buttons">
-          <button className="primary" onClick={onKeep}>Back to the Chain Forest</button>
-          <button onClick={onTitle}>Back to title</button>
-        </div>
-      </div>
-    </div>
-  )
-}
 
 export default function App() {
   const screen = useGame((s) => s.screen)
@@ -156,7 +84,7 @@ export default function App() {
     // The item menu is the pause screen. Esc while the mouse is captured never reaches the page
     // (the browser spends it on releasing the mouse), so a release we didn't ask for opens the menu.
     let lastUnlock = 0
-    const openMenu = (s) => { if (inGame(s) && !s.dialogue && !s.panel && !s.paused && !s.fade) setState({ paused: true, mapOpen: false }) }
+    const openMenu = (s) => { if (inGame(s) && !s.dialogue && !s.panel && !s.paused && !s.fade && !s.cutscene && !s.warpIn && !s.flash) setState({ paused: true, mapOpen: false }) }
     const lockChange = () => {
       if (document.pointerLockElement) return
       lastUnlock = performance.now()
@@ -207,7 +135,7 @@ export default function App() {
     }, 450)
   }
 
-  useEffect(() => { if (screen === 'title') stopMusic() }, [screen])
+  useEffect(() => { if (screen === 'title') { stopMusic(); setState({ flash: 0, warpIn: null, cutscene: false }) } }, [screen])
 
   // a molecule met for the first time gets logged on the Gauntlet (Esc menu), with a toast
   const save = useGame((s) => s.save)
@@ -223,13 +151,14 @@ export default function App() {
 
   const onNew = () => { resetSave(); sfx('lock'); go('intro') }
   // level select: load that point's save, then open its scene
-  const onLevel = (it) => { resetSave(); saveGame(it.save); sfx('lock'); go(it.screen) }
+  const onLevel = (it) => { resetSave(); saveGame(it.save); sfx('lock'); if (it.warpIn) setState({ warpIn: it.warpIn }); go(it.screen) }
   const onContinue = () => {
     const s = getState().save
     sfx('lock')
     go(s.checkpoint && inGameScreen(s.checkpoint.scene) ? s.checkpoint.scene : 'village')
   }
   const playing = inGameScreen(screen)
+  const cinematic = useGame((s) => !!(s.cutscene || s.warpIn)) // the HUD steps aside for cutscenes and the shard warp
   // leaving a scene: remember where to come back in, then fade to the next one
   const exitTo = (to, cp) => { if (cp) saveGame({ checkpoint: cp }); go(to) }
   const show3d = screen === 'intro' || playing
@@ -251,12 +180,9 @@ export default function App() {
       </div>
       {screen === 'title' && <Title onNew={onNew} onContinue={onContinue} onLevel={onLevel} />}
       {screen === 'intro' && <Intro onDone={() => { saveGame({ introSeen: true }); go('village') }} />}
-      {screen === 'credits' && <Credits onTitle={() => go('title')} onKeep={() => go('caverns')} onOn={() => exitTo('village', { scene: 'village' })} />}
-      {screen === 'credits2' && <Credits2 onTitle={() => go('title')} onKeep={() => exitTo('coast', { scene: 'coast', at: 'dock' })} onOn={() => exitTo('field', { scene: 'field', at: 'coast' })} />}
-      {screen === 'credits3' && <Credits3 onTitle={() => go('title')} onKeep={() => exitTo('forest', { scene: 'forest', at: 'gate' })} />}
-      {playing && <HUD />}
+      {playing && !cinematic && <HUD />}
       {playing && <Panels />}
-      {playing && <MiniMap />}
+      {playing && !cinematic && <MiniMap />}
       {playing && <FullMap />}
       <Dialogue />
       {playing && <ItemMenu onTitle={() => go('title')} onResume={() => captureMouse(wrap.current)} />}

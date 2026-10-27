@@ -3,6 +3,7 @@ import { useFrame, useThree } from '@react-three/fiber'
 import { Html } from '@react-three/drei'
 import * as THREE from 'three'
 import GameScene from '../engine/GameScene'
+import { warpOut } from '../engine/Warp'
 import { Slab, Gate, Station, Torch, Motes, Chest, scatter, Scatter, Tag } from '../engine/kit'
 import { ImpPack } from '../actors/Critters'
 import EclipsedBats from '../actors/EclipsedBats'
@@ -541,8 +542,9 @@ function LabyrinthLevel({ world, onExit }) {
       { who: 'Archivist Iupaca', text: 'I wanted it back on my desk. …It turns more bonds in your hand. Keep it. The Chair Fortress twists too.' },
       { who: 'Pi', text: 'Three down, nine to go!' },
     ])
+    await warpOut(world, { checkpoint: { scene: 'forest', at: 'gate' }, card: 3 })
     busy.current = false
-    onExit('credits3')
+    onExit('forest', { scene: 'forest', at: 'gate' })
   }
   useEffect(() => {
     const id = world.addInteractable({ pos: [0, 0, -160], radius: 2.6, label: 'Take the Bond Shard', onInteract: () => takeShard() })

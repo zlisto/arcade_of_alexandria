@@ -3,6 +3,7 @@ import { useFrame, useThree } from '@react-three/fiber'
 import { Html } from '@react-three/drei'
 import * as THREE from 'three'
 import GameScene from '../engine/GameScene'
+import { warpOut } from '../engine/Warp'
 import { Block, Slab, Gate, Station, Scatter, scatter, Torch, Motes, Chest, Tag, twoShot } from '../engine/kit'
 import { Aufbau } from '../actors/Figures'
 import { Part } from '../engine/models'
@@ -449,7 +450,7 @@ function CavernsLevel({ world, onExit }) {
       if (!ok) await say([{ who: 'Pi', text: "Come back when you're ready — the shard isn't going anywhere." }])
       if (!ok) { busy.current = false; return }
     }
-    saveGame({ shards: 1 })
+    saveGame({ shards: 1, checkpoint: { scene: 'village', at: 'cave' } })
     setState({ objective: 'Bond Shard 1 of 12 recovered' })
     await say([
       { who: 'Princess Octavia', text: 'Kai… can you hear me? The shard carries my voice.' },
@@ -457,8 +458,9 @@ function CavernsLevel({ world, onExit }) {
       { who: 'Princess Octavia', text: 'He swore carbon bonds any way it likes. You proved it has rules. Take the east road — the Tide Temple waits.' },
       { who: 'Pi', text: 'One down, eleven to go!' },
     ])
+    await warpOut(world, { checkpoint: { scene: 'village', at: 'cave' }, card: 1 })
     busy.current = false
-    onExit('credits')
+    onExit('village')
   }
 
   const arenaSeal = useRef(null)

@@ -3,6 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import { Html, Sky } from '@react-three/drei'
 import * as THREE from 'three'
 import GameScene from '../engine/GameScene'
+import { warpOut } from '../engine/Warp'
 import { Gate, Station, Torch, Motes, HookTarget, Chest } from '../engine/kit'
 import { Part, preloadModels } from '../engine/models'
 import { ImpPack, CrabPack } from '../actors/Critters'
@@ -339,8 +340,9 @@ function TempleLevel({ world, onExit }) {
       { who: 'Lowry', text: 'And you sent every proton the right way. Come on, little carbon — the boat is waiting.' },
       { who: 'Pi', text: 'Two down, ten to go!' },
     ])
+    await warpOut(world, { checkpoint: { scene: 'coast', at: 'dock' }, card: 2 })
     busy.current = false
-    onExit('credits2')
+    onExit('coast', { scene: 'coast', at: 'dock' })
   }
 
   useEffect(() => {

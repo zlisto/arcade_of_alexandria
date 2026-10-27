@@ -1,8 +1,8 @@
-import { useGame, setState } from '../engine/store'
+import { useGame, setState, getState } from '../engine/store'
 import { ELEMENTS } from '../chem/rules'
 import { STANCE } from '../engine/Player'
 import { setMuted, isMuted } from '../audio/sfx'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import NewmanHud from './Newman'
 
 function Hearts({ hp, max }) {
@@ -75,5 +75,12 @@ export default function HUD({ scene }) {
 
 export function Fade() {
   const f = useGame((s) => s.fade)
-  return <div className="fade" style={{ opacity: f }} />
+  const w = useGame((s) => s.flash)
+  // the warp's white-out should always clear; if a scene never arrives to clear it, let it go after a while
+  // (while an arrival is still pending, its scene may just be loading slowly: leave the white to it)
+  useEffect(() => { if (!w) return; const id = setInterval(() => { if (!getState().warpIn) setState({ flash: 0 }) }, 15000); return () => clearInterval(id) }, [w > 0])
+  return <>
+    <div className="fade" style={{ opacity: f }} />
+    <div className="flash" style={{ opacity: w }} />
+  </>
 }

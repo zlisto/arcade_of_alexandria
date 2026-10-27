@@ -101,7 +101,7 @@ function CoastLevel({ world, onExit }) {
 
   useEffect(() => {
     const s = getState().save
-    setState({ objective: !s.metFerrymen ? 'Find the Proton Ferrymen at the dock' : !s.lighthouseLit ? 'Light the Tide Lighthouse' : 'Ride with the Ferrymen to the Tide Temple' })
+    setState({ objective: (s.shards || 0) >= 2 ? 'Cross the Valence Fields to the forest road (north-west)' : !s.metFerrymen ? 'Find the Proton Ferrymen at the dock' : !s.lighthouseLit ? 'Light the Tide Lighthouse' : 'Ride with the Ferrymen to the Tide Temple' })
     if (!s.coastSeen) {
       saveGame({ coastSeen: true })
       setTimeout(() => say([

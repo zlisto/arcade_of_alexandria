@@ -1,3 +1,4 @@
+import WorldDone from './WorldDone'
 import { Shelf, Families, Isomers, Badges, NamingRules, NameTiles, NewmanPractice, ButaneCheck } from './Panels3'
 import { useEffect, useMemo, useState } from 'react'
 import { setState, useGame, getState, saveGame } from '../engine/store'
@@ -22,7 +23,7 @@ export default function Panels() {
   if (!p) return null
   // only close the panel this render belongs to (a trial's delayed done() must not close the next one)
   const close = (ok) => { if (getState().panel !== p) return; const f = p.onClose; setState({ panel: null }); setTimeout(() => f && f(ok), 0) }
-  const C = { atomForge: AtomForge, shells: Shells, octet: OctetBridge, well: EnergyWell, skeleton: Skeleton, hybridCheck: HybridCheck, polarity: Polarity, dipole: Dipole, formal: Formal, resonance: Resonance, pka: PKa, hbond: HBond, resonanceCheck: ResonanceCheck, shelf: Shelf, families: Families, isomers: Isomers, badges: Badges, namingRules: NamingRules, nameTiles: NameTiles, newman: NewmanPractice, butaneCheck: ButaneCheck }[p.kind]
+  const C = { atomForge: AtomForge, shells: Shells, octet: OctetBridge, well: EnergyWell, skeleton: Skeleton, hybridCheck: HybridCheck, polarity: Polarity, dipole: Dipole, formal: Formal, resonance: Resonance, pka: PKa, hbond: HBond, resonanceCheck: ResonanceCheck, shelf: Shelf, families: Families, isomers: Isomers, badges: Badges, namingRules: NamingRules, nameTiles: NameTiles, newman: NewmanPractice, butaneCheck: ButaneCheck, worldDone: WorldDone }[p.kind]
   const L = LESSONS[p.kind]
   const gotIt = () => { saveGame({ lessonsSeen: { ...(getState().save.lessonsSeen || {}), [p.kind]: true } }); setLesson(false); sfx('lock') }
   return (

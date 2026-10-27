@@ -167,7 +167,7 @@ function ForestLevel({ world, onExit }) {
 
   useEffect(() => {
     const s = getState().save
-    setState({ objective: !s.metIupaca ? 'Follow the path to the library tower' : !s.t3shelf ? 'Shelve the first ten alkanes for Iupaca' : 'Enter the Chain Labyrinth' })
+    setState({ objective: (s.shards || 0) >= 3 ? 'Bond Shard 3 recovered: the Chair Fortress awaits (Chapter 4, coming soon)' : !s.metIupaca ? 'Follow the path to the library tower' : !s.t3shelf ? 'Shelve the first ten alkanes for Iupaca' : 'Enter the Chain Labyrinth' })
     if (!s.forestSeen) {
       saveGame({ forestSeen: true })
       setTimeout(() => say([

@@ -115,11 +115,11 @@ export const LEVELS = [
     ],
   },
   {
-    group: 'Credits',
+    group: 'Shard warps (arrive outside, world card)',
     items: [
-      { label: 'Chapter 1 credits', screen: 'credits', save: { ...VILLAGE_DONE, solved: solvedBefore(null), hasCrystal: true, bossDone: true, shards: 1 } },
-      { label: 'Chapter 2 credits', screen: 'credits2', save: { ...temple('boss', null).save, shards: 2, checkpoint: { scene: 'coast', at: 'dock' } } },
-      { label: 'Chapter 3 credits', screen: 'credits3', save: { ...lab('boss', null).save, shards: 3, checkpoint: { scene: 'forest', at: 'gate' } } },
+      { label: 'World 1 cleared · Cavern Mouth', screen: 'village', warpIn: { card: 1 }, save: { ...VILLAGE_DONE, solved: solvedBefore(null), hasCrystal: true, bossDone: true, shards: 1, checkpoint: { scene: 'village', at: 'cave' } } },
+      { label: 'World 2 cleared · Tide Coast dock', screen: 'coast', warpIn: { card: 2 }, save: { ...temple('boss', null).save, shards: 2, checkpoint: { scene: 'coast', at: 'dock' } } },
+      { label: 'World 3 cleared · Chain Forest gate', screen: 'forest', warpIn: { card: 3 }, save: { ...lab('boss', null).save, shards: 3, checkpoint: { scene: 'forest', at: 'gate' } } },
     ],
   },
 ]

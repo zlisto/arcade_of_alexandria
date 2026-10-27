@@ -117,6 +117,7 @@ button { font: inherit; }
 .pbox { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 1.4rem 2rem; display: flex; flex-direction: column; gap: .7rem; align-items: stretch; min-width: 260px; }
 .pbox h2 { font-family: var(--display); margin: 0 0 .4rem; text-align: center; }
 .fade { position: fixed; inset: 0; background: #000; pointer-events: none; transition: opacity .45s; z-index: 40; }
+.flash { position: fixed; inset: 0; background: radial-gradient(circle at 50% 45%, #fff 0%, #eafcff 55%, #c8f2ff 100%); pointer-events: none; z-index: 41; }
 .credits { position: fixed; inset: 0; background: radial-gradient(800px 400px at 50% 20%, rgba(232,196,106,.15), transparent 60%), #07060b; display: flex; align-items: center; justify-content: center; padding: 16px; }
 .cbox { max-width: 640px; }
 .cbox h1 { font-family: var(--display); color: var(--gold); }

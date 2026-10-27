@@ -127,6 +127,7 @@ const SFX = {
   right: () => { tone({ f: 659, dur: 0.1, vol: 0.12 }); tone({ f: 880, dur: 0.18, vol: 0.12, delay: 0.09 }) },
   growl: () => tone({ f: 120, f2: 70, type: 'sawtooth', dur: 0.4, vol: 0.08, filter: 400 }),
   stomp: () => { tone({ f: 70, f2: 35, type: 'sine', dur: 0.5, vol: 0.4 }); noise({ dur: 0.4, vol: 0.2, filter: 300 }) },
+  warp: () => { swoosh({ dur: 0.9, vol: 0.3, f1: 300, f2: 4200 }); [784, 1046, 1318, 1568, 2093].forEach((f, i) => tone({ f, dur: 0.35, vol: 0.07, delay: 0.1 + i * 0.06, type: 'triangle' })) },
   shard: () => [523, 659, 784, 1046, 1318].forEach((f, i) => tone({ f, dur: 0.5, vol: 0.1, delay: i * 0.09, type: 'triangle' })),
   text: () => tone({ f: 1200 + Math.random() * 200, dur: 0.03, vol: 0.03, type: 'square', filter: 2500 }),
   shatter: () => { noise({ dur: 1.2, vol: 0.3, hp: 1500 }); [1318, 1046, 880, 659].forEach((f, i) => tone({ f, f2: f / 2, dur: 0.8, vol: 0.08, delay: i * 0.05, type: 'triangle' })) },

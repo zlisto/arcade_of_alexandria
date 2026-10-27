@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { sfx } from '../audio/sfx'
-import { toast } from '../engine/store'
+import { toast, inCinematic } from '../engine/store'
 import { WolfBody, useWolfAssets, animateWolf } from './WolfModel'
 
 // Radical Wolves (book §6.6, §10.2): each carries one unpaired electron.
@@ -90,7 +90,7 @@ export default function WolfPack({ world, spawns, onCleared, active = true, tuto
 
   useFrame((state, rawDt) => {
     if (!active) return
-    const dt = world.hitStop > 0 ? 0 : Math.min(rawDt, 1 / 30)
+    const dt = world.hitStop > 0 || inCinematic() ? 0 : Math.min(rawDt, 1 / 30)
     const p = world.player
     const list = wolves.current
     for (const w of list) {

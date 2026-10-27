@@ -600,9 +600,10 @@ function EastGate({ open }) {
 export default function Village({ onExit }) {
   const save = getState().save
   const fromEast = save.checkpoint && save.checkpoint.scene === 'village' && save.checkpoint.at === 'east'
-  const start = fromEast ? [38, 0, 0] : save.wolvesCleared ? [0, 0, -20] : START
+  const fromCave = save.checkpoint && save.checkpoint.scene === 'village' && save.checkpoint.at === 'cave' // warped out of the caverns
+  const start = fromEast ? [38, 0, 0] : fromCave ? [0, 0, -28] : save.wolvesCleared ? [0, 0, -20] : START
   return (
-    <GameScene start={start} startFacing={fromEast ? -Math.PI / 2 : Math.PI} background="#9ec3e6">
+    <GameScene start={start} startFacing={fromEast ? -Math.PI / 2 : fromCave ? 0 : Math.PI} background="#9ec3e6">
       {(world) => <VillageLevel world={world} onExit={onExit} />}
     </GameScene>
   )

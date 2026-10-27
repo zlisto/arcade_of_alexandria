@@ -24,7 +24,9 @@ function loadSave() {
 }
 
 let state = {
-  screen: 'title', // title | intro | village | caverns | credits
+  screen: 'title', // title | intro | village | caverns | field | coast | temple | forest | labyrinth
+  flash: 0, // the shard warp's white-out (engine/Warp.jsx)
+  warpIn: null, // { card } while Kai warps in outside a dungeon
   save: loadSave(),
   hp: 6,
   maxHp: 6,
@@ -79,6 +81,9 @@ export function toast(text, kind = 'info', ms = 3200) {
 export function say(lines) {
   return new Promise((resolve) => setState({ dialogue: { lines, onDone: resolve } }))
 }
+/** True while a cinematic plays (a cutscene, the shard warp or its world card): enemies hold still. */
+export function inCinematic() { const s = state; return !!(s.cutscene || s.warpIn || (s.panel && s.panel.kind === 'worldDone')) }
+
 export function openPanel(kind, props = {}) {
   return new Promise((resolve) => setState({ panel: { kind, props, onClose: resolve } }))
 }

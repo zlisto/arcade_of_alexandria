@@ -46,6 +46,7 @@ export default function Player({ world, start = [0, 0, 0], startFacing = 0 }) {
       get lockId() { return s.lockId },
       get height() { return STANCE[getState().stance].height },
       get mode() { return s.mode },
+      get group() { return group.current },
       get rolling() { return s.mode === 'roll' || s.mode === 'dash' },
       teleport(p, facing) { s.pos.set(...p); s.vel.set(0, 0, 0); s.lastSafe.set(...p); if (facing !== undefined) { s.facing = facing; world.cam.yaw = facing + Math.PI } },
       hurt(dmg, from, unblockable = false) {
@@ -478,6 +479,8 @@ export default function Player({ world, start = [0, 0, 0], startFacing = 0 }) {
     }
     s.hurtT = Math.max(0, s.hurtT - dt)
     group.current.position.copy(s.pos)
+    if (world.kaiLift) group.current.position.y += world.kaiLift // the shard warp (engine/Warp.jsx)
+    { const st = world.kaiStretch || 1; group.current.scale.set(1 / Math.sqrt(st), st, 1 / Math.sqrt(st)) }
     group.current.rotation.y = s.facing
     group.current.visible = s.iframes > 0 && s.mode === 'move' ? Math.floor(world.time * 20) % 2 === 0 : true
 

@@ -4,7 +4,7 @@ import * as THREE from 'three'
 import { rimMat, softDot } from '../engine/materials'
 import { Part } from '../engine/models'
 import { sfx } from '../audio/sfx'
-import { toast } from '../engine/store'
+import { toast, inCinematic } from '../engine/store'
 
 // Overworld critters for the Tide Coast region (World 2).
 // • Lone-Pair Imps (§2.11): small red imps carrying an electron pair, leaping at Kai. One hit pops them.
@@ -62,7 +62,7 @@ export function ImpPack({ world, spawns, active = true }) {
   }, [active])
   useFrame((state, rawDt) => {
     if (!active) return
-    const dt = world.hitStop > 0 ? 0 : Math.min(rawDt, 1 / 30)
+    const dt = world.hitStop > 0 || inCinematic() ? 0 : Math.min(rawDt, 1 / 30)
     const p = world.player
     for (const m of imps.current) {
       const g = refs.current[m.i]
@@ -165,7 +165,7 @@ export function CrabPack({ world, spawns, active = true }) {
   }, [active])
   useFrame((state, rawDt) => {
     if (!active) return
-    const dt = world.hitStop > 0 ? 0 : Math.min(rawDt, 1 / 30)
+    const dt = world.hitStop > 0 || inCinematic() ? 0 : Math.min(rawDt, 1 / 30)
     const p = world.player
     for (const c of crabs.current) {
       const g = refs.current[c.i]
