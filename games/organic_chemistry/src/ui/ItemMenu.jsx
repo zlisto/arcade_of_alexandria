@@ -77,7 +77,7 @@ function Items({ s, sel, setSel }) {
       ? { id: 'satchel', name: 'Reagent Satchel', icon: Icon.satchel, text: 'Carries one flask from a grove tree (E). Press G at an alkene altar to pour it. Every reagent makes something; each door wants one product (§8.2–8.9).' }
       : s.save.shards >= 7 ? { id: 'satchel', name: '???', icon: Icon.locked, text: 'Something waits in Borana’s Glasshouse.' } : null,
     s.save.hasRetro
-      ? { id: 'retro', name: 'Retrosynthesis Map', icon: Icon.retro, text: 'At a planning table, it starts from the product and asks what came just before it, step by step back to what you have (§9.9).' }
+      ? { id: 'retro', name: 'Retrosynthesis Map', icon: Icon.retro, text: 'Press G at a planning table: it asks what came just before the product, and with what, back to your start. On a disguise, G reads how it was made (§9.9).' }
       : s.save.shards >= 8 ? { id: 'retro', name: '???', icon: Icon.locked, text: 'Something waits in the Triple Spire.' } : null,
     s.save.hasRing
       ? { id: 'ring', name: 'Magnesium Ring', icon: Icon.ring, text: 'Press G at a carbon–halogen bond: Mg inserts, R–X becomes R–MgX, and the carbon turns δ−, a strong base. Water destroys it (§10.6).' }

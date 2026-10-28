@@ -40,13 +40,14 @@ export default function Panels() {
       <div className="panel">
         <button className="pclose" onClick={() => close(false)} title="Step away">✕</button>
         {L && !lesson && <button className="phelp" onClick={() => setLesson(true)} title="Show the lesson again">?</button>}
-        {lesson ? <LessonCard L={L} onGo={gotIt} /> : <C {...p.props} done={() => close(true)} fail={() => close(false)} />}
+        {lesson ? <LessonCard L={L} onGo={C === InfoCard ? () => { gotIt(); close(true) } : gotIt} info={C === InfoCard} /> : <C {...p.props} done={() => close(true)} fail={() => close(false)} />}
       </div>
     </div>
   )
 }
 
-function LessonCard({ L, onGo }) {
+// an info plate has no trial behind its lesson, so its button just closes (World 9 round 2, Play #8)
+function LessonCard({ L, onGo, info = false }) {
   return (
     <div className="lesson">
       <p className="lesson-kicker">Lesson · §{L.section}</p>
@@ -54,7 +55,7 @@ function LessonCard({ L, onGo }) {
       <ul>{L.points.map((t, i) => <li key={i}>{t}</li>)}</ul>
       <div className="lesson-ex"><b>Example</b> {L.example}</div>
       <p className="lesson-cite">McMurry, <i>Organic Chemistry</i> (OpenStax) · §{L.section}, pp. {L.pages}</p>
-      <button className="go" onClick={onGo}>Got it — try the trial</button>
+      <button className="go" onClick={onGo}>{info ? 'Got it' : 'Got it — try the trial'}</button>
     </div>
   )
 }

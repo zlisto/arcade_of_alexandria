@@ -83,7 +83,7 @@ export function Gate({ world, pos, size = [4, 4, 0.6], open, color = '#2a3550', 
 }
 
 /** A puzzle station: glowing pedestal you press E at. */
-export function Station({ world, pos, label, onUse, enabled = true, solved = false, color = '#c8102e', glow = '#ff3a50' }) {
+export function Station({ world, pos, label, onUse, enabled = true, solved = false, color = '#c8102e', glow = '#ff3a50', orb: showOrb = true }) {
   const idRef = useRef(null)
   const cb = useRef(onUse)
   cb.current = onUse
@@ -102,7 +102,7 @@ export function Station({ world, pos, label, onUse, enabled = true, solved = fal
     <group>
       <mesh position={[pos[0], pos[1] + 0.5, pos[2]]} castShadow><cylinderGeometry args={[0.38, 0.5, 1.0, 8]} /><meshStandardMaterial color="#d8d3c4" roughness={0.6} /></mesh>
       <mesh position={[pos[0], pos[1] + 1.02, pos[2]]}><cylinderGeometry args={[0.5, 0.42, 0.08, 8]} /><meshStandardMaterial color="#c9a24a" metalness={0.7} roughness={0.35} /></mesh>
-      <group ref={orb} position={[pos[0], pos[1] + 1.45, pos[2]]}>
+      <group ref={orb} position={[pos[0], pos[1] + 1.45, pos[2]]} visible={showOrb}>
         {/* a faceted gem: deep colour on the outside, a bright core glowing through */}
         <mesh scale={[1, 1.45, 1]}><octahedronGeometry args={[0.2, 0]} /><meshPhysicalMaterial color={c} emissive={c} emissiveIntensity={solved ? 1.4 : 0.9} roughness={0.12} metalness={0.05} clearcoat={1} clearcoatRoughness={0.05} flatShading transparent opacity={0.9} /></mesh>
         <mesh scale={[1, 1.45, 1]}><octahedronGeometry args={[0.09, 0]} /><meshBasicMaterial color={light} toneMapped={false} /></mesh>

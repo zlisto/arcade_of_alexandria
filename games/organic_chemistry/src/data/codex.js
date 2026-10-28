@@ -346,28 +346,58 @@ export const CODEX = [
   },
   // ---------------- World 9: the Triple Spire (Chapter 9)
   {
+    title: '† on a product name',
+    section: '9.4–9.9', pages: '291–304',
+    unlocked: (s) => s.solved['9-1'],
+    text: '† worked out from the book’s rules; not printed in the text. Hexanal from 1-hexyne, cis-5-decene and decane from 5-decyne, the Mimic’s 2-heptanone and 1-heptyne (Problem 9-13(d), with its route), the summit’s 6-methyl-3-heptyne and trans-6-methyl-3-heptene (Problem 9-38(b), with its route), the route to cyclohexyl–C≡C–CH₃ in Lindlar’s question (Problem 9-10), and the acetone answer in the acidity lesson (Problem 9-9) apply rules Chapter 9 states to compounds it doesn’t show. Products without a † are printed in the chapter.',
+  },
+  {
     title: 'Alkynes: naming and making',
     section: '9.1–9.3', pages: '288–291',
     unlocked: (s) => s.solved['9-1'],
-    text: 'Alkynes take -yne, numbered from the end nearer the triple bond; enynes give the double bond the lower number on a tie. Two eliminations of HX from a 1,2-dihalide give an alkyne. The sp carbons make it linear; the triple bond is the strongest C–C bond, about 965 kJ/mol.',
+    text: 'Alkynes take -yne, numbered from the end nearer the triple bond; enynes give the double bond the lower number on a tie. Two eliminations of HX from a 1,2-dihalide, with an excess of a strong base such as KOH or NaNH₂ (p. 289), give an alkyne; NaHCO₃ and water are far too weak. The sp carbons make it linear; the triple bond is the strongest C–C bond, about 965 kJ/mol.',
   },
   {
     title: 'Hydration and reduction',
     section: '9.4–9.5', pages: '291–296',
     unlocked: (s) => s.solved['9-3a'] && s.solved['9-3b'],
-    text: 'HgSO₄/H₂SO₄ hydration gives a ketone (Markovnikov); hydroboration gives an aldehyde from a terminal alkyne, both through an enol. H₂/Pd reduces to the alkane, the Lindlar catalyst to the cis alkene, Li/NH₃ to the trans alkene.',
+    text: 'HgSO₄/H₂SO₄ hydration gives a ketone (Markovnikov): 1-hexyne gives 2-hexanone (p. 292). Hydroboration gives an aldehyde from a terminal alkyne, using disiamylborane because BH₃ would add twice (p. 294): hexanal †. Both go through an enol. From 5-decyne, H₂/Pd gives decane †, the Lindlar catalyst cis-5-decene †, and Li/NH₃ trans-5-decene (p. 296).',
+  },
+  {
+    title: 'Oxidative cleavage',
+    section: '9.6', pages: '297',
+    unlocked: (s) => s.solved['9-3a'] && s.solved['9-3b'],
+    text: 'Ozone or KMnO₄ cleaves alkynes too, though the book mentions it only for completeness: yields can be low. An internal alkyne gives carboxylic acids; a terminal one gives CO₂ as one product.',
   },
   {
     title: 'Acetylides and alkylation',
     section: '9.7–9.8', pages: '297–300',
     unlocked: (s) => s.solved['9-4'],
-    text: 'Terminal alkynes (pKa 25) are deprotonated by NaNH₂. The acetylide anion attacks primary alkyl halides to make a longer alkyne; secondary and tertiary halides undergo elimination instead.',
+    text: 'Terminal alkynes (pKa 25) are deprotonated by NaNH₂ (NH₃ is 35); NaOH and NaHCO₃ are too weak. The acetylide anion attacks methyl or primary alkyl bromides and iodides to make a longer alkyne; secondary and tertiary halides undergo elimination instead (bromocyclohexane gives cyclohexene, p. 300).',
   },
   {
     title: 'An introduction to synthesis',
     section: '9.9', pages: '300–304',
     unlocked: (s) => s.solved['9-5'],
-    text: 'Work retrosynthetically: from the target, find an immediate precursor, then its precursor, back to the starting material. Example: cis-2-hexene from 1-pentyne by NaNH₂, CH₃I, then H₂ over the Lindlar catalyst.',
+    text: 'Work retrosynthetically: from the target, find an immediate precursor, then its precursor, back to the starting material. Example: cis-2-hexene from 1-pentyne by NaNH₂, CH₃I, then H₂ over the Lindlar catalyst, not Li/NH₃, which gives trans (Worked Example 9.1).',
+  },
+  {
+    title: 'The summit route (Problem 9-38(b))',
+    section: '9.7–9.9', pages: '297–304, 312',
+    unlocked: (s) => s.solved['9-5'],
+    text: '4-Methyl-1-pentyne, (CH₃)₂CHCH₂C≡CH, to trans-6-methyl-3-heptene †, planned backward: the trans alkene ← 6-methyl-3-heptyne † (Li in NH₃, §9.5) ← the acetylide anion + CH₃CH₂Br (§9.8; an ethyl group brings the two carbons the eight-carbon target needs) ← 4-methyl-1-pentyne + NaNH₂ (§9.7). Forward: NaNH₂, then CH₃CH₂Br, then Li/NH₃. The book asks this but prints no answer (†).',
+  },
+  {
+    title: 'The Mimic’s three disguises',
+    section: '9.9', pages: '302–304',
+    unlocked: (s) => s.solved['boss9'],
+    text: '2-Bromopentane ← 1-pentene (HBr) ← 1-pentyne (Lindlar) ← acetylide + 1-bromopropane (Worked Example 9.2). 5-Methyl-1-hexanol ← 5-methyl-1-hexene (hydroboration) ← 5-methyl-1-hexyne (Lindlar) ← acetylide + 1-bromo-3-methylbutane (Worked Example 9.3). 2-Heptanone † ← 1-heptyne † (HgSO₄) ← acetylide + 1-bromopentane (Problem 9-13(d)).',
+  },
+  {
+    title: 'Lindlar’s question (Problem 9-10)',
+    section: '9.8', pages: '300–301',
+    unlocked: (s) => (s.shards || 0) >= 9,
+    text: 'Cyclohexyl–C≡C–CH₃ ← ethynylcyclohexane + NaNH₂, then CH₃I †. Not propyne + a cyclohexyl halide: that halide is secondary, so the acetylide acts as a base and gives cyclohexene (p. 300). And count carbons: CH₃CH₂I or (iodomethyl)cyclohexane would add one too many.',
   },
   // ---------------- World 10: the Halogen Marsh (Chapter 10)
   {

@@ -313,7 +313,9 @@ export default function Player({ world, start = [0, 0, 0], startFacing = 0 }) {
         const k = s.modeT / T
         // swing on the run: keep most of Kai's running speed, plus a smaller lunge; standing still he lunges as before
         const moving = mlen > 0.1
-        const lunge = k < 0.4 ? (moving ? 1.2 : 3.2) : 0
+        // no lunge over a lip: a standing swing at a pit's edge stays put instead of carrying Kai into it (World 9 round 2, Play #1)
+        const lip = k < 0.4 && world.groundAt(s.pos.x + Math.sin(s.facing) * 0.6, s.pos.z + Math.cos(s.facing) * 0.6, s.pos.y + STEP, 0) === -Infinity
+        const lunge = k < 0.4 && !lip ? (moving ? 1.2 : 3.2) : 0
         // locked on, the swing only lets Kai drift (no circle-strafing a boss through a full combo)
         const mv = moving ? SP.speed * (lockPos ? 0.45 : 0.85) : 0
         hx = Math.sin(s.facing) * lunge + mx * mv

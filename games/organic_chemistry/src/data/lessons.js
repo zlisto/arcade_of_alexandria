@@ -597,17 +597,17 @@ export const LESSONS = {
       'A chain with a double and a triple bond is an enyne: number from the end nearer the first multiple bond.',
       'If there’s a choice, the double bond gets the lower number.',
     ],
-    example: 'HC≡CCH₂CH(CH₃)₂ is 4-methyl-1-pentyne.',
+    example: '6-Methyl-3-octyne: number from the end nearer the triple bond, even though the branch then sits on C6 (p. 288).',
   },
   linearInfo: {
     title: 'Making alkynes; the triple bond',
     section: '9.2–9.3', pages: '289–291',
     points: [
-      'A 1,2-dihalide treated with a strong base (KOH or NaNH₂) loses HX twice: an alkyne.',
+      'A 1,2-dihalide treated with an excess of strong base loses HX twice: an alkyne. One loss gives a vinylic halide; the second, the triple bond.',
       'The alkyne carbons are sp hybridized: the C≡C and the bonds on either side lie in a straight line, 180°.',
       'The triple bond is about 965 kJ/mol, the strongest carbon–carbon bond known.',
     ],
-    example: 'One elimination stops at a vinylic halide; the second gives the triple bond.',
+    example: 'Diphenylethylene + Br₂ gives a 1,2-dihalide; strong base then gives diphenylacetylene (p. 289).',
   },
   wellsInfo: {
     title: 'Hydrating an alkyne',
@@ -616,8 +616,9 @@ export const LESSONS = {
       'Water adds to an alkyne to give an enol (an OH on a C=C). Enols don’t last: keto–enol tautomerism turns them into the carbonyl.',
       'With H₂SO₄ and HgSO₄, water adds Markovnikov: a terminal alkyne gives a methyl ketone.',
       'Hydroboration–oxidation puts the OH on the end carbon: a terminal alkyne gives an aldehyde.',
+      'BH₃ adds twice to a terminal alkyne, so a bulky borane, disiamylborane, is used instead (p. 294).',
     ],
-    example: '1-Hexyne → 2-hexanone (HgSO₄) or hexanal (BH₃, then H₂O₂).',
+    example: '3-Hexyne, an internal alkyne, gives a ketone, 3-hexanone, by hydroboration–oxidation (p. 294).',
   },
   reduceInfo: {
     title: 'Reducing an alkyne',
@@ -627,34 +628,36 @@ export const LESSONS = {
       'The Lindlar catalyst stops at the alkene, adding both H syn: a cis alkene.',
       'Lithium in liquid ammonia gives the trans alkene instead.',
     ],
-    example: '5-Decyne → trans-5-decene with Li in NH₃ (§9.5).',
+    example: 'Vitamin A is made this way: Lindlar hydrogenation gives its cis isomer, which heating then turns trans (p. 296).',
   },
   pkaLadder: {
     title: 'Alkyne acidity',
     section: '9.7', pages: '297–299',
     points: [
       'A terminal alkyne’s C–H has pKa 25; ethylene’s is 44 and methane’s about 60 (Table 9.1).',
-      'A base removes the proton only if its conjugate acid is weaker (higher pKa) than the alkyne: NH₂⁻ (from NH₃, pKa 35) works.',
+      'A base removes the proton only if its conjugate acid is a weaker acid (higher pKa) than the alkyne.',
       'The acetylide’s lone pair sits in an sp orbital, close to the nucleus: more s character, more stable anion.',
     ],
-    example: 'HO⁻ won’t do: water (pKa 15.7) is a stronger acid than the alkyne.',
+    example: 'Acetone has pKa 19.3. By that rule, KOH can’t take its proton (water is 15.7), but sodium acetylide can (acetylene is 25) † (Problem 9-9).',
   },
   retroPlan: {
     title: 'Planning a synthesis',
     section: '9.8–9.9', pages: '299–304',
     points: [
-      'Acetylide anions alkylate with primary alkyl bromides and iodides; secondary and tertiary halides give elimination instead.',
+      'Acetylide anions alkylate with methyl and primary alkyl bromides and iodides; secondary and tertiary halides give elimination instead (p. 300).',
       'Work backward: look at the product and ask what its immediate precursor was. Then ask again, back to the starting material.',
     ],
-    example: 'cis-2-Hexene ← 2-hexyne (Lindlar) ← 1-pentyne anion + CH₃I (Worked Example 9.1).',
+    example: 'Propyne ← acetylide anion + bromomethane; that anion ← acetylene + NaNH₂ (p. 298; the alkylation is Fig 9.7, pp. 299–300).',
   },
   mimicCheck: {
-    title: 'Retrosynthesis',
-    section: '9.9', pages: '300–304',
+    title: 'Limits of acetylide alkylation',
+    section: '9.8', pages: '300–301',
     points: [
-      'Don’t ask what a starting material might do. Ask what the product was made from, one step at a time.',
+      'Any terminal alkyne can be turned into its anion (NaNH₂) and then alkylated, giving an internal alkyne (p. 300).',
+      'Only methyl and primary alkyl bromides and iodides work: with secondary and tertiary halides the acetylide acts as a base, and elimination wins (p. 300).',
+      'An internal alkyne has two sides. Problem 9-10 asks which terminal alkyne and halide make each product: if two routes look feasible, list both (p. 301).',
     ],
-    example: '2-Bromopentane ← 1-pentene ← 1-pentyne ← acetylide + 1-bromopropane (Worked Example 9.2).',
+    example: 'Hex-1-yne, treated first with NaNH₂ and then with 1-bromobutane, gives dec-5-yne (p. 300).',
   },
   // ---------------- World 10: the Halogen Marsh (Chapter 10)
   markers: {

@@ -187,7 +187,7 @@ const spi = (room, upTo, extra = {}) => {
       ...base, cliffsSeen: true, metLindlar: true, t9cairns: true,
       solved: { ...base.solved, ...done, 't9-map': true, 't9-decree': true },
       hasRetro: !!done['t9-retro'], t9key: !!done['t9-key'] && !done['t9-door'], t9bossKey: !!done['t9-bosskey'],
-      t9segs: done['9-1'] ? [2, 2, 2] : [0, 0, 0], t9steps: done['9-4'] ? ['mei', 'prbr'] : [], t9summit: done['9-5'] ? ['nanh2', 'mei', 'lindlar'] : [],
+      t9segs: done['9-1'] ? [2, 2, 2] : [0, 0, 0], t9steps: done['9-4'] ? ['mei', 'prbr'] : [], t9summit: done['9-5'] ? ['nanh2', 'etbr', 'li'] : [],
       t9seen: Object.fromEntries(ROOMS9.slice(0, r + 1).map((x) => [x.id, true])),
       checkpoint: { scene: 'spire', room }, ...extra,
     },

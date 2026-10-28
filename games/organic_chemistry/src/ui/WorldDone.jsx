@@ -121,9 +121,9 @@ const WORLDS = {
     pages: '287–316',
     points: [
       'Naming alkynes and enynes (§9.1); two eliminations of HX make an alkyne from a dihalide (§9.2)',
-      'Hydration: HgSO₄ gives a ketone, hydroboration an aldehyde, through an enol that tautomerizes (§9.4)',
+      'Hydration: HgSO₄ gives a methyl ketone; hydroboration (disiamylborane) gives an aldehyde from a terminal alkyne; both through an enol (§9.4)',
       'Reduction: Pd to the alkane, Lindlar to cis, Li in NH₃ to trans (§9.5)',
-      'Terminal alkynes (pKa 25) are deprotonated by NH₂⁻ (§9.7); acetylides alkylate with primary halides only (§9.8)',
+      'Terminal alkynes (pKa 25) are deprotonated by NH₂⁻ (§9.7); acetylides alkylate with methyl or primary bromides and iodides only (p. 300, §9.8)',
       'Synthesis: work backward, one step at a time (§9.9)',
     ],
     next: 'Next: the east road from the Cliffs, down into the Halogen Marsh (Chapter 10).',

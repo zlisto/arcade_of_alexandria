@@ -63,6 +63,20 @@ function Scenery({ world }) {
   )
 }
 
+/** Malradix's violet spark, glowing over the forge grate until Shard 10 (World 8's TowerSpark) */
+function ForgeSpark() {
+  const g = useRef()
+  useFrame(({ clock }) => { if (g.current) g.current.scale.setScalar(1 + Math.sin(clock.elapsedTime * 3) * 0.18) })
+  return (
+    <group ref={g} position={[0, 5.4, MOUTH_Z - 1.2]}>
+      <mesh><sphereGeometry args={[0.6, 20, 16]} /><meshStandardMaterial color="#f0d0ff" emissive="#c070ff" emissiveIntensity={3.4} toneMapped={false} /></mesh>
+      <mesh><sphereGeometry args={[1.4, 20, 16]} /><meshBasicMaterial color="#b050ff" transparent opacity={0.36} depthWrite={false} toneMapped={false} /></mesh>
+      <mesh><sphereGeometry args={[2.4, 20, 16]} /><meshBasicMaterial color="#a040ff" transparent opacity={0.13} depthWrite={false} toneMapped={false} /></mesh>
+      <pointLight color="#c070ff" intensity={30} distance={18} />
+    </group>
+  )
+}
+
 function MarshLevel({ world, onExit }) {
   const save = useGame((s) => s.save)
   const shot = useGame((s) => !!s.magnusShot)
@@ -127,11 +141,18 @@ function MarshLevel({ world, onExit }) {
     if (!s.metMagnus) {
       saveGame({ metMagnus: true })
       if (world.player) world.player.teleport([MAGNUS[0] - 1.6, 0, MAGNUS[2] + 2.0], Math.atan2(1.6, -2.0))
-      world.camOverride = twoShot(world, MAGNUS, 3.6, -0.5)
+      const shot = twoShot(world, MAGNUS, 3.6, -0.5)
+      world.camOverride = shot
       setState({ magnusShot: true })
       await say([
-        { who: 'Old Magnus', text: 'Stay on the planks, boy. The bog keeps what it takes.' },
-        { who: 'Old Magnus', text: 'Magnus. I’ve watched this marsh sixty years. Something violet went down into my forge last week.' },
+        { who: 'Old Magnus', text: 'Lindlar sent you? Stay on the planks, boy. The bog keeps what it takes.' },
+        { who: 'Old Magnus', text: 'Magnus. I’ve watched this marsh sixty years.' },
+      ])
+      // while he names it, the camera turns to the violet spark over the forge grate (Presentation round 2, #3)
+      world.camOverride = { pos: [10, 2.4, 3], look: [0, 5, MOUTH_Z] }
+      await say([{ who: 'Old Magnus', text: 'Something violet came over the cliffs just now and dropped into my forge.' }])
+      world.camOverride = shot
+      await say([
         { who: 'Old Magnus', text: 'Malradix hung a sign on my door: “My radicals strike at random.” Random! Ha.' },
         { who: 'Pi', text: 'They don’t?' },
         { who: 'Old Magnus', text: 'Nothing in this marsh is random. You just haven’t counted yet.' },
@@ -177,6 +198,7 @@ function MarshLevel({ world, onExit }) {
       </Suspense>
       <pointLight position={[14.5, 3.9, -4.3]} color="#e8f0ff" intensity={4} distance={10} />
       {!save.t10markers && <mesh position={[0, 3, MOUTH_Z - 0.2]}><boxGeometry args={[6, 6, 0.3]} /><meshStandardMaterial color="#3a3a32" metalness={0.6} roughness={0.5} /></mesh>}
+      {(save.shards || 0) < 10 && <ForgeSpark />}
       <Tag position={[0, 8.2, MOUTH_Z]} df={14}>{save.t10markers ? 'The Sunken Forge' : 'The Sunken Forge · grated'}</Tag>
       <Magnus position={MAGNUS} rotation={[0, -0.5, 0]} />
       {!shot && <Tag position={[MAGNUS[0], 2.5, MAGNUS[2]]} df={8}>Old Magnus</Tag>}
