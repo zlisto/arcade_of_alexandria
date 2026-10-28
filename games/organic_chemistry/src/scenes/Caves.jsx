@@ -125,7 +125,7 @@ function CavesLevel({ world, onExit }) {
       world.addFloor(-W, GORGE.z[0], W, 8, 0), world.addFloor(-W, PASS_Z.z0, W, GORGE.z[1], 0),
       world.addFloor(-W, -140, W, PASS_Z.z1 - 4, 0), // the far side of the Twin Passes
       world.addFloor(-ARENA.x, -146, ARENA.x, -140, 0), world.addFloor(-ARENA.x, ARENA.z[1], ARENA.x, -170 - 4, 0),
-      ...Object.values(PILLAR_POS).map(([x, z]) => world.addFloor(x - 0.9, z - 0.9, x + 0.9, z + 0.9, 0)),
+      ...Object.values(PILLAR_POS).map(([x, z]) => world.addFloor(x - 0.65, z - 0.65, x + 0.65, z + 0.65, 0)),
     ]
     const HINTS = {
       '6-1': 'Two hammers and two crystals. Ions, or radicals?',
@@ -142,7 +142,7 @@ function CavesLevel({ world, onExit }) {
       setState({ objective: r.title + (r.sections.length ? `  ·  §${r.sections.join(', §')}` : '') })
       if (!seen[r.id] && HINTS[r.id]) setTimeout(() => toast('Pi: ' + HINTS[r.id], 'info', 4800), 400)
     }))
-    const gorgeT = world.addTrigger([-W, -1, GORGE.z[1] - 3], [W, 4, GORGE.z[1] - 0.3], () => { if (!has('6-2gorge')) { markSolved('6-2gorge'); sfx('open'); toast('Across! Every hold you took was a δ+ carbon: electron-poor, electrophilic.', 'good', 4200) } })
+    const gorgeT = world.addTrigger([-W, -1, GORGE.z[1] - 3], [W, 4, GORGE.z[1] - 0.3], () => { const lp = world.lastPull, now = performance.now(), holds = (world.pulls || []).filter((q) => now - q.t < 30000 && q.to[2] < -42 && q.to[2] > -50).length; if (!has('6-2gorge') && !(lp && lp.to[2] < -51 && now - lp.t < 8000 && holds >= 2)) { sfx('wrong'); toast('You jumped it. The bank only counts if you hook across, hold by hold.', 'warn', 3600); if (world.player) world.player.teleport([0, 0, GORGE.z[0] + 2.5], 0); return } if (!has('6-2gorge')) { markSolved('6-2gorge'); sfx('open'); toast('Across! Every hold you took was a δ+ carbon: electron-poor, electrophilic.', 'good', 4200) } })
     const bossT = world.addTrigger([-6, 0, -146], [6, 6, -142], () => startBoss())
     const decreeT = world.addTrigger([-W, -2, -7], [W, 6, -4], () => { if (!getState().save.solved['t6-decree']) readDecree() })
     const ia = [
@@ -153,7 +153,7 @@ function CavesLevel({ world, onExit }) {
     ]
     // 6-1: each crystal, each hammer
     CRYSTALS6.forEach((c, i) => {
-      const x = i ? 2.2 : -2.2
+      const x = i ? 2.9 : -2.9
       ia.push(world.addInteractable({ pos: [x - 0.9, 0, FORGE6.anvil[1] + 1.2], radius: 1.1, label: () => (doneForge(c.id) ? null : `Strike ${c.bond} with the full-arrow hammer`), onInteract: () => strike(c, 'full') }))
       ia.push(world.addInteractable({ pos: [x + 0.9, 0, FORGE6.anvil[1] + 1.2], radius: 1.1, label: () => (doneForge(c.id) ? null : `Strike ${c.bond} with the fishhook hammer`), onInteract: () => strike(c, 'fish') }))
     })
@@ -165,7 +165,7 @@ function CavesLevel({ world, onExit }) {
     ia.push(world.addInteractable({ pos: [C.stray[0], 0, C.stray[1]], radius: 1.8, label: () => (carryRef.current && !has('6-3') ? 'Pair your radical with this one' : null), onInteract: () => terminate() }))
     // 6-5: the vent
     ia.push(world.addInteractable({ pos: [PASS_ROOM.vent[0], 0, PASS_ROOM.vent[1]], radius: 1.8, label: () => (getState().save.hasBoots ? 'Stand in the vent: charge the boots' : null), onInteract: () => vent() }))
-    const solids = [world.addSolid([4.4, 0, -9.4], [5.6, 1.6, -8.6]), world.addSolid([-1.6, 0, FORGE6.anvil[1] - 0.6], [1.6, 1.1, FORGE6.anvil[1] + 0.6])]
+    const solids = [world.addSolid([4.4, 0, -9.4], [5.6, 1.6, -8.6]), world.addSolid([-3.7, 0, FORGE6.anvil[1] - 0.6], [3.7, 1.1, FORGE6.anvil[1] + 0.6])]
     if (import.meta.env.DEV) {
       window.__valence = window.__valence || {}
       window.__valence.warp = (room) => { const r = ROOMS6.find((x) => x.id === room); if (r) world.player.teleport(r.checkpoint, Math.PI) }
@@ -183,7 +183,7 @@ function CavesLevel({ world, onExit }) {
     const door = Object.entries(FORGE6.doors).find(([, d]) => d.crystal === c.id)
     const [id, d] = door
     if (id === '6-1b' && !has('6-1a')) { toast(`${c.bond} splits: ${out}. The second door waits until the first is open.`, 'info', 3600); return }
-    if (kind !== d.want) { sfx('wrong'); toast(`${c.bond} splits ${hammer === 'full' ? 'heterolytically: both electrons to one side' : 'homolytically: one electron each'}, giving ${out}. This door wants ${d.want}.`, 'warn', 5200); return }
+    if (kind !== d.want) { sfx('wrong'); world.player?.hurt(1, [world.player.pos.x, 0, world.player.pos.z - 1], true); toast(`${c.bond} splits ${hammer === 'full' ? 'heterolytically: both electrons to one side' : 'homolytically: one electron each'}, giving ${out}. This door wants ${d.want}.`, 'warn', 5200); return }
     markSolved(id); sfx('open')
     toast(hammer === 'full' ? `Heterolytic: both electrons go with Br. ${out}: ions, the stuff of polar reactions.` : `Homolytic: one electron each way. ${out}: radicals, the stuff of radical reactions.`, 'good', 5200)
   }
@@ -199,7 +199,7 @@ function CavesLevel({ world, onExit }) {
     if (which === 'chlorine' && c === 'CH3') {
       const n = (getState().save.t6made || 0) + 1
       saveGame({ t6made: n }); setCarry('Cl'); sfx('right')
-      toast(n >= CHAIN.need ? `·CH₃ takes a Cl from Cl₂: CH₃Cl, and a new Cl· (propagation, step 2). ${n} made. The chain could run forever. End it.` : `·CH₃ + Cl₂ → CH₃Cl + Cl· (propagation, step 2). ${n} CH₃Cl made. The new Cl· carries on.`, 'good', 4600)
+      toast(n >= CHAIN.need ? `CH₃Cl made, and a new Cl·. ${n} done. It could run forever. End it.` : `·CH₃ + Cl₂ → CH₃Cl + Cl· (propagation, step 2). ${n} CH₃Cl made. The new Cl· carries on.`, 'good', 4600)
       return
     }
     sfx('wrong')
@@ -209,18 +209,18 @@ function CavesLevel({ world, onExit }) {
     if (!carryRef.current || has('6-3')) return
     if ((getState().save.t6made || 0) < CHAIN.need) { toast(`Not yet: the door wants ${CHAIN.need} CH₃Cl. Keep the chain going first.`, 'warn', 3400); return }
     setCarry(null); markSolved('6-3'); sfx('open')
-    toast('Two radicals meet and pair their electrons: termination. The chain stops, and the door opens.', 'good', 4600)
+    toast('Cl· + Cl· → Cl₂: termination (terms from §10.3). The chain stops; the door opens.', 'good', 4600)
   }
   const vent = () => {
     if (!getState().save.hasBoots) return
     saveGame({ t6meter: Math.max(getState().save.t6meter || 0, ROOM_T) }); sfx('stance')
-    toast(`The boots charge to ${ROOM_T} kJ/mol: about what room temperature can lift a molecule over (p. 190).`, 'good', 4600)
+    toast(`The boots charge to ${ROOM_T} kJ/mol: about what room temperature can lift a molecule over (p. 191).`, 'good', 4600)
   }
   const passCrossed = (route) => {
     if (has('6-5')) return
     markSolved('6-5'); sfx('open')
     setTimeout(() => say(route === 'enzyme' ? [
-      { who: 'Pi', text: 'Lots of little passes, none over 60. Like an enzyme: many small steps, no big climb (§6.10).' },
+      { who: 'Pi', text: 'Little passes, none over 60. Like an enzyme: many small steps, no big climb!' },
       { who: 'Pi', text: 'The direct way ends just as far down, but its first pass is 140. Too high for room temperature!' },
     ] : [{ who: 'Pi', text: 'You made it over the tall one?!' }]), 400)
   }
@@ -257,7 +257,7 @@ function CavesLevel({ world, onExit }) {
       await itemGet(world, { model: 'peaks', name: 'c6_boots', scale: 1.2, color: '#ffb04a' }, [
         { who: '', text: 'You got the Activation Boots!' },
         { who: 'Pi', text: 'They hold energy. A vent fills them; a pass you can’t reach, you can’t climb.' },
-        { who: 'Pi', text: 'Think of it as how much energy a molecule has to get over a barrier. (The boots are a picture; molecules don’t wear boots.)' },
+        { who: 'Pi', text: 'Like the energy a molecule needs for a barrier. Just a picture: molecules don’t wear boots!' },
       ])
     }
     if (id === 't6-bosskey') { saveGame({ t6bossKey: true }); await say([{ who: '', text: 'You got the Boss Key!' }]) }
@@ -274,12 +274,17 @@ function CavesLevel({ world, onExit }) {
     await new Promise((r) => setTimeout(r, 900))
     if (!getState().save.t6bossIntro) {
       saveGame({ t6bossIntro: true })
+      world.camOverride = { pos: [6, 5, -141], look: [0, 8, -158] }
       await say([
-        { who: 'Pi', text: 'The Transition Wyrm! It sits on top of the pass. You can’t hit the top of a pass.' },
-        { who: 'Pi', text: 'Two routes each time. It guards the taller pass: that one is slow. Take the lower pass, whichever ends further down.' },
+        { who: 'Pi', text: 'The Transition Wyrm! And the violet spark, in its eye! It guards whichever pass is higher.' },
+      ])
+      world.camOverride = { pos: [12.5, 4.5, -157], look: [-2, 1.6, -158] }
+      await say([
+        { who: 'Pi', text: 'Two routes each time. Find each one’s highest pass. Where it ends doesn’t decide the speed.' },
         { who: 'Pi', text: 'The boots are full: 120 here. Watch its breath and roll!' },
       ])
-    } else await say([{ who: 'Pi', text: 'Lower pass wins. Roll through the breath.' }])
+      world.camOverride = null
+    } else await say([{ who: 'Pi', text: 'Find each route’s highest pass. Roll through the breath.' }])
     busy.current = false
   }
   const bossDown = async () => {
@@ -287,7 +292,7 @@ function CavesLevel({ world, onExit }) {
     playMusic('caves')
     await say([
       { who: 'Pi', text: 'Over all three! It never was a monster to beat. It was the top of a hill to get past.' },
-      { who: 'Pi', text: 'The spark fled south-east, toward the plains. The shard!' },
+      { who: 'Pi', text: 'There goes the spark, east to the plains! And there: the shard!' },
     ])
   }
   const takeShard = async () => {
@@ -307,7 +312,7 @@ function CavesLevel({ world, onExit }) {
       { who: '', text: 'The shard glows warm in Kai’s hands…' },
       { who: 'Princess Octavia', text: 'Kai… six shards. Half the kingdom’s bonds are whole again.' },
       { who: 'Princess Octavia', text: 'He said downhill means instant. You crossed every pass by its height, not its drop.' },
-      { who: 'Pass-Warden Hammond', text: 'Keep the boots. South-east are the plains, and a tower where things only ever add on.' },
+      { who: 'Pass-Warden Hammond', text: 'Keep the boots. East are the plains. Find Farmer Markov; his tower only ever adds on.' },
       { who: 'Pi', text: 'Six down, six to go!' },
     ])
     world.camOverride = null
@@ -350,10 +355,12 @@ function CavesLevel({ world, onExit }) {
       <Chest world={world} pos={[-6, 0, -8]} rotY={Math.PI / 2} opened={!!solved['t6-map']} onOpen={() => openChest('t6-map')} />
       <Tag position={[0, 6.5, -13]} df={16}>The Pass Caves</Tag>
 
+      <IceDressing />
       {/* 6-1 the Splitting Forge */}
-      <mesh position={[0, 0.55, FORGE6.anvil[1]]} castShadow><boxGeometry args={[3.2, 1.1, 1.2]} /><meshStandardMaterial color="#3a3a44" metalness={0.6} roughness={0.4} /></mesh>
+      <mesh position={[0, 0.55, FORGE6.anvil[1]]} castShadow><boxGeometry args={[7.4, 1.1, 1.2]} /><meshStandardMaterial color="#8a8e98" metalness={0.75} roughness={0.35} /></mesh>
+      <pointLight position={[0, 3, FORGE6.anvil[1] + 2]} color="#ffb070" intensity={3} distance={9} />
       {CRYSTALS6.map((c, i) => {
-        const x = i ? 2.2 : -2.2
+        const x = i ? 2.9 : -2.9
         const done = doneForge(c.id)
         return (
           <group key={c.id} position={[x, 1.1, FORGE6.anvil[1]]}>
@@ -363,8 +370,13 @@ function CavesLevel({ world, onExit }) {
               <mesh position={[0, 0.45, 0]} rotation={[0, 0, Math.PI / 2]}><cylinderGeometry args={[0.07, 0.07, 0.7, 8]} /><meshStandardMaterial color="#fff7c0" emissive="#ffd760" emissiveIntensity={0.8} /></mesh>
             </>}
             <Tag position={[0, 1.3, 0]} df={10}>{done ? `${c.bond}: split` : `${c.bond} · a bond: two shared electrons`}</Tag>
-            <Tag position={[-0.9, -0.6, 1.2]} df={8} far={10}>full arrow ↷</Tag>
-            <Tag position={[0.9, -0.6, 1.2]} df={8} far={10}>fishhook ⇀</Tag>
+            {[[-0.9, '#ff9a6a'], [0.9, '#6fe39a']].map(([hx, col]) => (
+              <group key={hx} position={[hx, -1.1, 1.2]} rotation={[0, 0, hx < 0 ? 0.25 : -0.25]}>
+                <mesh position={[0, 0.45, 0]}><cylinderGeometry args={[0.05, 0.05, 0.9, 8]} /><meshStandardMaterial color="#6a4a2a" /></mesh>
+                <mesh position={[0, 0.95, 0]} rotation={[0, 0, Math.PI / 2]}><cylinderGeometry args={[0.14, 0.17, 0.56, 10]} /><meshStandardMaterial color={col} metalness={0.5} roughness={0.3} emissive={col} emissiveIntensity={0.25} /></mesh>
+                <Tag position={[0, 1.45, 0]} df={8} far={9}>{hx < 0 ? 'full arrow' : 'fishhook'}</Tag>
+              </group>
+            ))}
           </group>
         )
       })}
@@ -381,19 +393,19 @@ function CavesLevel({ world, onExit }) {
         const [x, z] = PILLAR_POS[pl.id]
         return (
           <group key={pl.id}>
-            <mesh position={[x, -3.5, z]}><cylinderGeometry args={[0.9, 0.7, 7, 10]} /><meshStandardMaterial color="#5a5060" roughness={0.9} /></mesh>
-            <HookTarget world={world} pos={[x, 0, z]} land={[x, 0, z]} color={'#4aa8ff'} accepts={() => (pl.delta === '+' ? true : `${pl.mol}: ${pl.why}`)} label={pl.mol} />
+            <mesh position={[x, -3.5, z]}><cylinderGeometry args={[0.65, 0.5, 7, 10]} /><meshStandardMaterial color="#5a5060" roughness={0.9} /></mesh>
+            <HookTarget world={world} pos={[x, 0, z]} land={[x, 0, z]} color={'#4aa8ff'} accepts={() => { if (pl.delta !== '+') { const p = world.player; if (p) p.hurt(1, [p.pos.x, 0, p.pos.z + 1], true); return `${pl.mol}: ${pl.why}` } const pz = world.player ? world.player.pos.z : 0; return (z < -46 && pz > -42.5) ? 'Too far to pull from the bank. Find a hold in the first row.' : true }} label={pl.mol} />
           </group>
         )
       })}
-      <HookTarget world={world} pos={[0, 0, GORGE.z[1] - 3]} land={[0, 0, GORGE.z[1] - 3.6]} label="the far bank" />
+      <HookTarget world={world} pos={[0, 0, GORGE.z[1] - 3]} land={[0, 0, GORGE.z[1] - 3.6]} label="the far bank" accepts={() => ((world.player ? world.player.pos.z : 0) > -48 ? 'Too far. Get to the back row of holds first.' : true)} />
       <Tag position={[0, 3.6, GORGE.z[0] + 0.5]} df={12}>Hook only where the carbon is δ+ (electron-poor)</Tag>
       <Chest world={world} pos={[0, 0, -59.5]} opened={!!solved['t6-key']} show={!!solved['6-2arrows']} onOpen={() => openChest('t6-key')} label="Open the small chest" />
       <Gate world={world} pos={[0, 0, -62]} size={[2 * W, 7, 0.8]} open={!!solved['t6-door']} color="#5a4020" glow="#ffcf6a" />
       <Tag position={[0, 7.8, -61.6]} df={13}>{solved['t6-door'] ? 'unlocked' : 'locked · small key'}</Tag>
 
       {/* 6-3 the Chain Cave */}
-      {[['uv', '#c89aff', 'UV crystal'], ['methane', '#ffb0d8', 'methane font · CH₄'], ['chlorine', '#6fe39a', 'chlorine font · Cl₂'], ['stray', '#ff9a6a', 'a stray radical']].map(([k, col, label]) => {
+      {[['uv', '#c89aff', 'UV crystal'], ['methane', '#ffb0d8', 'methane font · CH₄'], ['chlorine', '#6fe39a', 'chlorine font · Cl₂'], ['stray', '#6fe39a', 'a stray Cl· (initiation makes two)']].map(([k, col, label]) => {
         const [x, z] = CHAIN_POS[k]
         if (k === 'stray' && solved['6-3']) return null
         return (
@@ -452,5 +464,32 @@ export default function Caves({ onExit }) {
     <GameScene start={start} startFacing={Math.PI} background="#14121e" camDist={6.2}>
       {(world) => <CavesLevel world={world} onExit={onExit} />}
     </GameScene>
+  )
+}
+
+/** rocks, ice shards and frost along both walls of the caves, so no room is a bare plane */
+function IceDressing() {
+  const items = useMemo(() => {
+    const out = []
+    let seed = 7
+    const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647)
+    for (let z = 6; z > -140; z -= 1.6) {
+      if (z < -40 && z > -52) continue // the gorge
+      for (const side of [-1, 1]) {
+        const x = side * (W - 0.5 - rnd() * 1.2)
+        const k = rnd()
+        out.push({ x, z: z + rnd(), s: 0.35 + rnd() * 0.7, r: rnd() * 6, kind: k < 0.55 ? 'rock' : k < 0.85 ? 'shard' : 'frost' })
+      }
+    }
+    return out
+  }, [])
+  return (
+    <group>
+      {items.map((it, i) => it.kind === 'rock'
+        ? <mesh key={i} position={[it.x, it.s * 0.4, it.z]} rotation={[it.r, it.r * 2, 0]} scale={[it.s * 1.3, it.s, it.s]} castShadow><dodecahedronGeometry args={[0.7, 0]} /><meshStandardMaterial color="#6a6e80" roughness={0.95} flatShading /></mesh>
+        : it.kind === 'shard'
+          ? <mesh key={i} position={[it.x, it.s * 0.9, it.z]} rotation={[0.15 * Math.sin(it.r), it.r, 0.2 * Math.cos(it.r)]}><coneGeometry args={[0.22 * it.s + 0.1, 1.9 * it.s + 0.4, 5]} /><meshStandardMaterial color="#bfe8ff" emissive="#4a8ab0" emissiveIntensity={0.35} roughness={0.1} transparent opacity={0.85} /></mesh>
+          : <mesh key={i} position={[it.x, 0.02, it.z]} rotation={[-Math.PI / 2, 0, it.r]}><circleGeometry args={[0.9 * it.s + 0.4, 7]} /><meshStandardMaterial color="#eef6ff" roughness={0.6} /></mesh>)}
+    </group>
   )
 }

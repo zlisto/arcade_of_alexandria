@@ -17,11 +17,12 @@ import { WYRM_ROUTES, highestTS, fasterRoute } from '../chem/rules6'
 preloadModels('peaksfolk')
 const NAME = 'The Transition Wyrm · ‡'
 const Z0 = -146, Z1 = -170, XS = { a: -5, b: 5 }
+const WYRM_MATS = { wyrm: new THREE.MeshStandardMaterial({ color: '#e4dcf0', roughness: 0.35, emissive: '#8a78b0', emissiveIntensity: 0.45 }), light: new THREE.MeshBasicMaterial({ color: '#ff5050', toneMapped: false }) }
 
 export default function Wyrm({ world, center, active, onDefeated }) {
   const [phase, setPhase] = useState(0)
   const st = useRef({ mode: 'idle', t: 0, strikeT: 0, waveT: 4, wave: -1, crossing: false })
-  const coil = useRef(), head = useRef(), wave = useRef()
+  const coil = useRef(), head = useRef(), wave = useRef(), spark = useRef()
   const R = WYRM_ROUTES[Math.min(phase, 2)]
   const slow = fasterRoute(R) === 'a' ? 'b' : 'a'
   // where the slow route's summit is
@@ -44,14 +45,14 @@ export default function Wyrm({ world, center, active, onDefeated }) {
     if (!active || st.current.done) return
     if (which === slow) {
       // rolled past the coil: the slow route still counts as slow. Back to the start.
-      sfx('wrong'); world.player && world.player.teleport([0, 0, -143], Math.PI)
+      sfx('wrong'); if (world.player) { world.player.hurt(1, [world.player.pos.x, 0, world.player.pos.z + 1], true); world.player.teleport([0, 0, -143], Math.PI) }
       toast(`Over the ${highestTS(R[slow])} pass, but that was the slow way. The Wyrm only yields to the lower pass.`, 'warn', 4800)
       return
     }
     st.current.done = true
     sfx('shard'); world.shake = 0.4
     const next = phase + 1
-    if (next >= 3) { setState({ bossHp: { name: NAME, hp: 0, max: 3 } }); st.current.mode = 'gone'; st.current.t = 0; setTimeout(() => onDefeated && onDefeated(), 1800); return }
+    if (next >= 3) { if (world.player) world.player.teleport([0, 0, -143], Math.PI); setState({ bossHp: { name: NAME, hp: 0, max: 3 } }); st.current.mode = 'gone'; st.current.t = 0; setTimeout(() => onDefeated && onDefeated(), 1800); return }
     toast(next === 1 ? 'Over! The Wyrm uncoils and finds a new summit. Read the next pair of routes.' : 'Once more. The last pair.', 'good', 3800)
     setTimeout(() => {
       if (world.player) world.player.teleport([0, 0, -143], Math.PI)
@@ -69,23 +70,40 @@ export default function Wyrm({ world, center, active, onDefeated }) {
     const T = state.clock.elapsedTime
     // coil on the slow summit, the head rearing above it
     if (coil.current) {
-      coil.current.position.set(summit.x - center[0], summit.y - 0.2 + (s.mode === 'gone' ? -s.t * 4 : 0), summit.z - center[2])
+      // it hangs between the ridges until Kai is halfway up the slow route; then it drops onto that summit
+      const pp = world.player
+      const committed = pp && Math.abs(pp.pos.x - summit.x) < 2 && pp.pos.z < summit.z + 3.6
+      const tx = committed ? summit.x : 0, ty = committed ? summit.y - 0.2 : 9, tz = committed ? summit.z : (Z0 + Z1) / 2
+      if (!s.cp) s.cp = new THREE.Vector3(tx, ty, tz)
+      s.cp.lerp(new THREE.Vector3(tx, ty, tz), Math.min(1, dt * 3))
+      coil.current.position.set(s.cp.x - center[0], s.cp.y + (s.mode === 'gone' ? -s.t * 4 : 0), s.cp.z - center[2])
       coil.current.rotation.y = T * 0.15
       coil.current.scale.setScalar(s.mode === 'gone' ? Math.max(0.01, 0.42 * (1 - s.t / 1.5)) : 0.42)
+    }
+    // Malradix's violet spark rides in the Wyrm's eye; when the Wyrm falls it tears free and flies east
+    if (spark.current && head.current) {
+      if (s.mode !== 'gone') { s.sparkT = -1; spark.current.visible = true; spark.current.position.copy(head.current.position).add(new THREE.Vector3(Math.sin(T * 6) * 0.1, 0.5, 0.6)) }
+      else { if (s.sparkT < 0) s.sparkT = 0; s.sparkT += rawDt; spark.current.position.x += rawDt * 5; spark.current.position.y += rawDt * 2.5; spark.current.visible = s.sparkT < 2.6 }
     }
     // strike anyone climbing the slow route near its summit: the pass slams shut
     if (p && s.mode !== 'gone') {
       const onSlow = Math.abs(p.pos.x - summit.x) < 2 && p.pos.z < Z0 && p.pos.z > Z1
       const near = Math.abs(p.pos.z - summit.z) < 3.4
       if (s.strikeT > 0) s.strikeT -= dt
-      if (onSlow && near && s.strikeT <= 0 && !p.rolling) {
+      // once the wind-up starts, only a roll escapes it
+      if (s.strikeT <= 0 && s.wind == null && onSlow && near) { s.wind = 0.7; sfx('lock') }
+      if (s.wind != null && s.wind > 0) s.wind -= dt
+      if (s.wind != null && s.wind <= 0 && p.rolling) { s.wind = null; s.strikeT = 0.9; sfx('block') }
+      if (s.strikeT <= 0 && s.wind != null && s.wind <= 0 && !p.rolling) {
+        s.wind = null
         s.strikeT = 1.6; sfx('stomp'); world.shake = 0.5
         p.hurt(2, [summit.x, summit.y, summit.z - 3])
         if (!s.toldSlow) { s.toldSlow = true; toast(`The Wyrm slams the pass shut: ${summit.e} kJ/mol is the higher barrier, the slow way over. Try the other route.`, 'warn', 5200) }
       }
       if (head.current) {
-        const strike = Math.max(0, s.strikeT - 1.0) / 0.6
-        head.current.position.set(summit.x - center[0], summit.y + 3.8 - strike * 2.4, summit.z - center[2] + 1 + strike * 2.2)
+        const strike = s.wind != null && s.wind > 0 ? -0.6 * (1 - s.wind / 0.7) : Math.max(0, s.strikeT - 1.0) / 0.6
+        const hc = s.cp || summit
+        head.current.position.set(hc.x - center[0], hc.y + 3.8 - strike * 2.4, hc.z - center[2] + 1 + strike * 2.2)
         head.current.rotation.x = 0.4 + strike * 0.9
         head.current.lookAt(p.pos.x, p.pos.y + 1, p.pos.z)
       }
@@ -105,13 +123,14 @@ export default function Wyrm({ world, center, active, onDefeated }) {
   return (
     <>
     {active && (['a', 'b'].map((k) => (
-      <Ridge key={k + phase} world={world} route={R[k]} x={XS[k]} z0={Z0} z1={Z1} meter={() => 120} label={`Route ${k.toUpperCase()} · highest pass ${highestTS(R[k])} kJ/mol`} color={k === 'a' ? '#c8e4f4' : '#d8ecf8'} onEnd={() => crossed(k)} />
+      <Ridge key={k + phase} world={world} route={R[k]} x={XS[k]} z0={Z0} z1={Z1} meter={() => 120} label={`Route ${k.toUpperCase()}`} color={k === 'a' ? '#c8e4f4' : '#d8ecf8'} onEnd={() => crossed(k)} />
     )))}
     <group position={center}>
-      <group ref={coil}><Part model="peaksfolk" name="wyr_body" castShadow={false} /><pointLight position={[0, 6, 0]} color="#bfe8ff" intensity={4} distance={14} /></group>
+      <group ref={coil}><Part model="peaksfolk" name="wyr_body" castShadow={false} mats={WYRM_MATS} /><pointLight position={[0, 6, 0]} color="#bfe8ff" intensity={4} distance={14} /></group>
       <group ref={head}>
-        <group scale={0.9}><Part model="peaksfolk" name="wyr_head" /><group position={[-0.2, -0.2, -0.6]}><Part model="peaksfolk" name="wyr_wingL" /></group><group position={[0.2, -0.2, -0.6]}><Part model="peaksfolk" name="wyr_wingR" /></group></group>
+        <group scale={0.9}><Part model="peaksfolk" name="wyr_head" mats={WYRM_MATS} /><group position={[-0.2, -0.2, -0.6]}><Part model="peaksfolk" name="wyr_wingL" /></group><group position={[0.2, -0.2, -0.6]}><Part model="peaksfolk" name="wyr_wingR" /></group></group>
       </group>
+      <group ref={spark}><mesh><sphereGeometry args={[0.22, 14, 10]} /><meshBasicMaterial color="#e0b0ff" toneMapped={false} /></mesh><mesh><sphereGeometry args={[0.5, 14, 10]} /><meshBasicMaterial color="#a040ff" transparent opacity={0.35} depthWrite={false} toneMapped={false} /></mesh><pointLight color="#c070ff" intensity={5} distance={7} /></group>
       <mesh ref={wave} visible={false}><boxGeometry args={[22, 3, 0.4]} /><meshBasicMaterial color="#dff4ff" transparent opacity={0.45} toneMapped={false} /></mesh>
       {active && <Tag position={[0, 7.5, (Z0 + Z1) / 2 - center[2]]} df={16}>Two routes, same reactants. Which pass is lower?</Tag>}
     </group>

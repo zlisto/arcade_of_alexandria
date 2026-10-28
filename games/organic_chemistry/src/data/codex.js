@@ -11,7 +11,7 @@ export const CODEX = [
   },
   {
     title: 'Radicals pair up',
-    section: '6.6', pages: '183–185',
+    section: '6.6 (terms: §10.3)', pages: '183–185, 320',
     unlocked: (s) => s.wolvesCleared,
     text: 'A radical has an unpaired electron, which makes it very reactive. When a radical reacts with a molecule it leaves a new radical behind, so the chain keeps going (propagation). When two radicals meet, their electrons pair into a bond and both are gone (termination).',
   },
@@ -254,7 +254,7 @@ export const CODEX = [
   },
   {
     title: 'Radical chain reactions',
-    section: '6.6', pages: '183–185',
+    section: '6.6 (terms: §10.3)', pages: '183–185, 320',
     unlocked: (s) => s.solved['6-3'],
     text: 'Chlorination of methane: initiation (light splits Cl₂), propagation (Cl· + CH₄ → HCl + ·CH₃; ·CH₃ + Cl₂ → CH₃Cl + Cl·, repeated), termination (two radicals combine).',
   },

@@ -52,7 +52,7 @@ export function Wisps({ world, spawns, active = true, zone }) {
       ids.push(world.addTarget({
         pos: () => [m.pos.x, 1.4, m.pos.z], radius: 0.7, tall: 1.6, alive: () => m.state !== 'gone' && m.state !== 'dead',
         onHit: () => {
-          if (m.solid <= 0) { if (!told.pass) { told.pass = true; toast('The blade passes through: a carbocation, an empty orbital and a + charge. It is electron-poor. What latches onto electron-poor things?', 'warn', 5400, true) } return false }
+          if (m.solid <= 0) { if (!told.pass) { told.pass = true; toast('The blade passes through: empty orbital, + charge. Electron-poor. What latches onto that?', 'warn', 5400, true) } return false }
           m.hp--; sfx('hit'); if (m.hp <= 0) { m.state = 'dead'; m.t = 0; sfx('pair') }
           return true
         },

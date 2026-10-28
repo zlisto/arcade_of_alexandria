@@ -39,9 +39,9 @@ export const PILLARS = [
 // ---------- §6.5 curved arrows for HBr + ethylene (Fig 6.? , pp. 178–181): sources and sinks, step by step
 export const ARROW_STEPS = [
   { step: 'Step 1', from: ['π bond (C=C)', 'H of HBr', 'Br of HBr', 'C–H bond'], want: ['π bond (C=C)', 'H of HBr'],
-    ok: 'The π electrons (the nucleophile) attack the H of HBr (the electrophile); the H–Br pair leaves with Br.',
-    tip: 'Arrows start at electrons — a lone pair or a bond — and end at the electron-poor atom. Which of these is electron-rich?' },
-  { step: 'Step 2', from: ['Br⁻ lone pair', 'carbocation C⁺', 'C–H bond', 'π bond (C=C)'], want: ['Br⁻ lone pair', 'carbocation C⁺'],
+    ok: 'The π bond (nucleophile) attacks H (electrophile); the H–Br pair leaves with Br.',
+    tip: 'C–H and π are both bonds. Which pair is loosely held and exposed, ready to attack (§6.5)?' },
+  { step: 'Step 2', from: ['Br⁻', 'the CH₂ carbon', 'C–H bond', 'π bond (C=C)'], want: ['Br⁻', 'the CH₂ carbon'],
     ok: 'Br⁻ gives a lone pair to the carbocation (six electrons, positive): C–Br forms, charge is conserved.',
     tip: 'The π bond is gone after step 1. What is now electron-rich, and what is electron-poor?' },
 ]
@@ -50,16 +50,17 @@ export const ARROW_STEPS = [
 export const CHAIN = { need: 3 }
 
 // ---------- §6.8 bond dissociation energies (Table 6.3, p. 188), kJ/mol
-export const BDE = { 'CH₃–H': 439, 'Cl–Cl': 242, 'CH₃–Cl': 350, 'H–Cl': 431, 'Br–Br': 194, 'CH₃–Br': 294, 'H–Br': 366, 'H–H': 436 }
+export const BDE = { 'CH₃–H': 439, 'Cl–Cl': 242, 'CH₃–Cl': 350, 'H–Cl': 431, 'Br–Br': 194, 'CH₃–Br': 294, 'H–Br': 366, 'H–H': 436, 'I–I': 152, 'CH₃–I': 239, 'H–I': 298 }
 export const LEDGER = [
   { id: 'chlor', eq: 'CH₄ + Cl₂ → CH₃Cl + HCl', broken: ['CH₃–H', 'Cl–Cl'], formed: ['CH₃–Cl', 'H–Cl'] }, // 681 − 781 = −100
   { id: 'brom', eq: 'CH₄ + Br₂ → CH₃Br + HBr', broken: ['CH₃–H', 'Br–Br'], formed: ['CH₃–Br', 'H–Br'] }, // 633 − 660 = −27
+  { id: 'iod', eq: 'CH₄ + I₂ → CH₃I + HI', broken: ['CH₃–H', 'I–I'], formed: ['CH₃–I', 'H–I'] }, // 591 − 537 = +54
 ]
 export const ledgerH = (l) => l.broken.reduce((s, b) => s + BDE[b], 0) - l.formed.reduce((s, b) => s + BDE[b], 0)
 
 // ---------- §6.9–6.10 energy diagrams for the Twin Passes and the Wyrm (kJ/mol, relative to the reactants)
 // Each route: [{ ts, after }] — the transition-state height, then the valley (intermediate or product) after it.
-// The tall direct route is HBr + ethylene's first step (ΔG‡ ≈ 140, p. 190); the room-temperature limit is ~80 (p. 190).
+// The tall direct route is HBr + ethylene's first step (ΔG‡ ≈ 140, p. 191); the room-temperature limit is ~80 (p. 191).
 export const ROOM_T = 80
 export const PASSES = {
   direct: [{ ts: 140, after: 60 }, { ts: 70, after: -45 }],
@@ -69,7 +70,7 @@ export const highestTS = (route) => Math.max(...route.map((s) => s.ts))
 // the Wyrm's three crossings: route A and route B; the faster is the one with the lower highest-TS (ΔG° doesn't decide)
 export const WYRM_ROUTES = [
   { a: [{ ts: 95, after: -60 }], b: [{ ts: 55, after: -10 }] },
-  { a: [{ ts: 45, after: 25 }, { ts: 70, after: -30 }], b: [{ ts: 85, after: -70 }] },
+  { a: [{ ts: 45, after: 25 }, { ts: 70, after: -75 }], b: [{ ts: 85, after: -30 }] },
   { a: [{ ts: 60, after: 30 }, { ts: 110, after: -80 }], b: [{ ts: 75, after: 10 }, { ts: 65, after: -20 }] },
 ]
 export const fasterRoute = (r) => (highestTS(r.a) < highestTS(r.b) ? 'a' : 'b')

@@ -65,7 +65,12 @@ export function Ridge({ world, route, x, z0, z1, w = 3, pad = 2, meter, label, c
     const steps = Math.ceil((Math.abs(z1 - z0) + RAMP) / 0.3)
     for (let i = 0; i < steps; i++) {
       const za = z0 - i * 0.3, zb = za - 0.3
-      ids.push(world.addFloor(x - w / 2, zb, x + w / 2, za, yAtZ((za + zb) / 2)))
+      const rise = Math.abs(yAtZ(zb) - yAtZ(za))
+      const n = Math.max(1, Math.ceil(rise / 0.2))
+      for (let k = 0; k < n; k++) {
+        const a = za - (k * 0.3) / n, b = za - ((k + 1) * 0.3) / n
+        ids.push(world.addFloor(x - w / 2, b, x + w / 2, a, yAtZ((a + b) / 2)))
+      }
     }
     gates.current = nodes.filter((n) => n.kind === 'ts').map((n, i) => {
       // the foot of the pass: a little way before its summit, on the climb
@@ -102,9 +107,9 @@ export function Ridge({ world, route, x, z0, z1, w = 3, pad = 2, meter, label, c
     <group>
       <mesh geometry={geo} receiveShadow castShadow><meshStandardMaterial color={color} roughness={0.35} metalness={0.1} /></mesh>
       {nodes.map((n, i) => n.kind !== 'reactants' && (
-        <Tag key={i} position={[x, base + n.y * SCALE + 1.1, zAt(n.u)]} df={9} far={22}>{n.kind === 'ts' ? `‡ ${n.y} kJ/mol` : n.kind === 'products' ? `products ${n.y > 0 ? '+' : ''}${n.y}` : `intermediate ${n.y > 0 ? '+' : ''}${n.y}`}</Tag>
+        <Tag key={i} position={[x, base + n.y * SCALE + 1.1, zAt(n.u)]} df={9} far={40}>{n.kind === 'ts' ? `‡ ${n.y} kJ/mol` : n.kind === 'products' ? `products ${n.y > 0 ? '+' : ''}${n.y}` : `intermediate ${n.y > 0 ? '+' : ''}${n.y}`}</Tag>
       ))}
-      {label && <Tag position={[x, base + 2.2, z0 - 0.5]} df={11}>{label}</Tag>}
+      {label && <Tag position={[x, base + 3.4, z0 - 1.5]} df={11} far={40}>{label}</Tag>}
     </group>
   )
 }

@@ -81,7 +81,7 @@ const WORLDS = {
       'Four kinds of reaction: addition, elimination, substitution, rearrangement (§6.1)',
       'Bonds break evenly into radicals or unevenly into ions; polar and radical reactions (§6.2)',
       'Electrophiles are electron-poor (δ+), nucleophiles electron-rich; curved arrows run from nucleophile to electrophile (§6.3–6.5)',
-      'Radical chains: initiation, propagation, termination (§6.6)',
+      'Radical chains: initiation, propagation, termination (§6.6; terms from §10.3)',
       'ΔH from bond dissociation energies (Table 6.3); Keq and ΔG° say how far, not how fast (§6.7–6.8)',
       'Energy diagrams: the transition state sets the rate; intermediates sit in the valleys (§6.9–6.10)',
     ],

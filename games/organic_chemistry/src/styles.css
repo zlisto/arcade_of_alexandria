@@ -416,3 +416,4 @@ button { font: inherit; }
 
 /* World 12 panels */
 .ir-svg { width: 100%; max-width: 420px; height: auto; background: #10142a; border-radius: 10px; display: block; margin: 8px auto; }
+.panel .formula { font-family: system-ui, sans-serif; font-size: 1.25rem; font-weight: 600; text-align: center; margin: 4px 0 8px; color: var(--gold); text-transform: none; }

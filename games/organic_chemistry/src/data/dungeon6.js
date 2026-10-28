@@ -14,7 +14,7 @@ export const ROOMS6 = [
 ]
 
 export const STATIONS6 = {
-  '6-1info': { pos: [0, 0, -16.5], label: 'Read the Forge Rules', panel: 'bondBreak', props: { title: 'The Forge Rules', text: 'Strike a bond crystal with the full-arrow hammer (both electrons to one side: ions) or the fishhook hammer (one each: radicals). Each door wants one kind.' } },
+  '6-1info': { pos: [-5.5, 0, -16.5], label: 'Read the Forge Rules', panel: 'bondBreak', props: { title: 'The Forge Rules', text: 'Strike a bond crystal with the full-arrow hammer (both electrons to one side: ions) or the fishhook hammer (one each: radicals). Each door wants one kind.' } },
   '6-2arrows': { pos: [0, 0, -57], label: 'Draw the arrows: HBr meets ethylene', panel: 'arrows', props: {} },
   '6-3info': { pos: [-3, 0, -64.5], label: 'Read the Chain Rite', panel: 'chain', props: { title: 'The Chain Rite', text: 'Light the crystal, then carry each radical where it reacts: Cl· to the methane font, ·CH₃ to the chlorine font. Three turns, then end the chain.' } },
   '6-4ledger': { pos: [0, 0, -95], label: 'Balance the Ledger of Bonds', panel: 'ledger', props: {} },
@@ -26,7 +26,7 @@ export const FORGE6 = { anvil: [0, -24], doors: { '6-1a': { z: -27, want: 'ions'
 
 // 6-2 the gorge: a chasm z −40 … −52, crossed by hooking δ+ carbons on pillars
 export const GORGE = { z: [-40, -52] }
-export const PILLAR_POS = { p1: [-5, -44], p2: [5, -44], p3: [5, -48.5], p4: [-5, -48.5], p5: [0, -46] }
+export const PILLAR_POS = { p1: [-5, -44], p2: [5, -44], p3: [0, -47], p4: [5, -48.5], p5: [-5, -48.5] }
 
 // 6-3 the chain cave: the UV crystal, the methane font, the chlorine font, a wandering radical
 export const CHAIN_POS = { uv: [-6, -70], methane: [6, -70], chlorine: [0, -79], stray: [-5, -82] }

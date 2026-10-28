@@ -387,7 +387,7 @@ export const LESSONS = {
       'Substitution: two reactants exchange parts to give two new products.',
       'Rearrangement: one reactant reorganizes its bonds and atoms into an isomer.',
     ],
-    example: 'Ethylene + HBr → bromoethane is an addition; bromoethane → ethylene + HBr, an elimination (p. 172).',
+    example: 'Ethylene + HBr → bromoethane is an addition; bromoethane → ethylene + HBr, an elimination (§6.1; Problem 6-1, p. 173).',
   },
   bondBreak: {
     title: 'How bonds break',
@@ -408,7 +408,7 @@ export const LESSONS = {
       'A curved arrow starts at the electrons that move (a lone pair or a bond) and points to where they go: from the nucleophile to the electrophile.',
       'Charge is conserved: count it before and after each step.',
     ],
-    example: 'Ethylene + HBr: the π electrons attack H, the H–Br pair leaves with Br; then Br⁻ attacks the carbocation (§6.5).',
+    example: 'An arrow starts at electrons, a lone pair or a bond, and ends at the electron-poor atom; charge balances at the end (§6.5).',
   },
   chain: {
     title: 'A radical chain',
@@ -416,7 +416,7 @@ export const LESSONS = {
     points: [
       'Initiation: light or heat splits a few Cl₂ into Cl· radicals.',
       'Propagation: Cl· takes H from CH₄, giving HCl and ·CH₃; ·CH₃ takes Cl from Cl₂, giving CH₃Cl and a new Cl·. The chain repeats.',
-      'Termination: two radicals meet and pair their electrons. Termination is rare next to propagation.',
+      'Termination: two radicals meet and pair their electrons, e.g. Cl· + ·CH₃ → CH₃Cl (the terms come from §10.3, p. 320).',
     ],
     example: 'One initiation can run a chain of many propagation cycles before two radicals happen to meet.',
   },
@@ -428,16 +428,16 @@ export const LESSONS = {
       'ΔH = (energy of bonds broken) − (energy of bonds formed). Negative: exothermic.',
       'Keq and ΔG° say how far a reaction goes. They say nothing about how fast.',
     ],
-    example: 'CH₄ + Cl₂ → CH₃Cl + HCl: (439 + 242) − (350 + 431) = −100 kJ/mol (p. 188).',
+    example: 'H₂ + Cl₂ → 2 HCl: (436 + 242) − (2 × 431) = −184 kJ/mol, worked from Table 6.3.',
   },
   passes: {
     title: 'Energy diagrams and transition states',
     section: '6.9–6.10', pages: '189–194',
     points: [
       'The transition state is the highest point between reactants and products. The energy needed to reach it, ΔG‡, sets the rate.',
-      'Reactions with ΔG‡ below about 80 kJ/mol go fast at room temperature; ethylene + HBr’s first step needs about 140 and is slow (p. 190).',
-      'A multistep reaction has an intermediate in each valley and a transition state on each peak. The highest peak is rate-limiting.',
-      'Enzymes speed reactions by giving a different path, many small steps with no big barrier (§6.11).',
+      'Reactions with ΔG‡ below about 80 kJ/mol go fast at room temperature; ethylene + HBr’s first step needs about 140 and is slow (p. 191).',
+      'A multistep reaction has an intermediate in each valley and a transition state on each peak. The highest transition state sets the overall ΔG‡ (p. 192).',
+      'Enzymes speed reactions by giving a different path, many small steps with no big barrier (§6.10, p. 193, Fig 6.9).',
     ],
     example: 'ΔG° tells you how far down the products are. It does not tell you how high the pass is.',
   },

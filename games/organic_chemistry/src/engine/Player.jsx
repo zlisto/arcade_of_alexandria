@@ -349,7 +349,7 @@ export default function Player({ world, start = [0, 0, 0], startFacing = 0 }) {
             if (tg.kind === 'pull') {
               const land = tg.land ? (typeof tg.land === 'function' ? tg.land() : tg.land) : [H.to[0], H.to[1] - 1.2, H.to[2]]
               s.pullTo = new THREE.Vector3(...land)
-              s.mode = 'hookpull'; s.modeT = 0
+              s.mode = 'hookpull'; s.modeT = 0; world.lastPull = { to: land, t: performance.now() }; world.pulls = [...(world.pulls || []).slice(-7), world.lastPull]
             } else {
               if (tg.onHook) tg.onHook()
               s.mode = 'hookback'; s.modeT = 0

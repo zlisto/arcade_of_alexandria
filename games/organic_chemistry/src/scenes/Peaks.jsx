@@ -83,10 +83,14 @@ function PeaksLevel({ world, onExit }) {
     setState({ objective: (s.shards || 0) >= 6 ? 'Take the east road to the Plains of Addition' : !s.metHammond ? 'Follow the trail to the warden’s hut' : !s.t6signs ? 'Sort Hammond’s trail signs' : 'Enter the cave under the peaks' })
     if (!s.peaksSeen) {
       saveGame({ peaksSeen: true })
-      setTimeout(() => say([
-        { who: 'Pi', text: 'Brrr. Look at the skyline: up, down, up higher, then way down. Like a graph!' },
-        { who: 'Pi', text: 'And something long and shiny is curled round the tallest peak.' },
-      ]), 900)
+      setTimeout(async () => {
+        world.camOverride = { pos: [-40, 40, 10], look: [0, 30, -80] }
+        await say([
+          { who: 'Pi', text: 'Brrr. Look at the skyline: up, down, up higher, then way down. Like a graph!' },
+          { who: 'Pi', text: 'Up on the tallest peak… did something just move? Something long.' },
+        ])
+        world.camOverride = null
+      }, 900)
     }
   }, [])
 
@@ -117,11 +121,11 @@ function PeaksLevel({ world, onExit }) {
       setState({ hammondShot: true })
       await say([
         { who: 'Pass-Warden Hammond', text: 'Off the snow, lad. You’re standing where the avalanches like to sit.' },
-        { who: 'Pass-Warden Hammond', text: 'Hammond. I keep the passes. Forty years of watching things get over these mountains, or not.' },
+        { who: 'Pass-Warden Hammond', text: 'Hammond. Tartara sent word. Forty years I’ve kept these passes, watching things get over, or not.' },
         { who: 'Pass-Warden Hammond', text: 'Malradix says anything that rolls downhill must get there in an instant. Then why does my soup still take an hour?' },
-        { who: 'Pi', text: 'And the dragon on the peak?' },
+        { who: 'Pi', text: 'And the dragon on the peak? I saw a violet spark fly in there.' },
         { who: 'Pass-Warden Hammond', text: 'The Wyrm. It sits on the tops of passes. You don’t fight it. You get over it, if you pick your pass.' },
-        { who: 'Pass-Warden Hammond', text: 'First: every traveller here takes one of four trails. Sort my signs and I’ll open the cave road.' },
+        { who: 'Pass-Warden Hammond', text: 'First, the four trails. Sort my signs and I’ll open the cave road.' },
       ])
       world.camOverride = null
       setState({ hammondShot: false, objective: 'Sort Hammond’s trail signs' })
