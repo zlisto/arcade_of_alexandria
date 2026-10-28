@@ -2,7 +2,7 @@ import { Suspense, useEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import GameScene from '../engine/GameScene'
-import { Slab, Station, Signpost, Motes, Tag } from '../engine/kit'
+import { Slab, Station, Signpost, Motes, Tag, twoShot } from '../engine/kit'
 import { Part, preloadModels } from '../engine/models'
 import WolfPack from '../actors/WolfPack'
 import { ImpPack } from '../actors/Critters'
@@ -124,7 +124,8 @@ function LakeLevel({ world, onExit }) {
     const s = getState().save
     if (!s.metTartara) {
       saveGame({ metTartara: true })
-      world.camOverride = { pos: [1.6, 1.85, -1.2], look: [4.2, 1.35, -5.6] }
+      if (world.player) world.player.teleport([TARTARA[0] - 1.5, 0, TARTARA[2] + 2.4], Math.atan2(1.5, -2.4))
+      world.camOverride = twoShot(world, TARTARA, 3.6, 0)
       setState({ tartaraShot: true })
       await say([
         { who: 'Sister Tartara', text: 'Mind the water: it copies everything. You, me, the palace. Even your little light.' },
@@ -176,7 +177,7 @@ function LakeLevel({ world, onExit }) {
       </Suspense>
       <Causeway world={world} up={!!save.t5crystals} />
       <pointLight position={[0, 6, -90]} color="#bfe8ff" intensity={8} distance={40} />
-      <Tartara position={TARTARA} rotation={[0, Math.PI, 0]} />
+      <Tartara position={TARTARA} rotation={[0, 0, 0]} />
       {!shot && <Tag position={[TARTARA[0], 2.4, TARTARA[2]]} df={8}>Sister Tartara</Tag>}
       <Station world={world} pos={[TARTARA[0] - 2.4, 0, TARTARA[2] + 1.6]} label={save.t5crystals ? null : 'Sort the crystals'} enabled={!save.t5crystals} solved={!!save.t5crystals} onUse={sort} />
       <Signpost pos={[3, 0, 40]} rotY={Math.PI} text="↓ Chair Hills · Mirror Palace ↑" />

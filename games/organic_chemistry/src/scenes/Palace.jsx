@@ -138,16 +138,26 @@ function LockFace({ place, read, rank, want, solved }) {
 }
 
 /** a two-centre statue (threonine, tartaric acid): two centres side by side, each labelled with its R/S */
-function TwinStatue({ pos, cfg, name, meso }) {
-  // draw each centre with its groups arranged to match its configuration (R: one arrangement, S: its mirror)
-  const R = ['H', 'OH', 'CH₃', 'CO₂H']
-  const placeFor = (c) => (c === 'R' ? R : reflect(R))
+// each twin's two centres, with their real groups and CIP ranks (§5.5–5.6)
+const TWINS = {
+  thr: [
+    { groups: ['NH₂', 'CO₂H', 'CH(OH)CH₃', 'H'], rank: { 'NH₂': 1, 'CO₂H': 2, 'CH(OH)CH₃': 3, H: 4 } },
+    { groups: ['OH', 'CH(NH₂)CO₂H', 'CH₃', 'H'], rank: { OH: 1, 'CH(NH₂)CO₂H': 2, 'CH₃': 3, H: 4 } },
+  ],
+  tart: [
+    { groups: ['OH', 'CO₂H', 'CH(OH)CO₂H', 'H'], rank: { OH: 1, 'CO₂H': 2, 'CH(OH)CO₂H': 3, H: 4 } },
+    { groups: ['OH', 'CO₂H', 'CH(OH)CO₂H', 'H'], rank: { OH: 1, 'CO₂H': 2, 'CH(OH)CO₂H': 3, H: 4 } },
+  ],
+}
+function TwinStatue({ pos, cfg, name, meso, kind = 'thr' }) {
+  // build each centre from its real groups, arranged so that it truly is the configuration on its tag
+  const placeFor = (c, i) => { const t = TWINS[kind][i]; return configOf(t.groups, t.rank) === c ? t.groups : reflect(t.groups) }
   return (
     <group position={[pos[0], 0, pos[1]]}>
       <Part model="palace" name="p5_plinth" scale={[1.6, 1, 1]} />
       {[0, 1].map((i) => (
         <group key={i} position={[(i ? 0.75 : -0.75), 2.1, 0]}>
-          <Centre place={placeFor(cfg[i])} s={0.65} glow={i ? '#bfe8ff' : '#ffd760'} />
+          <Centre place={placeFor(cfg[i], i)} s={0.65} glow={i ? '#bfe8ff' : '#ffd760'} />
           <Tag position={[0, 1.15, 0]} df={10}>{`C${i + 2}: ${cfg[i]}`}</Tag>
         </group>
       ))}
@@ -255,6 +265,7 @@ function PalaceLevel({ world, onExit }) {
       const [x, z] = STATUE_POS[st.id]
       ia.push(world.addInteractable({ pos: [x, 0, z + 1.2], radius: 1.5, label: () => ((getState().save.t5statues || {})[st.id] ? null : 'Turn the glass plane through the statue'), onInteract: () => turnPlane(st) }))
       ia.push(world.addInteractable({ pos: [x + (x < 0 ? -1.6 : 1.6), 0, z + 1.4], radius: 1.1, label: () => ((getState().save.t5statues || {})[st.id] ? null : 'Pull the lever: no plane will ever work, it is chiral'), onInteract: () => declareChiral(st) }))
+      ia.push(world.addInteractable({ pos: [x + (x < 0 ? 1.2 : -1.2), 0, z + 2.8], radius: 1.0, label: () => ((getState().save.t5statues || {})[st.id] ? null : 'Ring the bell: this plane is a symmetry plane'), onInteract: () => declareAchiral(st) }))
     })
     // 5-3 locks and the 5-5 receptor: E reads the centre
     ;[...Object.keys(LOCK_DOORS), '5-5c'].forEach((id) => {
@@ -291,6 +302,7 @@ function PalaceLevel({ world, onExit }) {
     })
     ;[0, 1].forEach((i) => ids.push(world.addLantern({ needs: 'hasShield', pos: [THREONINE.pos[0] + (i ? 0.75 : -0.75), 0, THREONINE.pos[1]], radius: 3.4, label: () => (has('5-4b') ? null : `Reflect threonine's C${i + 2}`), onLantern: () => reflectTwin('t5thr', THREONINE.start, i) })))
     ;[0, 1].forEach((i) => ids.push(world.addLantern({ needs: 'hasShield', pos: [TARTARIC.pos[0] + (i ? 0.75 : -0.75), 0, TARTARIC.pos[1]], radius: 3.4, label: () => (has('5-4c') ? null : `Reflect tartaric acid's C${i + 2}`), onLantern: () => reflectTwin('t5tart', TARTARIC.start, i) })))
+    ;['5-4a', '5-4b', '5-4c'].forEach((door) => ids.push(world.addInteractable({ pos: [door === '5-4c' ? TARTARIC.pos[0] : THREONINE.pos[0], 0, DOORS4[door].z + 1.3], radius: 2.2, label: () => (has(door) || (door === '5-4b' && !has('5-4a')) ? null : `Present ${door === '5-4c' ? 'tartaric acid' : 'threonine'} at the door`), onInteract: () => present(door) })))
     return () => ids.forEach((id) => world.remove(id))
   }, [world])
 
@@ -299,14 +311,17 @@ function PalaceLevel({ world, onExit }) {
     const all = getState().save.t5planes || {}
     const k = ((all[st.id] ?? 3) + 1) % PLANES.length // planes start at 3, which holds for none of the four
     saveGame({ t5planes: { ...all, [st.id]: k } }); sfx('pickup')
-    if (planeHolds(st.place, k)) {
-      settle(st, 'achiral')
-      toast(`A symmetry plane! ${st.note}`, 'good', 5200)
-    }
+  }
+  const declareAchiral = (st) => {
+    if ((getState().save.t5statues || {})[st.id]) return
+    const k = (getState().save.t5planes || {})[st.id] ?? 3
+    if (!planeHolds(st.place, k)) { if (world.player) world.player.hurt(1, [world.player.pos.x, 0, world.player.pos.z - 1], true); toast('The glass shatters back together: that plane doesn’t cut the statue into two mirror-image halves. Look at what sits on each side of it.', 'warn', 5200); return }
+    settle(st, 'achiral')
+    toast(`A symmetry plane! ${st.note}`, 'good', 5200)
   }
   const declareChiral = (st) => {
     if ((getState().save.t5statues || {})[st.id]) return
-    if (!isChiralCentre(st.place)) { sfx('wrong'); toast('The mirror disagrees: two of its groups are the same, so some plane can swap them. Keep turning the glass.', 'warn', 4800); return }
+    if (!isChiralCentre(st.place)) { if (world.player) world.player.hurt(1, [world.player.pos.x, 0, world.player.pos.z - 1], true); toast('The lever snaps back. Two of its groups are the same, so some plane can swap them. Find it.', 'warn', 4800); return }
     settle(st, 'chiral')
     toast(`Chiral. ${st.note}`, 'good', 5200)
   }
@@ -360,16 +375,32 @@ function PalaceLevel({ world, onExit }) {
     const cur = [...(getState().save[key] || start)]
     cur[i] = flipRS(cur[i])
     saveGame({ [key]: cur }); sfx('shard')
-    if (key === 't5thr') {
-      if (!has('5-4a') && DOORS4['5-4a'].want(cur)) { markSolved('5-4a'); sfx('open'); toast('(2S,3S): every centre reflected, so it is the mirror image of (2R,3R). Enantiomers.', 'good', 5000) }
-      else if (has('5-4a') && !has('5-4b') && DOORS4['5-4b'].want(cur)) { markSolved('5-4b'); sfx('open'); toast('One centre the same, one opposite: a stereoisomer that is not a mirror image. Diastereomers (Table 5.2).', 'good', 5200) }
-    } else if (!has('5-4c') && DOORS4['5-4c'].want(cur)) {
+  }
+  const present = (door) => {
+    const key = door === '5-4c' ? 't5tart' : 't5thr'
+    const cur = getState().save[key] || (door === '5-4c' ? TARTARIC.start : THREONINE.start)
+    const tag = `(2${cur[0]},3${cur[1]})`
+    if (has(door)) return
+    if (door === '5-4b' && !has('5-4a')) { toast('The first door first.', 'info', 2000); return }
+    if (!DOORS4[door].want(cur)) {
+      if (world.player) world.player.hurt(1, [world.player.pos.x, 0, world.player.pos.z - 1], true)
+      const why = door === '5-4a' ? (cur[0] === cur[1] ? `${tag} is (2R,3R) itself, not its mirror image.` : `${tag} keeps one centre the same: that’s not the mirror image. A mirror image flips every centre.`)
+        : door === '5-4b' ? `${tag} is either (2R,3R) itself or its mirror image (2S,3S). A diastereomer changes some centres, not all.`
+        : (cur[0] === 'S' ? `${tag} is the enantiomer of (2R,3R): chiral, no plane between the centres.` : `${tag} has no plane between its centres: chiral.`)
+      toast(`The door won’t take ${tag}. ${why}`, 'warn', 5600); return
+    }
+    markSolved(door); sfx('open')
+    if (door === '5-4a') toast('(2S,3S): every centre reflected, so it is the mirror image of (2R,3R). Enantiomers.', 'good', 5000)
+    else if (door === '5-4b') toast('One centre the same, one opposite: a stereoisomer that is not a mirror image. Diastereomers (Table 5.2).', 'good', 5200)
+    else {
       markSolved('5-4c'); sfx('open')
       setTimeout(() => say([
         { who: 'Pi', text: '(2R,3S)… and look, the plane between the centres! It is its own mirror image.' },
         { who: 'Pi', text: 'Meso: chirality centres, but achiral. (2R,3S) and (2S,3R) are the same compound (Fig 5.12).' },
       ]), 500)
     }
+  }
+  const unusedPresent = () => {
   }
   const pour = (kind) => {
     if (has('5-5a')) return
@@ -511,6 +542,13 @@ function PalaceLevel({ world, onExit }) {
           <Tag position={[0, 1.9, 0]} df={8} far={10}>chiral lever</Tag>
         </group>
       ) })}
+      {STATUES.map((st) => { const [x, z] = STATUE_POS[st.id]; return (
+        <group key={'bl' + st.id} position={[x + (x < 0 ? 1.2 : -1.2), 0, z + 2.8]}>
+          <mesh position={[0, 0.8, 0]}><cylinderGeometry args={[0.06, 0.06, 1.6, 6]} /><meshStandardMaterial color="#8a8ea0" metalness={0.6} /></mesh>
+          <mesh position={[0, 1.5, 0]}><cylinderGeometry args={[0.08, 0.28, 0.34, 16, 1, true]} /><meshStandardMaterial color={settled[st.id] === 'achiral' ? '#9affb8' : '#e0c060'} metalness={0.8} roughness={0.3} side={2} /></mesh>
+          <Tag position={[0, 2.1, 0]} df={8} far={10}>symmetry bell</Tag>
+        </group>
+      ) })}
       <Gate world={world} pos={[0, 0, -40]} size={[2 * W, 7, 0.8]} open={!!solved['5-1']} color="#5a6a8a" glow="#bfe8ff" />
 
       {/* 5-2 The Polarized Window */}
@@ -532,12 +570,12 @@ function PalaceLevel({ world, onExit }) {
       ))}
 
       {/* 5-4 Halls of Many Centres */}
-      <TwinStatue pos={THREONINE.pos} cfg={thr} name="Threonine · C2 and C3" />
+      <TwinStatue pos={THREONINE.pos} cfg={thr} name="Threonine · C2 and C3" kind="thr" />
       <Gate world={world} pos={[0, 0, DOORS4['5-4a'].z]} size={[2 * W, 7, 0.8]} open={!!solved['5-4a']} color="#4a5a7a" glow="#bfe8ff" />
       <Tag position={[0, 7.6, DOORS4['5-4a'].z + 0.6]} df={12}>{DOORS4['5-4a'].label}</Tag>
       <Gate world={world} pos={[0, 0, DOORS4['5-4b'].z]} size={[2 * W, 7, 0.8]} open={!!solved['5-4b']} color="#4a5a7a" glow="#bfe8ff" />
       <Tag position={[0, 7.6, DOORS4['5-4b'].z + 0.6]} df={12}>{DOORS4['5-4b'].label}</Tag>
-      <TwinStatue pos={TARTARIC.pos} cfg={tart} name="Tartaric acid · C2 and C3" meso={!!solved['5-4c']} />
+      <TwinStatue pos={TARTARIC.pos} cfg={tart} name="Tartaric acid · C2 and C3" meso={!!solved['5-4c']} kind="tart" />
       <Gate world={world} pos={[0, 0, DOORS4['5-4c'].z]} size={[2 * W, 7, 0.8]} open={!!solved['5-4c']} color="#4a5a7a" glow="#bfe8ff" />
       <Tag position={[0, 7.6, DOORS4['5-4c'].z + 0.6]} df={12}>{DOORS4['5-4c'].label}</Tag>
       <EnantiomerShades world={world} spawns={[[5, -96], [-5, -110]]} mirrorX={0} zone={[-118, -92]} active={!!save.hasShield} />

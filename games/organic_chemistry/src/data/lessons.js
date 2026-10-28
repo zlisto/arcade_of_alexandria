@@ -587,4 +587,238 @@ export const LESSONS = {
     ],
     example: 'They give complementary products from the same alkene.',
   },
+  // ---------------- World 9: the Triple Spire (Chapter 9)
+  cairns: {
+    title: 'Naming alkynes',
+    section: '9.1', pages: '288–289',
+    points: [
+      'The suffix is -yne. Number the chain from the end nearer the triple bond and give the number of its first carbon.',
+      'A chain with a double and a triple bond is an enyne: number from the end nearer the first multiple bond.',
+      'If there’s a choice, the double bond gets the lower number.',
+    ],
+    example: 'HC≡CCH₂CH(CH₃)₂ is 4-methyl-1-pentyne.',
+  },
+  linearInfo: {
+    title: 'Making alkynes; the triple bond',
+    section: '9.2–9.3', pages: '289–291',
+    points: [
+      'A 1,2-dihalide treated with a strong base (KOH or NaNH₂) loses HX twice: an alkyne.',
+      'The alkyne carbons are sp hybridized: the C≡C and the bonds on either side lie in a straight line, 180°.',
+      'The triple bond is about 965 kJ/mol, the strongest carbon–carbon bond known.',
+    ],
+    example: 'One elimination stops at a vinylic halide; the second gives the triple bond.',
+  },
+  wellsInfo: {
+    title: 'Hydrating an alkyne',
+    section: '9.4', pages: '291–294',
+    points: [
+      'Water adds to an alkyne to give an enol (an OH on a C=C). Enols don’t last: keto–enol tautomerism turns them into the carbonyl.',
+      'With H₂SO₄ and HgSO₄, water adds Markovnikov: a terminal alkyne gives a methyl ketone.',
+      'Hydroboration–oxidation puts the OH on the end carbon: a terminal alkyne gives an aldehyde.',
+    ],
+    example: '1-Hexyne → 2-hexanone (HgSO₄) or hexanal (BH₃, then H₂O₂).',
+  },
+  reduceInfo: {
+    title: 'Reducing an alkyne',
+    section: '9.5', pages: '294–296',
+    points: [
+      'H₂ over palladium reduces an alkyne all the way to the alkane.',
+      'The Lindlar catalyst stops at the alkene, adding both H syn: a cis alkene.',
+      'Lithium in liquid ammonia gives the trans alkene instead.',
+    ],
+    example: '5-Decyne → trans-5-decene with Li in NH₃ (§9.5).',
+  },
+  pkaLadder: {
+    title: 'Alkyne acidity',
+    section: '9.7', pages: '297–299',
+    points: [
+      'A terminal alkyne’s C–H has pKa 25; ethylene’s is 44 and methane’s about 60 (Table 9.1).',
+      'A base removes the proton only if its conjugate acid is weaker (higher pKa) than the alkyne: NH₂⁻ (from NH₃, pKa 35) works.',
+      'The acetylide’s lone pair sits in an sp orbital, close to the nucleus: more s character, more stable anion.',
+    ],
+    example: 'HO⁻ won’t do: water (pKa 15.7) is a stronger acid than the alkyne.',
+  },
+  retroPlan: {
+    title: 'Planning a synthesis',
+    section: '9.8–9.9', pages: '299–304',
+    points: [
+      'Acetylide anions alkylate with primary alkyl bromides and iodides; secondary and tertiary halides give elimination instead.',
+      'Work backward: look at the product and ask what its immediate precursor was. Then ask again, back to the starting material.',
+    ],
+    example: 'cis-2-Hexene ← 2-hexyne (Lindlar) ← 1-pentyne anion + CH₃I (Worked Example 9.1).',
+  },
+  mimicCheck: {
+    title: 'Retrosynthesis',
+    section: '9.9', pages: '300–304',
+    points: [
+      'Don’t ask what a starting material might do. Ask what the product was made from, one step at a time.',
+    ],
+    example: '2-Bromopentane ← 1-pentene ← 1-pentyne ← acetylide + 1-bromopropane (Worked Example 9.2).',
+  },
+  // ---------------- World 10: the Halogen Marsh (Chapter 10)
+  markers: {
+    title: 'Naming alkyl halides',
+    section: '10.1', pages: '318–319',
+    points: [
+      'Halogens are named as substituents (fluoro, chloro, bromo, iodo), just like alkyl groups, on the longest chain.',
+      'Number from the end nearer the first substituent, halogen or alkyl. If it’s a tie, the one first in the alphabet takes the lower number.',
+    ],
+    example: 'CH₃CHClCH₂CH(CH₃)₂ is 2-chloro-4-methylpentane.',
+  },
+  bogInfo: {
+    title: 'The carbon–halogen bond',
+    section: '10.1', pages: '319–320',
+    points: [
+      'Down the group, halogens get bigger: C–X bonds get longer and weaker (Table 10.1).',
+      'CH₃F 139 pm, 460 kJ/mol; CH₃Cl 178 pm, 350; CH₃Br 193 pm, 294; CH₃I 214 pm, 239.',
+      'The C–X bond is polar: the carbon is δ+, electrophilic.',
+    ],
+    example: 'The weakest of them, C–I, is the easiest to break.',
+  },
+  hunt: {
+    title: 'Radical chlorination',
+    section: '10.2', pages: '320–322',
+    points: [
+      'Radical chlorination gives mixtures. Each kind of hydrogen reacts at its own rate: per H, tertiary 5, secondary 3.5, primary 1.',
+      'To predict a ratio: (number of that kind of H) × (its reactivity), for each product.',
+      'Tertiary C–H bonds are weakest (400 kJ/mol), then secondary (410), then primary (421): weaker bond, more stable radical.',
+    ],
+    example: 'Butane: 6 primary H × 1 : 4 secondary H × 3.5 = 6 : 14, about 30 : 70 (p. 321).',
+  },
+  gilman: {
+    title: 'Grignard and Gilman reagents',
+    section: '10.6–10.7', pages: '327–329',
+    points: [
+      'RX + Mg → RMgX, a Grignard reagent: the carbon is now nucleophilic and strongly basic. Water destroys it: RMgX + H₂O → RH.',
+      'Lithium diorganocopper (Gilman) reagents, R₂CuLi, couple with organochlorides, bromides and iodides (not fluorides), making a new C–C bond.',
+    ],
+    example: '(CH₃)₂CuLi + 1-iododecane → undecane, 90% (p. 328).',
+  },
+  oxLadder: {
+    title: 'Oxidation levels',
+    section: '10.8', pages: '330–332',
+    points: [
+      'An organic oxidation forms bonds from carbon to O, N or halogen, or breaks bonds to H. A reduction does the reverse.',
+      'Compare compounds with the same number of carbons: count C–O, C–N and C–X bonds, subtract C–H bonds. Higher is more oxidized (Worked Example 10.2).',
+    ],
+    example: 'CH₄ < CH₃Cl < H₂C=O < HCO₂H < CO₂ (Fig 10.7).',
+  },
+  hydraCheck: {
+    title: 'Which hydrogen goes',
+    section: '10.2–10.3', pages: '320–323',
+    points: [
+      'Radicals take the weakest C–H: allylic (about 370 kJ/mol) before tertiary (400), secondary (410) and primary (421).',
+    ],
+    example: 'NBS brominates cyclohexene at the allylic position: 3-bromocyclohexene.',
+  },
+  // ---------------- World 11: the Arena of Five (Chapter 11)
+  waldenCycle: {
+    title: 'Walden’s discovery',
+    section: '11.1', pages: '342–344',
+    points: [
+      'In 1896 Paul Walden interconverted (+)- and (−)-malic acid through a series of substitution reactions: some steps invert the chirality centre.',
+      'A step can only invert the centre if it breaks and makes a bond at the centre itself.',
+      'Making a tosylate breaks the O–H bond, not the C–O bond: no inversion. A tosylate is then as good a leaving group as a halide.',
+    ],
+    example: 'In the 1-phenyl-2-propanol cycle (Fig 11.3), step 2, acetate replacing tosylate, is the inversion.',
+  },
+  sn2Info: {
+    title: 'The SN2 reaction',
+    section: '11.2–11.3', pages: '344–354',
+    points: [
+      'One step: the nucleophile comes in from the side opposite the leaving group as the leaving group goes. The centre inverts, like an umbrella turning inside out.',
+      '(S)-2-Bromobutane + HO⁻ → (R)-2-butanol. Second-order kinetics: rate depends on both reactants.',
+      'Fastest with: methyl > primary > secondary (tertiary: none); a charged nucleophile; a good leaving group (Cl⁻, Br⁻, TsO⁻, weak bases); a polar aprotic solvent (DMF, DMSO).',
+    ],
+    example: 'Protic solvents like methanol cage the nucleophile and slow SN2.',
+  },
+  zaitsev: {
+    title: 'Eliminations',
+    section: '11.7–11.9', pages: '362–369',
+    points: [
+      'Zaitsev’s rule (1875): base-induced eliminations generally give the more substituted, more stable alkene.',
+      'E2 is one step: H and the leaving group must be anti-periplanar. In a cyclohexane both must be axial: trans-diaxial.',
+      'Neomenthyl chloride eliminates 200 times faster than menthyl chloride, which must first ring-flip to put its Cl axial.',
+    ],
+    example: 'Menthyl chloride’s only trans-diaxial H gives 2-menthene, the non-Zaitsev product.',
+  },
+  trial: {
+    title: 'Which mechanism?',
+    section: '11.10–11.12', pages: '369–374',
+    points: [
+      'Primary: SN2 with a good nucleophile; E2 with a strong, hindered base.',
+      'Secondary: SN2 with a weakly basic nucleophile in polar aprotic solvent; E2 with a strong base.',
+      'Tertiary: E2 with a base; SN1 and E1 together under neutral conditions (ethanol, water).',
+      'E1cB, through a carbanion, when the leaving group is two carbons from a carbonyl.',
+    ],
+    example: 'The substrate first, then what it meets.',
+  },
+  champCheck: {
+    title: 'Not luck',
+    section: '11.12', pages: '372–374',
+    points: ['Substrate, nucleophile or base, leaving group and solvent together decide between SN1, SN2, E1, E2 and E1cB.'],
+    example: 'A tertiary bromide with ethoxide eliminates (E2); in pure ethanol it gives SN1 and E1.',
+  },
+  // ---------------- World 12: the Observatory of Light (Chapter 12)
+  telescope: {
+    title: 'The electromagnetic spectrum',
+    section: '12.5', pages: '397–399',
+    points: [
+      'Radio waves, microwaves, infrared, visible, ultraviolet, X rays and gamma rays are all electromagnetic radiation, differing in wavelength and frequency.',
+      'ε = hν = hc/λ: higher frequency (shorter wavelength) means more energy.',
+      'A molecule absorbs some wavelengths and transmits others: its absorption spectrum.',
+    ],
+    example: 'Visible green light (5 × 10¹⁴ Hz) carries more energy than FM radio (1.015 × 10⁸ Hz) (Worked Example 12.3).',
+  },
+  massHall: {
+    title: 'Mass spectrometry',
+    section: '12.1–12.2', pages: '386–391',
+    points: [
+      'An electron beam knocks an electron out of a molecule: a cation radical, the molecular ion M⁺, whose mass is the molecular weight.',
+      'Many molecular ions break into fragments. The tallest peak is the base peak (100%).',
+      'Subtract a fragment from M⁺ to see what was lost: 15 is CH₃, 29 is C₂H₅, 43 is C₃H₇.',
+    ],
+    example: 'Hexane: M⁺ = 86, fragments at 71, 57 (the base peak), 43 and 29 (Fig 12.6).',
+  },
+  samples: {
+    title: 'Telling isomers apart',
+    section: '12.2', pages: '389–391',
+    points: ['Isomers share a molecular weight, but they fragment differently: the losses point to their groups.'],
+    example: 'Methylcyclohexane and ethylcyclopentane are both C₇H₁₄ (98).',
+  },
+  dome: {
+    title: 'Infrared spectroscopy',
+    section: '12.5–12.6', pages: '399–401',
+    points: [
+      'IR radiation makes bonds stretch and bend; UV moves electrons between orbitals.',
+      'The useful IR range is 4000 to 400 cm⁻¹ (wavenumber = 1/λ in cm), 48.0 to 4.80 kJ/mol.',
+      'Each kind of bond absorbs at its own characteristic frequency.',
+    ],
+    example: 'An IR spectrum is read as downward spikes: each is an absorption.',
+  },
+  bell: {
+    title: 'Reading IR bands',
+    section: '12.7–12.8', pages: '401–410',
+    points: [
+      'O–H 3400–3650, broad (hydrogen bonding); N–H 3300–3500, sharper; ≡C–H 3300; C≡C 2100–2260; C=C 1640–1680.',
+      'C=O 1670–1780, sharp and intense: ketone 1715, aldehyde 1730 (plus C–H at 2750 and 2850), ester 1735 (plus C–O at 1300–1000).',
+      'Carboxylic acids: C=O near 1710 and a very broad O–H from 2500 to 3100.',
+    ],
+    example: 'Acetone: 1715. 2-Propen-1-ol: O–H at 3500 and C=C at 1660 (§12.7).',
+  },
+  sorcerer: {
+    title: 'Putting the evidence together',
+    section: '12.2–12.8', pages: '388–410',
+    points: [
+      'M⁺ gives the molecular weight; isomers with the same weight are told apart by their other evidence.',
+      'IR bands say which functional groups are present.',
+    ],
+    example: 'Weight 58 with C=O at 1715 and no aldehyde C–H: a ketone, acetone.',
+  },
+  finalCheck: {
+    title: 'Structure determination',
+    section: '12.2, 12.7', pages: '388–410',
+    points: ['Mass spectrometry: molecular weight and fragments. Infrared: functional groups. Together they narrow the structure.'],
+    example: 'Two kinds of light on one molecule.',
+  },
 }

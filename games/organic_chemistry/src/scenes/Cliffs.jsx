@@ -9,6 +9,7 @@ import { Lindlar } from '../actors/SpireFolk'
 import { PiFollower } from './Village'
 import { getState, setState, saveGame, say, openPanel, useGame } from '../engine/store'
 import { playMusic, sfx } from '../audio/sfx'
+import { roadOpen } from '../data/release'
 
 // The Thunder Cliffs — World 9's route and prep. A storm over sea cliffs; three straight spires rise from the water,
 // joined by bridges of three glowing bars (assets/locations/world-9-triple-spire.png). Sage Lindlar opens the spire
@@ -70,7 +71,7 @@ function CliffsLevel({ world, onExit }) {
     playMusic('cliffs')
     const ids = [
       world.addSolid([-52, 0, -50], [-50, 8, 2]), world.addSolid([-52, 0, 10], [-50, 8, 50]),
-      world.addSolid([50, 0, -50], [52, 8, 50]), world.addSolid([-50, 0, 43], [50, 8, 46]),
+      world.addSolid([50, 0, -50], [52, 8, 4]), world.addSolid([50, 0, 12], [52, 8, 50]), world.addSolid([-50, 0, 43], [50, 8, 46]),
       world.addSolid([-50, 0, -52], [-3.2, 12, GATE_Z - 1]), world.addSolid([3.2, 0, -52], [50, 12, GATE_Z - 1]),
       world.addSolid([LINDLAR[0] - 0.4, 0, LINDLAR[2] - 0.4], [LINDLAR[0] + 0.4, 1.9, LINDLAR[2] + 0.4]),
     ]
@@ -81,14 +82,17 @@ function CliffsLevel({ world, onExit }) {
     world.spireBar = bar
     const la = world.addInteractable({ pos: LINDLAR, radius: 2.6, label: 'Speak with Sage Lindlar', onInteract: () => talk() })
     const near = world.addTrigger([-22, 0, -4], [2, 4, 14], () => { if (!getState().save.metLindlar) talk() })
-    ids.push(back, into, bar, la, near)
+    const rocks = world.addSolid([49, 0, 4], [52, 8, 12])
+    world.setEnabled(rocks, !roadOpen(10, getState().save.shards))
+    const toMarsh = world.addTrigger([49.8, 0, 4], [52, 4, 12], () => { if (roadOpen(10, getState().save.shards)) onExit('marsh', { scene: 'marsh', at: 'west' }) })
+    ids.push(back, into, bar, la, near, rocks, toMarsh)
     return () => ids.forEach((i) => world.remove(i))
   }, [world])
   useEffect(() => { if (world.spireBar) world.setEnabled(world.spireBar, !save.t9cairns) }, [save.t9cairns])
 
   useEffect(() => {
     const s = getState().save
-    setState({ objective: (s.shards || 0) >= 9 ? 'Bond Shard 9 recovered: the Halogen Marsh awaits (Chapter 10, coming soon)' : !s.metLindlar ? 'Follow the cliff path' : !s.t9cairns ? 'Name Lindlar’s cairns' : 'Cross to the Triple Spire' })
+    setState({ objective: (s.shards || 0) >= 9 ? 'Take the east road down to the Halogen Marsh' : !s.metLindlar ? 'Follow the cliff path' : !s.t9cairns ? 'Name Lindlar’s cairns' : 'Cross to the Triple Spire' })
     if (!s.cliffsSeen) {
       saveGame({ cliffsSeen: true })
       setTimeout(() => say([
@@ -101,12 +105,13 @@ function CliffsLevel({ world, onExit }) {
   useEffect(() => {
     world.map = {
       floor: '#4a6a4a', wall: '#2a2e36', pit: '#1a2a34',
-      labels: [{ pos: [-44, 6], text: '← Reagent Orchards', align: 'left' }, { pos: [0, -40], text: 'The Triple Spire', align: 'center' }],
+      labels: [{ pos: [-44, 6], text: '← Reagent Orchards', align: 'left' }, { pos: [40, 8], text: 'Halogen Marsh →', align: 'left' }, { pos: [0, -40], text: 'The Triple Spire', align: 'center' }],
       goal: () => {
         const s = getState().save
         if (!s.metLindlar) return { pos: [LINDLAR[0], LINDLAR[2]], label: 'Speak with Sage Lindlar' }
         if (!s.t9cairns) return { pos: [CAIRNS[0], CAIRNS[2]], label: 'Name the cairns' }
         if ((s.shards || 0) < 9) return { pos: [0, GATE_Z], label: 'Cross to the Triple Spire' }
+        if ((s.shards || 0) < 11) return { pos: [49, 8], label: 'Take the east road to the Halogen Marsh' }
         return { pos: [-48, 6], label: 'Back to the Orchards' }
       },
     }
@@ -174,6 +179,8 @@ function CliffsLevel({ world, onExit }) {
       <Station world={world} pos={CAIRNS} label={save.t9cairns ? null : 'Name the cairns'} enabled={!save.t9cairns} solved={!!save.t9cairns} onUse={useCairns} />
       {[0, 1, 2].map((k) => <mesh key={k} position={[CAIRNS[0] + 1.8 + k * 1.1, 0.7, CAIRNS[2] - 1.2]} castShadow><cylinderGeometry args={[0.3, 0.5, 1.4, 6]} /><meshStandardMaterial color="#7a7e86" roughness={0.9} flatShading /></mesh>)}
       <Signpost pos={[-45, 0, 3]} rotY={Math.PI / 2} text="← Orchards · Spire ↑" />
+      <Signpost pos={[45, 0, 3]} rotY={-Math.PI / 2} text="Halogen Marsh →" />
+      {!roadOpen(10, save.shards) && [...Array(7)].map((_, i) => <mesh key={'rk' + i} position={[50.6, 0.8 + (i % 3) * 0.9, 5 + i * 1.1]} castShadow><dodecahedronGeometry args={[1.0, 0]} /><meshStandardMaterial color="#6a6e76" roughness={0.9} flatShading /></mesh>)}
       <Motes count={240} area={[90, 10, 90]} center={[0, 3, 0]} color="#c8e0ff" size={0.04} />
       <WolfPack world={world} spawns={[[18, 10], [22, 14], [16, 16]]} tutorial={false} />
       <PiFollower world={world} />
@@ -183,9 +190,9 @@ function CliffsLevel({ world, onExit }) {
 
 export default function Cliffs({ onExit }) {
   const cp = getState().save.checkpoint || {}
-  const fromSpire = cp.at === 'gate'
+  const fromSpire = cp.at === 'gate', fromMarsh = cp.at === 'east'
   return (
-    <GameScene start={fromSpire ? [0, 0, -38] : [-46, 0, 6]} startFacing={fromSpire ? 0 : Math.PI / 2} background="#3a4258" camDist={6.2}>
+    <GameScene start={fromMarsh ? [46, 0, 8] : fromSpire ? [0, 0, -38] : [-46, 0, 6]} startFacing={fromMarsh ? -Math.PI / 2 : fromSpire ? 0 : Math.PI / 2} background="#3a4258" camDist={6.2}>
       {(world) => <CliffsLevel world={world} onExit={onExit} />}
     </GameScene>
   )

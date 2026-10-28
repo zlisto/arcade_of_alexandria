@@ -399,3 +399,20 @@ button { font: inherit; }
 
 /* World 7 panels */
 .skel-svg { width: 100%; max-width: 320px; height: auto; background: #1a1428; border-radius: 10px; display: block; margin: 8px auto; }
+
+/* World 9 panels */
+.formula-big { font-size: 1.5rem; font-weight: 700; text-align: center; margin: 10px 0; color: var(--gold); letter-spacing: .03em; }
+.pka-ladder { display: flex; flex-direction: column; gap: 3px; margin: 8px 0; }
+.pka-rung { background: #1d1a2a; border-left: 4px solid #3a4a6a; padding: 3px 8px; font-size: .9rem; }
+.pka-rung b { color: var(--cyan); margin-right: 8px; display: inline-block; min-width: 36px; }
+.pka-rung.me { border-left-color: var(--gold); background: #2a2418; }
+.retro-chain { display: flex; flex-direction: column; align-items: center; gap: 2px; margin: 8px 0; }
+.retro-node { background: #e8d8b0; color: #2a1e10; border-radius: 6px; padding: 3px 10px; font-weight: 700; }
+.retro-step { color: #9af0ff; font-size: .8rem; }
+
+/* World 10 panels */
+.hunt-grid { display: flex; flex-direction: column; gap: 6px; margin: 8px 0; }
+.hunt-grid input { background: #1d1a2a; color: #e8e4f4; border: 1px solid #3a3450; border-radius: 4px; padding: 2px 6px; }
+
+/* World 12 panels */
+.ir-svg { width: 100%; max-width: 420px; height: auto; background: #10142a; border-radius: 10px; display: block; margin: 8px auto; }

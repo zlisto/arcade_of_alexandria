@@ -57,7 +57,7 @@ for i in range(70):
 # ================================================================ hills and snowy mountains round the lake
 for i in range(16):
     a = (i / 16) * 2 * PI
-    r = 150 + 20 * hash3(i, 7, 7)
+    r = 150 + 20 * hash3(i, 7, 7) + (70 if math.cos(a) > 0.3 else 0)  # the southern ones stand well back, behind the shore
     h = 40 + 30 * hash3(i, 8, 8)
     m = cyl(1.0, 0.0, 1.0, 7)
     add('lk_hills', m, 'far', TRS((math.sin(a) * r, h / 2 - 2, PZ + math.cos(a) * r), (0, a, 0), scl=(40, h, 40)), smooth=False)

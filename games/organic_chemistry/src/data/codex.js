@@ -338,6 +338,106 @@ export const CODEX = [
     unlocked: (s) => s.solved['8-5p'] && s.solved['8-5race'],
     text: 'Chain-growth polymerization: a radical initiator (from benzoyl peroxide) adds to a monomer, the chain grows one monomer at a time, and two chains combine to end it. Achiral reactants making a new chirality centre give a racemate.',
   },
+  // ---------------- World 9: the Triple Spire (Chapter 9)
+  {
+    title: 'Alkynes: naming and making',
+    section: '9.1–9.3', pages: '288–291',
+    unlocked: (s) => s.solved['9-1'],
+    text: 'Alkynes take -yne, numbered from the end nearer the triple bond; enynes give the double bond the lower number on a tie. Two eliminations of HX from a 1,2-dihalide give an alkyne. The sp carbons make it linear; the triple bond is the strongest C–C bond, about 965 kJ/mol.',
+  },
+  {
+    title: 'Hydration and reduction',
+    section: '9.4–9.5', pages: '291–296',
+    unlocked: (s) => s.solved['9-3a'] && s.solved['9-3b'],
+    text: 'HgSO₄/H₂SO₄ hydration gives a ketone (Markovnikov); hydroboration gives an aldehyde from a terminal alkyne, both through an enol. H₂/Pd reduces to the alkane, the Lindlar catalyst to the cis alkene, Li/NH₃ to the trans alkene.',
+  },
+  {
+    title: 'Acetylides and alkylation',
+    section: '9.7–9.8', pages: '297–300',
+    unlocked: (s) => s.solved['9-4'],
+    text: 'Terminal alkynes (pKa 25) are deprotonated by NaNH₂. The acetylide anion attacks primary alkyl halides to make a longer alkyne; secondary and tertiary halides undergo elimination instead.',
+  },
+  {
+    title: 'An introduction to synthesis',
+    section: '9.9', pages: '300–304',
+    unlocked: (s) => s.solved['9-5'],
+    text: 'Work retrosynthetically: from the target, find an immediate precursor, then its precursor, back to the starting material. Example: cis-2-hexene from 1-pentyne by NaNH₂, CH₃I, then H₂ over the Lindlar catalyst.',
+  },
+  // ---------------- World 10: the Halogen Marsh (Chapter 10)
+  {
+    title: 'Alkyl halides',
+    section: '10.1', pages: '318–320',
+    unlocked: (s) => s.solved['10-1'],
+    text: 'Halogens are named as substituents. Down the group, C–X bonds lengthen and weaken: C–F 460, C–Cl 350, C–Br 294, C–I 239 kJ/mol (Table 10.1). The carbon is δ+.',
+  },
+  {
+    title: 'Radical halogenation',
+    section: '10.2', pages: '320–322',
+    unlocked: (s) => s.solved['10-2a'] && s.solved['10-2b'],
+    text: 'Chlorination gives mixtures whose ratios follow (number of H) × (reactivity per H): tertiary 5, secondary 3.5, primary 1. Butane gives 30 : 70; 2-methylpropane 65 : 35. Weaker C–H, more stable radical.',
+  },
+  {
+    title: 'Allylic bromination',
+    section: '10.3–10.4', pages: '322–325',
+    unlocked: (s) => s.solved['10-3b'],
+    text: 'NBS with light brominates the allylic position (allylic C–H about 370 kJ/mol). The allyl radical’s unpaired electron is shared equally by both end carbons, so Br can bond at either end: 1-octene gives 3-bromo-1-octene and 1-bromo-2-octene.',
+  },
+  {
+    title: 'Alkyl halides from alcohols',
+    section: '10.5', pages: '326–327',
+    unlocked: (s) => s.solved['10-4a'] && s.solved['10-4b'] && s.solved['10-4c'],
+    text: 'HX converts tertiary alcohols quickly (1-methylcyclohexanol + HCl). Primary and secondary alcohols are better converted with SOCl₂ or PBr₃, under milder, less acidic conditions with fewer rearrangements.',
+  },
+  {
+    title: 'Organometallics and oxidation levels',
+    section: '10.6–10.8', pages: '327–332',
+    unlocked: (s) => s.solved['10-5gilman'] && s.solved['10-5ox'],
+    text: 'Grignard reagents (RMgX) have a nucleophilic, strongly basic carbon; water protonates them. Gilman reagents (R₂CuLi) couple with organohalides to form C–C bonds. Oxidation level: count C–O, C–N, C–X bonds minus C–H bonds.',
+  },
+  // ---------------- World 11: the Arena of Five (Chapter 11)
+  {
+    title: 'The SN2 reaction',
+    section: '11.1–11.3', pages: '342–354',
+    unlocked: (s) => s.solved['11-2'],
+    text: 'One step, backside attack, inversion of configuration (Walden inversion). Fastest at methyl and primary carbons, with charged nucleophiles, good leaving groups (weak bases like Br⁻ and TsO⁻) and polar aprotic solvents.',
+  },
+  {
+    title: 'The SN1 reaction',
+    section: '11.4–11.5', pages: '354–361',
+    unlocked: (s) => s.solved['11-3'],
+    text: 'Two steps: the leaving group departs first to give a planar carbocation, which the nucleophile attacks from either face. First-order kinetics; tertiary, allylic and benzylic substrates; polar protic solvents; mostly racemic products.',
+  },
+  {
+    title: 'Eliminations: Zaitsev, E2, E1, E1cB',
+    section: '11.7–11.10', pages: '362–371',
+    unlocked: (s) => s.solved['11-4e'] && s.solved['11-4z'],
+    text: 'The more substituted alkene usually wins (Zaitsev). E2 needs H and the leaving group anti-periplanar, trans-diaxial in a ring. E1 goes through a carbocation; E1cB loses the proton first, next to a carbonyl.',
+  },
+  {
+    title: 'A summary of reactivity',
+    section: '11.12', pages: '372–374',
+    unlocked: (s) => s.solved['11-5'],
+    text: 'Primary: SN2 (good nucleophile) or E2 (hindered base). Secondary: SN2 (weakly basic nucleophile, polar aprotic) or E2 (strong base). Tertiary: E2 (base), or SN1 + E1 (neutral). E1cB two carbons from a carbonyl.',
+  },
+  // ---------------- World 12: the Observatory of Light (Chapter 12)
+  {
+    title: 'Mass spectrometry',
+    section: '12.1–12.3', pages: '386–395',
+    unlocked: (s) => s.solved['12-2'],
+    text: 'Electron impact makes M⁺, the molecular ion; fragments show what broke off (hexane: 86 → 71, 57, 43, 29; base peak 57). Chlorine gives M and M + 2 at 3 : 1; bromine 1 : 1. An odd molecular weight means an odd number of nitrogens.',
+  },
+  {
+    title: 'The electromagnetic spectrum',
+    section: '12.5', pages: '397–399',
+    unlocked: (s) => s.solved['12-3'],
+    text: 'ε = hν = hc/λ. From radio waves to gamma rays, energy rises with frequency. Infrared (4000–400 cm⁻¹, 48.0–4.80 kJ/mol) makes bonds vibrate.',
+  },
+  {
+    title: 'Infrared spectroscopy',
+    section: '12.6–12.8', pages: '399–410',
+    unlocked: (s) => s.solved['12-4'],
+    text: 'Characteristic bands (Table 12.1): O–H 3400–3650 broad; N–H 3300–3500; ≡C–H 3300; C≡C 2100–2260; C=C 1640–1680; C=O 1670–1780 (ketone 1715, aldehyde 1730 with 2750/2850, ester 1735).',
+  },
 ]
 
 export const BOOK = { title: 'Organic Chemistry, 10th edition', author: 'John McMurry', publisher: 'OpenStax', license: 'CC BY-NC-SA 4.0' }

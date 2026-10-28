@@ -9,6 +9,10 @@ import { GOALS5, ROOMS5 } from './dungeon5'
 import { GOALS6, ROOMS6 } from './dungeon6'
 import { GOALS7, ROOMS7 } from './dungeon7'
 import { GOALS8, ROOMS8 } from './dungeon8'
+import { GOALS9, ROOMS9 } from './dungeon9'
+import { GOALS10, ROOMS10 } from './dungeon10'
+import { GOALS11, ROOMS11 } from './dungeon11'
+import { GOALS12, ROOMS12 } from './dungeon12'
 
 const VILLAGE_DONE = { introSeen: true, villageDone: true, well: true, wolvesCleared: true, piMet: true }
 const solvedBefore = (id) => {
@@ -170,6 +174,87 @@ const gla = (room, upTo, extra = {}) => {
   }
 }
 
+// World 9 starts from a finished World 8
+const W8_DONE = () => ({ ...gla('boss', null).save, shards: 8 })
+const spi = (room, upTo, extra = {}) => {
+  const base = W8_DONE()
+  const i = upTo ? GOALS9.findIndex((g) => g.id === upTo) : GOALS9.length
+  const done = Object.fromEntries(GOALS9.slice(0, i).map((g) => [g.id, true]))
+  const r = ROOMS9.findIndex((x) => x.id === room)
+  return {
+    screen: 'spire',
+    save: {
+      ...base, cliffsSeen: true, metLindlar: true, t9cairns: true,
+      solved: { ...base.solved, ...done, 't9-map': true, 't9-decree': true },
+      hasRetro: !!done['t9-retro'], t9key: !!done['t9-key'] && !done['t9-door'], t9bossKey: !!done['t9-bosskey'],
+      t9segs: done['9-1'] ? [2, 2, 2] : [0, 0, 0], t9steps: done['9-4'] ? ['mei', 'prbr'] : [], t9summit: done['9-5'] ? ['nanh2', 'mei', 'lindlar'] : [],
+      t9seen: Object.fromEntries(ROOMS9.slice(0, r + 1).map((x) => [x.id, true])),
+      checkpoint: { scene: 'spire', room }, ...extra,
+    },
+  }
+}
+
+// World 10 starts from a finished World 9
+const W9_DONE = () => ({ ...spi('boss', null).save, shards: 9 })
+const sun = (room, upTo, extra = {}) => {
+  const base = W9_DONE()
+  const i = upTo ? GOALS10.findIndex((g) => g.id === upTo) : GOALS10.length
+  const done = Object.fromEntries(GOALS10.slice(0, i).map((g) => [g.id, true]))
+  const r = ROOMS10.findIndex((x) => x.id === room)
+  return {
+    screen: 'sunken',
+    save: {
+      ...base, marshSeen: true, metMagnus: true, t10markers: true,
+      solved: { ...base.solved, ...done, 't10-map': true, 't10-decree': true },
+      hasRing: !!done['t10-ring'], t10key: !!done['t10-key'] && !done['t10-door'], t10bossKey: !!done['t10-bosskey'],
+      t10laid: done['10-1'] ? ['F', 'Cl', 'Br', 'I'] : [], t10ends: done['10-3b'] ? { left: true, right: true } : {},
+      t10seen: Object.fromEntries(ROOMS10.slice(0, r + 1).map((x) => [x.id, true])),
+      checkpoint: { scene: 'sunken', room }, ...extra,
+    },
+  }
+}
+
+// World 11 starts from a finished World 10
+const W10_DONE = () => ({ ...sun('boss', null).save, shards: 10 })
+const col = (room, upTo, extra = {}) => {
+  const base = W10_DONE()
+  const i = upTo ? GOALS11.findIndex((g) => g.id === upTo) : GOALS11.length
+  const done = Object.fromEntries(GOALS11.slice(0, i).map((g) => [g.id, true]))
+  const r = ROOMS11.findIndex((x) => x.id === room)
+  if (done['t11-umb']) done['t11-ghouls'] = true
+  return {
+    screen: 'coliseum',
+    save: {
+      ...base, wastesSeen: true, metWalden: true, t11cycle: true,
+      solved: { ...base.solved, ...done, 't11-map': true, 't11-decree': true },
+      hasUmbrella: !!done['t11-umb'], t11key: !!done['t11-key'] && !done['t11-door'], t11bossKey: !!done['t11-bosskey'],
+      t11dials: done['11-2'] ? { sub: 'me', nu: 'ho', lg: 'br', sol: 'dmf' } : {}, t11pit: done['11-3'] ? { ion: true, top: true, bottom: true } : {}, t11flip: !!done['11-4e'],
+      t11seen: Object.fromEntries(ROOMS11.slice(0, r + 1).map((x) => [x.id, true])),
+      checkpoint: { scene: 'coliseum', room }, ...extra,
+    },
+  }
+}
+
+// World 12 starts from a finished World 11
+const W11_DONE = () => ({ ...col('boss', null).save, shards: 11 })
+const obs = (room, upTo, extra = {}) => {
+  const base = W11_DONE()
+  const i = upTo ? GOALS12.findIndex((g) => g.id === upTo) : GOALS12.length
+  const done = Object.fromEntries(GOALS12.slice(0, i).map((g) => [g.id, true]))
+  const r = ROOMS12.findIndex((x) => x.id === room)
+  return {
+    screen: 'observatory',
+    save: {
+      ...base, summitSeen: true, metSpectra: true, t12scope: true,
+      solved: { ...base.solved, ...done, 't12-map': true, 't12-decree': true },
+      hasLens: !!done['t12-lens'], t12key: !!done['t12-key'] && !done['t12-door'], t12bossKey: !!done['t12-bosskey'],
+      t12placed: done['12-2'] ? { cl: 'chlorine', br: 'bromine', n: 'nitrogen' } : {}, t12bells: done['12-4'] ? { b1: true, b2: true, b3: true, b4: true, b5: true } : {},
+      t12seen: Object.fromEntries(ROOMS12.slice(0, r + 1).map((x) => [x.id, true])),
+      checkpoint: { scene: 'observatory', room }, ...extra,
+    },
+  }
+}
+
 export const LEVELS = [
   { group: 'Intro', items: [{ label: 'Opening cutscene', screen: 'intro', save: {} }] },
   {
@@ -315,6 +400,70 @@ export const LEVELS = [
     ],
   },
   {
+    group: 'World 9 · The Triple Spire',
+    items: [
+      { label: 'Orchards · the east road (shard 8 in hand)', screen: 'orchard', save: { ...W8_DONE(), checkpoint: { scene: 'orchard', at: 'gate' } } },
+      { label: 'Thunder Cliffs · meet Sage Lindlar', screen: 'cliffs', save: { ...W8_DONE(), checkpoint: { scene: 'cliffs', at: 'west' } } },
+      { label: 'Cliffs · the cairns · §9.1', screen: 'cliffs', save: { ...W8_DONE(), cliffsSeen: true, metLindlar: true, checkpoint: { scene: 'cliffs', at: 'west' } } },
+      { label: 'Spire entrance · map chest', ...spi('entrance', '9-1') },
+      { label: '9-1 The Linear Halls · §9.2–9.3', ...spi('9-1', '9-1') },
+      { label: '9-2 The Shifting Wells · §9.4', ...spi('9-2', 't9-compass') },
+      { label: '9-3 Three Reductions · §9.5', ...spi('9-3', '9-3a') },
+      { label: '9-4 The Acetylide Stair · §9.7–9.8', ...spi('9-4', '9-4ladder') },
+      { label: '9-5 The Planner’s Summit · §9.9', ...spi('9-5', '9-5map') },
+      { label: 'Boss · Malradix’s Mimic', ...spi('boss', 'boss9') },
+      { label: 'Bond Shard 9 (boss beaten)', ...spi('boss', null) },
+    ],
+  },
+  {
+    group: 'World 10 · The Halogen Marsh',
+    items: [
+      { label: 'Cliffs · the east road (shard 9 in hand)', screen: 'cliffs', save: { ...W9_DONE(), checkpoint: { scene: 'cliffs', at: 'gate' } } },
+      { label: 'Halogen Marsh · meet Old Magnus', screen: 'marsh', save: { ...W9_DONE(), checkpoint: { scene: 'marsh', at: 'west' } } },
+      { label: 'Marsh · the markers · §10.1', screen: 'marsh', save: { ...W9_DONE(), marshSeen: true, metMagnus: true, checkpoint: { scene: 'marsh', at: 'west' } } },
+      { label: 'Forge entrance · map chest', ...sun('entrance', '10-1') },
+      { label: '10-1 The Naming Bog · §10.1', ...sun('10-1', '10-1') },
+      { label: '10-2 The Hunt · §10.2', ...sun('10-2', 't10-compass') },
+      { label: '10-3 The Allyl Crossing · §10.3–10.4', ...sun('10-3', '10-3a') },
+      { label: '10-4 The Alcohol Spring · §10.5', ...sun('10-4', '10-4a') },
+      { label: '10-5 The Metal Forge · §10.6–10.8', ...sun('10-5', '10-5g') },
+      { label: 'Boss · The Allylic Hydra', ...sun('boss', 'boss10') },
+      { label: 'Bond Shard 10 (boss beaten)', ...sun('boss', null) },
+    ],
+  },
+  {
+    group: 'World 11 · The Arena of Five',
+    items: [
+      { label: 'Marsh · the east road (shard 10 in hand)', screen: 'marsh', save: { ...W10_DONE(), checkpoint: { scene: 'marsh', at: 'gate' } } },
+      { label: 'Volcanic Wastes · meet Sage Walden', screen: 'wastes', save: { ...W10_DONE(), checkpoint: { scene: 'wastes', at: 'west' } } },
+      { label: 'Wastes · Walden’s cycle · §11.1', screen: 'wastes', save: { ...W10_DONE(), wastesSeen: true, metWalden: true, checkpoint: { scene: 'wastes', at: 'west' } } },
+      { label: 'Under-halls entrance · map chest', ...col('entrance', 't11-umb') },
+      { label: '11-1 The Walden Gate · the ghouls · §11.1–11.2', ...col('11-1', 't11-umb') },
+      { label: '11-1 The Walden Gate · the centres', ...col('11-1', '11-1a') },
+      { label: '11-2 Four Dials · §11.3', ...col('11-2', '11-2') },
+      { label: '11-3 The Cation Pit · §11.4–11.5', ...col('11-3', '11-3') },
+      { label: '11-4 The Elimination Ring · §11.7–11.9', ...col('11-4', '11-4e') },
+      { label: '11-5 The Champion’s Trial · §11.10–11.12', ...col('11-5', '11-5') },
+      { label: 'Boss · The Five-Stanced Champion', ...col('boss', 'boss11') },
+      { label: 'Bond Shard 11 (boss beaten)', ...col('boss', null) },
+    ],
+  },
+  {
+    group: 'World 12 · The Observatory of Light',
+    items: [
+      { label: 'Wastes · the east road (shard 11 in hand)', screen: 'wastes', save: { ...W11_DONE(), checkpoint: { scene: 'wastes', at: 'gate' } } },
+      { label: 'Summit of Light · meet Astronomer Spectra', screen: 'summit', save: { ...W11_DONE(), checkpoint: { scene: 'summit', at: 'west' } } },
+      { label: 'Summit · the telescope · §12.5', screen: 'summit', save: { ...W11_DONE(), summitSeen: true, metSpectra: true, checkpoint: { scene: 'summit', at: 'west' } } },
+      { label: 'Observatory entrance · map chest', ...obs('entrance', '12-1a') },
+      { label: '12-1 The Weighing Hall · §12.1–12.2', ...obs('12-1', '12-1a') },
+      { label: '12-2 The Isotope Gallery · §12.3', ...obs('12-2', '12-2') },
+      { label: '12-3 The Spectrum Dome · §12.5', ...obs('12-3', 't12-compass') },
+      { label: '12-4 The Ringing Bonds · §12.6–12.8', ...obs('12-4', '12-4') },
+      { label: 'Boss · The Disguised Sorcerer', ...obs('boss', 'boss12') },
+      { label: 'Bond Shard 12 (boss beaten)', ...obs('boss', null) },
+    ],
+  },
+  {
     group: 'Shard warps (arrive outside, world card)',
     items: [
       { label: 'World 1 cleared · Cavern Mouth', screen: 'village', warpIn: { card: 1 }, save: { ...VILLAGE_DONE, solved: solvedBefore(null), hasCrystal: true, bossDone: true, shards: 1, checkpoint: { scene: 'village', at: 'cave' } } },
@@ -325,6 +474,10 @@ export const LEVELS = [
       { label: 'World 6 cleared · the Pass Caves mouth', screen: 'peaks', warpIn: { card: 6 }, save: { ...cav('boss', null).save, shards: 6, checkpoint: { scene: 'peaks', at: 'gate' } } },
       { label: 'World 7 cleared · the Tower door', screen: 'plains', warpIn: { card: 7 }, save: { ...tow('boss', null).save, shards: 7, checkpoint: { scene: 'plains', at: 'gate' } } },
       { label: 'World 8 cleared · the Glasshouse door', screen: 'orchard', warpIn: { card: 8 }, save: { ...gla('boss', null).save, shards: 8, checkpoint: { scene: 'orchard', at: 'gate' } } },
+      { label: 'World 9 cleared · the spire bridge', screen: 'cliffs', warpIn: { card: 9 }, save: { ...spi('boss', null).save, shards: 9, checkpoint: { scene: 'cliffs', at: 'gate' } } },
+      { label: 'World 10 cleared · the forge grate', screen: 'marsh', warpIn: { card: 10 }, save: { ...sun('boss', null).save, shards: 10, checkpoint: { scene: 'marsh', at: 'gate' } } },
+      { label: 'World 11 cleared · the Coliseum gate', screen: 'wastes', warpIn: { card: 11 }, save: { ...col('boss', null).save, shards: 11, checkpoint: { scene: 'wastes', at: 'gate' } } },
+      { label: 'World 12 cleared · the Observatory door', screen: 'summit', warpIn: { card: 12 }, save: { ...obs('boss', null).save, shards: 12, checkpoint: { scene: 'summit', at: 'gate' } } },
     ],
   },
 ]

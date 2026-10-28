@@ -62,7 +62,7 @@ export default function EnantiomerShades({ world, spawns, mirrorX = 0, zone, act
         },
       }))
       ids.push(world.addLantern({
-        needs: 'hasShield', pos: () => [m.pos.x, 0, m.pos.z], radius: 7, priority: 0.5,
+        needs: 'hasShield', omni: true, pos: () => [m.pos.x, 0, m.pos.z], radius: 7, priority: 0.5,
         label: () => (m.state === 'dead' || m.state === 'gone' || m.broken > 0 ? null : 'Show it the Mirror Shield'),
         onLantern: () => {
           if (m.broken > 0 || m.state === 'dead') return
@@ -107,7 +107,7 @@ export default function EnantiomerShades({ world, spawns, mirrorX = 0, zone, act
         g.rotation.z = 0
         // it copies Kai's swing; if he is in reach, the mirrored blow lands on him
         const swinging = p.mode === 'attack' || p.mode === 'spin'
-        if (swinging && !m.swinging && Math.hypot(p.pos.x - m.pos.x, p.pos.z - m.pos.z) < 1.9) p.hurt(1, [m.pos.x, 0, m.pos.z])
+        if (swinging && !m.swinging && Math.hypot(p.pos.x - m.pos.x, p.pos.z - m.pos.z) < 2.6) p.hurt(1, [m.pos.x, 0, m.pos.z])
         m.swinging = swinging
       }
       g.position.set(m.pos.x + (m.hitT > 0 ? Math.sin(m.hitT * 60) * 0.05 : 0), 0, m.pos.z)

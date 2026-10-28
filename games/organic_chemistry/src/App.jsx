@@ -21,16 +21,25 @@ import Plains from './scenes/Plains'
 import Tower from './scenes/Tower'
 import Orchard from './scenes/Orchard'
 import Glasshouse from './scenes/Glasshouse'
+import Cliffs from './scenes/Cliffs'
+import Spire from './scenes/Spire'
+import Marsh from './scenes/Marsh'
+import Sunken from './scenes/Sunken'
+import Wastes from './scenes/Wastes'
+import Coliseum from './scenes/Coliseum'
+import Summit from './scenes/Summit'
+import Observatory from './scenes/Observatory'
 import HUD, { Fade } from './ui/HUD'
 import ItemMenu from './ui/ItemMenu'
 import Dialogue from './ui/Dialogue'
 import Panels from './ui/Panels'
 import LevelSelect from './ui/LevelSelect'
+import { LEVELS } from './data/levels'
 import { MiniMap, FullMap } from './ui/MapView'
 import { playMusic, stopMusic, sfx } from './audio/sfx'
 
 // screens with Kai walking around in them
-const GAME = ['village', 'caverns', 'field', 'coast', 'temple', 'forest', 'labyrinth', 'hills', 'fortress', 'lake', 'palace', 'peaks', 'caves', 'plains', 'tower', 'orchard', 'glasshouse']
+const GAME = ['village', 'caverns', 'field', 'coast', 'temple', 'forest', 'labyrinth', 'hills', 'fortress', 'lake', 'palace', 'peaks', 'caves', 'plains', 'tower', 'orchard', 'glasshouse', 'cliffs', 'spire', 'marsh', 'sunken', 'wastes', 'coliseum', 'summit', 'observatory']
 const inGameScreen = (sc) => GAME.includes(sc)
 
 // If a 3D scene throws, show a way back instead of a black screen.
@@ -162,6 +171,8 @@ export default function App() {
   const onNew = () => { resetSave(); sfx('lock'); go('intro') }
   // level select: load that point's save, then open its scene
   const onLevel = (it) => { resetSave(); saveGame(it.save); sfx('lock'); if (it.warpIn) setState({ warpIn: it.warpIn }); go(it.screen) }
+  // dev: jump to any level-select entry by the start of its label, e.g. window.__level('5-3 Steering')
+  if (import.meta.env.DEV) window.__level = (label) => { const it = LEVELS.flatMap((g) => g.items).find((i) => i.label.startsWith(label)); if (!it) return 'no such entry'; onLevel(it); return it.label }
   const onContinue = () => {
     const s = getState().save
     sfx('lock')
@@ -195,6 +206,14 @@ export default function App() {
           {screen === 'tower' && <Tower key={sceneKey} onExit={exitTo} />}
           {screen === 'orchard' && <Orchard key={sceneKey} onExit={exitTo} />}
           {screen === 'glasshouse' && <Glasshouse key={sceneKey} onExit={exitTo} />}
+          {screen === 'cliffs' && <Cliffs key={sceneKey} onExit={exitTo} />}
+          {screen === 'spire' && <Spire key={sceneKey} onExit={exitTo} />}
+          {screen === 'marsh' && <Marsh key={sceneKey} onExit={exitTo} />}
+          {screen === 'sunken' && <Sunken key={sceneKey} onExit={exitTo} />}
+          {screen === 'wastes' && <Wastes key={sceneKey} onExit={exitTo} />}
+          {screen === 'coliseum' && <Coliseum key={sceneKey} onExit={exitTo} />}
+          {screen === 'summit' && <Summit key={sceneKey} onExit={exitTo} />}
+          {screen === 'observatory' && <Observatory key={sceneKey} onExit={exitTo} />}
         </Canvas>
         </SceneGuard>
       </div>

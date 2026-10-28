@@ -11,6 +11,10 @@ import { ROOMS5 } from '../data/dungeon5'
 import { ROOMS6 } from '../data/dungeon6'
 import { ROOMS7 } from '../data/dungeon7'
 import { ROOMS8 } from '../data/dungeon8'
+import { ROOMS9 } from '../data/dungeon9'
+import { ROOMS10 } from '../data/dungeon10'
+import { ROOMS11 } from '../data/dungeon11'
+import { ROOMS12 } from '../data/dungeon12'
 import { sfx } from '../audio/sfx'
 import { MOLECULES } from '../data/molecules'
 import MoleculeView from './MoleculeView'
@@ -34,6 +38,10 @@ const Icon = {
   boots: <svg viewBox="0 0 40 40"><path d="M12 6 h10 v18 l10 4 v6 h-22 z" fill="#8a5a3a" stroke="#3a2418" strokeWidth="1.5" /><path d="M12 30 h20" stroke="#ffb04a" strokeWidth="2" /><path d="M14 12 h6 M14 17 h6" stroke="#ffb04a" strokeWidth="1.5" /></svg>,
   sling: <svg viewBox="0 0 40 40"><path d="M20 36 V22 M20 22 L12 8 M20 22 L28 8" stroke="#7a5030" strokeWidth="3.5" fill="none" strokeLinecap="round" /><path d="M12 8 Q20 18 28 8" stroke="#6a3e22" strokeWidth="1.5" fill="none" /><circle cx="20" cy="13" r="3" fill="#ff8aa0" /></svg>,
   satchel: <svg viewBox="0 0 40 40"><rect x="8" y="16" width="24" height="18" rx="4" fill="#2a2428" /><rect x="8" y="14" width="24" height="7" rx="2" fill="#3a3238" /><rect x="12" y="6" width="3" height="10" fill="#4ac8e8" /><rect x="18" y="5" width="3" height="11" fill="#e84a4a" /><rect x="24" y="7" width="3" height="9" fill="#a04ae8" /><rect x="18" y="19" width="4" height="4" fill="#c8a050" /></svg>,
+  retro: <svg viewBox="0 0 40 40"><rect x="8" y="6" width="24" height="28" rx="2" fill="#e8d8b0" /><path d="M20 10 V16 M20 16 L14 22 M20 16 L26 22 M14 22 L12 29 M14 22 L17 29 M26 22 L23 29 M26 22 L28 29" stroke="#6a4a2a" strokeWidth="1.4" fill="none" /><circle cx="20" cy="10" r="2" fill="#5ff0ff" /></svg>,
+  ring: <svg viewBox="0 0 40 40"><ellipse cx="20" cy="20" rx="12" ry="14" fill="none" stroke="#dcdce8" strokeWidth="5" /><path d="M9 12 L13 8 L15 14 Z" fill="#3aff8a" /><circle cx="32" cy="21" r="2.4" fill="#ff5a2a" /></svg>,
+  umbrella: <svg viewBox="0 0 40 40"><path d="M8 10 L20 22 L32 10 Q26 16 20 14 Q14 16 8 10 Z" fill="#b82a2a" /><path d="M20 14 V34 Q20 37 17 37" stroke="#6a4428" strokeWidth="2.2" fill="none" /></svg>,
+  lens: <svg viewBox="0 0 40 40"><polygon points="8,30 18,8 24,30" fill="#bff4ff" stroke="#5ae8ff" /><circle cx="28" cy="24" r="6" fill="#c82a2a" stroke="#c8a050" strokeWidth="2" /><path d="M24 18 Q32 10 36 16" stroke="#ffe04a" strokeWidth="1.5" fill="none" /></svg>,
   gauntlet: <svg viewBox="0 0 40 40"><rect x="13" y="22" width="14" height="14" rx="2" fill="#4a4a5a" /><rect x="12" y="10" width="16" height="14" rx="3" fill="#5a5a6a" />{[13, 17, 21, 25].map((x) => <rect key={x} x={x} y="3" width="3" height="9" rx="1.4" fill="#5a5a6a" />)}<circle cx="20" cy="17" r="5" fill="none" stroke="#2fd8f0" strokeWidth="1.6" /><path d="M17 18 l2-3 h2 l2 3 l-2 2 h-2 z" fill="none" stroke="#2fd8f0" strokeWidth="1" /></svg>,
   lantern: <svg viewBox="0 0 40 40"><rect x="15" y="4" width="10" height="4" rx="1" fill="#b8904a" /><circle cx="20" cy="21" r="13" fill="#b8904a" /><circle cx="20" cy="21" r="9" fill="#ffd8a0" /><g stroke="#2fd8f0" strokeWidth="1.6"><line x1="20" y1="21" x2="20" y2="13" /><line x1="20" y1="21" x2="13" y2="25" /><line x1="20" y1="21" x2="27" y2="25" /></g><circle cx="20" cy="21" r="5" fill="none" stroke="#2fd8f0" strokeWidth="1.2" /></svg>,
   locked: <svg viewBox="0 0 40 40"><polygon points="20,3 31,17 20,37 9,17" fill="none" stroke="#4a4458" strokeWidth="2" strokeDasharray="3 3" /><text x="20" y="25" textAnchor="middle" fill="#5a5468" fontSize="13" fontWeight="700">?</text></svg>,
@@ -68,6 +76,18 @@ function Items({ s, sel, setSel }) {
     s.save.hasSatchel
       ? { id: 'satchel', name: 'Reagent Satchel', icon: Icon.satchel, text: 'Carries one flask from a grove tree (E). Press G at an alkene altar to pour it. Every reagent makes something; each door wants one product (§8.2–8.9).' }
       : s.save.shards >= 7 ? { id: 'satchel', name: '???', icon: Icon.locked, text: 'Something waits in Borana’s Glasshouse.' } : null,
+    s.save.hasRetro
+      ? { id: 'retro', name: 'Retrosynthesis Map', icon: Icon.retro, text: 'At a planning table, it starts from the product and asks what came just before it, step by step back to what you have (§9.9).' }
+      : s.save.shards >= 8 ? { id: 'retro', name: '???', icon: Icon.locked, text: 'Something waits in the Triple Spire.' } : null,
+    s.save.hasRing
+      ? { id: 'ring', name: 'Magnesium Ring', icon: Icon.ring, text: 'Press G at a carbon–halogen bond: Mg inserts, R–X becomes R–MgX, and the carbon turns δ−, a strong base. Water destroys it (§10.6).' }
+      : s.save.shards >= 9 ? { id: 'ring', name: '???', icon: Icon.locked, text: 'Something waits in the Sunken Forge.' } : null,
+    s.save.hasUmbrella
+      ? { id: 'umbrella', name: 'Inversion Umbrella', icon: Icon.umbrella, text: 'Press G at a chirality centre from the side opposite its leaving group: a backside attack, and the centre inverts like an umbrella in the wind (SN2, §11.2).' }
+      : s.save.shards >= 10 ? { id: 'umbrella', name: '???', icon: Icon.locked, text: 'Something waits under the Coliseum.' } : null,
+    s.save.hasLens
+      ? { id: 'lens', name: 'Spectra Lens', icon: Icon.lens, text: 'Press G at a molecule to see its infrared spectrum: where it absorbs. Each kind of bond rings at its own wavenumber (Table 12.1).' }
+      : s.save.shards >= 11 ? { id: 'lens', name: '???', icon: Icon.locked, text: 'Something waits in the Observatory.' } : null,
   ].filter(Boolean)
   const cur = cards.find((c) => c.id === sel) || cards[0]
   const pickForm = (f) => {
@@ -95,6 +115,50 @@ function Items({ s, sel, setSel }) {
               <span className="im-fu">{f.use}</span>
             </button>
           ))}
+        </div>
+      )}
+      {s.screen === 'observatory' && (
+        <div className="im-box im-dungeon">
+          <h4>The Observatory</h4>
+          <div className="im-ditems">
+            <span className={s.save.solved['t12-map'] ? 'got' : ''}>🗺 Dungeon Map</span>
+            <span className={s.save.solved['t12-compass'] ? 'got' : ''}>🧭 Compass</span>
+            <span className={s.save.t12key ? 'got' : ''}>🗝 Small Key ×{s.save.t12key ? 1 : 0}</span>
+            <span className={s.save.t12bossKey ? 'got' : ''}>🔑 Boss Key</span>
+          </div>
+        </div>
+      )}
+      {s.screen === 'coliseum' && (
+        <div className="im-box im-dungeon">
+          <h4>The Under-Halls</h4>
+          <div className="im-ditems">
+            <span className={s.save.solved['t11-map'] ? 'got' : ''}>🗺 Dungeon Map</span>
+            <span className={s.save.solved['t11-compass'] ? 'got' : ''}>🧭 Compass</span>
+            <span className={s.save.t11key ? 'got' : ''}>🗝 Small Key ×{s.save.t11key ? 1 : 0}</span>
+            <span className={s.save.t11bossKey ? 'got' : ''}>🔑 Boss Key</span>
+          </div>
+        </div>
+      )}
+      {s.screen === 'sunken' && (
+        <div className="im-box im-dungeon">
+          <h4>The Sunken Forge</h4>
+          <div className="im-ditems">
+            <span className={s.save.solved['t10-map'] ? 'got' : ''}>🗺 Dungeon Map</span>
+            <span className={s.save.solved['t10-compass'] ? 'got' : ''}>🧭 Compass</span>
+            <span className={s.save.t10key ? 'got' : ''}>🗝 Small Key ×{s.save.t10key ? 1 : 0}</span>
+            <span className={s.save.t10bossKey ? 'got' : ''}>🔑 Boss Key</span>
+          </div>
+        </div>
+      )}
+      {s.screen === 'spire' && (
+        <div className="im-box im-dungeon">
+          <h4>The Triple Spire</h4>
+          <div className="im-ditems">
+            <span className={s.save.solved['t9-map'] ? 'got' : ''}>🗺 Dungeon Map</span>
+            <span className={s.save.solved['t9-compass'] ? 'got' : ''}>🧭 Compass</span>
+            <span className={s.save.t9key ? 'got' : ''}>🗝 Small Key ×{s.save.t9key ? 1 : 0}</span>
+            <span className={s.save.t9bossKey ? 'got' : ''}>🔑 Boss Key</span>
+          </div>
         </div>
       )}
       {s.screen === 'glasshouse' && (
@@ -334,6 +398,42 @@ function Quest({ s }) {
             <li className={s.save.t8board ? 'done' : ''}>Fill in Borana’s recipe board <span className="sec"> §8.2–8.9</span></li>
             {ROOMS8.map((r) => <li key={r.id} className={r.needs.every((id) => solved[id]) ? 'done' : ''}>{r.title}{r.sections.length ? <span className="sec"> §{r.sections[0]}{r.sections.length > 1 ? '–' + r.sections[r.sections.length - 1] : ''}</span> : null}</li>)}
             <li className={s.save.shards >= 8 ? 'done' : ''}>Recover Bond Shard 8</li>
+          </ul>
+        </>)}
+        {s.save.shards >= 8 && (<>
+          <h4>The Triple Spire · Chapter 9</h4>
+          <ul className="im-steps">
+            <li className={s.save.cliffsSeen ? 'done' : ''}>Take the east road to the Thunder Cliffs</li>
+            <li className={s.save.t9cairns ? 'done' : ''}>Name Lindlar’s cairns <span className="sec"> §9.1</span></li>
+            {ROOMS9.map((r) => <li key={r.id} className={r.needs.every((id) => solved[id]) ? 'done' : ''}>{r.title}{r.sections.length ? <span className="sec"> §{r.sections[0]}{r.sections.length > 1 ? '–' + r.sections[r.sections.length - 1] : ''}</span> : null}</li>)}
+            <li className={s.save.shards >= 9 ? 'done' : ''}>Recover Bond Shard 9</li>
+          </ul>
+        </>)}
+        {s.save.shards >= 9 && (<>
+          <h4>The Halogen Marsh · Chapter 10</h4>
+          <ul className="im-steps">
+            <li className={s.save.marshSeen ? 'done' : ''}>Take the east road to the Halogen Marsh</li>
+            <li className={s.save.t10markers ? 'done' : ''}>Name Magnus’s markers <span className="sec"> §10.1</span></li>
+            {ROOMS10.map((r) => <li key={r.id} className={r.needs.every((id) => solved[id]) ? 'done' : ''}>{r.title}{r.sections.length ? <span className="sec"> §{r.sections[0]}{r.sections.length > 1 ? '–' + r.sections[r.sections.length - 1] : ''}</span> : null}</li>)}
+            <li className={s.save.shards >= 10 ? 'done' : ''}>Recover Bond Shard 10</li>
+          </ul>
+        </>)}
+        {s.save.shards >= 10 && (<>
+          <h4>The Arena of Five · Chapter 11</h4>
+          <ul className="im-steps">
+            <li className={s.save.wastesSeen ? 'done' : ''}>Take the east road to the Volcanic Wastes</li>
+            <li className={s.save.t11cycle ? 'done' : ''}>Solve Walden’s cycle <span className="sec"> §11.1</span></li>
+            {ROOMS11.map((r) => <li key={r.id} className={r.needs.every((id) => solved[id]) ? 'done' : ''}>{r.title}{r.sections.length ? <span className="sec"> §{r.sections[0]}{r.sections.length > 1 ? '–' + r.sections[r.sections.length - 1] : ''}</span> : null}</li>)}
+            <li className={s.save.shards >= 11 ? 'done' : ''}>Recover Bond Shard 11</li>
+          </ul>
+        </>)}
+        {s.save.shards >= 11 && (<>
+          <h4>The Observatory of Light · Chapter 12</h4>
+          <ul className="im-steps">
+            <li className={s.save.summitSeen ? 'done' : ''}>Take the east road to the Summit of Light</li>
+            <li className={s.save.t12scope ? 'done' : ''}>Set Spectra’s telescope <span className="sec"> §12.5</span></li>
+            {ROOMS12.map((r) => <li key={r.id} className={r.needs.every((id) => solved[id]) ? 'done' : ''}>{r.title}{r.sections.length ? <span className="sec"> §{r.sections[0]}{r.sections.length > 1 ? '–' + r.sections[r.sections.length - 1] : ''}</span> : null}</li>)}
+            <li className={s.save.shards >= 12 ? 'done' : ''}>Recover Bond Shard 12</li>
           </ul>
         </>)}
       </div>

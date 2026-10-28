@@ -17,7 +17,7 @@ import { sfx } from '../audio/sfx'
 preloadModels('king')
 
 const PHASES = [{ glow: 2.8, every: 5.5, speed: 1.6, wind: 1.2 }, { glow: 2.2, every: 4.6, speed: 2.1, wind: 1.0 }, { glow: 1.7, every: 4.0, speed: 2.6, wind: 0.85 }]
-const SPLIT = 7.5
+const SPLIT = 5.5
 const NAME = 'The Racemic King · (±)'
 
 export default function RacemicKing({ world, center, active, onDefeated }) {
@@ -70,13 +70,13 @@ export default function RacemicKing({ world, center, active, onDefeated }) {
     })
     const ids = [half('gold'), half('silver')]
     ids.push(world.addLantern({
-      needs: 'hasShield', pos: () => [s.pos.x, 0, s.pos.z], radius: 16, priority: 2,
+      needs: 'hasShield', omni: true, pos: () => [s.pos.x, 0, s.pos.z], radius: 16, priority: 2,
       label: () => (s.mode === 'down' || s.mode === 'rise' || s.split > 0 ? null : 'Pair it with the chiral glove'),
       onLantern: () => {
         if (s.split > 0 || s.mode === 'down' || s.mode === 'rise') return
-        if (s.t < s.glowT || s.t > s.glowT + PHASES[Math.min(s.phase, 2)].glow) { sfx('wrong'); toast('The glove slips off: its crown isn’t open. Wait for it to glow.', 'warn', 3000); return }
+        if (s.t < s.glowT || s.t > s.glowT + PHASES[Math.min(s.phase, 2)].glow) { sfx('wrong'); toast('The glove slips off: its crown isn’t open. It answers with both sceptres!', 'warn', 3000); if (s.mode === 'walk' && world.player) { s.mode = 'wind'; s.wt = PHASES[Math.min(s.phase, 2)].wind * 0.4; s.aim.set(world.player.pos.x, 0, world.player.pos.z) } return }
         s.split = SPLIT; s.mode = 'split'; s.splitT = 0; sfx('shard'); world.shake = 0.4
-        if (!s.toldSplit) { s.toldSplit = true; toast('The R glove pairs with both halves: R·R and S·R. Not mirror images any more: diastereomers, different weights. They come apart! Strike each.', 'good', 6000) }
+        if (!s.toldSplit) { s.toldSplit = true; toast('The R glove pairs with both halves: R·R and S·R. Not mirror images any more: diastereomers, with different properties, like solubility. They come apart! Strike each.', 'good', 6000) }
       },
     }))
     if (import.meta.env.DEV) window.__valence = { ...(window.__valence || {}), king: s }
@@ -127,6 +127,13 @@ export default function RacemicKing({ world, center, active, onDefeated }) {
       }
     } else if (s.mode === 'split') {
       s.splitT += dt; s.split -= dt
+      // apart, each half still swings at Kai when he comes close
+      s.splitAtk = (s.splitAtk ?? 1.2) - dt
+      if (s.splitAtk <= 0 && p) {
+        s.splitAtk = 1.6 - s.phase * 0.25
+        const near = ['gold', 'silver'].some((w) => { const hp2 = halfPos(w); return Math.hypot(p.pos.x - hp2.x, p.pos.z - hp2.z) < 2.6 })
+        if (near) { sfx('stomp'); if (!p.rolling) p.hurt(1, [s.pos.x, 0, s.pos.z]) }
+      }
       if (s.split <= 0) { s.mode = 'rejoin'; s.t = 0; s.hitG = s.hitS = false; s.hpFix = true; toast('They fuse again: racemic. Wait for the crown.', 'info', 2800) }
     } else if (s.mode === 'rejoin') {
       if (s.t > 0.8) { s.mode = 'walk'; s.nextGlow = s.t + 2.2 }
