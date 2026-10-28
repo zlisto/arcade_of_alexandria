@@ -3,7 +3,7 @@ import WorldDone from './WorldDone'
 import { PasteurCrystals, Polarimeter, CipLock, KingCheck } from './Panels5'
 import { TrailSigns, Arrows, Ledger, WyrmCheck } from './Panels6'
 import { SeedLabels, HammondStone, ShiftName, PhantomCheck } from './Panels7'
-import { RecipeBoard, Backward, Racemate, LeviCheck } from './Panels8'
+import { RecipeBoard, Backward, LeviCheck } from './Panels8'
 import { Cairns, PkaLadder, RetroPlan, MimicCheck } from './Panels9'
 import { Markers, Hunt, Gilman, OxLadder, HydraCheck } from './Panels10'
 import { WaldenCycle, Zaitsev, Trial, ChampCheck } from './Panels11'
@@ -32,7 +32,7 @@ export default function Panels() {
   if (!p) return null
   // only close the panel this render belongs to (a trial's delayed done() must not close the next one)
   const close = (ok) => { if (getState().panel !== p) return; const f = p.onClose; setState({ panel: null }); setTimeout(() => f && f(ok), 0) }
-  const C = { atomForge: AtomForge, shells: Shells, octet: OctetBridge, well: EnergyWell, skeleton: Skeleton, hybridCheck: HybridCheck, polarity: Polarity, dipole: Dipole, formal: Formal, resonance: Resonance, pka: PKa, hbond: HBond, resonanceCheck: ResonanceCheck, shelf: Shelf, families: Families, isomers: Isomers, badges: Badges, namingRules: NamingRules, nameTiles: NameTiles, newman: NewmanPractice, butaneCheck: ButaneCheck, worldDone: WorldDone, ringNames: RingNames, cisTrans: InfoCard, ringStrain: InfoCard, chairFlip: InfoCard, diaxial: InfoCard, decalin: InfoCard, titanCheck: TitanCheck, decalinPredict: DecalinPredict, pasteur: PasteurCrystals, polarimeter: Polarimeter, cipLock: CipLock, kingCheck: KingCheck, chirality: InfoCard, cip: InfoCard, diastereomers: InfoCard, resolution: InfoCard, trailSigns: TrailSigns, arrows: Arrows, ledger: Ledger, wyrmCheck: WyrmCheck, bondBreak: InfoCard, chain: InfoCard, passes: InfoCard, seedLabels: SeedLabels, hammond: HammondStone, shiftName: ShiftName, phantomCheck: PhantomCheck, unsatInfo: InfoCard, ezInfo: InfoCard, stabInfo: InfoCard, recipeBoard: RecipeBoard, backward: Backward, racemate: Racemate, leviCheck: LeviCheck, halogenInfo: InfoCard, watersInfo: InfoCard, facesInfo: InfoCard, cairns: Cairns, pkaLadder: PkaLadder, retroPlan: RetroPlan, mimicCheck: MimicCheck, linearInfo: InfoCard, wellsInfo: InfoCard, reduceInfo: InfoCard, markers: Markers, hunt: Hunt, gilman: Gilman, oxLadder: OxLadder, hydraCheck: HydraCheck, bogInfo: InfoCard, waldenCycle: WaldenCycle, zaitsev: Zaitsev, trial: Trial, champCheck: ChampCheck, sn2Info: InfoCard, telescope: Telescope, massHall: MassHall, samples: Samples, dome: Dome, bell: BellPanel, sorcerer: SorcererPanel, finalCheck: FinalCheck }[p.kind]
+  const C = { atomForge: AtomForge, shells: Shells, octet: OctetBridge, well: EnergyWell, skeleton: Skeleton, hybridCheck: HybridCheck, polarity: Polarity, dipole: Dipole, formal: Formal, resonance: Resonance, pka: PKa, hbond: HBond, resonanceCheck: ResonanceCheck, shelf: Shelf, families: Families, isomers: Isomers, badges: Badges, namingRules: NamingRules, nameTiles: NameTiles, newman: NewmanPractice, butaneCheck: ButaneCheck, worldDone: WorldDone, ringNames: RingNames, cisTrans: InfoCard, ringStrain: InfoCard, chairFlip: InfoCard, diaxial: InfoCard, decalin: InfoCard, titanCheck: TitanCheck, decalinPredict: DecalinPredict, pasteur: PasteurCrystals, polarimeter: Polarimeter, cipLock: CipLock, kingCheck: KingCheck, chirality: InfoCard, cip: InfoCard, diastereomers: InfoCard, resolution: InfoCard, trailSigns: TrailSigns, arrows: Arrows, ledger: Ledger, wyrmCheck: WyrmCheck, bondBreak: InfoCard, chain: InfoCard, passes: InfoCard, seedLabels: SeedLabels, hammond: HammondStone, shiftName: ShiftName, phantomCheck: PhantomCheck, unsatInfo: InfoCard, ezInfo: InfoCard, stabInfo: InfoCard, recipeBoard: RecipeBoard, backward: Backward, racemate: InfoCard, leviCheck: LeviCheck, halogenInfo: InfoCard, watersInfo: InfoCard, facesInfo: InfoCard, cairns: Cairns, pkaLadder: PkaLadder, retroPlan: RetroPlan, mimicCheck: MimicCheck, linearInfo: InfoCard, wellsInfo: InfoCard, reduceInfo: InfoCard, markers: Markers, hunt: Hunt, gilman: Gilman, oxLadder: OxLadder, hydraCheck: HydraCheck, bogInfo: InfoCard, waldenCycle: WaldenCycle, zaitsev: Zaitsev, trial: Trial, champCheck: ChampCheck, sn2Info: InfoCard, telescope: Telescope, massHall: MassHall, samples: Samples, dome: Dome, bell: BellPanel, sorcerer: SorcererPanel, finalCheck: FinalCheck }[p.kind]
   const L = LESSONS[p.kind]
   const gotIt = () => { saveGame({ lessonsSeen: { ...(getState().save.lessonsSeen || {}), [p.kind]: true } }); setLesson(false); sfx('lock') }
   return (
@@ -40,7 +40,7 @@ export default function Panels() {
       <div className="panel">
         <button className="pclose" onClick={() => close(false)} title="Step away">✕</button>
         {L && !lesson && <button className="phelp" onClick={() => setLesson(true)} title="Show the lesson again">?</button>}
-        {lesson ? <LessonCard L={L} onGo={gotIt} /> : <C {...p.props} done={() => close(true)} />}
+        {lesson ? <LessonCard L={L} onGo={gotIt} /> : <C {...p.props} done={() => close(true)} fail={() => close(false)} />}
       </div>
     </div>
   )

@@ -555,6 +555,8 @@ export function PiFollower({ world }) {
     if (!p || !g.current) return
     const target = world.lockPos
       ? new THREE.Vector3(world.lockPos[0], world.lockPos[1] + 2.1, world.lockPos[2])
+      : Array.isArray(world.piAside) // a scene asks for a fixed spot (e.g. beside a model Kai must read)
+        ? new THREE.Vector3(...world.piAside)
       : getState().lanternPrompt || world.piAside // aiming at a lantern (or a scene asks): give way, up and out to Kai's side, out of the line of fire
         ? new THREE.Vector3(p.pos.x + Math.sin(p.facing + 2.0) * 1.6, p.pos.y + 2.5, p.pos.z + Math.cos(p.facing + 2.0) * 1.6)
         : new THREE.Vector3(p.pos.x + Math.sin(p.facing + 2.3) * 0.8, p.pos.y + 1.9, p.pos.z + Math.cos(p.facing + 2.3) * 0.8)

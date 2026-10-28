@@ -309,10 +309,16 @@ export const CODEX = [
   },
   // ---------------- World 8: the Reagent Orchards (Chapter 8)
   {
+    title: '† on a product name',
+    section: '8.2–8.9', pages: '247–265',
+    unlocked: (s) => s.solved['t8-satchel'],
+    text: '† worked out from the book’s rules; not printed in the text. Some altar outcomes (for example trans-2-bromocyclopentanol, which Problem 8-5 asks for, or the trans cyclopropane from trans-2-pentene) apply a rule the chapter states to an alkene it doesn’t show. Products without a † are printed in the chapter.',
+  },
+  {
     title: 'Halogenation and halohydrins',
     section: '8.2–8.3', pages: '247–251',
     unlocked: (s) => s.solved['8-1a'] && s.solved['8-1b'],
-    text: 'Br₂ adds through a cyclic bromonium ion, opened from the back: anti addition. In water, H₂O opens it instead, giving a halohydrin with OH on the more substituted carbon.',
+    text: 'Br₂ adds through a cyclic bromonium ion, opened from the back: anti addition. In water, H₂O opens it instead, giving a halohydrin. Its OH ends up on the more substituted carbon (the answer to Problem 8-6).',
   },
   {
     title: 'Hydration: oxymercuration and hydroboration',
@@ -323,20 +329,20 @@ export const CODEX = [
   {
     title: 'Hydrogenation, epoxides and diols',
     section: '8.6–8.7', pages: '257–260',
-    unlocked: (s) => s.solved['8-3a'] && s.solved['8-3b'],
-    text: 'H₂ with Pd or Pt adds syn on the catalyst surface. Peroxyacids give epoxides; acid opens them anti to trans-1,2-diols. OsO₄ gives cis-1,2-diols through a cyclic osmate.',
+    unlocked: (s) => s.solved['8-3a'] && s.solved['8-3b'] && s.solved['8-3c'],
+    text: 'H₂ with Pd or Pt adds syn on the catalyst surface: 1,2-dimethylcyclohexene gives cis-1,2-dimethylcyclohexane (p. 255). Peroxyacids give epoxides; acid opens them anti, so 1,2-epoxycyclohexane gives trans-1,2-cyclohexanediol (p. 260). OsO₄ gives cis-1,2-diols through a cyclic osmate.',
   },
   {
     title: 'Oxidative cleavage and carbenes',
     section: '8.8–8.9', pages: '261–265',
     unlocked: (s) => s.solved['8-4'],
-    text: 'Ozonolysis turns each alkene carbon into a C=O: tetrasubstituted gives two ketones, trisubstituted a ketone and an aldehyde. KMnO₄ gives acids and CO₂. Carbenes (:CCl₂ from CHCl₃ + KOH; the Simmons–Smith carbenoid) add stereospecifically to give cyclopropanes.',
+    text: 'Ozonolysis turns each alkene carbon into a C=O: tetrasubstituted gives two ketones, trisubstituted a ketone and an aldehyde, so (CH₃)₂C=CHCH₃ should give acetone and acetaldehyde †. KMnO₄ gives acids and CO₂. Dichlorocarbene (:CCl₂, from CHCl₃ + KOH) adds in one step, stereospecifically: cis-2-pentene gives only the cis cyclopropane (p. 264); by the same rule trans-2-pentene gives the trans ring †. The Simmons–Smith reagent (CH₂I₂, Zn(Cu)) makes cyclopropanes without halogens.',
   },
   {
     title: 'Polymers and new chirality centres',
     section: '8.10–8.13', pages: '265–274',
     unlocked: (s) => s.solved['8-5p'] && s.solved['8-5race'],
-    text: 'Chain-growth polymerization: a radical initiator (from benzoyl peroxide) adds to a monomer, the chain grows one monomer at a time, and two chains combine to end it. Achiral reactants making a new chirality centre give a racemate.',
+    text: 'Chain-growth polymerization: a radical initiator (from benzoyl peroxide) adds to a monomer, the chain grows one monomer at a time, and two chains combine to end it. Propylene adds so the radical is secondary (p. 267). Achiral reactants making a new chirality centre give a racemate: 1-butene + H₂O, H⁺ gives (±)-2-butanol: with the cation drawn as in Fig 8.13, (S) from the top face and (R) from the bottom. Turn the cation over (or swap its arms) and the faces swap too, so name each product by CIP.',
   },
   // ---------------- World 9: the Triple Spire (Chapter 9)
   {

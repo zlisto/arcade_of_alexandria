@@ -128,7 +128,7 @@ function CliffsLevel({ world, onExit }) {
       world.camOverride = twoShot(world, LINDLAR, 3.6, 0.6)
       setState({ lindlarShot: true })
       await say([
-        { who: 'Sage Lindlar', text: 'You came along the cliff path. Good. Most people try to climb straight up the rock.' },
+        { who: 'Sage Lindlar', text: 'Borana sent you? Along the cliff path, good. Most people try to climb straight up the rock.' },
         { who: 'Sage Lindlar', text: 'Lindlar. I build the bridges here: three bonds each, perfectly straight. They have to be.' },
         { who: 'Sage Lindlar', text: 'Malradix wrote on my door: “To make something, just start somewhere and hope.”' },
         { who: 'Pi', text: 'That’s how I build sandcastles.' },
