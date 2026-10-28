@@ -198,7 +198,7 @@ function SpireLevel({ world, onExit }) {
   }
   const takeFlask = () => { const f = getState().save.t9flask; saveGame({ t9flask: null }); return f }
   const pourWell = (id) => {
-    if (has(id)) return
+    if (has(id) || String((getState().save.t9wells || {})[id] || '').startsWith('enol:')) return
     const f = takeFlask(); if (!f) return
     const r = WELLS.routes[f]
     if (!r) { sfx('wrong'); toast(f === 'h2' ? 'That reduces the alkyne; it doesn’t add water. The well stays still.' : 'Nothing happens.', 'warn', 3600); return }
@@ -468,7 +468,7 @@ function SpireLevel({ world, onExit }) {
       })}
 
       {/* boss */}
-      <Mimic world={world} center={MIMIC.center} active={bossOn && !solved.boss9} onDefeated={bossDown} />
+      {!solved.boss9 && <Mimic world={world} center={MIMIC.center} active={bossOn && !solved.boss9} onDefeated={bossDown} />}
       {lindlarHere && <Lindlar position={[-2.2, 0, -162.4]} rotation={[0, Math.PI / 2, 0]} />}
       <Shard show={!!solved.boss9 && (save.shards || 0) < 9} pos={[0, 0, -164]} />
       <Motes count={160} area={[20, 7, 170]} center={[0, 0.6, -80]} color="#c8e8ff" size={0.05} />

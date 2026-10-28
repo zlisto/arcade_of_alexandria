@@ -84,6 +84,7 @@ export default function Sorcerer({ world, center, active, onDefeated }) {
   const evRef = useRef(ev)
   evRef.current = ev
   const st = useRef({ mode: 'fight', t: 0, orbT: 3, wave: -1 })
+  const pending = useRef(false)
   const g = useRef(), wave = useRef(), cryst = useRef([])
   const D = DISGUISES[Math.min(round, DISGUISES.length - 1)]
   const crystalPos = (k) => [center[0] + (k ? 7 : -7), center[2] + 4]
@@ -99,9 +100,12 @@ export default function Sorcerer({ world, center, active, onDefeated }) {
       onHit: () => { sfx('shard'); setEv((e) => ({ ...e, [k ? 'm2' : 'm1']: true })); toast(k ? `The second crystal rings: the base peak, m/z = ${D.base}.` : `The first crystal rings: M⁺ at m/z = ${D.M}. No M + 2 peak beside it.`, 'good', 4200); return true },
     }))
     ids.push(world.addLantern({ needs: 'hasLens', omni: true, priority: 1, pos: [center[0], 0, center[2]], radius: 8, label: () => (evRef.current.ir ? null : 'Turn the Spectra Lens on him'), onLantern: () => { sfx('stance'); setEv((e) => ({ ...e, ir: true })); toast(`His light splits: bands at ${D.bands.map((b) => b.label).join(', ')} cm⁻¹.`, 'good', 4600) } }))
-    ids.push(world.addInteractable({ pos: [center[0], 0, center[2] + 4], radius: 3.2, label: () => (evRef.current.m1 && evRef.current.m2 && evRef.current.ir ? 'Name what he truly is' : null), onInteract: async () => {
+    ids.push(world.addInteractable({ pos: [center[0], 0, center[2] + 4], radius: 3.2, label: () => (!pending.current && evRef.current.m1 && evRef.current.m2 && evRef.current.ir ? 'Name what he truly is' : null), onInteract: async () => {
+      if (pending.current) return
       const ok = await openPanel('sorcerer', { round })
       if (!ok) return
+      pending.current = true
+      setTimeout(() => (pending.current = false), 2000)
       sfx('shard'); world.shake = 0.5
       const next = round + 1
       setState({ bossHp: { name: NAME, hp: DISGUISES.length - next, max: DISGUISES.length } })

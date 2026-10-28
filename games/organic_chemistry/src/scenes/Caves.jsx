@@ -4,9 +4,9 @@ import * as THREE from 'three'
 import GameScene from '../engine/GameScene'
 import { itemGet } from '../engine/ItemGet'
 import { warpOut } from '../engine/Warp'
-import { Gate, Station, Torch, Motes, Chest, Tag, HookTarget } from '../engine/kit'
+import { Gate, Station, Torch, Motes, Chest, Tag, HookTarget, twoShot } from '../engine/kit'
 import { Part, useModelParts, InstancedPart, preloadModels } from '../engine/models'
-import { Wisps } from '../actors/PeaksFolk'
+import { Wisps, Hammond } from '../actors/PeaksFolk'
 import Wyrm from '../actors/Wyrm'
 import { Ridge } from '../actors/EnergyRidge'
 import { PiFollower } from './Village'
@@ -92,6 +92,7 @@ function CavesLevel({ world, onExit }) {
   const busy = useRef(false)
   const [bossOn, setBossOn] = useState(false)
   const bossStarted = useRef(false)
+  const [hammondHere, setHammondHere] = useState(false)
   const [carry, setCarry] = useState(null)
   const carryRef = useRef(null)
   carryRef.current = carry
@@ -293,9 +294,13 @@ function CavesLevel({ world, onExit }) {
     if ((getState().save.shards || 0) >= 6 || busy.current) return
     busy.current = true
     sfx('shard')
-    await say([{ who: 'Pass-Warden Hammond', text: '(He stamps in, snow on his hood.) One question, lad. Humour an old man.' }])
+    setHammondHere(true)
+    if (world.player) world.player.teleport([0, 0, -172.4], Math.PI)
+    await new Promise((r) => setTimeout(r, 300))
+    world.camOverride = twoShot(world, [-2.2, 0, -172.4], 3.8, Math.PI / 2)
+    await say([{ who: 'Pass-Warden Hammond', text: 'Climbed all the way up after you. One question, lad. Humour an old man.' }])
     const ok = await openPanel('wyrmCheck', {})
-    if (!ok) { await say([{ who: 'Pass-Warden Hammond', text: 'Think it over. The shard’s not going anywhere. Neither am I.' }]); busy.current = false; return }
+    if (!ok) { await say([{ who: 'Pass-Warden Hammond', text: 'Think it over. The shard’s not going anywhere. Neither am I.' }]); world.camOverride = null; busy.current = false; return }
     saveGame({ shards: 6, checkpoint: { scene: 'peaks', at: 'gate' } })
     setState({ objective: 'Bond Shard 6 of 12 recovered' })
     await say([
@@ -305,6 +310,7 @@ function CavesLevel({ world, onExit }) {
       { who: 'Pass-Warden Hammond', text: 'Keep the boots. South-east are the plains, and a tower where things only ever add on.' },
       { who: 'Pi', text: 'Six down, six to go!' },
     ])
+    world.camOverride = null
     await warpOut(world, { checkpoint: { scene: 'peaks', at: 'gate' }, card: 6 })
     busy.current = false
     onExit('peaks', { scene: 'peaks', at: 'gate' })
@@ -316,6 +322,8 @@ function CavesLevel({ world, onExit }) {
     const tt = setInterval(tick, 300)
     return () => { clearInterval(tt); world.remove(id) }
   }, [world])
+  // once the Wyrm is gone, its ridges go too: a floor across the pit to the shard
+  useEffect(() => { if (!solved.boss6) return; const id = world.addFloor(-ARENA.x, -174, ARENA.x, -146, 0); return () => world.remove(id) }, [world, solved.boss6])
   useFrame(() => { world.camBoost = world.bossCam ? { dist: 4, pitchSet: 0.3, lookY: 1.2 } : null })
 
   return (
@@ -328,6 +336,7 @@ function CavesLevel({ world, onExit }) {
       {/* floors (snow-dusted rock), the gorge, the chasm under the passes */}
       {[[8, GORGE.z[0]], [GORGE.z[1], PASS_Z.z0], [PASS_Z.z1 - 4, -140]].map(([a, b], i) => <mesh key={i} position={[0, -0.01, (a + b) / 2]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow><planeGeometry args={[2 * W, Math.abs(a - b)]} /><meshStandardMaterial color="#c8d0e0" roughness={0.9} /></mesh>)}
       <mesh position={[0, -0.01, -160]} rotation={[-Math.PI / 2, 0, 0]}><planeGeometry args={[2 * ARENA.x, 38]} /><meshStandardMaterial color="#9aa4b8" roughness={0.9} /></mesh>
+      {solved.boss6 && <mesh position={[0, 0.02, -160]} rotation={[-Math.PI / 2, 0, 0]}><planeGeometry args={[2 * ARENA.x, 28]} /><meshStandardMaterial color="#c8d4e4" roughness={0.6} /></mesh>}
       {[[GORGE.z[0], GORGE.z[1]], [PASS_Z.z0, PASS_Z.z1 - 4], [-146, -174]].map(([a, b], i) => <mesh key={'pit' + i} position={[0, -7, (a + b) / 2]} rotation={[-Math.PI / 2, 0, 0]}><planeGeometry args={[2 * ARENA.x, Math.abs(a - b)]} /><meshBasicMaterial color="#05040a" /></mesh>)}
       <Suspense fallback={null}><Walls world={world} /></Suspense>
       {[2, -12, -24, -36, -58, -70, -82, -92, -102].flatMap((z) => [-1, 1].map((sd) => <Torch key={z + '' + sd} pos={[sd * (W - 1), 0, z]} color="#ffb04a" />))}
@@ -426,9 +435,10 @@ function CavesLevel({ world, onExit }) {
       ))}
 
       {/* boss */}
-      <Wyrm world={world} center={WYRM.center} active={bossOn && !solved.boss6} onDefeated={bossDown} />
+      {!solved.boss6 && <Wyrm world={world} center={WYRM.center} active={bossOn && !solved.boss6} onDefeated={bossDown} />}
       <Shard show={!!solved.boss6 && (save.shards || 0) < 6} pos={[0, 0, -174]} />
       <Motes count={200} area={[20, 7, 180]} center={[0, 0.3, -85]} color="#ffffff" size={0.05} />
+      {hammondHere && <Hammond position={[-2.2, 0, -172.4]} rotation={[0, Math.PI / 2, 0]} />}
       <PiFollower world={world} />
     </group>
   )

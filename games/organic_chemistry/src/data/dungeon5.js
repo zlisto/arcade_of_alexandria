@@ -8,8 +8,8 @@ export const ROOMS5 = [
   { id: '5-1', title: 'Hall of Hands', z: [-14, -40], checkpoint: [0, 0, -16], sections: ['5.1', '5.2'], needs: ['5-1'] },
   { id: '5-2', title: 'The Polarized Window', z: [-40, -62], checkpoint: [0, 0, -42], sections: ['5.3'], needs: ['t5-door'] },
   { id: '5-3', title: 'The Steering-Wheel Locks', z: [-62, -92], checkpoint: [0, 0, -64], sections: ['5.5'], needs: ['5-3c'] },
-  { id: '5-4', title: 'Halls of Many Centres', z: [-92, -118], checkpoint: [0, 0, -94], sections: ['5.6', '5.7', '5.9'], needs: ['5-4c'] },
-  { id: '5-5', title: 'The Resolution Hall', z: [-118, -140], checkpoint: [0, 0, -120], sections: ['5.8', '5.10', '5.12'], needs: ['t5-bosskey'] },
+  { id: '5-4', title: 'Halls of Many Centres', z: [-92, -118], checkpoint: [3.5, 0, -94], sections: ['5.6', '5.7', '5.9'], needs: ['5-4c'] },
+  { id: '5-5', title: 'The Resolution Hall', z: [-118, -140], checkpoint: [3.5, 0, -120], sections: ['5.8', '5.10', '5.12'], needs: ['t5-bosskey'] },
   { id: 'boss', title: 'Throne of the Racemic King', z: [-140, -178], checkpoint: [0, 0, -143], sections: ['5.8', '5.12'], needs: ['boss5'] },
 ]
 
@@ -23,7 +23,7 @@ export const STATIONS5 = {
 }
 
 // 5-1 statues (place = groups at the four tetrahedral positions; see chem/rules5.js STATUES)
-export const STATUE_POS = { s1: [-6.5, -22], s2: [6.5, -22], s3: [-6.5, -32], s4: [6.5, -32] }
+export const STATUE_POS = { s1: [-6.5, -22], s2: [6.5, -22], s3: [-6.5, -30], s4: [6.5, -30] }
 
 // 5-3 lock doors: which configuration each lock wants
 export const LOCK_DOORS = { '5-3a': { z: -72, want: 'S' }, '5-3b': { z: -80, want: 'S' }, '5-3c': { z: -88, want: 'R' } }

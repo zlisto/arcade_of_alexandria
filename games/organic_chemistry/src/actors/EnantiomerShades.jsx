@@ -109,6 +109,14 @@ export default function EnantiomerShades({ world, spawns, mirrorX = 0, zone, act
         const swinging = p.mode === 'attack' || p.mode === 'spin'
         if (swinging && !m.swinging && Math.hypot(p.pos.x - m.pos.x, p.pos.z - m.pos.z) < 2.6) p.hurt(1, [m.pos.x, 0, m.pos.z])
         m.swinging = swinging
+        // it presses in: a raised-blade wind-up (with a chime), then a blow. A grace period after Kai arrives or is knocked out.
+        if (m.ko !== world.knockouts) { m.ko = world.knockouts; m.grace = 3 }
+        if (m.grace > 0) m.grace -= dt
+        const near = m.grace <= 0 && Math.hypot(p.pos.x - m.pos.x, p.pos.z - m.pos.z) < 1.9
+        const before = m.press || 0
+        m.press = near ? before + dt : 0
+        if (before < 0.7 && m.press >= 0.7) sfx('lock')
+        if (m.press > 1.4) { m.press = 0; m.grace = 1.2; sfx('swing'); p.hurt(1, [m.pos.x, 0, m.pos.z]); if (!told.press) { told.press = true; toast('It presses in! Shield (G) first, then strike.', 'warn', 3600, true) } }
       }
       g.position.set(m.pos.x + (m.hitT > 0 ? Math.sin(m.hitT * 60) * 0.05 : 0), 0, m.pos.z)
       g.rotation.y = m.facing
@@ -117,7 +125,7 @@ export default function EnantiomerShades({ world, spawns, mirrorX = 0, zone, act
       if (pose && p) {
         pose.run = m.broken > 0 ? 0 : Math.min(1, Math.hypot(p.pos.x - (m.lx ?? p.pos.x), p.pos.z - (m.lz ?? p.pos.z)) / Math.max(1e-3, dt) / 6)
         pose.phase = (pose.phase || 0) + dt * 10 * pose.run
-        pose.swing = m.parryT > 0 ? Math.sin((1 - m.parryT / 0.35) * Math.PI) : p.mode === 'attack' && m.broken <= 0 ? Math.sin(m.t * 12) : 0
+        pose.swing = m.press > 0.7 ? -1.6 : m.parryT > 0 ? Math.sin((1 - m.parryT / 0.35) * Math.PI) : p.mode === 'attack' && m.broken <= 0 ? Math.sin(m.t * 12) : 0
         pose.block = m.parryT > 0 ? 1 : 0
         m.lx = p.pos.x; m.lz = p.pos.z
       }

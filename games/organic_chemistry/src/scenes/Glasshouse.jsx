@@ -378,7 +378,7 @@ function GlassLevel({ world, onExit }) {
           </group>
         )
       })}
-      <Wraiths world={world} spawns={[[-4, -26], [4, -28], [0, -32]]} active zone={[-16, -44]} onCleared={() => { if (!has('t8-wraiths')) { markSolved('t8-wraiths'); sfx('open'); toast('The wraiths are gone. A big chest rises!', 'good', 3000) } }} />
+      <Wraiths world={world} spawns={[[-4, -26], [4, -28], [0, -32]]} active={!solved['t8-wraiths']} zone={[-16, -44]} onCleared={() => { if (!has('t8-wraiths')) { markSolved('t8-wraiths'); sfx('open'); toast('The wraiths are gone. A big chest rises!', 'good', 3000) } }} />
       <Chest world={world} pos={[0, 0, -25]} big opened={!!solved['t8-satchel']} show={!!solved['t8-wraiths']} onOpen={() => openChest('t8-satchel')} label="Open the big chest" />
       <Gate world={world} pos={[0, 0, DOORS8['8-1']]} size={[2 * W, 7, 0.8]} open={!!(solved['8-1a'] && solved['8-1b'])} color="#3a5a3a" glow="#c86a3a" />
       <Gate world={world} pos={[0, 0, DOORS8['8-2']]} size={[2 * W, 7, 0.8]} open={!!(solved['8-2a'] && solved['8-2b'])} color="#3a5a3a" glow="#8ad0ff" />
@@ -450,7 +450,7 @@ function GlassLevel({ world, onExit }) {
       })}
 
       {/* boss */}
-      <Leviathan world={world} center={LEVI.center} R={LEVI.R} vent={[-11, 0, -152]} active={bossOn && !solved.boss8} onDefeated={bossDown} />
+      {!solved.boss8 && <Leviathan world={world} center={LEVI.center} R={LEVI.R} vent={[-11, 0, -152]} active={bossOn && !solved.boss8} onDefeated={bossDown} />}
       {boranaHere && <Borana position={[-2.2, 0, -172.4]} rotation={[0, Math.PI / 2, 0]} />}
       <Shard show={!!solved.boss8 && (save.shards || 0) < 8} pos={[0, 0, -174]} />
       <Motes count={180} area={[20, 7, 180]} center={[0, 0.6, -85]} color="#d8ffd0" size={0.05} />

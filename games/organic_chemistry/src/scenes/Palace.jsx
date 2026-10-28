@@ -4,7 +4,8 @@ import * as THREE from 'three'
 import GameScene from '../engine/GameScene'
 import { itemGet } from '../engine/ItemGet'
 import { warpOut } from '../engine/Warp'
-import { Gate, Station, Torch, Motes, Chest, Tag } from '../engine/kit'
+import { Gate, Station, Torch, Motes, Chest, Tag, twoShot } from '../engine/kit'
+import { Tartara } from '../actors/TartaraModel'
 import { Part, useModelParts, InstancedPart, preloadModels } from '../engine/models'
 import EnantiomerShades from '../actors/EnantiomerShades'
 import RacemicKing from '../actors/RacemicKing'
@@ -104,7 +105,7 @@ function Statue({ st, pos, plane, settled }) {
     return new THREE.Vector3().crossVectors(new THREE.Vector3(...TETRA[i]), new THREE.Vector3(...TETRA[j])).normalize()
   }, [plane])
   const holds = planeHolds(st.place, plane)
-  const side = pos[0] < 0 ? 1 : -1 // the mirror stands toward the middle of the hall
+  const side = pos[0] < 0 ? -1 : 1 // the mirror stands toward the wall, its reflection behind it
   return (
     <group position={[pos[0], 0, pos[1]]}>
       <Part model="palace" name="p5_plinth" />
@@ -113,13 +114,19 @@ function Statue({ st, pos, plane, settled }) {
         {settled !== 'chiral' && (
           <mesh quaternion={new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), n)}>
             <circleGeometry args={[1.25, 40]} />
-            <meshStandardMaterial color={holds ? '#6fe39a' : '#bfe8ff'} transparent opacity={holds ? 0.45 : 0.22} side={THREE.DoubleSide} depthWrite={false} emissive={holds ? '#2a8a4a' : '#3a6a9a'} emissiveIntensity={0.5} />
+            <meshStandardMaterial color={settled && holds ? '#6fe39a' : '#bfe8ff'} transparent opacity={0.3} side={THREE.DoubleSide} depthWrite={false} emissive={settled && holds ? '#2a8a4a' : '#3a6a9a'} emissiveIntensity={0.5} />
           </mesh>
         )}
       </group>
       {/* the mirror and, behind it, the statue's reflection (its groups mirrored through the mirror's plane) */}
-      <group position={[side * 2.2, 0, 0]} rotation={[0, side * Math.PI / 2, 0]}><Part model="palace" name="p5_mirror" /></group>
-      <group position={[side * 4.4, 2.1, 0]} scale={[-1, 1, 1]}><Centre place={st.place} s={0.9} glow="#8aa0c0" /></group>
+      <group position={[side * 1.8, 0, 0]}>
+        {[[0, 3.55, 0, 0.16, 0.16, 2.5], [0, 0.35, 0, 0.16, 0.16, 2.5], [0, 1.95, 1.2, 0.16, 3.36, 0.16], [0, 1.95, -1.2, 0.16, 3.36, 0.16]].map(([x, y, z, sx, sy, sz], i) => (
+          <mesh key={i} position={[x, y, z]}><boxGeometry args={[sx, sy, sz]} /><meshStandardMaterial color="#c8d0dc" metalness={0.85} roughness={0.25} /></mesh>
+        ))}
+        <mesh position={[0, 1.95, 0]} rotation={[0, Math.PI / 2, 0]}><planeGeometry args={[2.3, 3.1]} /><meshStandardMaterial color="#cfe4ff" metalness={0.6} roughness={0.05} transparent opacity={0.22} side={THREE.DoubleSide} depthWrite={false} /></mesh>
+        <mesh position={[0, 0.12, 0]}><boxGeometry args={[0.6, 0.24, 2.6]} /><meshStandardMaterial color="#8a93a6" roughness={0.6} /></mesh>
+      </group>
+      <group position={[side * 2.9, 2.1, 0]} scale={[-1, 1, 1]}><Centre place={st.place} s={0.7} glow="#8aa0c0" /></group>
       <Tag position={[0, 3.7, 0]} df={11}>{st.name}</Tag>
       {settled && <Tag position={[0, 3.25, 0]} df={10}>{settled === 'chiral' ? 'chiral: no symmetry plane' : 'achiral: a symmetry plane'}</Tag>}
     </group>
@@ -208,6 +215,7 @@ function PalaceLevel({ world, onExit }) {
   const busy = useRef(false)
   const [bossOn, setBossOn] = useState(false)
   const bossStarted = useRef(false)
+  const [tartaraHere, setTartaraHere] = useState(false)
   const floor = usePolished()
   const planes = save.t5planes || {}
   const settled = save.t5statues || {}
@@ -242,7 +250,7 @@ function PalaceLevel({ world, onExit }) {
       '5-2': 'A polarimeter! Light that twists. And a chest by the wall.',
       '5-3': 'Locks shaped like carbon centres. Read each one first (E).',
       '5-4': 'Statues with two centres. And shades with your face. Backwards.',
-      '5-5': 'A pool, two keys, a lock like a hand. The last room.',
+      '5-5': 'A still pool, two twitchy keys, a lock shaped like a hand. Last room!',
     }
     const t = ROOMS5.map((r) => world.addTrigger([-ARENA.x, -2, r.z[1] + 0.5], [ARENA.x, 12, r.z[0] - 1], () => {
       const sv = getState().save
@@ -264,8 +272,8 @@ function PalaceLevel({ world, onExit }) {
     STATUES.forEach((st) => {
       const [x, z] = STATUE_POS[st.id]
       ia.push(world.addInteractable({ pos: [x, 0, z + 1.2], radius: 1.5, label: () => ((getState().save.t5statues || {})[st.id] ? null : 'Turn the glass plane through the statue'), onInteract: () => turnPlane(st) }))
-      ia.push(world.addInteractable({ pos: [x + (x < 0 ? -1.6 : 1.6), 0, z + 1.4], radius: 1.1, label: () => ((getState().save.t5statues || {})[st.id] ? null : 'Pull the lever: no plane will ever work, it is chiral'), onInteract: () => declareChiral(st) }))
-      ia.push(world.addInteractable({ pos: [x + (x < 0 ? 1.2 : -1.2), 0, z + 2.8], radius: 1.0, label: () => ((getState().save.t5statues || {})[st.id] ? null : 'Ring the bell: this plane is a symmetry plane'), onInteract: () => declareAchiral(st) }))
+      ia.push(world.addInteractable({ pos: [x + (x < 0 ? 2.0 : -2.0), 0, z + 1.2], radius: 1.1, label: () => ((getState().save.t5statues || {})[st.id] ? null : 'Pull the lever: no plane will ever work, it is chiral'), onInteract: () => declareChiral(st) }))
+      ia.push(world.addInteractable({ pos: [x + (x < 0 ? 2.0 : -2.0), 0, z - 1.4], radius: 1.0, label: () => ((getState().save.t5statues || {})[st.id] ? null : 'Ring the bell: this plane is a symmetry plane'), onInteract: () => declareAchiral(st) }))
     })
     // 5-3 locks and the 5-5 receptor: E reads the centre
     ;[...Object.keys(LOCK_DOORS), '5-5c'].forEach((id) => {
@@ -298,7 +306,7 @@ function PalaceLevel({ world, onExit }) {
     const ids = []
     ;[...Object.keys(LOCK_DOORS), '5-5c'].forEach((id) => {
       const pos = id === '5-5c' ? [RECEPTOR.pos[0], 0, RECEPTOR.pos[1]] : [0, 0, LOCK_DOORS[id].z]
-      ids.push(world.addLantern({ needs: 'hasShield', pos, radius: 5, label: () => (has(id) ? null : 'Reflect the centre in the Mirror Shield'), onLantern: () => reflectLock(id) }))
+      ids.push(world.addLantern({ needs: 'hasShield', pos, radius: 2.6, label: () => (has(id) || !(getState().save.t5read || {})[id] ? null : 'Reflect the centre in the Mirror Shield'), onLantern: () => reflectLock(id) }))
     })
     ;[0, 1].forEach((i) => ids.push(world.addLantern({ needs: 'hasShield', pos: [THREONINE.pos[0] + (i ? 0.75 : -0.75), 0, THREONINE.pos[1]], radius: 3.4, label: () => (has('5-4b') ? null : `Reflect threonine's C${i + 2}`), onLantern: () => reflectTwin('t5thr', THREONINE.start, i) })))
     ;[0, 1].forEach((i) => ids.push(world.addLantern({ needs: 'hasShield', pos: [TARTARIC.pos[0] + (i ? 0.75 : -0.75), 0, TARTARIC.pos[1]], radius: 3.4, label: () => (has('5-4c') ? null : `Reflect tartaric acid's C${i + 2}`), onLantern: () => reflectTwin('t5tart', TARTARIC.start, i) })))
@@ -309,13 +317,13 @@ function PalaceLevel({ world, onExit }) {
   // ---------------------------------------------------------------- actions
   const turnPlane = (st) => {
     const all = getState().save.t5planes || {}
-    const k = ((all[st.id] ?? 3) + 1) % PLANES.length // planes start at 3, which holds for none of the four
+    const k = ((all[st.id] ?? st.start) + 1) % PLANES.length // each statue starts on a plane that doesn't hold
     saveGame({ t5planes: { ...all, [st.id]: k } }); sfx('pickup')
   }
   const declareAchiral = (st) => {
     if ((getState().save.t5statues || {})[st.id]) return
-    const k = (getState().save.t5planes || {})[st.id] ?? 3
-    if (!planeHolds(st.place, k)) { if (world.player) world.player.hurt(1, [world.player.pos.x, 0, world.player.pos.z - 1], true); toast('The glass shatters back together: that plane doesn’t cut the statue into two mirror-image halves. Look at what sits on each side of it.', 'warn', 5200); return }
+    const k = (getState().save.t5planes || {})[st.id] ?? st.start
+    if (!planeHolds(st.place, k)) { if (world.player) world.player.hurt(1, [world.player.pos.x, 0, world.player.pos.z - 1], true); { const [i, j] = PLANES[k]; const o = [0, 1, 2, 3].filter((x) => x !== i && x !== j); toast(`The glass snaps back: this plane swaps ${st.place[o[0]]} with ${st.place[o[1]]}. Not the same group!`, 'warn', 4400) } return }
     settle(st, 'achiral')
     toast(`A symmetry plane! ${st.note}`, 'good', 5200)
   }
@@ -384,7 +392,7 @@ function PalaceLevel({ world, onExit }) {
     if (door === '5-4b' && !has('5-4a')) { toast('The first door first.', 'info', 2000); return }
     if (!DOORS4[door].want(cur)) {
       if (world.player) world.player.hurt(1, [world.player.pos.x, 0, world.player.pos.z - 1], true)
-      const why = door === '5-4a' ? (cur[0] === cur[1] ? `${tag} is (2R,3R) itself, not its mirror image.` : `${tag} keeps one centre the same: that’s not the mirror image. A mirror image flips every centre.`)
+      const why = door === '5-4a' ? (cur[0] === cur[1] ? `That’s (2R,3R) itself, not its mirror image.` : `${tag} keeps one centre the same: that’s not the mirror image. A mirror image flips every centre.`)
         : door === '5-4b' ? `${tag} is either (2R,3R) itself or its mirror image (2S,3S). A diastereomer changes some centres, not all.`
         : (cur[0] === 'S' ? `${tag} is the enantiomer of (2R,3R): chiral, no plane between the centres.` : `${tag} has no plane between its centres: chiral.`)
       toast(`The door won’t take ${tag}. ${why}`, 'warn', 5600); return
@@ -396,7 +404,7 @@ function PalaceLevel({ world, onExit }) {
       markSolved('5-4c'); sfx('open')
       setTimeout(() => say([
         { who: 'Pi', text: '(2R,3S)… and look, the plane between the centres! It is its own mirror image.' },
-        { who: 'Pi', text: 'Meso: chirality centres, but achiral. (2R,3S) and (2S,3R) are the same compound (Fig 5.12).' },
+        { who: 'Pi', text: 'Two chirality centres, yet its own reflection: meso, achiral. (2S,3R) is the same compound!' },
       ]), 500)
     }
   }
@@ -404,13 +412,13 @@ function PalaceLevel({ world, onExit }) {
   }
   const pour = (kind) => {
     if (has('5-5a')) return
-    if (kind === 'achiral') { saveGame({ t5pool: 'racemic' }); sfx('wrong'); toast('Salts form, but as mirror images of each other: same solubility, one pool. Still no rotation (Fig 5.13).', 'warn', 5200); return }
+    if (kind === 'achiral') { saveGame({ t5pool: 'racemic' }); sfx('wrong'); world.player?.hurt(1, [world.player.pos.x, 0, world.player.pos.z - 1], true); toast('Salts form, but as mirror images of each other: same solubility, one pool. Still no rotation (Fig 5.13).', 'warn', 5200); return }
     saveGame({ t5pool: 'split' }); markSolved('5-5a'); sfx('open')
     toast('R,R and S,R salts: diastereomers, with different solubilities. The pool splits in two (Fig 5.14).', 'good', 5200)
   }
   const useKey = (k) => {
     if (has('5-5b')) return
-    if (k === 'N') { sfx('wrong'); toast('It keeps turning inside out, like an umbrella in the wind. An amine inverts too fast: its two hands can’t be kept apart (§5.10).', 'warn', 5200); return }
+    if (k === 'N') { sfx('wrong'); world.player?.hurt(1, [world.player.pos.x, 0, world.player.pos.z - 1], true); toast('It keeps flipping inside out, like an umbrella. An amine inverts too fast to keep a hand (§5.10).', 'warn', 5200); return }
     markSolved('5-5b'); sfx('open'); toast('The phosphine holds its shape. Phosphines invert slowly enough to keep a handedness (§5.10).', 'good', 4800)
     checkBossKey()
   }
@@ -465,11 +473,13 @@ function PalaceLevel({ world, onExit }) {
     await new Promise((r) => setTimeout(r, 1200))
     if (!getState().save.t5bossIntro) {
       saveGame({ t5bossIntro: true })
+      world.camOverride = { pos: [2.6, 3.6, KING.center[2] + 8], look: [KING.center[0], 3.0, KING.center[2]] }
       await say([
-        { who: 'Pi', text: 'The Racemic King! Half gold, half silver. Mirror images, fused.' },
+        { who: 'Pi', text: 'The Racemic King! Gold and silver, fused. And the violet spark, in its crown!' },
         { who: 'Pi', text: 'Hit one half and the other cancels it, like a racemate cancelling its own rotation.' },
         { who: 'Pi', text: 'When the crown glows, give it Tartara’s one-handed glove (G). Then the halves aren’t mirror images any more!' },
       ])
+      world.camOverride = null
     } else await say([{ who: 'Pi', text: 'Wait for the crown. Glove it (G). Then strike both halves!' }])
     busy.current = false
   }
@@ -485,18 +495,23 @@ function PalaceLevel({ world, onExit }) {
     if ((getState().save.shards || 0) >= 5 || busy.current) return
     busy.current = true
     sfx('shard')
-    await say([{ who: 'Sister Tartara', text: '(She steps out of a mirror.) One question, and it is yours.' }])
+    setTartaraHere(true)
+    if (world.player) world.player.teleport([0, 0, -158.4], Math.PI)
+    await new Promise((r) => setTimeout(r, 300))
+    world.camOverride = twoShot(world, [-2.2, 0, -158.4], 3.8, Math.PI / 2)
+    await say([{ who: 'Sister Tartara', text: 'The mirrors went quiet, so I came. One question, and the shard is yours.' }])
     const ok = await openPanel('kingCheck', {})
-    if (!ok) { await say([{ who: 'Sister Tartara', text: 'Take your time. Patience is the whole trick.' }]); busy.current = false; return }
+    if (!ok) { await say([{ who: 'Sister Tartara', text: 'Take your time. Patience is the whole trick.' }]); world.camOverride = null; busy.current = false; return }
     saveGame({ shards: 5, checkpoint: { scene: 'lake', at: 'gate' } })
     setState({ objective: 'Bond Shard 5 of 12 recovered' })
     await say([
       { who: '', text: 'The shard glows warm in Kai’s hands…' },
       { who: 'Princess Octavia', text: 'Kai… five shards. I can hear the castle bells now.' },
       { who: 'Princess Octavia', text: 'He said a thing and its reflection are the same. Every lock in that palace disagreed.' },
-      { who: 'Sister Tartara', text: 'Keep the Shield. East of the lake the mountains climb, and every road needs energy to cross.' },
+      { who: 'Sister Tartara', text: 'Keep the Shield. East, the Peaks climb, and every pass costs energy. Find Pass-Warden Hammond.' },
       { who: 'Pi', text: 'Five down, seven to go!' },
     ])
+    world.camOverride = null
     await warpOut(world, { checkpoint: { scene: 'lake', at: 'gate' }, card: 5 })
     busy.current = false
     onExit('lake', { scene: 'lake', at: 'gate' })
@@ -534,16 +549,16 @@ function PalaceLevel({ world, onExit }) {
       <Tag position={[0, 6.5, -13]} df={16}>The Mirror Palace</Tag>
 
       {/* 5-1 Hall of Hands */}
-      {STATUES.map((st) => <Statue key={st.id} st={st} pos={STATUE_POS[st.id]} plane={planes[st.id] ?? 3} settled={settled[st.id]} />)}
+      {STATUES.map((st) => <Statue key={st.id} st={st} pos={STATUE_POS[st.id]} plane={planes[st.id] ?? st.start} settled={settled[st.id]} />)}
       {STATUES.map((st) => { const [x, z] = STATUE_POS[st.id]; return (
-        <group key={'lv' + st.id} position={[x + (x < 0 ? -1.6 : 1.6), 0, z + 1.4]}>
+        <group key={'lv' + st.id} position={[x + (x < 0 ? 2.0 : -2.0), 0, z + 1.2]}>
           <mesh position={[0, 0.5, 0]}><boxGeometry args={[0.4, 1.0, 0.4]} /><meshStandardMaterial color="#3a4050" /></mesh>
           <mesh position={[0, 1.15, 0]} rotation={[settled[st.id] === 'chiral' ? 0.9 : -0.9, 0, 0]}><cylinderGeometry args={[0.05, 0.05, 1.0, 6]} /><meshStandardMaterial color="#d8dce8" metalness={0.8} roughness={0.3} /></mesh>
           <Tag position={[0, 1.9, 0]} df={8} far={10}>chiral lever</Tag>
         </group>
       ) })}
       {STATUES.map((st) => { const [x, z] = STATUE_POS[st.id]; return (
-        <group key={'bl' + st.id} position={[x + (x < 0 ? 1.2 : -1.2), 0, z + 2.8]}>
+        <group key={'bl' + st.id} position={[x + (x < 0 ? 2.0 : -2.0), 0, z - 1.4]}>
           <mesh position={[0, 0.8, 0]}><cylinderGeometry args={[0.06, 0.06, 1.6, 6]} /><meshStandardMaterial color="#8a8ea0" metalness={0.6} /></mesh>
           <mesh position={[0, 1.5, 0]}><cylinderGeometry args={[0.08, 0.28, 0.34, 16, 1, true]} /><meshStandardMaterial color={settled[st.id] === 'achiral' ? '#9affb8' : '#e0c060'} metalness={0.8} roughness={0.3} side={2} /></mesh>
           <Tag position={[0, 2.1, 0]} df={8} far={10}>symmetry bell</Tag>
@@ -604,9 +619,10 @@ function PalaceLevel({ world, onExit }) {
       {/* boss arena */}
       {[0, 1, 2, 3, 4, 5, 6, 7].map((k) => { const a = ((k + 0.5) / 8) * Math.PI * 2; return <Torch key={'b' + k} pos={[Math.cos(a) * 12.4, 0, KING.center[2] + Math.sin(a) * 15.5]} color="#e8f0ff" /> })}
       {[-1, 1].map((s) => <group key={s} position={[s * 12.8, 0, -160]} rotation={[0, -s * Math.PI / 2, 0]} scale={2}><Part model="palace" name="p5_mirror" /></group>)}
-      <RacemicKing world={world} center={KING.center} active={bossOn && !solved.boss5} onDefeated={bossDown} />
+      {!solved.boss5 && <RacemicKing world={world} center={KING.center} active={bossOn && !solved.boss5} onDefeated={bossDown} />}
       <Shard show={!!solved.boss5 && (save.shards || 0) < 5} pos={KING.center} />
       <Motes count={180} area={[20, 7, 180]} center={[0, 0.3, -85]} color="#e8f0ff" size={0.06} />
+      {tartaraHere && <Tartara withTable={false} position={[-2.2, 0, -158.4]} rotation={[0, Math.PI / 2, 0]} />}
       <PiFollower world={world} />
     </group>
   )

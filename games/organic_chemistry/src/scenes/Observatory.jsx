@@ -338,7 +338,7 @@ function ObsLevel({ world, onExit }) {
       {Object.entries(STATIONS12).map(([id, st]) => <Station key={id} world={world} pos={st.pos} label={solved[id] ? null : st.label} enabled={!solved[id]} solved={!!solved[id]} onUse={async () => { const ok = await openPanel(st.panel, st.props); if (!ok) return; markSolved(id); if (id === '12-3') { sfx('open'); toast('The lens swings to infrared. A small chest appears.', 'good', 3000) } }} />)}
 
       {/* boss */}
-      <Sorcerer world={world} center={SORC.center} active={bossOn && !solved.boss12} onDefeated={bossDown} />
+      {!solved.boss12 && <Sorcerer world={world} center={SORC.center} active={bossOn && !solved.boss12} onDefeated={bossDown} />}
       {spectraHere && <Spectra position={[-2.2, 0, -142.4]} rotation={[0, Math.PI / 2, 0]} />}
       <Shard show={!!solved.boss12 && (save.shards || 0) < 12} pos={[0, 0, -144]} />
       <Motes count={200} area={[20, 6, 150]} center={[0, 1, -70]} color="#e8f0ff" size={0.04} />

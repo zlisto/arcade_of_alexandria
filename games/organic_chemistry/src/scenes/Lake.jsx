@@ -48,8 +48,8 @@ function Night() {
 function Lake() {
   return (
     <group>
-      <mesh position={[0, -0.04, SHORE_Z - 110]} rotation={[-Math.PI / 2, 0, 0]}><planeGeometry args={[320, 220]} /><meshStandardMaterial color="#5a6e90" metalness={0.9} roughness={0.08} transparent opacity={0.72} depthWrite={false} /></mesh>
-      <mesh position={[0, -12, SHORE_Z - 110]} rotation={[-Math.PI / 2, 0, 0]}><planeGeometry args={[320, 220]} /><meshBasicMaterial color="#0c1428" /></mesh>
+      <mesh position={[0, -0.04, SHORE_Z - 110]} rotation={[-Math.PI / 2, 0, 0]}><planeGeometry args={[320, 220]} /><meshStandardMaterial color="#5a6e90" metalness={0.9} roughness={0.08} transparent opacity={0.5} depthWrite={false} /></mesh>
+      <mesh position={[0, -60, SHORE_Z - 110]} rotation={[-Math.PI / 2, 0, 0]}><planeGeometry args={[320, 220]} /><meshBasicMaterial color="#0c1428" /></mesh>
     </group>
   )
 }
@@ -129,7 +129,7 @@ function LakeLevel({ world, onExit }) {
       setState({ tartaraShot: true })
       await say([
         { who: 'Sister Tartara', text: 'Mind the water: it copies everything. You, me, the palace. Even your little light.' },
-        { who: 'Sister Tartara', text: 'I am Tartara. I sort crystals. Left ones here, right ones there. It takes patience, and nothing else.' },
+        { who: 'Sister Tartara', text: 'I am Tartara. Sachse said you would come. I sort crystals: left here, right there. Patience, nothing else.' },
         { who: 'Sister Tartara', text: 'Malradix has decreed that a thing and its reflection are the same thing. He crowned a king made of both.' },
         { who: 'Pi', text: 'But a left glove doesn’t fit a right hand!' },
         { who: 'Sister Tartara', text: 'Quite. Show me you can tell them apart, and I will raise the causeway. Sort these for me.' },
@@ -156,6 +156,7 @@ function LakeLevel({ world, onExit }) {
     await say([
       { who: 'Sister Tartara', text: 'Pasteur would have liked you. The causeway is yours.' },
       { who: 'Sister Tartara', text: 'Inside, the shades wear your face, backwards. Do not try to out-fight a mirror.' },
+      { who: 'Sister Tartara', text: 'And take my glove. Right-handed, always. It grips both his halves, but never the same way.' },
     ])
   }
 

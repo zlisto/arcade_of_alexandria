@@ -38,7 +38,7 @@ export default function RacemicKing({ world, center, active, onDefeated }) {
   const C = useMemo(() => new THREE.Vector3(...center), [center])
   const st = useRef(null)
   if (!st.current) st.current = { phase: 0, mode: 'rise', t: 0, pos: new THREE.Vector3(C.x, 0, C.z - 4), facing: 0, glowT: -99, nextGlow: 3, split: 0, hitG: false, hitS: false, cd: 3, aim: new THREE.Vector3() }
-  const gold = useRef(), silver = useRef(), crown = useRef(), mark = useRef()
+  const gold = useRef(), silver = useRef(), crown = useRef(), mark = useRef(), spark = useRef()
   const [tagMode, setTagMode] = useState(null)
 
   useEffect(() => {
@@ -71,12 +71,12 @@ export default function RacemicKing({ world, center, active, onDefeated }) {
     const ids = [half('gold'), half('silver')]
     ids.push(world.addLantern({
       needs: 'hasShield', omni: true, pos: () => [s.pos.x, 0, s.pos.z], radius: 16, priority: 2,
-      label: () => (s.mode === 'down' || s.mode === 'rise' || s.split > 0 ? null : 'Pair it with the chiral glove'),
+      label: () => (s.mode === 'down' || s.mode === 'rise' || s.split > 0 || s.t < s.glowT || s.t > s.glowT + PHASES[Math.min(s.phase, 2)].glow ? null : 'Pair it with the chiral glove'),
       onLantern: () => {
         if (s.split > 0 || s.mode === 'down' || s.mode === 'rise') return
         if (s.t < s.glowT || s.t > s.glowT + PHASES[Math.min(s.phase, 2)].glow) { sfx('wrong'); toast('The glove slips off: its crown isn’t open. It answers with both sceptres!', 'warn', 3000); if (s.mode === 'walk' && world.player) { s.mode = 'wind'; s.wt = PHASES[Math.min(s.phase, 2)].wind * 0.4; s.aim.set(world.player.pos.x, 0, world.player.pos.z) } return }
         s.split = SPLIT; s.mode = 'split'; s.splitT = 0; sfx('shard'); world.shake = 0.4
-        if (!s.toldSplit) { s.toldSplit = true; toast('The R glove pairs with both halves: R·R and S·R. Not mirror images any more: diastereomers, with different properties, like solubility. They come apart! Strike each.', 'good', 6000) }
+        if (!s.toldSplit) { s.toldSplit = true; toast('R·R and S·R: diastereomers, with different properties. They split. Strike each!', 'good', 4600) }
       },
     }))
     if (import.meta.env.DEV) window.__valence = { ...(window.__valence || {}), king: s }
@@ -136,7 +136,7 @@ export default function RacemicKing({ world, center, active, onDefeated }) {
       }
       if (s.split <= 0) { s.mode = 'rejoin'; s.t = 0; s.hitG = s.hitS = false; s.hpFix = true; toast('They fuse again: racemic. Wait for the crown.', 'info', 2800) }
     } else if (s.mode === 'rejoin') {
-      if (s.t > 0.8) { s.mode = 'walk'; s.nextGlow = s.t + 2.2 }
+      if (s.t > 0.8) { s.mode = 'walk'; s.nextGlow = s.t + 4.2; s.cd = Math.min(s.cd, 0.8) }
     } else if (s.mode === 'down') {
       lift = -Math.max(0, s.t - 1) * 1.5
     }
@@ -155,6 +155,10 @@ export default function RacemicKing({ world, center, active, onDefeated }) {
     const open = s.mode !== 'split' && s.t >= s.glowT && s.t <= s.glowT + P.glow
     if (crown.current) { crown.current.visible = open; crown.current.position.set(s.pos.x - C.x, 4.4 + lift, s.pos.z - C.z) }
     if (mark.current) { mark.current.visible = s.mode === 'wind'; if (s.mode === 'wind') { mark.current.position.set(s.aim.x - C.x, 0.06, s.aim.z - C.z); mark.current.material.opacity = 0.3 + 0.5 * Math.abs(Math.sin(s.wt * 10)) } }
+    if (spark.current) {
+      if (s.mode !== 'down') { s.sparkT = -1; spark.current.visible = true; spark.current.position.set(s.pos.x - C.x + Math.sin(state.clock.elapsedTime * 7) * 0.12, 4.0 + lift, s.pos.z - C.z) }
+      else { if (s.sparkT < 0) { s.sparkT = 0; sfx('shard') } s.sparkT += rawDt; spark.current.position.set(s.pos.x - C.x + s.sparkT * 5, 4.0 + s.sparkT * 2.5, s.pos.z - C.z); spark.current.visible = s.sparkT < 2.5 }
+    }
     const tm = open ? 'open' : s.split > 0 ? 'split' : null
     if (tm !== tagMode) setTagMode(tm)
   })
@@ -163,6 +167,7 @@ export default function RacemicKing({ world, center, active, onDefeated }) {
     <group position={[C.x, 0, C.z]}>
       <group ref={gold} position={[0, -6, 0]}><Part model="king" name="kng_gold" mats={M} /><pointLight position={[-1, 3, 1.5]} color="#ffcf6a" intensity={3} distance={8} /></group>
       <group ref={silver} position={[0, -6, 0]}><Part model="king" name="kng_silver" mats={M} /><pointLight position={[1, 3, 1.5]} color="#bfe8ff" intensity={3} distance={8} /></group>
+      <group ref={spark}><mesh><sphereGeometry args={[0.24, 14, 10]} /><meshBasicMaterial color="#e0b0ff" toneMapped={false} /></mesh><mesh><sphereGeometry args={[0.55, 14, 10]} /><meshBasicMaterial color="#a040ff" transparent opacity={0.35} depthWrite={false} toneMapped={false} /></mesh><pointLight color="#c070ff" intensity={5} distance={7} /></group>
       <group ref={crown} visible={false}>
         <mesh><torusGeometry args={[0.7, 0.08, 10, 32]} /><meshBasicMaterial color="#fff6c0" toneMapped={false} /></mesh>
         <pointLight color="#fff6c0" intensity={6} distance={10} />

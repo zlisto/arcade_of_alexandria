@@ -11,8 +11,20 @@ import { sfx } from '../audio/sfx'
 export async function itemGet(world, item, lines) {
   const p = world.player
   if (p) {
-    // Kai turns round, away from the chest he just opened, and the camera stands in front of him: open ground
-    const f = p.facing + Math.PI
+    // Kai turns round, away from the chest he just opened, and the camera stands in front of him. If a wall or a
+    // shut door is in the way on that side, try the other sides until the line of sight is clear.
+    const blocked = (x, y, z) => {
+      for (let k = 1; k <= 8; k++) {
+        const t = k / 8, px = p.pos.x + (x - p.pos.x) * t, py = p.pos.y + 1.6 + (y - p.pos.y - 1.6) * t, pz = p.pos.z + (z - p.pos.z) * t
+        for (const s of world.solids.values()) if (s.enabled && px > s.min[0] && px < s.max[0] && py > s.min[1] && py < s.max[1] && pz > s.min[2] && pz < s.max[2]) return true
+      }
+      return false
+    }
+    let f = p.facing + Math.PI
+    for (const turn of [0, Math.PI / 2, -Math.PI / 2, Math.PI]) {
+      const g = p.facing + Math.PI + turn
+      if (!blocked(p.pos.x + Math.sin(g) * 4.6, p.pos.y + 1.7, p.pos.z + Math.cos(g) * 4.6)) { f = g; break }
+    }
     if (p.teleport) p.teleport([p.pos.x, p.pos.y, p.pos.z], f)
     world.camOverride = { pos: [p.pos.x + Math.sin(f) * 4.6, p.pos.y + 1.7, p.pos.z + Math.cos(f) * 4.6], look: [p.pos.x, p.pos.y + 1.6, p.pos.z] }
   }

@@ -550,7 +550,7 @@ function TowerLevel({ world, onExit }) {
       })}
 
       {/* boss */}
-      <Phantom world={world} center={PHANTOM.center} active={bossOn && !solved.boss7} onDefeated={bossDown} />
+      {!solved.boss7 && <Phantom world={world} center={PHANTOM.center} active={bossOn && !solved.boss7} onDefeated={bossDown} />}
       {markovHere && <Markov position={[-2.2, 0, -182.4]} rotation={[0, Math.PI / 2, 0]} />}
       <Shard show={!!solved.boss7 && (save.shards || 0) < 7} pos={[0, 0, -184]} />
       <Motes count={180} area={[20, 7, 190]} center={[0, 0.5, -90]} color="#ffe8a0" size={0.05} />

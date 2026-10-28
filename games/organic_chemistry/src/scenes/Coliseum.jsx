@@ -193,7 +193,7 @@ function ColLevel({ world, onExit }) {
   }
   const eliminate = () => {
     if (has('11-4e')) return
-    const axial = isAxial(0, 'top', !!getState().save.t11flip)
+    const axial = isAxial(1, 'top', !!getState().save.t11flip)
     if (!axial) { sfx('wrong'); toast('Cl is equatorial: no neighbouring H lines up anti to it. E2 needs H and Cl trans-diaxial. Flip the ring (G).', 'warn', 5200); return }
     markSolved('11-4e'); sfx('open')
     toast('Cl axial, the H on the next carbon axial and pointing the other way: anti-periplanar. One step, and HCl is gone (§11.9).', 'good', 5600)
@@ -321,7 +321,7 @@ function ColLevel({ world, onExit }) {
       <Tag position={[0, 6.5, -13]} df={16}>The Under-Halls</Tag>
 
       {/* 11-1 the Walden gate */}
-      <Ghouls world={world} spawns={[[-4, -20], [4, -22], [0, -26]]} active zone={[-14, -40]} onCleared={() => { if (!has('t11-ghouls')) { markSolved('t11-ghouls'); sfx('open'); toast('The ghouls have left. A big chest rises!', 'good', 3000) } }} />
+      <Ghouls world={world} spawns={[[-4, -20], [4, -22], [0, -26]]} active={!solved['t11-ghouls']} zone={[-14, -40]} onCleared={() => { if (!has('t11-ghouls')) { markSolved('t11-ghouls'); sfx('open'); toast('The ghouls have left. A big chest rises!', 'good', 3000) } }} />
       <Chest world={world} pos={[0, 0, -22]} big opened={!!solved['t11-umb']} show={!!solved['t11-ghouls']} onOpen={() => openChest('t11-umb')} label="Open the big chest" />
       {CENTRES11.map((c) => <CentreStatue key={c.id} c={c} inverted={!!solved[c.id]} />)}
       <Gate world={world} pos={[0, 0, -39.5]} size={[2 * W, 7, 0.8]} open={!!(solved['11-1a'] && solved['11-1b'])} color="#4a2a2a" glow="#ff8a6a" />
@@ -364,7 +364,7 @@ function ColLevel({ world, onExit }) {
       <Gate world={world} pos={[0, 0, -81.5]} size={[2 * W, 7, 0.8]} open={!!solved['11-3']} color="#4a2a2a" glow="#f0f0f0" />
 
       {/* 11-4 the elimination ring */}
-      <ChairRing position={[RING11.centre[0], 1.2, RING11.centre[1]]} R={2.6} amp={0.5} atom={0.3} bond={0.09} len={1.0} flip={flip} subs={[{ c: 0, face: 'top', label: 'Cl', color: '#6fe39a', size: 0.34 }]} />
+      <ChairRing position={[RING11.centre[0], 1.2, RING11.centre[1]]} R={2.6} amp={0.5} atom={0.3} bond={0.09} len={1.0} flip={flip} subs={[{ c: 1, face: 'top', label: 'Cl', color: '#6fe39a', size: 0.34 }]} />
       <Tag position={[RING11.centre[0], 3.8, RING11.centre[1]]} df={11} far={16} className={solved['11-4e'] ? 'ok-tag' : ''}>{solved['11-4e'] ? 'H and Cl trans-diaxial: eliminated' : 'chlorocyclohexane: get Cl axial'}</Tag>
       <Chest world={world} pos={[0, 0, -104]} opened={!!solved['t11-key']} show={!!(solved['11-4e'] && solved['11-4z'])} onOpen={() => openChest('t11-key')} label="Open the small chest" />
       <Gate world={world} pos={[0, 0, -106]} size={[2 * W, 7, 0.8]} open={!!solved['t11-door']} color="#5a4020" glow="#ffcf6a" />
@@ -380,7 +380,7 @@ function ColLevel({ world, onExit }) {
       })}
 
       {/* boss */}
-      <Champion world={world} center={CHAMP.center} R={CHAMP.R} active={bossOn && !solved.boss11} onDefeated={bossDown} />
+      {!solved.boss11 && <Champion world={world} center={CHAMP.center} R={CHAMP.R} active={bossOn && !solved.boss11} onDefeated={bossDown} />}
       {waldenHere && <Walden position={[-2.2, 0, -158.4]} rotation={[0, Math.PI / 2, 0]} />}
       <Shard show={!!solved.boss11 && (save.shards || 0) < 11} pos={[0, 0, -160]} />
       <Motes count={160} area={[20, 6, 166]} center={[0, 0.6, -80]} color="#ffa060" size={0.05} />

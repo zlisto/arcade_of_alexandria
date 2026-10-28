@@ -75,7 +75,7 @@ function Title({ onNew, onContinue, onLevel }) {
           <button className={canContinue ? '' : 'primary'} onClick={onNew}>{canContinue ? 'New game' : 'Start'}</button>
           <button className="ghost" onClick={() => setPicking(true)} title="Jump to any level">Level select</button>
         </div>
-        <p className="credit">Based on <i>Organic Chemistry: A Tenth Edition</i>, Chapters 1–3 — John McMurry, OpenStax (CC BY-NC-SA 4.0). Best with keyboard + mouse or a gamepad.</p>
+        <p className="credit">Based on <i>Organic Chemistry: A Tenth Edition</i>, Chapters 1–12 — John McMurry, OpenStax (CC BY-NC-SA 4.0). Best with keyboard + mouse or a gamepad.</p>
       </div>
       {picking && <LevelSelect onGo={(it) => { setPicking(false); onLevel(it) }} onClose={() => setPicking(false)} />}
     </div>

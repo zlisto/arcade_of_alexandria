@@ -37,10 +37,10 @@ export function planeHolds(place, k) {
 export const isChiralCentre = (place) => new Set(place).size === 4
 
 export const STATUES = [
-  { id: 's1', name: 'Chloromethane · CH₃Cl', place: ['Cl', 'H', 'H', 'H'], note: 'CH₃X: three identical H. Any plane through Cl and one H swaps the other two H.' },
-  { id: 's2', name: 'Bromochloromethane · CH₂BrCl', place: ['Br', 'Cl', 'H', 'H'], note: 'CH₂XY: the plane through Br and Cl swaps the two H. Achiral (Fig 5.2).' },
-  { id: 's3', name: 'Propanoic acid, C2 · H, H, CH₃, CO₂H', place: ['CO₂H', 'CH₃', 'H', 'H'], note: 'Two H on one carbon: a symmetry plane, so propanoic acid is achiral (Fig 5.5).' },
-  { id: 's4', name: 'Lactic acid, C2 · H, OH, CH₃, CO₂H', place: ['CO₂H', 'OH', 'CH₃', 'H'], note: 'Four different groups: no plane swaps two identical groups. Chiral; it has an enantiomer (Fig 5.3).' },
+  { id: 's1', name: 'Chloromethane · CH₃Cl', place: ['H', 'H', 'Cl', 'H'], start: 0, note: 'CH₃X: three identical H. Any plane through Cl and one H swaps the other two H.' },
+  { id: 's2', name: 'Bromochloromethane · CH₂BrCl', place: ['H', 'Br', 'H', 'Cl'], start: 2, note: 'CH₂XY: the plane through Br and Cl swaps the two H. Achiral (Fig 5.2).' },
+  { id: 's3', name: 'Propanoic acid, C2 · H, H, CH₃, CO₂H', place: ['CH₃', 'H', 'CO₂H', 'H'], start: 5, note: 'Two H on one carbon: a symmetry plane, so propanoic acid is achiral (Fig 5.5).' },
+  { id: 's4', name: 'Lactic acid, C2 · H, OH, CH₃, CO₂H', place: ['CO₂H', 'OH', 'CH₃', 'H'], start: 1, note: 'Four different groups: no plane swaps two identical groups. Chiral; it has an enantiomer (Fig 5.3).' },
 ]
 export const GROUP_COLOR = { H: '#f2f2f2', Cl: '#6fe39a', Br: '#b0503a', 'CH₃': '#ff6fb3', 'CO₂H': '#ff6a5a', OH: '#ff9a3a', 'NH₂': '#5a8aff', CHO: '#ffd04a', 'CH₂OH': '#c87aff', Ar: '#8a7aff' }
 

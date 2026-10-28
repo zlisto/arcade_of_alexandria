@@ -394,7 +394,7 @@ function SunkenLevel({ world, onExit }) {
 
       {/* 10-5 the metal forge */}
       <mesh position={[FORGE10.pool[0], 0.03, FORGE10.pool[1]]} rotation={[-Math.PI / 2, 0, 0]}><circleGeometry args={[3, 24]} /><meshStandardMaterial color="#4a6a7a" metalness={0.3} roughness={0.2} /></mesh>
-      <Golems world={world} spawns={FORGE10.golems} active={!!solved['t10-door']} zone={[-104, -132]} onCleared={() => { if (!has('10-5g')) { markSolved('10-5g'); sfx('open'); toast('Both golems protonated. The forge is quiet.', 'good', 3000) } }} />
+      <Golems world={world} spawns={FORGE10.golems} active={!!solved['t10-door'] && !solved['10-5g']} zone={[-104, -132]} onCleared={() => { if (!has('10-5g')) { markSolved('10-5g'); sfx('open'); toast('Both golems protonated. The forge is quiet.', 'good', 3000) } }} />
       <Chest world={world} pos={[0, 0, -129.5]} big opened={!!solved['t10-bosskey']} show={!!(solved['10-5g'] && solved['10-5gilman'] && solved['10-5ox'])} onOpen={() => openChest('t10-bosskey')} label="Open the big chest" />
       <Gate world={world} pos={[0, 0, -132]} size={[2 * W, 7, 0.8]} open={!!solved['t10-bossdoor']} color="#3a2a50" glow="#c9a3ff" />
 
@@ -404,7 +404,7 @@ function SunkenLevel({ world, onExit }) {
       })}
 
       {/* boss */}
-      <Hydra10 world={world} center={HYDRA.center} active={bossOn && !solved.boss10} onDefeated={bossDown} />
+      {!solved.boss10 && <Hydra10 world={world} center={HYDRA.center} active={bossOn && !solved.boss10} onDefeated={bossDown} />}
       {magnusHere && <Magnus position={[-2.2, 0, -164.4]} rotation={[0, Math.PI / 2, 0]} />}
       <Shard show={!!solved.boss10 && (save.shards || 0) < 10} pos={[0, 0, -166]} />
       <Motes count={160} area={[20, 6, 170]} center={[0, 0.6, -80]} color="#c8ffb0" size={0.05} />

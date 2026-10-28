@@ -113,7 +113,7 @@ export default function Champion({ world, center, R = 11, active, onDefeated }) 
     const ids = BANNERS.map((b, k) => world.addTarget({
       pos: () => { const [x, z] = bannerPos(k); return [x, 2.0, z] }, radius: 0.9, tall: 2.6, alive: () => st.current.mode === 'read',
       onHit: () => {
-        if (b === S.mech) { sfx('right'); s.mode = 'stance'; s.t = 0; setStance(b); toast(`${b}! ${S.tell}`, 'good', 5200) }
+        if (b === S.mech) { sfx('right'); s.mode = 'stance'; s.t = 0; setStance(b); const p0 = world.player; if (p0) s.face = Math.atan2(p0.pos.x - s.pos.x, p0.pos.z - s.pos.z) + Math.PI / 2; toast(`${b}! ${S.tell}`, 'good', 5200) }
         else { sfx('wrong'); s.mode = 'punish'; s.t = 0; toast(`Not ${b} under these conditions: ${S.cond}. It punishes the guess.`, 'warn', 4800) }
         return true
       },
@@ -129,7 +129,7 @@ export default function Champion({ world, center, R = 11, active, onDefeated }) 
       const p = world.player
       const dx = p.pos.x - s.pos.x, dz = p.pos.z - s.pos.z, l = Math.hypot(dx, dz) || 1
       const front = (dx * Math.sin(s.face) + dz * Math.cos(s.face)) / l
-      if (front > -0.3) { sfx('block'); toast('It turns its leaving group to you. SN2 comes from the opposite side: get behind it.', 'warn', 3600); return }
+      if (front > -0.3) { sfx('block'); toast('That’s its leaving-group side. SN2 comes from the opposite side: get behind it.', 'warn', 3600); return }
       land()
     } }))
     return () => { ids.forEach((i) => world.remove(i)); world.bossCam = false; setState({ bossHp: null }) }
@@ -153,7 +153,7 @@ export default function Champion({ world, center, R = 11, active, onDefeated }) 
     const p = world.player
     if (p && s.mode !== 'stance') s.face = Math.atan2(p.pos.x - s.pos.x, p.pos.z - s.pos.z)
     if (s.mode === 'stance') {
-      if (S.mech === 'SN2') { if (p) s.face = Math.atan2(p.pos.x - s.pos.x, p.pos.z - s.pos.z) + Math.PI / 2; if (s.t > 7) { s.mode = 'read'; toast('It squares up again. Read the banners.', 'warn', 2600, true) } }
+      if (S.mech === 'SN2') { if (s.t > 9) { s.mode = 'read'; toast('It squares up again. Read the banners.', 'warn', 2600, true) } }
       if (S.mech === 'SN1') { s.open = s.t > 2.5 && s.t < 6; if (s.t > 2.5 && !s.toldIon) { s.toldIon = true; toast('Its leaving group drops away: a flat carbocation. Now!', 'good', 2600) } if (s.t > 6) { s.mode = 'read'; s.toldIon = false } }
       if (S.mech === 'E2') {
         if (sweep.current) { sweep.current.visible = s.t > 1 && s.t < 1.5; sweep.current.scale.setScalar(1 + (s.t - 1) * 16) }

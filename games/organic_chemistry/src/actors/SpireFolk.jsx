@@ -133,7 +133,7 @@ export default function Mimic({ world, center, active, onDefeated }) {
           toast(`Yes: ${cur.right} → (${cur.step}) → ${cur.have}. A shell tears away.`, 'good', 4600)
           setStep(step + 1)
         } else {
-          sfx('wrong'); s.mode = 'lash'; s.t = 0
+          sfx('wrong'); s.mode = 'lash'; s.t = 0; s.hit = false
           toast(cur.why[o] || 'That isn’t what came just before.', 'warn', 5600)
         }
         return true
@@ -171,7 +171,7 @@ export default function Mimic({ world, center, active, onDefeated }) {
     if (s.mode === 'lash') {
       if (wave.current) { wave.current.visible = s.t < 0.7; wave.current.scale.setScalar(1 + s.t * 14) }
       if (s.t > 0.2 && !s.lashed) { s.lashed = true; if (p && !p.rolling && Math.hypot(p.pos.x - s.pos.x, p.pos.z - s.pos.z) < 9) p.hurt(1, [s.pos.x, 0, s.pos.z]) }
-      if (s.t > 1.0) { s.mode = 'plan'; s.lashed = false }
+      if (s.t > 1.0) { s.mode = 'back'; s.t = 0; s.lashed = false }
     }
     if (body.current) {
       body.current.position.set(s.pos.x - center[0], 0.2 + Math.sin(state.clock.elapsedTime * 1.6) * 0.1, s.pos.z - center[2])

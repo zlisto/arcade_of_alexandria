@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { sfx } from '../audio/sfx'
 import { TETRA, configOf, LOCKS, ROTATIONS, observed, GROUP_COLOR } from '../chem/rules5'
 
@@ -17,7 +17,7 @@ const bad = (setFb, text) => { sfx('wrong'); setFb({ ok: false, text }) }
 // of the top edge. A crystal can be turned any way in the tray — turning never changes its hand; only a mirror does.
 const CRYSTALS = [...Array(8)].map((_, i) => ({ id: i, hand: [1, -1, -1, 1, 1, -1, 1, -1][i], rot: [0, 50, 160, 220, 300, 110, 25, 260][i] }))
 const spin = {} // a crystal put in the wrong tray comes back turned a new way, so guessing twice doesn't work
-function CrystalSvg({ hand, rot, size = 64 }) {
+function CrystalSvg({ hand, rot, size = 84 }) {
   // hexagon, with a small triangular facet cut beside the top-right (hand 1) or top-left (hand −1) corner
   const pts = [...Array(6)].map((_, k) => { const a = (k / 6) * Math.PI * 2 - Math.PI / 2; return [Math.cos(a) * 24, Math.sin(a) * 30] })
   const corner = pts[hand > 0 ? 1 : 5]
@@ -36,13 +36,14 @@ export function PasteurCrystals({ done }) {
   const [held, setHeld] = useState(null)
   const [stage, setStage] = useState('sort')
   const [fb, setFb] = useState(null)
+  const misses = useRef(0)
   const place = (side) => {
     if (held === null) return
     const c = CRYSTALS[held]
     // the left tray takes the crystals whose facet sits LEFT of the long axis when the crystal stands upright
-    if ((side === 'L') !== (c.hand < 0)) { spin[held] = ((spin[held] || 0) + 97 + Math.floor(Math.random() * 120)) % 360; setHeld(null); return bad(setFb, 'Wrong tray: the crystal slides back, turned a new way. Turn it upright in your head: which side of the top is the gold facet? Turning never changes its hand.') }
+    if ((side === 'L') !== (c.hand < 0)) { spin[held] = ((spin[held] || 0) + 97 + Math.floor(Math.random() * 120)) % 360; setHeld(null); misses.current += 1; if (misses.current >= 2) { misses.current = 0; setTray({}); return bad(setFb, 'Two wrong trays: the crystals tumble out, every one. Stand each upright in your head first: which side is the gold facet?') } return bad(setFb, 'Wrong tray: it slides back, turned a new way. Turning never changes its hand.') }
     const next = { ...tray, [held]: side }
-    setTray(next); setHeld(null); setFb(null); sfx('pickup')
+    misses.current = 0; setTray(next); setHeld(null); setFb(null); sfx('pickup')
     if (Object.keys(next).length === CRYSTALS.length) { sfx('right'); setStage('ask') }
   }
   if (stage === 'ask') {
@@ -67,7 +68,7 @@ export function PasteurCrystals({ done }) {
   return (
     <div>
       <h2>Sister Tartara's crystals</h2>
-      <p className="ins">Like Pasteur in 1848: pick up each crystal and put it in the tray for its hand. Stood upright, a left-handed crystal has its gold facet left of the top; a right-handed one, right. They come in turned every which way. <span className="cite">§5.4, Fig 5.7</span></p>
+      <p className="ins">Like Pasteur in 1848: pick up each crystal and put it in the tray for its hand. Stand it upright, its long point up: a left-handed crystal has its gold facet left of that point; a right-handed one, right. They come in turned every which way. <span className="cite">§5.4, Fig 5.7</span></p>
       <div className="crys-row">{CRYSTALS.filter((c) => !tray[c.id] && tray[c.id] !== 0).map((c) => <button key={c.id} className={'crys' + (held === c.id ? ' sel' : '')} onClick={() => { setHeld(c.id); setFb(null) }}><CrystalSvg hand={c.hand} rot={c.rot + (spin[c.id] || 0)} /></button>)}</div>
       <div className="crys-trays">
         {['L', 'R'].map((side) => <button key={side} className="crys-tray" onClick={() => place(side)}><b>{side === 'L' ? 'Left-handed' : 'Right-handed'}</b><span>{CRYSTALS.filter((c) => tray[c.id] === side).map((c) => <CrystalSvg key={c.id} hand={c.hand} rot={0} size={30} />)}</span></button>)}
@@ -86,22 +87,32 @@ export function Polarimeter({ done }) {
   const [ans, setAns] = useState('')
   const [fb, setFb] = useState(null)
   // step 0: an unknown at c = 0.05 g/mL; find α with the analyzer, compute [α] yourself, then name it
-  const pool = ROTATIONS.filter((r) => Math.abs(r.a) >= 15 && Math.abs(r.a) <= 140)
-  const [unknownR] = useState(() => pool[Math.floor(Math.random() * pool.length)])
+  const pool = ROTATIONS.filter((r) => Math.abs(r.a) >= 15 && Math.abs(r.a) <= 140 && r.name !== 'Sucrose')
+  const roll = () => pool[Math.floor(Math.random() * pool.length)]
+  const [unknownR, setUnknownR] = useState(roll)
+  const [specOk, setSpecOk] = useState(false)
+  const misses = useRef(0)
   const unknown = unknownR.a
   const [spec, setSpec] = useState('')
   const alpha = step === 0 ? observed(unknown, len, 0.05) : observed(66.47, len, conc)
   // the light is brightest only within a fraction of a degree of α: you have to hunt for it
   const light = Math.exp(-Math.pow((ang - alpha) / 0.6, 2))
   const name = () => {
-    if (Math.abs(ang - alpha) > 0.3) return bad(setFb, 'The light isn’t at its brightest yet: turn the analyzer until the meter peaks, and read α off it.')
+    if (Math.abs(ang - alpha) > 0.1) return bad(setFb, 'The light isn’t at its brightest yet: turn the analyzer until the meter peaks, and read α off it.')
     const v = parseFloat(spec.replace('−', '-'))
-    const want = +(alpha / (len * 0.05)).toFixed(1)
-    if (!isFinite(v) || Math.abs(v - want) > Math.max(2, Math.abs(want) * 0.03)) return bad(setFb, `[α]D = α / (l × c): your reading ÷ (${len} dm × 0.05 g/mL). Work it out and type it in.`)
+    const want = +(ang / (len * 0.05)).toFixed(1)
+    if (!specOk) {
+      if (!isFinite(v) || Math.abs(v - want) > Math.max(2, Math.abs(want) * 0.03)) {
+        misses.current += 1
+        if (misses.current >= 2) { misses.current = 0; setUnknownR(roll()); setAng(0); setSpec(''); return bad(setFb, 'The tube clouds and is refilled: a new unknown. [α]D = α ÷ (l × c). Read α again.') }
+        return bad(setFb, `[α]D = α / (l × c): your reading ÷ (${len} dm × 0.05 g/mL). One more try.`)
+      }
+      setSpecOk(true); sfx("pickup"); setFb({ ok: true, text: `[α]D ≈ ${want}. Now find it in Table 5.1.` }); return
+    }
     const guess = ROTATIONS.find((r) => r.name === ans)
     if (!guess) return bad(setFb, 'Now pick the compound whose specific rotation matches yours.')
-    if (guess.a !== unknown) return bad(setFb, `Your [α] is ${want}. ${guess.name}’s is ${guess.a}. Look again in Table 5.1.`)
-    sfx('right'); setFb({ ok: true, text: `${guess.name}: [α]D = ${alpha} / (${len} × 0.05) = ${unknown}. ${unknown < 0 ? 'Levorotatory (−).' : 'Dextrorotatory (+).'}` }); setTimeout(() => { setFb(null); setStep(1); setAng(0) }, 2600)
+    if (guess.a !== unknown) return bad(setFb, `Your [α] is about ${want}. ${guess.name}’s is ${guess.a}. Look again in Table 5.1.`)
+    sfx('right'); setFb({ ok: true, text: `${guess.name}: [α]D = ${alpha} / (${len} × 0.05) = ${unknown}. ${unknown < 0 ? 'Levorotatory (−).' : 'Dextrorotatory (+).'}` }); setTimeout(() => { setFb(null); setStep(1); setAng(0); setLen(1); setConc(0.2) }, 2600)
   }
   const target = 6.65
   const check2 = () => {
@@ -113,13 +124,14 @@ export function Polarimeter({ done }) {
       <h2>The Polarized Window</h2>
       <p className="ins">{step === 0 ? 'An unknown in the tube, 0.05 g/mL. Choose a tube length, turn the analyzer until the meter peaks (that angle is α), work out [α]D = α / (l × c) yourself, then name it from Table 5.1.' : 'Now the window itself: it opens at α = +6.65° with sucrose ([α]D = +66.47). Pick the tube and the concentration.'} <span className="cite">§5.3</span></p>
       <div className="polar">
-        <div><div className="polar-light" style={{ opacity: step === 0 ? 0.08 + 0.92 * light : 0.6 }} />{step === 0 && <div className="small">light meter: {Math.round(light * 100)}%</div>}</div>
+        <div><div className="polar-light" style={{ opacity: step === 0 ? 0.08 + 0.92 * light : 0.6 }} />{step === 0 && <div className="small">light meter: {(light * 100).toFixed(1)}%</div>}</div>
         <div className="polar-ctrl">
-          <label>tube l: {[0.5, 1, 2].map((l) => <button key={l} className={len === l ? 'sel' : ''} onClick={() => setLen(l)}>{l} dm</button>)}</label>
-          {step === 0 && <label>analyzer: <input type="range" min="-20" max="20" step="0.05" value={ang} onChange={(e) => setAng(+e.target.value)} /> <b>{ang.toFixed(2)}°</b></label>}
+          <label>tube l: {[0.5, 1, 2].map((l) => <button key={l} className={len === l ? 'sel' : ''} disabled={step === 0 && specOk} onClick={() => setLen(l)}>{l} dm</button>)}</label>
+          {step === 0 && <label>analyzer: <input type="range" min="-20" max="20" step="0.05" disabled={specOk} value={ang} onChange={(e) => setAng(+e.target.value)} /> <b>{ang.toFixed(2)}°</b></label>}
           {step === 1 && <label>concentration c: {[0.05, 0.1, 0.2].map((c) => <button key={c} className={conc === c ? 'sel' : ''} onClick={() => setConc(c)}>{c} g/mL</button>)}</label>}
-          {step === 0 && <label>your [α]D: <input value={spec} onChange={(e) => setSpec(e.target.value)} placeholder="e.g. −31.5" style={{ width: 80 }} /></label>}
-          {step === 0 && <label>it is: <select value={ans} onChange={(e) => setAns(e.target.value)}><option value="">…</option>{ROTATIONS.map((r) => <option key={r.name} value={r.name}>{r.name} ({r.a > 0 ? '+' : ''}{r.a})</option>)}</select> <button className="go" onClick={name}>Name it</button></label>}
+          {step === 0 && <label>your [α]D: <input value={spec} disabled={specOk} onChange={(e) => setSpec(e.target.value)} placeholder="e.g. −31.5" style={{ width: 80 }} /></label>}
+          {step === 0 && !specOk && <button className="go" onClick={name}>Check my [α]</button>}
+          {step === 0 && specOk && <label>it is: <select value={ans} onChange={(e) => setAns(e.target.value)}><option value="">…</option>{ROTATIONS.map((r) => <option key={r.name} value={r.name}>{r.name} ({r.a > 0 ? '+' : ''}{r.a})</option>)}</select> <button className="go" onClick={name}>Name it</button></label>}
           {step === 1 && <button className="go" onClick={check2}>Set the window</button>}
         </div>
       </div>
@@ -200,9 +212,9 @@ export function CipLock({ done, lockId, place, want }) {
 
 // ---------- After the boss: Sister Tartara's question (§5.8, Figs 5.13–5.14)
 const KQ = [
-  ['a', 'Reacting the racemic acid with achiral methylamine gives two salts that are mirror images: same properties, no separation.'],
-  ['b', 'Reacting it with achiral methylamine gives two salts with different solubilities, so they separate.'],
-  ['c', 'Racemic mixtures can’t be separated at all; you have to make each enantiomer from scratch.'],
+  ['b', 'With achiral methylamine, the two salts have different solubilities, so they separate.'],
+  ['c', 'Racemic mixtures can’t be separated; each enantiomer has to be made from scratch.'],
+  ['a', 'With achiral methylamine, the two salts are mirror images: same properties, no separation.'],
 ]
 export function KingCheck({ done }) {
   const [fb, setFb] = useState(null)
