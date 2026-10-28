@@ -118,7 +118,7 @@ function KaiBody({ pose, noTag }) {
   const col = useMemo(() => ({ glow: new THREE.Color(), armor: new THREE.Color(), armorDark: new THREE.Color(), blade: new THREE.Color(), white: new THREE.Color('#ffffff') }), [])
   const hasCrystal = useGame((st) => st.save.hasCrystal)
   const stance = useGame((st) => st.stance)
-  const busyTag = useGame((st) => !!(st.prompt || st.lanternPrompt || st.dialogue || st.newman || st.carrying)) || noTag
+  const busyTag = useGame((st) => !!(st.prompt || st.lanternPrompt || st.dialogue || st.newman || st.carrying || st.hideFormTag)) || noTag
   const form = FORMS[stance] || FORMS.sp3
 
   useFrame(({ clock }, dt) => {

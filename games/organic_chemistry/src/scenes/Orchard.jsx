@@ -135,7 +135,7 @@ function OrchardLevel({ world, onExit }) {
       setState({ boranaShot: true })
       await say([
         { who: 'Alchemist Borana', text: 'Don’t touch the blue ones. Or the red. Actually, touch nothing.' },
-        { who: 'Alchemist Borana', text: 'Borana. Every tree here grows one reagent. My glasshouse holds the recipes. Held. Something violet moved in.' },
+        { who: 'Alchemist Borana', text: 'Borana. Markov sent you, I suppose. Every tree here grows one reagent. My glasshouse holds the recipes. Held. Something violet moved in.' },
         { who: 'Alchemist Borana', text: 'Malradix pinned this to my door: “Water is water. Every way of adding it gives the same alcohol.”' },
         { who: 'Pi', text: 'Is he wrong?' },
         { who: 'Alchemist Borana', text: 'Spectacularly. Same alkene, same water, different reagent, different alcohol. I’ll show you.' },

@@ -84,9 +84,9 @@ export const STAB_ORDER = [...STAB].sort((a, b) => b.dH - a.dH).map((s) => s.id)
 export const DEG = ['methyl', 'primary (1°)', 'secondary (2°)', 'tertiary (3°)']
 export const BRIDGES7 = [
   { id: 'b1', name: 'propene', hx: 'HBr', a: { label: 'CH₂', H: 2, R: 0 }, b: { label: 'CH', H: 1, R: 1 }, product: '2-bromopropane', cite: '§7.8' },
-  { id: 'b2', name: '2-methylpropene', hx: 'HCl', a: { label: 'CH₂', H: 2, R: 0 }, b: { label: 'C', H: 0, R: 2 }, product: '2-chloro-2-methylpropane', cite: 'p. 222' },
+  { id: 'b2', name: '2-methylpropene', hx: 'HCl', a: { label: 'CH₂', H: 2, R: 0 }, b: { label: 'C', H: 0, R: 2 }, product: '2-chloro-2-methylpropane', cite: 'p. 222', flip: true },
   { id: 'b3', name: '1-methylcyclohexene', hx: 'HBr', a: { label: 'CH (ring C2)', H: 1, R: 1 }, b: { label: 'C (ring C1)', H: 0, R: 2 }, product: '1-bromo-1-methylcyclohexane', cite: 'p. 223' },
-  { id: 'b4', name: '1-ethylcyclopentene', hx: 'HCl', a: { label: 'CH (ring C2)', H: 1, R: 1 }, b: { label: 'C (ring C1)', H: 0, R: 2 }, product: '1-chloro-1-ethylcyclopentane', cite: 'Worked Example 7.2' },
+  { id: 'b4', name: '1-ethylcyclopentene', hx: 'HCl', a: { label: 'CH (ring C2)', H: 1, R: 1 }, b: { label: 'C (ring C1)', H: 0, R: 2 }, product: '1-chloro-1-ethylcyclopentane', cite: 'Worked Example 7.2', flip: true },
   { id: 'b5', name: '2-pentene', hx: 'HBr', a: { label: 'CH (C2)', H: 1, R: 1 }, b: { label: 'CH (C3)', H: 1, R: 1 }, product: '2-bromopentane and 3-bromopentane', cite: 'p. 223', mixture: true },
 ]
 /** protonate carbon `on` ('a' | 'b'): the cation lands on the other one */
@@ -104,13 +104,15 @@ export const SHIFTS = [
     id: 'h', name: '3-methyl-1-butene + HCl', kind: 'hydride', cite: 'p. 231',
     carbons: [{ n: 'C1', deg: 1 }, { n: 'C2', deg: 2 }, { n: 'C3', deg: 3 }, { n: 'C4', deg: 1 }, { n: 'CH₃ on C3', deg: 1 }],
     bonds: [[0, 1], [1, 2], [2, 3], [2, 4]], start: 1, end: 2,
-    product: '2-chloro-2-methylbutane', plain: '2-chloro-3-methylbutane',
+    product: '2-chloro-2-methylbutane', plain: '2-chloro-3-methylbutane', misnum: '3-chloro-3-methylbutane',
+    caught: { n: 4, subs: { 2: 'CH₃' }, plus: 2 }, // the cation after the shift, drawn C1→C4 in the alkene's numbering (ShiftName)
   },
   {
     id: 'm', name: '3,3-dimethyl-1-butene + HCl', kind: 'methyl', cite: 'p. 231',
     carbons: [{ n: 'C1', deg: 1 }, { n: 'C2', deg: 2 }, { n: 'C3', deg: 3 }, { n: 'C4', deg: 1 }, { n: 'CH₃ on C3', deg: 1 }, { n: 'CH₃ on C3', deg: 1 }],
     bonds: [[0, 1], [1, 2], [2, 3], [2, 4], [2, 5]], start: 1, end: 2,
-    product: '2-chloro-2,3-dimethylbutane', plain: '3-chloro-2,2-dimethylbutane',
+    product: '2-chloro-2,3-dimethylbutane', plain: '3-chloro-2,2-dimethylbutane', misnum: '3-chloro-2,3-dimethylbutane',
+    caught: { n: 4, subs: { 1: 'CH₃', 2: 'CH₃' }, plus: 2 },
   },
 ]
 /** where a cation at carbon i goes: the neighbour with the highest degree, if higher than its own */
@@ -122,14 +124,22 @@ export function shiftFrom(sk, i) {
 
 // ---------- the boss: three rounds on the arena skeleton. round.start is where the cation first forms.
 export const PHANTOM_ROUNDS = [
-  { sk: 'h', start: 1, label: 'A secondary cation, next to a carbon with one H and two alkyl groups…' },
-  { sk: 'm', start: 1, label: 'A secondary cation, next to a carbon with three methyls…' },
-  { sk: 't', start: 2, label: 'A tertiary cation. Can any neighbour do better?' },
+  { sk: 'h2', start: 1, label: 'Where will the + settle?' },
+  { sk: 'm2', start: 1, label: 'Where will the + settle?' },
+  { sk: 't', start: 2, label: 'Where will the + settle?' },
 ]
+// round 1's skeleton: 3-methyl-1-pentene + HCl (Problem 7-27a). H⁺ on C1 → 2° at C2; a hydride from C3 → 3° at C3.
+export const SKELETON_H2 = {
+  id: 'h2', name: '3-methyl-1-pentene + HCl', kind: 'hydride', cite: 'Problem 7-27a (our answer: the book prints no product)',
+  carbons: [{ n: 'C1', deg: 1 }, { n: 'C2', deg: 2 }, { n: 'C3', deg: 3 }, { n: 'C4', deg: 2 }, { n: 'C5', deg: 1 }, { n: 'CH₃ on C3', deg: 1 }],
+  bonds: [[0, 1], [1, 2], [2, 3], [3, 4], [2, 5]], start: 1, end: 2,
+  product: '3-chloro-3-methylpentane', plain: '2-chloro-3-methylpentane',
+}
+// round 2 reuses the crypt's methyl-shift alkene (the book's only one, p. 231), on a mirrored floor layout
 // round 3's skeleton: 2-methyl-2-butene protonated at C3 → a tertiary cation at C2; no neighbour beats it
 export const SKELETON_T = {
   id: 't', name: '2-methyl-2-butene + HCl', kind: 'none', cite: '§7.9',
   carbons: [{ n: 'C1', deg: 1 }, { n: 'CH₃ on C2', deg: 1 }, { n: 'C2', deg: 3 }, { n: 'C3', deg: 2 }, { n: 'C4', deg: 1 }],
   bonds: [[0, 2], [1, 2], [2, 3], [3, 4]], start: 2, end: 2, product: '2-chloro-2-methylbutane',
 }
-export const skeleton = (id) => (id === 't' ? SKELETON_T : SHIFTS.find((s) => s.id === id))
+export const skeleton = (id) => (id === 't' ? SKELETON_T : id === 'h2' ? SKELETON_H2 : id === 'm2' ? { ...SHIFTS[1], id: 'm2' } : SHIFTS.find((s) => s.id === id))

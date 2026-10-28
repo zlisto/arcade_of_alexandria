@@ -11,9 +11,11 @@ function Feedback({ fb }) {
 }
 const good = (setFb, text, done, ms = 1900) => { sfx('right'); setFb({ ok: true, text }); setTimeout(done, ms) }
 const bad = (setFb, text) => { sfx('wrong'); setFb({ ok: false, text }) }
+/** a fresh order for a panel's options, drawn once per mount (useState initialiser) so the answer isn't always first */
+const shuffled = (a) => { const r = [...a]; for (let i = r.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [r[i], r[j]] = [r[j], r[i]] } return r }
 
-/** a zigzag skeleton: n carbons left to right, a C=C from carbon dbl to dbl + 1, substituents hanging off */
-export function Skeleton({ n, dbl, subs = {}, w = 300 }) {
+/** a zigzag skeleton: n carbons left to right, a C=C from carbon dbl to dbl + 1 (none if dbl < 0), substituents hanging off; plus marks a cation carbon */
+export function Skeleton({ n, dbl, subs = {}, w = 300, plus = -1, plusLabel }) {
   const dx = (w - 40) / (n - 1)
   const P = [...Array(n)].map((_, i) => [20 + i * dx, i % 2 ? 50 : 80])
   return (
@@ -39,6 +41,16 @@ export function Skeleton({ n, dbl, subs = {}, w = 300 }) {
           </g>
         )
       })}
+      {plus >= 0 && (() => {
+        const [x, y] = P[plus], up = plus % 2 === 1, py = up ? y + 22 : y - 22 // on the side away from its substituent
+        return (
+          <g>
+            <circle cx={x} cy={py} r="9" fill="#2a1840" stroke="#e0a0ff" strokeWidth="2" />
+            <text x={x} y={py + 5} textAnchor="middle" fill="#ffe0ff" fontSize="15" fontWeight="700">+</text>
+            {plusLabel && <text x={x} y={up ? py + 26 : py - 14} textAnchor="middle" fill="#e0a0ff" fontSize="12">{plusLabel}</text>}
+          </g>
+        )
+      })()}
     </svg>
   )
 }
@@ -47,6 +59,7 @@ export function Skeleton({ n, dbl, subs = {}, w = 300 }) {
 export function SeedLabels({ done }) {
   const [i, setI] = useState(0)
   const [fb, setFb] = useState(null)
+  const [orders] = useState(() => SEEDS.map((x) => shuffled(x.opts)))
   const S = SEEDS[i]
   const pick = (id) => {
     if (id !== S.right) return bad(setFb, S.why[id])
@@ -57,7 +70,7 @@ export function SeedLabels({ done }) {
       <h2>Markov’s Seed Labels · {i + 1} / {SEEDS.length}</h2>
       <p className="ins">Every corner of the skeleton is a carbon. Find the longest chain that holds the double bond (cyan), number from the end nearer it, and pick the label. <span className="cite">§7.3</span></p>
       <Skeleton n={S.chain} dbl={S.dbl} subs={S.subs} />
-      <div className="res-opts">{S.opts.map(([id, t]) => <button key={id} onClick={() => pick(id)}>{t}</button>)}</div>
+      <div className="res-opts">{orders[i].map(([id, t]) => <button key={id} onClick={() => pick(id)}>{t}</button>)}</div>
       <Feedback fb={fb} />
     </div>
   )
@@ -65,14 +78,15 @@ export function SeedLabels({ done }) {
 
 // ---------- 7-4: the Hammond stone (§7.10)
 const HQ = [
-  ['a', 'The tertiary cation’s pass is lower, so it forms faster.'],
-  ['b', 'Both passes are the same height; the tertiary cation just lasts longer.'],
-  ['c', 'The primary cation’s pass is lower, because a primary cation is smaller.'],
+  ['a', 'The tertiary cation’s pass is lower: it forms faster.'],
+  ['b', 'Both passes are equal; the tertiary cation just lasts longer.'],
+  ['c', 'The primary cation’s pass is lower: a smaller cation forms faster.'],
 ]
 export function HammondStone({ done }) {
   const [fb, setFb] = useState(null)
+  const [opts] = useState(() => shuffled(HQ))
   const pick = (id) => {
-    if (id === 'a') return good(setFb, 'Right. Protonation is uphill, so its transition state looks like the carbocation: what steadies the cation lowers the pass too (Fig 7.17).', done, 3800)
+    if (id === 'a') return good(setFb, 'Right. Protonation is uphill, so its transition state looks like the carbocation: what steadies the cation lowers the pass too (Figs 7.16–7.17).', done, 3800)
     if (id === 'b') return bad(setFb, 'The Hammond postulate says the transition state looks like the nearest species in energy: here, the cation. A steadier cation means a steadier transition state.')
     bad(setFb, 'Primary cations are the least stable: 3° > 2° > 1° > methyl (§7.9). Their pass is the highest.')
   }
@@ -86,8 +100,9 @@ export function HammondStone({ done }) {
         <text x="168" y="74" fill="#ffb0d8" fontSize="13">cation A</text>
         <text x="168" y="54" fill="#9ad0ff" fontSize="13">cation B</text>
         <text x="10" y="112" fill="#c8c0d8" fontSize="12">alkene + HCl</text>
+        <text x="2" y="12" fill="#c8c0d8" fontSize="11">energy ↑</text>
       </svg>
-      <div className="res-opts">{HQ.map(([id, t]) => <button key={id} onClick={() => pick(id)}>{t}</button>)}</div>
+      <div className="res-opts">{opts.map(([id, t]) => <button key={id} onClick={() => pick(id)}>{t}</button>)}</div>
       <Feedback fb={fb} />
     </div>
   )
@@ -97,18 +112,20 @@ export function HammondStone({ done }) {
 export function ShiftName({ done }) {
   const [i, setI] = useState(0)
   const [fb, setFb] = useState(null)
+  const [orders] = useState(() => SHIFTS.map(() => shuffled([0, 1, 2])))
   const S = SHIFTS[i]
-  const opts = [S.product, S.plain, S.id === 'h' ? '1-chloro-3-methylbutane' : '1-chloro-3,3-dimethylbutane']
-  const order = i === 0 ? [1, 0, 2] : [2, 1, 0]
+  const opts = [S.product, S.plain, S.misnum] // misnum: the rearranged product, numbered from the wrong end
+  const order = orders[i]
   const pick = (k) => {
     if (k === 0) return good(setFb, `Yes: the cation moved to the tertiary carbon before the Cl⁻ arrived, so Cl sits there: ${S.product}.`, () => { setFb(null); if (i + 1 >= SHIFTS.length) done(); else setI(i + 1) }, 2600)
     if (k === 1) return bad(setFb, `That one forms too: it’s the product with no shift (p. 230–231). But the crypt caught the cation after the ${S.kind} shift. Where did the charge end up?`)
-    bad(setFb, 'Cl⁻ adds where the positive charge is, never at C1: a primary cation is the least stable.')
+    bad(setFb, `Right carbon, wrong numbering. Number the chain from the end nearer the first substituent, halo or alkyl (§10.1, p. 318).`)
   }
   return (
     <div>
       <h2>Name What Formed · {S.name}</h2>
       <p className="ins">You caught the cation after the {S.kind} shift and planted the chloride there. What did you make? <span className="cite">§7.11</span></p>
+      {S.caught && <Skeleton n={S.caught.n} dbl={-1} subs={S.caught.subs} plus={S.caught.plus} plusLabel="Cl⁻ planted here" />}
       <div className="res-opts">{order.map((k) => <button key={k} onClick={() => pick(k)}>{opts[k]}</button>)}</div>
       <Feedback fb={fb} />
     </div>
@@ -117,12 +134,13 @@ export function ShiftName({ done }) {
 
 // ---------- After the boss: Markov's question (§7.8)
 const MQ = [
-  ['a', 'H goes to the end with more H, so the more stable (more substituted) carbocation forms, and X adds there.'],
+  ['a', 'H adds to the C with more H; X follows the +.'],
   ['b', 'Any which way: the two products form about equally.'],
-  ['c', 'X goes to the carbon with more H, because it is less crowded.'],
+  ['c', 'X goes to the carbon with more H, since it is less crowded.'],
 ]
 export function PhantomCheck({ done }) {
   const [fb, setFb] = useState(null)
+  const [opts] = useState(() => shuffled(MQ))
   const pick = (id) => {
     if (id === 'a') return good(setFb, 'Right. 2-Methylpropene + HCl gives only 2-chloro-2-methylpropane (p. 222). Markovnikov’s rule, restated with carbocations.', done, 4000)
     if (id === 'b') return bad(setFb, 'Then 2-methylpropene would give two chlorides. It gives one. What decides it?')
@@ -132,7 +150,7 @@ export function PhantomCheck({ done }) {
     <div>
       <h2>Markov’s Question</h2>
       <p className="ins">Malradix said HX adds to a double bond any which way. How does it really add? <span className="cite">§7.8–7.9</span></p>
-      <div className="res-opts">{MQ.map(([id, t]) => <button key={id} onClick={() => pick(id)}>{t}</button>)}</div>
+      <div className="res-opts">{opts.map(([id, t]) => <button key={id} onClick={() => pick(id)}>{t}</button>)}</div>
       <Feedback fb={fb} />
     </div>
   )

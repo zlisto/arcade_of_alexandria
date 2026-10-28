@@ -15,7 +15,7 @@ export const ROOMS7 = [
 
 export const STATIONS7 = {
   '7-1info': { pos: [-3, 0, -16.5], label: 'Read the Harvest Count', panel: 'unsatInfo', props: { title: 'The Harvest Count', text: 'Each crate hides a molecule. Strike its dial to set how many rings and π bonds it has: its degree of unsaturation.' } },
-  '7-2info': { pos: [3, 0, -37], label: 'Read the Geometry Rules', panel: 'ezInfo', props: { title: 'The Geometry Rules', text: 'Light the higher-ranked group on each end of a statue, then call it: higher groups together, Z; opposite, E.' } },
+  '7-2info': { pos: [3, 0, -37], label: 'Read the Geometry Rules', panel: 'ezInfo', props: { title: 'The Geometry Rules', text: 'Light the higher-ranked group on each end of a statue, then call it: higher groups together, Z; opposite, E. Two identical groups on one end: neither.' } },
   '7-3info': { pos: [-3, 0, -66.5], label: 'Read the Scale’s Rule', panel: 'stabInfo', props: { title: 'The Scale’s Rule', text: 'Weigh each alkene by the heat its hydrogenation gives off. Less heat out means it was more stable to begin with. Most stable at the top.' } },
   '7-4hammond': { pos: [3, 0, -121], label: 'The Hammond stone', panel: 'hammond', props: {} },
   '7-5name': { pos: [3, 0, -137.5], label: 'Name what formed', panel: 'shiftName', props: {} },
@@ -42,7 +42,9 @@ export const ISLANDS7 = [[-97, -99.5], [-102.5, -105], [-108, -110.5], [-113.5, 
 export const SKEL_POS = {
   h: { origin: [-1, -131], pads: [[-6, 0], [-2, 0], [2, 0], [6, 0], [2, -4]] },
   m: { origin: [-1, -143], pads: [[-6, 0], [-2, 0], [2, 0], [6, 0], [2, -4], [2, 4]] },
-  t: { origin: [0, 0], pads: [[-6, 3], [-6, -3], [-2, 0], [2, 0], [6, 0]] },
+  t: { origin: [0, 0], pads: [[10, 0], [10, -6], [6, -3], [2, -3], [-2, -3]] }, // C2 sits 9 m from round 2's answer (m2's C3)
+  h2: { origin: [0, 0], pads: [[-8, 2], [-4, 2], [0, 2], [4, 2], [8, 2], [0, -3]] },
+  m2: { origin: [0, 0], pads: [[6, 0], [2, 0], [-2, 0], [-6, 0], [-2, 4], [-2, -4]] },
 }
 
 export const GOALS7 = [

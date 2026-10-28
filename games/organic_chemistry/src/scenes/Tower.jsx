@@ -1,12 +1,15 @@
 import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
+import * as THREE from 'three'
 import GameScene from '../engine/GameScene'
 import { itemGet } from '../engine/ItemGet'
 import { warpOut } from '../engine/Warp'
 import { Gate, Station, Torch, Motes, Chest, Tag, twoShot } from '../engine/kit'
 import { Part, useModelParts, InstancedPart, preloadModels } from '../engine/models'
 import { Wisps } from '../actors/PeaksFolk'
-import Phantom, { Markov, SkeletonFloor } from '../actors/PlainsFolk'
+import Phantom, { Markov, SkeletonFloor, GHOST_WAIT } from '../actors/PlainsFolk'
+// Markov at the shard faces Kai (+x) turned partly toward the two-shot camera (on the −z side), a three-quarter view
+const MARKOV_SHARD_FACING = 2.0
 import { PiFollower } from './Village'
 import { getState, setState, saveGame, markSolved, say, toast, openPanel, useGame } from '../engine/store'
 import { playMusic, sfx } from '../audio/sfx'
@@ -25,6 +28,74 @@ const SHOW = {
   b1: ['CH₂=', '=CH–CH₃'], b2: ['CH₂=', '=C(CH₃)₂'], b3: ['ring C2 (=CH–)', 'ring C1 (=C(CH₃)–)'],
   b4: ['ring C2 (=CH–)', 'ring C1 (=C(CH₂CH₃)–)'], b5: ['CH₃–CH= (C2)', '=CH–CH₂CH₃ (C3)'],
 }
+const bx = (br, on) => ((on === 'a') !== !!br.flip ? -1.6 : 1.6) // b2 and b4 put carbon a on the right
+/** the ghost barrier over an unbuilt bridge span: a shimmering cyan sheet with a lit frame and two posts */
+function Curtain({ z, strength = 1 }) {
+  const sheet = useRef(), bands = useRef()
+  useFrame(({ clock }) => {
+    const t = clock.elapsedTime
+    if (sheet.current) sheet.current.opacity = (0.26 + Math.sin(t * 2.4 + z) * 0.06) * strength
+    if (bands.current) bands.current.position.y = ((t * 0.8) % 2.4) - 1.2
+  })
+  const edge = <meshBasicMaterial color="#9ffcff" transparent opacity={strength} depthWrite={strength >= 1} toneMapped={false} />
+  return (
+    <group position={[0, 1.2, z]}>
+      <mesh><planeGeometry args={[2 * W, 2.4]} /><meshBasicMaterial ref={sheet} color="#5ff0ff" transparent opacity={0.3} depthWrite={false} side={2} toneMapped={false} /></mesh>
+      <mesh ref={bands}><planeGeometry args={[2 * W, 0.14]} /><meshBasicMaterial color="#c8ffff" transparent opacity={0.45 * strength} depthWrite={false} side={2} toneMapped={false} /></mesh>
+      {[-1.2, 1.2].map((y) => <mesh key={y} position={[0, y, 0]}><boxGeometry args={[2 * W, 0.07, 0.07]} />{edge}</mesh>)}
+      {[-W + 0.1, W - 0.1].map((x) => <mesh key={x} position={[x, 0, 0]}><boxGeometry args={[0.14, 2.5, 0.14]} />{edge}</mesh>)}
+    </group>
+  )
+}
+/** the open roof: a dusk sky dome with stars, far plains on the horizon, a crenellated parapet and a few props.
+ *  The sky shows only once Kai is up on the roof, so the dungeon floors keep their dark backdrop. */
+function RoofDressing({ world }) {
+  const sky = useRef()
+  const dome = useMemo(() => {
+    const g = new THREE.SphereGeometry(150, 32, 16), c = [], top = new THREE.Color('#141038'), mid = new THREE.Color('#6a3a6a'), low = new THREE.Color('#e8905a')
+    const pos = g.attributes.position
+    for (let i = 0; i < pos.count; i++) {
+      const h = pos.getY(i) / 150, col = h > 0.12 ? mid.clone().lerp(top, Math.min(1, (h - 0.12) / 0.5)) : low.clone().lerp(mid, Math.max(0, (h + 0.05) / 0.17))
+      c.push(col.r, col.g, col.b)
+    }
+    g.setAttribute('color', new THREE.Float32BufferAttribute(c, 3))
+    return g
+  }, [])
+  const stars = useMemo(() => {
+    const a = []
+    for (let k = 0; k < 260; k++) {
+      const u = Math.sin(k * 12.9898) * 43758.5453, v = Math.sin(k * 78.233) * 12345.678
+      const th = (u - Math.floor(u)) * Math.PI * 2, ph = 0.25 + (v - Math.floor(v)) * 1.1
+      a.push(Math.cos(th) * Math.cos(ph) * 140, Math.sin(ph) * 140, Math.sin(th) * Math.cos(ph) * 140)
+    }
+    return new Float32Array(a)
+  }, [])
+  useFrame(() => { if (sky.current) sky.current.visible = !!(world.player && world.player.pos.z < -151) })
+  const stone = <meshStandardMaterial color="#7a6a58" roughness={0.95} />
+  const merlons = []
+  for (let x = -ARENA.x + 1; x <= ARENA.x - 1; x += 2) merlons.push([x, ARENA.z[1] + 0.4, 0])
+  for (let z = -156; z > ARENA.z[1] + 1; z -= 2) { merlons.push([-ARENA.x + 0.4, z, Math.PI / 2]); merlons.push([ARENA.x - 0.4, z, Math.PI / 2]) }
+  return (
+    <group>
+      <group ref={sky} visible={false} position={[0, 0, PHANTOM.center[2]]}>
+        <mesh geometry={dome}><meshBasicMaterial vertexColors side={THREE.BackSide} fog={false} depthWrite={false} /></mesh>
+        <points><bufferGeometry><bufferAttribute attach="attributes-position" args={[stars, 3]} /></bufferGeometry><pointsMaterial color="#fff4d8" size={0.9} sizeAttenuation fog={false} /></points>
+        {[...Array(16)].map((_, k) => { const a = (k / 16) * Math.PI * 2, r = 105 + (k % 3) * 12; return <mesh key={k} position={[Math.cos(a) * r, -18, Math.sin(a) * r]} scale={[26 + (k % 4) * 6, 9 + (k % 3) * 4, 18]} rotation={[0, -a, 0]}><sphereGeometry args={[1, 12, 6, 0, Math.PI * 2, 0, Math.PI / 2]} /><meshBasicMaterial color={k % 2 ? '#3a2a3a' : '#4a3438'} fog={false} /></mesh> })}
+      </group>
+      {/* parapet: a low wall along the back edge, merlons all round */}
+      <mesh position={[0, 0.5, ARENA.z[1] + 0.4]} castShadow receiveShadow><boxGeometry args={[2 * ARENA.x, 1, 0.8]} />{stone}</mesh>
+      {merlons.map(([x, z, r], i) => <mesh key={i} position={[x, 1.35, z]} rotation={[0, r, 0]} castShadow><boxGeometry args={[1, 0.7, 0.8]} />{stone}</mesh>)}
+      {/* roof props in the corners, clear of the skeleton */}
+      {[[-11.5, -156.5], [11.5, -187.5], [-11.8, -187]].map(([x, z], i) => <mesh key={'c' + i} position={[x, 0.45, z]} rotation={[0, i * 0.5, 0]} castShadow receiveShadow><boxGeometry args={[0.9, 0.9, 0.9]} /><meshStandardMaterial color="#8a6438" roughness={0.9} /></mesh>)}
+      {[[11.6, -157], [-10.6, -187.8]].map(([x, z], i) => <mesh key={'r' + i} position={[x, 0.55, z]} castShadow><cylinderGeometry args={[0.42, 0.42, 1.1, 14]} /><meshStandardMaterial color="#6a4a2a" roughness={0.85} /></mesh>)}
+      {[[12, -172], [-12, -172]].map(([x, z], i) => <group key={'s' + i} position={[x, 0, z]}>
+        <mesh position={[0, 0.7, 0]} castShadow><coneGeometry args={[0.45, 1.4, 10]} /><meshStandardMaterial color="#d0a850" roughness={0.9} /></mesh>
+        <mesh position={[0, 0.55, 0]} rotation={[Math.PI / 2, 0, 0]}><torusGeometry args={[0.28, 0.04, 6, 14]} /><meshStandardMaterial color="#6a4a28" /></mesh>
+      </group>)}
+    </group>
+  )
+}
+const padName = (n) => (n.startsWith('CH₃ on ') ? `the ${n.slice(7)} methyl` : n)
 const skAbs = (id) => { const P = SKEL_POS[id]; return P.pads.map(([x, z]) => [P.origin[0] + x, P.origin[1] + z]) }
 
 function Walls({ world }) {
@@ -62,6 +133,41 @@ function Carried({ world, what }) {
   )
 }
 
+/** the Proton Sling's shot: a glowing H⁺ flies from Kai to the target in 0.25 s (world.slingFx(to)) */
+function SlingShot({ world }) {
+  const g = useRef(), shot = useRef(null), trail = useRef([])
+  useEffect(() => {
+    world.slingFx = (to) => { const p = world.player; if (p) shot.current = { from: [p.pos.x, p.pos.y + 1.4, p.pos.z], to, t: 0 } }
+    return () => { world.slingFx = null }
+  }, [world])
+  useFrame((_, dt) => {
+    const sh = shot.current
+    if (!g.current) return
+    g.current.visible = !!sh
+    if (!sh) return
+    sh.t += Math.min(dt, 1 / 30)
+    const k = Math.min(1, sh.t / 0.25)
+    g.current.position.set(sh.from[0] + (sh.to[0] - sh.from[0]) * k, sh.from[1] + (sh.to[1] - sh.from[1]) * k + Math.sin(k * Math.PI) * 0.8, sh.from[2] + (sh.to[2] - sh.from[2]) * k)
+    // a short trail: three fading beads a few hundredths of a second behind the ball
+    trail.current.forEach((m, j) => {
+      if (!m) return
+      const kj = Math.max(0, k - (j + 1) * 0.09)
+      m.visible = kj > 0
+      m.position.set(sh.from[0] + (sh.to[0] - sh.from[0]) * kj - g.current.position.x, sh.from[1] + (sh.to[1] - sh.from[1]) * kj + Math.sin(kj * Math.PI) * 0.8 - g.current.position.y, sh.from[2] + (sh.to[2] - sh.from[2]) * kj - g.current.position.z)
+    })
+    if (k >= 1) shot.current = null
+  })
+  return (
+    <group ref={g} visible={false}>
+      {/* hot white core in a magenta-white glow, so it doesn't blend with Pi's pink trim */}
+      <mesh><sphereGeometry args={[0.13, 12, 8]} /><meshBasicMaterial color="#ffffff" toneMapped={false} /></mesh>
+      <mesh><sphereGeometry args={[0.24, 12, 8]} /><meshBasicMaterial color="#ff4fa8" transparent opacity={0.55} depthWrite={false} toneMapped={false} /></mesh>
+      {[0, 1, 2].map((j) => <mesh key={j} ref={(m) => { trail.current[j] = m }}><sphereGeometry args={[0.11 - j * 0.025, 8, 6]} /><meshBasicMaterial color="#ffd8f0" transparent opacity={0.6 - j * 0.17} depthWrite={false} toneMapped={false} /></mesh>)}
+      <pointLight color="#ff5fb0" intensity={3} distance={4} />
+    </group>
+  )
+}
+
 function Shard({ show, pos }) {
   const g = useRef()
   useFrame(({ clock }) => { if (g.current) { g.current.rotation.y = clock.elapsedTime * 1.5; g.current.position.y = 1.8 + Math.sin(clock.elapsedTime * 2) * 0.2 } })
@@ -84,8 +190,8 @@ function Statue({ st, z, lit, done }) {
   return (
     <group position={[0, 0, z]}>
       <mesh position={[0, 0.5, 0]} castShadow><boxGeometry args={[4.6, 1.0, 1.2]} /><meshStandardMaterial color="#9a8a7a" roughness={0.85} /></mesh>
-      {[-0.8, 0.8].map((x) => <mesh key={x} position={[x, 2.15, 0]}><sphereGeometry args={[0.32, 16, 12]} /><meshStandardMaterial color="#3a3640" /></mesh>)}
-      {[-0.1, 0.1].map((dy) => <mesh key={dy} position={[0, 2.15 + dy, 0]} rotation={[0, 0, Math.PI / 2]}><cylinderGeometry args={[0.06, 0.06, 1.6, 8]} /><meshStandardMaterial color="#5ff0ff" emissive="#2ab0d0" emissiveIntensity={0.8} /></mesh>)}
+      {[-0.8, 0.8].map((x) => <mesh key={x} position={[x, 2.15, 0]}><sphereGeometry args={[0.24, 16, 12]} /><meshStandardMaterial color="#6a6470" /></mesh>)}
+      {[-0.1, 0.1].map((dy) => <mesh key={dy} position={[0, 2.15 + dy, 0.2]} rotation={[0, 0, Math.PI / 2]}><cylinderGeometry args={[0.075, 0.075, 1.6, 8]} /><meshStandardMaterial color="#5ff0ff" emissive="#2ab0d0" emissiveIntensity={0.8} /></mesh>)}
       {Object.entries(corners).map(([k, [x, y]]) => {
         const end = k[0], pos = k.slice(1) === 'top' ? 'top' : 'bot'
         const grp = st[end][pos]
@@ -96,16 +202,17 @@ function Statue({ st, z, lit, done }) {
             <mesh position={[(x + cx) / 2, (y + 2.15) / 2, 0]} rotation={[0, 0, Math.atan2(y - 2.15, x - cx) - Math.PI / 2]}><cylinderGeometry args={[0.05, 0.05, Math.hypot(x - cx, y - 2.15), 6]} /><meshStandardMaterial color="#c8c0b0" /></mesh>
             <mesh position={[x, y, 0]}><sphereGeometry args={[grp === 'H' ? 0.2 : 0.32, 14, 10]} /><meshStandardMaterial color={on ? '#ffe070' : '#d8d0c0'} emissive={on ? '#ffb020' : '#000'} emissiveIntensity={on ? 1.6 : 0} /></mesh>
             {on && <pointLight position={[x, y, 0.6]} color="#ffd060" intensity={2} distance={3} />}
-            <Tag position={[x + (end === 'L' ? -0.55 : 0.55), y, 0.2]} df={9} far={14}>{grp}</Tag>
+            <Tag position={[x + (end === 'L' ? -0.55 : 0.55), y, 0.2]} df={9} far={8}>{grp}</Tag>
           </group>
         )
       })}
-      <Tag position={[0, 3.9, 0]} df={10} far={16} className={done ? 'ok-tag' : ''}>{done ? `${st.name}: ${done === 'none' ? 'no E/Z' : done}` : st.name}</Tag>
-      {!done && st.id !== 'e5' && <>
+      <Tag position={[0, 3.9, 0]} df={10} far={8} className={done ? 'ok-tag' : ''}>{done ? `${st.name}: ${done === 'none' ? 'no E/Z' : done}` : st.name}</Tag>
+      {!done && <>
         <Tag position={[-3.6, 2.6, 0.6]} df={10} far={12}>E arch</Tag>
         <Tag position={[3.6, 2.6, 0.6]} df={10} far={12}>Z arch</Tag>
+        <Tag position={[7.2, 2.6, 0.6]} df={10} far={12}>Neither</Tag>
       </>}
-      {[-3.6, 3.6].map((x) => <group key={x} position={[x, 0, 0.6]}>
+      {[-3.6, 3.6, 7.2].map((x) => <group key={x} position={[x, 0, 0.6]}>
         {[-0.7, 0.7].map((dx) => <mesh key={dx} position={[dx, 1.1, 0]}><boxGeometry args={[0.3, 2.2, 0.3]} /><meshStandardMaterial color="#b8a890" /></mesh>)}
         <mesh position={[0, 2.3, 0]}><boxGeometry args={[1.8, 0.3, 0.3]} /><meshStandardMaterial color="#b8a890" /></mesh>
       </group>)}
@@ -118,6 +225,10 @@ function TowerLevel({ world, onExit }) {
   const solved = save.solved
   const busy = useRef(false)
   const [bossOn, setBossOn] = useState(false)
+  const [bossArmed, setBossArmed] = useState(false) // the Phantom's clock starts only once Pi has finished
+  const sparkFly = useRef(false) // keeps the beaten Phantom mounted while its spark flies south (a ref, so the render markSolved forces already sees it)
+  const [, bumpSpark] = useState(0)
+  const cryptTimer = useRef({}) // per crypt skeleton: when the shift is due, and its timer
   const bossStarted = useRef(false)
   const [carry, setCarry] = useState(null)
   const carryRef = useRef(null)
@@ -125,6 +236,21 @@ function TowerLevel({ world, onExit }) {
   const [crypt, setCrypt] = useState({ h: null, m: null }) // the cation's carbon index in each crypt skeleton
   const cryptRef = useRef(crypt)
   cryptRef.current = crypt
+  // while a crypt cation is live, Kai's form tag would sit on the + and pad tags: hide it
+  // ...and in 7-2, where it would sit on the statue plinths and their tags
+  const inEz = useRef(false)
+  useEffect(() => { setState({ hideFormTag: crypt.h !== null || crypt.m !== null || inEz.current }) }, [crypt])
+  useFrame(() => {
+    const p = world.player, r = ROOMS7[2], now = !!(p && p.pos.z < r.z[0] && p.pos.z > r.z[1])
+    if (now === inEz.current) return
+    inEz.current = now
+    const c = cryptRef.current
+    setState({ hideFormTag: now || c.h !== null || c.m !== null })
+  })
+  useEffect(() => () => setState({ hideFormTag: false }), [])
+  const [wait, setWait] = useState({ h: null, m: null }) // the pad Kai committed the chloride to, before the shift
+  const waitRef = useRef(wait)
+  waitRef.current = wait
   const [markovHere, setMarkovHere] = useState(false)
   const dials = save.t7dials || {}
   const ez = save.t7ez || {}
@@ -157,7 +283,7 @@ function TowerLevel({ world, onExit }) {
     ]
     const HINTS = {
       '7-1': 'Crates with dials. How many rings and double bonds hide in each formula?',
-      '7-2': 'Statues with a double bond. Light the bigger group on each end!',
+      '7-2': 'Statues with a double bond. Light the higher-ranked group on each end!',
       '7-3': 'A scale with six steps. Most stable at the top, Markov says.',
       '7-4': 'A pit, and ghost bridges. Each one is a double bond waiting for HX.',
       '7-5': 'Skeletons on the floor. A cation here won’t sit still…',
@@ -187,34 +313,35 @@ function TowerLevel({ world, onExit }) {
     // 7-2: strike a group to light it; call the statue at its arches
     STATUES7.filter((s) => STATUE7_POS[s.id] !== undefined).forEach((s) => {
       const z = STATUE7_POS[s.id]
-      ;[['L', 'top', -1.7, 3.0], ['L', 'bot', -1.7, 1.3], ['R', 'top', 1.7, 3.0], ['R', 'bot', 1.7, 1.3]].forEach(([end, pos, x, y]) => {
-        targets.push(world.addTarget({ pos: () => [x, y - 0.6, z], radius: 0.55, tall: 1.2, alive: () => !(getState().save.t7ez || {})[s.id]?.done, onHit: () => lightGroup(s, end, pos) }))
+      const lampHitAt = {}
+      ;[['L', -1.7], ['R', 1.7]].forEach(([end, x]) => { // one target per end: each strike cycles off → top → bottom → off
+        targets.push(world.addTarget({ pos: () => [x, 1.4, z], radius: 0.6, tall: 2.0, alive: () => !(getState().save.t7ez || {})[s.id]?.done,
+          onHit: () => { const p = world.player; if (p && (p.pos.x > 0 ? 'R' : 'L') !== end) return false; const now = performance.now(); if (now - (lampHitAt[s.id + end] || 0) < 600) return true; lampHitAt[s.id + end] = now; return lightGroup(s, end) } })) // one cycle per swing, not per combo hit // only the end Kai stands nearer
       })
-      if (s.id !== 'e5') {
-        ia.push(world.addInteractable({ pos: [-3.6, 0, z + 0.6], radius: 1.4, label: () => (((getState().save.t7ez || {})[s.id] || {}).done ? null : 'Call it E (opposite sides)'), onInteract: () => callEZ(s, 'E') }))
-        ia.push(world.addInteractable({ pos: [3.6, 0, z + 0.6], radius: 1.4, label: () => (((getState().save.t7ez || {})[s.id] || {}).done ? null : 'Call it Z (same side)'), onInteract: () => callEZ(s, 'Z') }))
-      }
+      ia.push(world.addInteractable({ pos: [-3.6, 0, z + 0.6], radius: 1.4, label: () => (((getState().save.t7ez || {})[s.id] || {}).done ? null : 'Call it E (opposite sides)'), onInteract: () => callEZ(s, 'E') }))
+      ia.push(world.addInteractable({ pos: [3.6, 0, z + 0.6], radius: 1.4, label: () => (((getState().save.t7ez || {})[s.id] || {}).done ? null : 'Call it Z (same side)'), onInteract: () => callEZ(s, 'Z') }))
+      ia.push(world.addInteractable({ pos: [7.2, 0, z + 0.6], radius: 1.4, label: () => (((getState().save.t7ez || {})[s.id] || {}).done ? null : 'Call it neither (no E/Z)'), onInteract: () => callEZ(s, 'none') }))
     })
     // 7-3: pick up a weight; set it on a step
     Object.entries(WEIGHT_POS).forEach(([id, [x, z]]) => {
       ia.push(world.addInteractable({ pos: [x, 0, z], radius: 1.3, label: () => (carryRef.current || (getState().save.t7placed || {})[id] !== undefined ? null : `Pick up: ${STAB.find((s) => s.id === id).name}`), onInteract: () => { if (!carryRef.current) { setCarry(id); sfx('pickup') } } }))
     })
     STEP_POS.forEach(([x, z], k) => {
-      ia.push(world.addInteractable({ pos: [x, 0, z], radius: 1.4, label: () => (carryRef.current ? `Set it on step ${k + 1}` : null), onInteract: () => placeWeight(k) }))
+      ia.push(world.addInteractable({ pos: [x, 0, z], radius: 2.1, label: () => (carryRef.current ? `Set it on step ${k + 1}` : null), onInteract: () => placeWeight(k) })) // reached from beside the (solid) step
     })
     // 7-4: the Proton Sling on each bridge's two carbons
     const lanterns = []
     BRIDGES7.forEach((br) => {
       const [z0] = BRIDGE7_Z[br.id]
       ;['a', 'b'].forEach((on) => {
-        lanterns.push(world.addLantern({ needs: 'hasSling', omni: true, pos: [on === 'a' ? -1.6 : 1.6, 0, z0 - 0.3], radius: 3.6, label: () => (has(br.id) ? null : `Sling a proton onto ${SHOW[br.id][on === 'a' ? 0 : 1]}`), onLantern: () => sling(br, on) }))
+        lanterns.push(world.addLantern({ needs: 'hasSling', omni: true, aim: true, pos: [bx(br, on), 0, z0 - 0.3], radius: 3.6, label: () => (has(br.id) ? null : `Sling a proton onto ${SHOW[br.id][on === 'a' ? 0 : 1]}`), onLantern: () => sling(br, on) }))
       })
     })
     // 7-5: sling onto C1 or C2 of each crypt skeleton; plant the chloride on a pad
     SHIFTS.forEach((sk) => {
       const P = skAbs(sk.id)
       ;[0, 1].forEach((i) => lanterns.push(world.addLantern({ needs: 'hasSling', omni: true, pos: [P[i][0], 0, P[i][1]], radius: 3.4, label: () => (has('7-5' + sk.id) || cryptRef.current[sk.id] !== null ? null : `Sling a proton onto ${sk.carbons[i].n}`), onLantern: () => cryptSling(sk, i) })))
-      P.forEach(([x, z], i) => ia.push(world.addInteractable({ pos: [x, 0, z], radius: 1.2, label: () => (cryptRef.current[sk.id] === i ? 'Plant the chloride here' : null), onInteract: () => plant(sk, i) })))
+      P.forEach(([x, z], i) => ia.push(world.addInteractable({ pos: [x, 0, z], radius: 1.6, label: () => (cryptRef.current[sk.id] === 1 && waitRef.current[sk.id] !== i ? `Wait on ${padName(sk.carbons[i].n)} with Cl⁻` : null), onInteract: () => plant(sk, i) })))
     })
     if (import.meta.env.DEV) {
       window.__valence = window.__valence || {}
@@ -224,9 +351,21 @@ function TowerLevel({ world, onExit }) {
     return () => { [...f, ...t, bossT, decreeT, ...ia, ...targets, ...lanterns].forEach((i) => world.remove(i)) }
   }, [world])
 
-  // the bridges: a floor strip appears when built
+  // stone you can't walk through: the 7-2 statue plinths and the 7-3 scale steps
   useEffect(() => {
-    const ids = BRIDGES7.filter((b) => solved[b.id]).map((b) => { const [a, c] = BRIDGE7_Z[b.id]; return world.addFloor(-2.2, c, 2.2, a, 0) })
+    const ids = [
+      ...Object.values(STATUE7_POS).map((z) => world.addSolid([-2.3, 0, z - 0.6], [2.3, 1.0, z + 0.6])),
+      ...STEP_POS.map(([x, z], k) => world.addSolid([x - 1.2, 0, z - 1.3], [x + 1.2, 0.4 + (5 - k) * 0.35, z + 1.3])),
+    ]
+    return () => ids.forEach((i) => world.remove(i))
+  }, [world])
+  // 7-1: Pi gives way while Kai is working the crates, so it never hangs over one
+  useFrame(() => { const p = world.player; world.piAside = !!(p && p.pos.z < -14 && p.pos.z > -33 && !has('7-1')) })
+  useEffect(() => () => { world.piAside = false }, [world])
+
+  // the bridges: a floor strip appears when built; until then a wall stops Kai auto-hopping the gap
+  useEffect(() => {
+    const ids = BRIDGES7.map((b) => { const [a, c] = BRIDGE7_Z[b.id]; return solved[b.id] ? world.addFloor(-2.2, c, 2.2, a, 0) : world.addSolid([-W, -1, c], [W, 5, a]) })
     return () => ids.forEach((i) => world.remove(i))
   }, [world, ...BRIDGES7.map((b) => !!solved[b.id])])
 
@@ -235,35 +374,43 @@ function TowerLevel({ world, onExit }) {
     if (has('7-1')) return
     const d = getState().save.t7dials || {}
     const wrong = CRATES.find((c) => (d[c.id] || 0) !== unsat(c))
-    if (wrong) { sfx('wrong'); toast(`${wrong.f}: not ${d[wrong.id] || 0}. ${crateHint(wrong, d[wrong.id] || 0)}`, 'warn', 6000); return }
+    if (wrong) { sfx('wrong'); saveGame({ t7dials: {} }); toast(`${wrong.f}: not ${d[wrong.id] || 0}. ${crateHint(wrong, d[wrong.id] || 0)} The dials spin back to 0.`, 'warn', 7000); return }
     markSolved('7-1'); sfx('open')
     toast('Every dial right. Each ring or π bond costs a molecule two hydrogens.', 'good', 4400)
   }
-  const lightGroup = (s, end, pos) => {
+  const lightGroup = (s, end) => {
     const all = getState().save.t7ez || {}
     const cur = all[s.id] || {}
     if (cur.done) return false
-    const hi = higherAt(s[end])
-    if (!hi) {
-      // two identical groups on this end: no cis–trans isomer exists
-      saveGame({ t7ez: { ...all, [s.id]: { ...cur, done: 'none' } } }); sfx('open')
-      toast(rankWhy(s[end], pos) + ' This statue is neither E nor Z.', 'good', 6000)
-      setTimeout(checkEZRoom, 100)
+    if (!higherAt(s[end])) {
+      // two identical groups on this end: nothing to rank. The player still has to make the call at an arch.
+      sfx('block'); toast(`Two ${s[end].top} groups here: neither outranks the other.`, 'info', 3200)
       return true
     }
-    if (hi !== pos) { sfx('wrong'); toast(rankWhy(s[end], pos), 'warn', 5200); return true }
-    saveGame({ t7ez: { ...all, [s.id]: { ...cur, [end]: pos } } }); sfx('pickup')
+    const next = !cur[end] ? 'top' : cur[end] === 'top' ? 'bot' : undefined // judged at the arch, not here
+    saveGame({ t7ez: { ...all, [s.id]: { ...cur, [end]: next } } }); sfx(next ? 'pickup' : 'block')
     return true
   }
   const callEZ = (s, call) => {
     const all = getState().save.t7ez || {}
     const cur = all[s.id] || {}
     if (cur.done) return
-    if (!cur.L || !cur.R) { sfx('wrong'); toast('Light the higher group on both ends first. Then look: same side, or opposite?', 'warn', 4000); return }
     const right = ezOf(s)
-    if (call !== right) { sfx('wrong'); toast(right === 'Z' ? 'Look again: both lit groups are on the same side (both up, or both down). Together: Z.' : 'Look again: one lit group is up and the other down. Opposite: E.', 'warn', 4600); return }
+    const x = call === 'E' ? -3.6 : call === 'Z' ? 3.6 : 7.2
+    if (call !== 'none' && right !== 'none' && (!cur.L || !cur.R)) { sfx('wrong'); toast('Light the higher group on both ends first. Then look: same side, or opposite?', 'warn', 5000); return }
+    const bad = call !== 'none' && right !== 'none' && ['L', 'R'].find((e) => cur[e] !== higherAt(s[e]))
+    if (bad) {
+      sfx('wrong'); if (world.player) world.player.hurt(1, [x, 0, STATUE7_POS[s.id] + 0.6], true)
+      saveGame({ t7ez: { ...all, [s.id]: {} } }); toast(rankWhy(s[bad], cur[bad]) + ' The statue goes dark.', 'warn', 5600)
+      return
+    }
+    if (call !== right) {
+      sfx('wrong'); if (world.player) world.player.hurt(1, [x, 0, STATUE7_POS[s.id] + 0.6], true)
+      toast(right === 'none' ? 'One end has two identical groups: nothing to rank, so no E or Z.' : call === 'none' ? 'Each end has two different groups, so it has a geometry. Rank them.' : right === 'Z' ? 'Look again: both lit groups are on the same side. Together: Z.' : 'Look again: one lit group is up, the other down. Opposite: E.', 'warn', 4600)
+      return
+    }
     saveGame({ t7ez: { ...all, [s.id]: { ...cur, done: call } } }); sfx('right')
-    toast(call === 'Z' ? 'Z: zusammen, together. The arch opens.' : 'E: entgegen, opposite. The arch opens.', 'good', 3200)
+    toast(call === 'Z' ? 'Z: zusammen, together. The arch opens.' : call === 'E' ? 'E: entgegen, opposite. The arch opens.' : 'Neither: a tied end means no cis–trans isomer. The arch opens.', 'good', 3600)
     setTimeout(checkEZRoom, 100)
   }
   const checkEZRoom = () => {
@@ -276,8 +423,8 @@ function TowerLevel({ world, onExit }) {
     const s = STAB.find((x) => x.id === id)
     const want = STAB.find((x) => x.id === STAB_ORDER[k])
     if (STAB_ORDER[k] !== id) {
-      sfx('wrong'); setCarry(null)
-      toast(`Not step ${k + 1}. ${s.name} (${s.kind}) gives off ${-s.dH} kJ/mol when hydrogenated. ${-s.dH > -want.dH ? 'More heat out: less stable, lower down.' : 'Less heat out: more stable, higher up.'}`, 'warn', 6400)
+      sfx('wrong'); setCarry(null); if (world.player) world.player.hurt(1, [STEP_POS[k][0], 0, STEP_POS[k][1]], true)
+      toast(`Not step ${k + 1}. ${s.name} is ${s.kind}. ${s.kind.startsWith('disub') && want.kind.startsWith('disub') ? (s.id === 'cis2b' ? 'In cis the methyls crowd each other: less steady, lower.' : 'Trans: no crowding, so steadier, higher.') : -s.dH > -want.dH ? 'Fewer groups on the C=C: less steady, lower down.' : 'More groups on the C=C: steadier, higher up.'}`, 'warn', 5600)
       return
     }
     const next = { ...(getState().save.t7placed || {}), [id]: k }
@@ -295,8 +442,9 @@ function TowerLevel({ world, onExit }) {
     const order = BRIDGES7.findIndex((b) => b.id === br.id)
     if (order > 0 && !has(BRIDGES7[order - 1].id)) { toast('Build the bridges in order, from the near side.', 'info', 2600); return }
     const r = protonate(br, on)
-    sfx('hookFire')
-    if (!r.ok) { sfx('wrong'); toast(`H⁺ there leaves a ${DEG[r.deg]} cation on the other carbon. The other way gives a ${DEG[r.alt]} one, more stable. That’s the one that forms.`, 'warn', 6200); return }
+    const lp = [bx(br, on), 1.35, BRIDGE7_Z[br.id][0] - 0.3]
+    sfx('hookFire'); if (world.slingFx) world.slingFx(lp)
+    if (!r.ok) { sfx('wrong'); if (world.player) world.player.hurt(1, lp, true); toast(`H⁺ there leaves a ${DEG[r.deg]} cation. The other way gives a ${DEG[r.alt]} one: steadier, so that one forms.`, 'warn', 6200); return }
     markSolved(br.id); sfx('open')
     const X = br.hx === 'HBr' ? 'Br⁻' : 'Cl⁻'
     toast(br.mixture ? `Both carbons give a secondary cation: neither wins, so you get a mixture. ${X} adds: ${br.product}.` : `H⁺ adds, a ${DEG[r.deg]} cation forms, ${X} adds to it: ${br.product}.`, 'good', 5600)
@@ -304,24 +452,40 @@ function TowerLevel({ world, onExit }) {
   }
   const cryptSling = (sk, i) => {
     if (has('7-5' + sk.id) || cryptRef.current[sk.id] !== null) return
-    sfx('hookFire')
-    if (i === 1) { sfx('wrong'); toast('H⁺ on C2 would leave a primary cation on C1. Protonate C1, the end with more H.', 'warn', 4600); return }
-    setCrypt((c) => ({ ...c, [sk.id]: 1 }))
-    toast(`H⁺ on C1: a secondary cation on C2. Will it stay there?`, 'info', 3600)
-    setTimeout(() => {
+    const P = skAbs(sk.id)
+    sfx('hookFire'); if (world.slingFx) world.slingFx([P[i][0], 0.6, P[i][1]])
+    if (i === 1) { sfx('wrong'); if (world.player) world.player.hurt(1, [P[i][0], 0, P[i][1]], true); toast('H⁺ on C2 would leave a primary cation on C1. Protonate C1, the end with more H.', 'warn', 4600); return }
+    setCrypt((c) => ({ ...c, [sk.id]: 1 })); setWait((w) => ({ ...w, [sk.id]: null }))
+    toast('Cation on C2. Stand where Cl⁻ should meet it, press E.', 'info', 3600)
+    const shift = () => {
       if (cryptRef.current[sk.id] !== 1) return
-      setCrypt((c) => ({ ...c, [sk.id]: 2 })); sfx('dash')
-      toast(sk.kind === 'hydride' ? 'A hydride slid from C3 to C2: the + is now on C3, tertiary!' : 'A methyl slid from C3 to C2: the + is now on C3, tertiary!', 'info', 4200)
-      setTimeout(() => { if (cryptRef.current[sk.id] === 2 && !has('7-5' + sk.id)) { setCrypt((c) => ({ ...c, [sk.id]: null })); toast('Too slow: it fell apart. Sling again, and be on the right carbon.', 'warn', 3600) } }, 5000)
-    }, 2600)
+      const w = waitRef.current[sk.id]
+      if (w === null || w === undefined) { // no commit: the + is lost from view, so watching it can't stand in for predicting it
+        setCrypt((c) => ({ ...c, [sk.id]: null })); setWait((x) => ({ ...x, [sk.id]: null })); sfx('wrong')
+        if (world.player) world.player.hurt(1, [P[1][0], 0, P[1][1]], true)
+        toast('You didn’t commit. The + went somewhere; you didn’t see where. Sling again and pick a carbon first.', 'warn', 5200)
+        return
+      }
+      setCrypt((c) => ({ ...c, [sk.id]: sk.end })); sfx('dash')
+      const moved = sk.kind === 'hydride' ? 'A hydride slid over.' : 'A methyl slid over.'
+      setTimeout(() => {
+        setCrypt((c) => ({ ...c, [sk.id]: null })); setWait((x) => ({ ...x, [sk.id]: null }))
+        if (w === sk.end) { markSolved('7-5' + sk.id); sfx('open'); toast(`${moved} The + went to ${sk.carbons[sk.end].n}, tertiary, and your Cl was waiting. Caught!`, 'good', 5200); return }
+        sfx('wrong'); if (world.player) world.player.hurt(1, [P[w][0], 0, P[w][1]], true) // a wrong commit costs half a heart
+        toast(w === 1 ? `${moved} Cl on C2 forms too, before any shift. But this cation moved first.` : `${moved} The + never reached ${sk.carbons[w].n}. Which neighbour makes it steadier?`, 'warn', 5600)
+      }, 1400)
+    }
+    clearTimeout((cryptTimer.current[sk.id] || {}).id)
+    cryptTimer.current[sk.id] = { due: performance.now() + 5800, fire: shift, id: setTimeout(shift, 5800) }
   }
   const plant = (sk, i) => {
-    const at = cryptRef.current[sk.id]
-    if (at !== i) return
-    setCrypt((c) => ({ ...c, [sk.id]: null }))
-    if (i === 1) { sfx('wrong'); toast(`Cl on C2: ${sk.plain}. That forms too, before any shift. But the door wants the product after the shift.`, 'warn', 6000); return }
-    markSolved('7-5' + sk.id); sfx('open')
-    toast(`Cl on C3, where the charge moved: ${sk.product}.`, 'good', 4600)
+    if (cryptRef.current[sk.id] !== 1 || waitRef.current[sk.id] === i) return
+    waitRef.current = { ...waitRef.current, [sk.id]: i } // the shift may now fire before the next render
+    setWait((w) => ({ ...w, [sk.id]: i })); sfx('pickup')
+    // once Kai has committed, don't make him stand idle: the shift comes ~1.2 s later (never sooner than it was due)
+    const ct = cryptTimer.current[sk.id]
+    if (ct && ct.due - performance.now() > 1200) { clearTimeout(ct.id); ct.due = performance.now() + 1200; ct.id = setTimeout(ct.fire, 1200) }
+    toast(`Chloride ready on ${sk.carbons[i].n}. Wait for it…`, 'info', 2400)
   }
 
   const readDecree = async () => {
@@ -368,12 +532,13 @@ function TowerLevel({ world, onExit }) {
     bossStarted.current = true
     busy.current = true
     playMusic('boss')
-    world.respawn = [0, 0, -156]
+    world.respawn = [0, 0, -162]
     setBossOn(true)
     await new Promise((r) => setTimeout(r, 900))
     if (!getState().save.t7bossIntro) {
       saveGame({ t7bossIntro: true })
-      world.camOverride = { pos: [3, 5, -158], look: [PHANTOM.center[0], 1.5, PHANTOM.center[2]] }
+      { const [sx, sz] = GHOST_WAIT; const px = PHANTOM.center[0] + sx, pz = PHANTOM.center[2] + sz // where the ghost waits, off the skeleton
+        world.camOverride = { pos: [px + 2.2, 4.2, pz + 9.5], look: [px, 2.0, pz] } }
       await say([
         { who: 'Pi', text: 'The Carbocation Phantom! It’s a + charge in a cloak, and the spark’s inside it.' },
         { who: 'Pi', text: 'It sits on a carbon of that skeleton. If a neighbour is steadier, it shifts over.' },
@@ -381,14 +546,23 @@ function TowerLevel({ world, onExit }) {
       ])
       world.camOverride = null
     } else await say([{ who: 'Pi', text: 'Where will the + end up? Be there first.' }])
+    await say([{ who: 'Pi', text: 'Sling an H⁺ onto the alkene to start each round. Watch where it lands.' }])
     busy.current = false
+    setBossArmed(true)
   }
   const bossDown = async () => {
+    sparkFly.current = true // the Phantom stays mounted (fading) until its spark has flown
     markSolved('boss7')
     playMusic('tower')
+    // from the arena's north end, looking south, so the spark flies away from the camera and stays in frame
+    world.camOverride = { pos: [-1, 4, -188], look: [5, 5.5, -167] }
+    const flight = new Promise((r) => setTimeout(r, 2500))
+    setTimeout(() => { sparkFly.current = false; bumpSpark((n) => n + 1) }, 2900)
+    await Promise.all([say([{ who: 'Pi', text: 'There goes the spark, south to the orchards!' }]), flight])
+    world.camOverride = null
     await say([
-      { who: 'Pi', text: 'Caught it every time! It always ran to the most substituted carbon.' },
-      { who: 'Pi', text: 'The spark’s loose again. South, toward the orchards. And there’s the shard!' },
+      { who: 'Pi', text: 'Caught it every time! It always settled on the steadiest carbon, even when that meant staying put.' },
+      { who: 'Pi', text: 'And there: the shard!' },
     ])
   }
   const takeShard = async () => {
@@ -398,7 +572,7 @@ function TowerLevel({ world, onExit }) {
     setMarkovHere(true)
     if (world.player) world.player.teleport([0, 0, -182.4], Math.PI)
     await new Promise((r) => setTimeout(r, 300))
-    world.camOverride = twoShot(world, [-2.2, 0, -182.4], 3.8, Math.PI / 2)
+    world.camOverride = twoShot(world, [-2.2, 0, -182.4], 3.8, MARKOV_SHARD_FACING)
     await say([{ who: 'Farmer Markov', text: 'Puffed my way up all those stairs. One question before you take it, lad.' }])
     const ok = await openPanel('phantomCheck', {})
     if (!ok) { await say([{ who: 'Farmer Markov', text: 'Chew on it. The shard’ll keep.' }]); world.camOverride = null; busy.current = false; return }
@@ -407,7 +581,7 @@ function TowerLevel({ world, onExit }) {
     await say([
       { who: '', text: 'The shard glows warm in Kai’s hands…' },
       { who: 'Princess Octavia', text: 'Kai… seven. The double bonds out on the plains are holding again.' },
-      { who: 'Princess Octavia', text: 'He said any which way. Every time, it went to the steadier carbon.' },
+      { who: 'Princess Octavia', text: 'Malradix said any which way. It always went to the steadier carbon, unless both were equal.' },
       { who: 'Farmer Markov', text: 'Keep the sling. Borana’s orchards are south. She’ll show you more ways to add.' },
       { who: 'Pi', text: 'Seven down, five to go!' },
     ])
@@ -457,7 +631,7 @@ function TowerLevel({ world, onExit }) {
             <group key={c.id} position={[x, 0, z]}>
               <Part model="tower" name="t7_crate" />
               <mesh position={[0, 1.0, 0.7]} rotation={[0, 0, -Math.PI / 2 + (d * Math.PI) / 4]}><boxGeometry args={[0.06, 0.32, 0.03]} /><meshBasicMaterial color="#ffe070" toneMapped={false} /></mesh>
-              <Tag position={[0, 2.0, 0]} df={10} far={16}>{`${c.f} · dial: ${d}`}</Tag>
+              <Tag position={[0, 2.0, 0]} df={12} far={16}>{`${c.f} · dial: ${d}`}</Tag>
             </group>
           )
         })}
@@ -479,7 +653,7 @@ function TowerLevel({ world, onExit }) {
           <group key={s.id}>
             <mesh position={[x, 0.45, z]}><cylinderGeometry args={[0.6, 0.7, 0.9, 10]} /><meshStandardMaterial color="#8a7a6a" roughness={0.85} /></mesh>
             {on === undefined && carry !== s.id && <mesh position={[x, 1.15, z]} castShadow><boxGeometry args={[0.6, 0.45, 0.45]} /><meshStandardMaterial color="#8a8a96" metalness={0.7} roughness={0.35} /></mesh>}
-            {on === undefined && carry !== s.id && <Tag position={[x, 1.9, z]} df={9} far={14}>{s.name}</Tag>}
+            {on === undefined && carry !== s.id && <Tag position={[x, 1.9, z]} df={9} far={20}>{s.name}</Tag>}
           </group>
         )
       })}
@@ -490,30 +664,33 @@ function TowerLevel({ world, onExit }) {
           <group key={k} position={[x, 0, z]}>
             <mesh position={[0, h / 2, 0]} castShadow><boxGeometry args={[2.4, h, 2.6]} /><meshStandardMaterial color="#b8a890" roughness={0.8} /></mesh>
             {id && <mesh position={[0, h + 0.23, 0]}><boxGeometry args={[0.6, 0.45, 0.45]} /><meshStandardMaterial color="#c8b060" metalness={0.7} roughness={0.35} /></mesh>}
-            <Tag position={[-1.6, h + 0.9, 0]} df={9} far={16}>{id ? `${k + 1} · ${STAB.find((s) => s.id === id).name} · ${STAB.find((s) => s.id === id).dH}` : k === 0 ? '1 · most stable' : k === 5 ? '6 · least stable' : `${k + 1}`}</Tag>
+            <Tag position={[-2.6, h + 0.9, 0]} df={9} far={20}>{id ? `${k + 1} · ${STAB.find((s) => s.id === id).name} · ${STAB.find((s) => s.id === id).dH}` : k === 0 ? '1 · most stable' : k === 5 ? '6 · least stable' : `${k + 1}`}</Tag>
           </group>
         )
       })}
       <Carried world={world} what={carry} />
+      <SlingShot world={world} />
       <Chest world={world} pos={[0, 0, -88.5]} big opened={!!solved['t7-sling']} show={!!solved['7-3']} onOpen={() => openChest('t7-sling')} label="Open the big chest" />
       <Gate world={world} pos={[0, 0, -90]} size={[2 * W, 7, 0.8]} open={!!solved['t7-sling']} color="#5a4a30" glow="#ff8aa0" />
 
       {/* 7-4 The Harvest Hall: alkene bridges over the grain pit */}
       {BRIDGES7.map((br) => {
         const [a, c] = BRIDGE7_Z[br.id], built = !!solved[br.id]
+        const nextSpan = (BRIDGES7.find((b) => !solved[b.id]) || {}).id // only the next unbuilt span's curtain shows at full strength
         return (
           <group key={br.id}>
             {built
               ? <mesh position={[0, -0.15, (a + c) / 2]} receiveShadow castShadow><boxGeometry args={[4.4, 0.3, Math.abs(a - c)]} /><meshStandardMaterial color="#8a6a40" roughness={0.85} /></mesh>
               : [-0.18, 0.18].map((dx) => <mesh key={dx} position={[dx, -0.05, (a + c) / 2]} rotation={[Math.PI / 2, 0, 0]}><cylinderGeometry args={[0.07, 0.07, Math.abs(a - c), 8]} /><meshStandardMaterial color="#5ff0ff" emissive="#2ab0d0" emissiveIntensity={1} transparent opacity={0.7} /></mesh>)}
+            {!built && <Curtain z={a - 0.05} strength={br.id === nextSpan ? 1 : 0.22} />}
             {['a', 'b'].map((on) => (
-              <group key={on} position={[on === 'a' ? -1.6 : 1.6, 0, a - 0.3]}>
+              <group key={on} position={[bx(br, on), 0, a - 0.3]}>
                 <mesh position={[0, 0.6, 0]}><cylinderGeometry args={[0.1, 0.12, 1.2, 8]} /><meshStandardMaterial color="#6a5a4a" /></mesh>
-                <mesh position={[0, 1.35, 0]}><sphereGeometry args={[0.28, 14, 10]} /><meshStandardMaterial color={built ? '#9affb8' : '#3a3640'} emissive={built ? '#2a8a4a' : '#000'} emissiveIntensity={0.6} /></mesh>
+                <mesh position={[0, 1.35, 0]}><sphereGeometry args={[0.28, 14, 10]} /><meshStandardMaterial color={built ? '#9affb8' : '#d8c8a0'} emissive={built ? '#2a8a4a' : '#d8c8a0'} emissiveIntensity={built ? 0.6 : 0.2} /></mesh>
                 <Tag position={[0, 2.0, 0]} df={9} far={12}>{SHOW[br.id][on === 'a' ? 0 : 1]}</Tag>
               </group>
             ))}
-            <Tag position={[0, 2.8, a - 0.3]} df={11} far={14} className={built ? 'ok-tag' : ''}>{built ? br.product : `${br.name} + ${br.hx}`}</Tag>
+            <Tag position={[0, 2.6, c + 0.3]} df={11} far={16} className={built ? 'ok-tag' : ''}>{built ? br.product : `${br.name} + ${br.hx}`}</Tag>
           </group>
         )
       })}
@@ -533,7 +710,8 @@ function TowerLevel({ world, onExit }) {
               <pointLight color="#c070ff" intensity={3} distance={5} />
               <Tag position={[0, 0.8, 0]} df={10}>+</Tag>
             </group>}
-            <Tag position={[P[0][0] - 2.4, 2.2, P[0][1]]} df={11} far={16} className={done ? 'ok-tag' : ''}>{done ? sk.product : `${sk.name}`}</Tag>
+            {wait[sk.id] !== null && crypt[sk.id] !== null && <Tag position={[P[wait[sk.id]][0] + 1.8, 0.3, P[wait[sk.id]][1] + 0.4]} df={9}>Cl⁻ waiting</Tag>}
+            <Tag position={[P[0][0] - 2.4, 2.2, P[0][1]]} df={11} far={16} className={done ? 'ok-tag' : ''}>{done ? (solved['7-5name'] ? sk.product : `caught: Cl on ${sk.carbons[sk.end].n}`) : `${sk.name}`}</Tag>
           </group>
         )
       })}
@@ -550,8 +728,9 @@ function TowerLevel({ world, onExit }) {
       })}
 
       {/* boss */}
-      {!solved.boss7 && <Phantom world={world} center={PHANTOM.center} active={bossOn && !solved.boss7} onDefeated={bossDown} />}
-      {markovHere && <Markov position={[-2.2, 0, -182.4]} rotation={[0, Math.PI / 2, 0]} />}
+      <RoofDressing world={world} />
+      {(!solved.boss7 || sparkFly.current) && <Phantom world={world} center={PHANTOM.center} active={bossOn && (!solved.boss7 || sparkFly.current)} armed={bossArmed} onDefeated={bossDown} />}
+      {markovHere && <Markov position={[-2.2, 0, -182.4]} rotation={[0, MARKOV_SHARD_FACING, 0]} />}
       <Shard show={!!solved.boss7 && (save.shards || 0) < 7} pos={[0, 0, -184]} />
       <Motes count={180} area={[20, 7, 190]} center={[0, 0.5, -90]} color="#ffe8a0" size={0.05} />
       <PiFollower world={world} />

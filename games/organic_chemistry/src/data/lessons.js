@@ -456,10 +456,10 @@ export const LESSONS = {
     section: '7.3', pages: '211–212',
     points: [
       'Find the longest carbon chain that contains the double bond; the suffix is -ene.',
-      'Number from the end nearer the double bond, so its carbons get the lowest numbers.',
+      'Number from the end nearer the double bond, so its carbons get the lowest numbers. If it’s central, start nearer the first branch.',
       'Give the number of the first alkene carbon before the parent name; list substituents alphabetically with their numbers.',
     ],
-    example: 'CH₃CH=CHCH₂CH₂CH₃ is 2-hexene, not 4-hexene.',
+    example: '(CH₃)₂CHCH=CHCH₂CH₃ is 2-methyl-3-hexene: the C=C is central, so number from the end nearer the branch.',
   },
   unsatInfo: {
     title: 'Degree of unsaturation',
@@ -468,7 +468,7 @@ export const LESSONS = {
       'Each ring or π bond costs a molecule two hydrogens from the saturated formula CₙH₂ₙ₊₂.',
       'Add halogens to the H count. Ignore oxygen. Subtract one H for each nitrogen.',
     ],
-    example: 'C₆H₁₀: hexane is C₆H₁₄, four H short, so two degrees (two double bonds, a ring and a double bond, two rings, or a triple bond).',
+    example: 'C₅H₁₀: pentane is C₅H₁₂, two H short, so one degree: one double bond or one ring.',
   },
   ezInfo: {
     title: 'Cis–trans and E,Z',
@@ -508,7 +508,7 @@ export const LESSONS = {
       'It happens when the new cation is more stable, usually secondary to tertiary.',
       'Rearranged products are strong evidence for the carbocation mechanism (Whitmore, 1930s).',
     ],
-    example: '3-Methyl-1-butene + HCl gives 2-chloro-3-methylbutane and also 2-chloro-2-methylbutane, by a hydride shift.',
+    example: 'Vinylcyclohexane + HBr gives 1-bromo-1-ethylcyclohexane: a hydride shift makes the cation tertiary (Problem 7-21 asks you to show it; the product is our answer).',
   },
   phantomCheck: {
     title: 'Markovnikov’s rule',

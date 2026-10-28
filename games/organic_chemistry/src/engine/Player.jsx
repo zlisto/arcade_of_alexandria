@@ -470,7 +470,7 @@ export default function Player({ world, start = [0, 0, 0], startFacing = 0 }) {
         if (gateBetween(s.pos.x, s.pos.z, lp[0], lp[2])) continue // a shut gate between
         const ang = d < 0.8 ? 0 : Math.acos(Math.max(-1, Math.min(1, (dx * Math.sin(s.facing) + dz * Math.cos(s.facing)) / d)))
         if (ang > 1.2 && !l.omni) continue
-        const score = d - (l.priority || 0) * 10 // a higher-priority target (the boss's knot) wins over nearby ones
+        const score = d - (l.priority || 0) * 10 + (l.aim ? ang * 3 : 0) // a higher-priority target (the boss's knot) wins over nearby ones; `aim` targets favour the one Kai faces
         if (score < bd) { bd = score; lt = l }
       }
     }
@@ -597,7 +597,7 @@ function swordHit(world, s, dmg, range, halfAngle, kind) {
     if (Math.abs(p[1] - s.pos.y) > 2.8 + (t.tall || 0)) continue
     const a = Math.atan2(dx, dz)
     const diff = Math.abs(Math.atan2(Math.sin(a - s.facing), Math.cos(a - s.facing)))
-    if (diff > halfAngle) continue
+    if (diff > halfAngle && d > 0) continue // a target Kai is standing inside is always in reach
     const dir = [dx / (Math.hypot(dx, dz) || 1), 0, dz / (Math.hypot(dx, dz) || 1)]
     const res = t.onHit && t.onHit(dir, dmg, kind, getState().stance)
     if (res !== false) hit = true
