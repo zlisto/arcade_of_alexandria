@@ -7,7 +7,8 @@ import { Part, useModelParts, InstancedPart, preloadModels } from '../engine/mod
 import WolfPack from '../actors/WolfPack'
 import { Magnus } from '../actors/MarshFolk'
 import { PiFollower } from './Village'
-import { getState, setState, saveGame, say, openPanel, useGame } from '../engine/store'
+import { getState, setState, saveGame, say, toast, openPanel, useGame } from '../engine/store'
+import { readMs } from '../chem/rules10'
 import { playMusic, sfx } from '../audio/sfx'
 import { roadOpen } from '../data/release'
 
@@ -20,6 +21,10 @@ preloadModels('marsh', 'magnus')
 const MAGNUS = [9, 0, -1.5]
 const MARKERS = [5.8, 0, 1.2]
 const MOUTH_Z = -44
+const KAI_MEET = [MAGNUS[0] - 1.6, 0, MAGNUS[2] + 2.0] // where Kai stands to meet Magnus
+const SHOT_CAM = [12.3, 4.3] // about where the first two-shot's camera stands (twoShot 6.2 m off the line, so Kai fits at 800 px)
+const SHOT_LINES = [[[KAI_MEET[0], KAI_MEET[2]], [MAGNUS[0], MAGNUS[2]]], [SHOT_CAM, [KAI_MEET[0], KAI_MEET[2]]], [SHOT_CAM, [MAGNUS[0], MAGNUS[2]]]]
+const segDist = (x, z, [ax, az], [bx, bz]) => { const vx = bx - ax, vz = bz - az, t = Math.max(0, Math.min(1, ((x - ax) * vx + (z - az) * vz) / (vx * vx + vz * vz))); return Math.hypot(x - ax - vx * t, z - az - vz * t) }
 
 function Gloom() {
   const tex = useMemo(() => {
@@ -50,7 +55,7 @@ function Mist() {
 function Scenery({ world }) {
   const parts = useModelParts('marsh')
   const trees = useMemo(() => [[-20, -8], [-14, -22], [24, 8], [30, -14], [-34, 6], [-26, 30], [34, 30], [16, -30], [-8, 24], [38, -36], [-40, -30]].map(([x, z], i) => [x, 0, z, 0.9 + (i % 3) * 0.15, i * 1.7]), [])
-  const reeds = useMemo(() => { const o = []; for (let i = 0; i < 70; i++) { const a = i * 2.39996, r = 8 + (i * 37) % 40; const x = Math.sin(a) * r, z = Math.cos(a) * r; if (Math.abs(x) < 4 && z > -46) continue; o.push([x, 0, z, 0.8 + (i % 4) * 0.15, i]) } return o }, [])
+  const reeds = useMemo(() => { const o = []; for (let i = 0; i < 70; i++) { const a = i * 2.39996, r = 8 + (i * 37) % 40; const x = Math.sin(a) * r, z = Math.cos(a) * r; if (Math.abs(x) < 4 && z > -46) continue; if (SHOT_LINES.some(([p, q]) => segDist(x, z, p, q) < 2)) continue; o.push([x, 0, z, 0.8 + (i % 4) * 0.15, i]) } return o }, [])
   useEffect(() => {
     const ids = trees.map(([x, , z]) => world.addSolid([x - 0.5, 0, z - 0.5], [x + 0.5, 5, z + 0.5]))
     return () => ids.forEach((i) => world.remove(i))
@@ -68,11 +73,37 @@ function ForgeSpark() {
   const g = useRef()
   useFrame(({ clock }) => { if (g.current) g.current.scale.setScalar(1 + Math.sin(clock.elapsedTime * 3) * 0.18) })
   return (
-    <group ref={g} position={[0, 5.4, MOUTH_Z - 1.2]}>
+    <group ref={g} position={[0, 4.6, MOUTH_Z + 0.6]}>
       <mesh><sphereGeometry args={[0.6, 20, 16]} /><meshStandardMaterial color="#f0d0ff" emissive="#c070ff" emissiveIntensity={3.4} toneMapped={false} /></mesh>
       <mesh><sphereGeometry args={[1.4, 20, 16]} /><meshBasicMaterial color="#b050ff" transparent opacity={0.36} depthWrite={false} toneMapped={false} /></mesh>
       <mesh><sphereGeometry args={[2.4, 20, 16]} /><meshBasicMaterial color="#a040ff" transparent opacity={0.13} depthWrite={false} toneMapped={false} /></mesh>
       <pointLight color="#c070ff" intensity={30} distance={18} />
+    </group>
+  )
+}
+
+/** the forge grate: an iron frame with bars, rivets and a chain, lowered once the markers are named */
+function Grate() {
+  return (
+    <group position={[0, 0, MOUTH_Z - 0.2]}>
+      {[-3, 3].map((x) => <mesh key={x} position={[x, 3, 0]} castShadow><boxGeometry args={[0.3, 6, 0.4]} /><meshStandardMaterial color="#2e322a" metalness={0.7} roughness={0.45} /></mesh>)}
+      {[0.3, 3, 5.8].map((y) => <mesh key={y} position={[0, y, 0]} castShadow><boxGeometry args={[6.2, 0.26, 0.36]} /><meshStandardMaterial color="#2e322a" metalness={0.7} roughness={0.45} /></mesh>)}
+      {[...Array(11)].map((_, i) => <mesh key={i} position={[-2.5 + i * 0.5, 3, 0]} castShadow><cylinderGeometry args={[0.06, 0.06, 5.6, 6]} /><meshStandardMaterial color="#3a3e34" metalness={0.75} roughness={0.4} /></mesh>)}
+      {[...Array(12)].map((_, i) => <mesh key={'r' + i} position={[-2.75 + (i % 6) * 1.1, i < 6 ? 3 : 5.8, 0.2]}><sphereGeometry args={[0.06, 6, 4]} /><meshStandardMaterial color="#8a7a50" metalness={0.8} roughness={0.3} /></mesh>)}
+      <mesh position={[0, 4.3, 0.24]}><torusGeometry args={[0.7, 0.07, 6, 24]} /><meshStandardMaterial color="#9a8a5a" metalness={0.8} roughness={0.3} /></mesh>
+    </group>
+  )
+}
+
+/** one of Magnus's marker posts: a weathered stake with a name board; the boards are blank until Kai names them */
+function MarkerPost({ position, tilt = 0, named }) {
+  return (
+    <group position={position} rotation={[0, 0, tilt]}>
+      <mesh position={[0, 0.75, 0]} castShadow><cylinderGeometry args={[0.07, 0.1, 1.5, 6]} /><meshStandardMaterial color="#4a3a2a" roughness={0.95} flatShading /></mesh>
+      <mesh position={[0, 1.3, 0.09]} castShadow><boxGeometry args={[0.62, 0.32, 0.05]} /><meshStandardMaterial color="#7a6646" roughness={0.9} /></mesh>
+      {named && [0.06, -0.04].map((y) => <mesh key={y} position={[0, 1.3 + y, 0.12]}><planeGeometry args={[0.46, 0.035]} /><meshBasicMaterial color="#2a2018" /></mesh>)}
+      <mesh position={[0, 1.5, 0.09]}><coneGeometry args={[0.36, 0.14, 4, 1]} /><meshStandardMaterial color="#3a2e20" roughness={0.9} flatShading /></mesh>
+      <mesh position={[0, 0.1, 0]}><cylinderGeometry args={[0.22, 0.28, 0.2, 7]} /><meshStandardMaterial color="#3a4a2a" roughness={1} /></mesh>
     </group>
   )
 }
@@ -113,7 +144,7 @@ function MarshLevel({ world, onExit }) {
       saveGame({ marshSeen: true })
       setTimeout(() => say([
         { who: 'Pi', text: 'It smells like a swimming pool and a rusty nail had a fight.' },
-        { who: 'Pi', text: 'Eyes in the reeds… radical wolves. Lots of them.' },
+        { who: 'Pi', text: 'Eyes in the reeds… radical wolves. And a violet glow over that forge.' },
       ]), 900)
     }
   }, [])
@@ -140,8 +171,8 @@ function MarshLevel({ world, onExit }) {
     const s = getState().save
     if (!s.metMagnus) {
       saveGame({ metMagnus: true })
-      if (world.player) world.player.teleport([MAGNUS[0] - 1.6, 0, MAGNUS[2] + 2.0], Math.atan2(1.6, -2.0))
-      const shot = twoShot(world, MAGNUS, 3.6, -0.5)
+      if (world.player) world.player.teleport(KAI_MEET, Math.atan2(1.6, -2.0))
+      const shot = twoShot(world, MAGNUS, 6.2, -0.3)
       world.camOverride = shot
       setState({ magnusShot: true })
       await say([
@@ -149,11 +180,11 @@ function MarshLevel({ world, onExit }) {
         { who: 'Old Magnus', text: 'Magnus. I’ve watched this marsh sixty years.' },
       ])
       // while he names it, the camera turns to the violet spark over the forge grate (Presentation round 2, #3)
-      world.camOverride = { pos: [10, 2.4, 3], look: [0, 5, MOUTH_Z] }
+      world.camOverride = { pos: [4, 3, -30], look: [0, 4.6, MOUTH_Z + 0.6] }
       await say([{ who: 'Old Magnus', text: 'Something violet came over the cliffs just now and dropped into my forge.' }])
       world.camOverride = shot
       await say([
-        { who: 'Old Magnus', text: 'Malradix hung a sign on my door: “My radicals strike at random.” Random! Ha.' },
+        { who: 'Old Magnus', text: 'Malradix nailed a notice in my forge: “My radicals strike at random.” Random! Ha.' },
         { who: 'Pi', text: 'They don’t?' },
         { who: 'Old Magnus', text: 'Nothing in this marsh is random. You just haven’t counted yet.' },
         { who: 'Old Magnus', text: 'My markers lost their names in the mist. Put them back and I’ll lift the forge grate.' },
@@ -165,15 +196,16 @@ function MarshLevel({ world, onExit }) {
     } else if ((s.shards || 0) < 10) {
       await say([{ who: 'Old Magnus', text: s.hasRing ? 'That’s my ring. Mind the water once it’s on: a Grignard can’t abide it.' : 'My ring’s down in the forge, past the allyl crossing. You’ll want it for the golems.' }])
     } else {
-      await say([{ who: 'Old Magnus', text: 'The wolves are quiet. Go on, then. Walden’s arena is south and hot. Take water. No, wait. Don’t.' }])
+      await say([{ who: 'Old Magnus', text: 'The wolves are quiet. Go on, then. Walden’s arena is east, past the rocks, and hot. Take water. No, wait. Don’t.' }])
     }
     busy.current = false
   }
   const useMarkers = async () => {
     if (getState().save.t10markers) return
     if (!getState().save.metMagnus) { await talk(); return }
-    const ok = await openPanel('markers', {})
-    if (!ok) return
+    let wrong = null
+    const ok = await openPanel('markers', { onWrong: (t) => { wrong = t } })
+    if (!ok) { if (wrong) { world.player.hurt(1, MARKERS, true); toast(wrong, 'warn', readMs(wrong)) } return }
     saveGame({ t10markers: true }); sfx('open')
     setState({ objective: 'Enter the Sunken Forge' })
     await say([{ who: 'Old Magnus', text: 'Good. The grate’s up. Down there, count before you swing.' }])
@@ -197,13 +229,13 @@ function MarshLevel({ world, onExit }) {
         <Scenery world={world} />
       </Suspense>
       <pointLight position={[14.5, 3.9, -4.3]} color="#e8f0ff" intensity={4} distance={10} />
-      {!save.t10markers && <mesh position={[0, 3, MOUTH_Z - 0.2]}><boxGeometry args={[6, 6, 0.3]} /><meshStandardMaterial color="#3a3a32" metalness={0.6} roughness={0.5} /></mesh>}
+      {!save.t10markers && <Grate />}
       {(save.shards || 0) < 10 && <ForgeSpark />}
-      <Tag position={[0, 8.2, MOUTH_Z]} df={14}>{save.t10markers ? 'The Sunken Forge' : 'The Sunken Forge · grated'}</Tag>
+      <Tag position={[0, 8.2, MOUTH_Z]} df={14} far={40}>{save.t10markers ? 'The Sunken Forge' : 'The Sunken Forge · grated'}</Tag>
       <Magnus position={MAGNUS} rotation={[0, -0.5, 0]} />
-      {!shot && <Tag position={[MAGNUS[0], 2.5, MAGNUS[2]]} df={8}>Old Magnus</Tag>}
+      {!shot && <Tag position={[MAGNUS[0], 2.5, MAGNUS[2]]} df={8} far={20}>Old Magnus</Tag>}
       <Station world={world} pos={MARKERS} label={save.t10markers ? null : 'Name the markers'} enabled={!save.t10markers} solved={!!save.t10markers} onUse={useMarkers} />
-      {[0, 1, 2].map((k) => <mesh key={k} position={[MARKERS[0] - 1.6 - k * 1.0, 0.7, MARKERS[2] - 1.0]} castShadow><boxGeometry args={[0.2, 1.4, 0.6]} /><meshStandardMaterial color="#4a3a2a" /></mesh>)}
+      {[0, 1, 2].map((k) => <MarkerPost key={k} position={[MARKERS[0] - 1.6 - k * 1.0, 0, MARKERS[2] - 1.0]} tilt={(k - 1) * 0.08} named={!!save.t10markers} />)}
       <Signpost pos={[-45, 0, 3]} rotY={Math.PI / 2} text="← Cliffs · Forge ↓" />
       <Signpost pos={[45, 0, 3]} rotY={-Math.PI / 2} text="Volcanic Wastes →" />
       {!roadOpen(11, save.shards) && [...Array(7)].map((_, i) => <mesh key={'rk' + i} position={[50.6, 0.8 + (i % 3) * 0.9, 5 + i * 1.1]} castShadow><dodecahedronGeometry args={[1.0, 0]} /><meshStandardMaterial color="#4a4e3e" roughness={0.9} flatShading /></mesh>)}

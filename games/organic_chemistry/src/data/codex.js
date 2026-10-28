@@ -401,6 +401,12 @@ export const CODEX = [
   },
   // ---------------- World 10: the Halogen Marsh (Chapter 10)
   {
+    title: '† on a product name (the Marsh)',
+    section: '10.2–10.5', pages: '320–327',
+    unlocked: (s) => s.solved['10-2a'] || s.solved['10-4a'] || s.solved['10-4b'] || s.solved['10-4c'],
+    text: '† worked out from the book’s rules; not printed in the text. The propane hunt (1-chloropropane and 2-chloropropane, about 46 : 54), 1-bromobutane and 2-chlorobutane at the Alcohol Spring, and the answer to Magnus’s question (Problem 10-4) apply rules Chapter 10 states to compounds it doesn’t show. Products without a † are printed in the chapter. One game rule goes past the text: the tertiary spring refuses SOCl₂. The book only says SOCl₂ and PBr₃ are used for primary and secondary alcohols and HX for tertiary ones (p. 326); it never says SOCl₂ fails on a tertiary alcohol.',
+  },
+  {
     title: 'Alkyl halides',
     section: '10.1', pages: '318–320',
     unlocked: (s) => s.solved['10-1'],
@@ -410,7 +416,7 @@ export const CODEX = [
     title: 'Radical halogenation',
     section: '10.2', pages: '320–322',
     unlocked: (s) => s.solved['10-2a'] && s.solved['10-2b'],
-    text: 'Chlorination gives mixtures whose ratios follow (number of H) × (reactivity per H): tertiary 5, secondary 3.5, primary 1. Butane gives 30 : 70; 2-methylpropane 65 : 35. Weaker C–H, more stable radical.',
+    text: 'Chlorination gives mixtures whose ratios follow (number of H) × (reactivity per H): tertiary 5, secondary 3.5, primary 1. Butane gives 30 : 70 and 2-methylpropane 65 : 35, as measured; propane works out to 6 : 7, about 46 : 54 †. Weaker C–H, more stable radical.',
   },
   {
     title: 'Allylic bromination',
@@ -422,13 +428,25 @@ export const CODEX = [
     title: 'Alkyl halides from alcohols',
     section: '10.5', pages: '326–327',
     unlocked: (s) => s.solved['10-4a'] && s.solved['10-4b'] && s.solved['10-4c'],
-    text: 'HX converts tertiary alcohols quickly (1-methylcyclohexanol + HCl). Primary and secondary alcohols are better converted with SOCl₂ or PBr₃, under milder, less acidic conditions with fewer rearrangements.',
+    text: 'HX converts tertiary alcohols quickly: 1-methylcyclohexanol + HCl → 1-chloro-1-methylcyclohexane (90%). Primary and secondary alcohols are better converted with SOCl₂ (chlorides) or PBr₃ (bromides), under milder, less acidic conditions with fewer rearrangements: 1-butanol + PBr₃ → 1-bromobutane †; 2-butanol + SOCl₂ → 2-chlorobutane †; 2-butanol + PBr₃ → 2-bromobutane (86%).',
   },
   {
     title: 'Organometallics and oxidation levels',
     section: '10.6–10.8', pages: '327–332',
     unlocked: (s) => s.solved['10-5gilman'] && s.solved['10-5ox'],
-    text: 'Grignard reagents (RMgX) have a nucleophilic, strongly basic carbon; water protonates them. Gilman reagents (R₂CuLi) couple with organohalides to form C–C bonds. Oxidation level: count C–O, C–N, C–X bonds minus C–H bonds.',
+    text: 'Grignard reagents (RMgX) have a nucleophilic, strongly basic carbon; water protonates them. Gilman reagents (R₂CuLi) couple with organohalides to form C–C bonds: (CH₃)₂CuLi + 1-iododecane → undecane (90%). Oxidation level: count C–O, C–N, C–X bonds minus C–H bonds (a C=O counts twice). From Fig 10.7: CH₃OH = CH₃Cl (−2) < H₂C=O = CH₂Cl₂ (0) < CHCl₃ (+2) < CO₂ (+4); compounds in one column of the figure share a level. Worked Example 10.2: propane (−8) < propene = 2-propanol (−6) < acetone (−4).',
+  },
+  {
+    title: 'The Allylic Hydra',
+    section: '10.3–10.4, 10.6', pages: '322–328',
+    unlocked: (s) => s.solved.boss10,
+    text: 'Round 1: Br· takes the allylic H first (about 370 kJ/mol), not a vinylic one (465) or a plain alkyl one (410–421): C3 of 1-butene, C6 of cyclohexene, ring C2 of methylenecyclohexane. Round 2: the allyl radical’s electron is shared equally by the two end carbons (Fig 10.5). Round 3: magnesium reacts with alkyl, vinylic and aryl chlorides, bromides and iodides; the trap is a C–F, whether alkyl, vinylic or aryl: organofluorides rarely react. The Grignard’s δ− carbon is a very strong base, and water turns it into R–H.',
+  },
+  {
+    title: 'Magnus’s question (Problem 10-4)',
+    section: '10.2', pages: '322',
+    unlocked: (s) => (s.shards || 0) >= 10,
+    text: 'Monochlorination of 2-methylbutane, weighted by (number of H) × (reactivity): 2-chloro-3-methylbutane † 2 × 3.5 = 7 (33%); 1-chloro-2-methylbutane † 6 × 1 = 6 (29%); 2-chloro-2-methylbutane † 1 × 5 = 5 (24%); 1-chloro-3-methylbutane † 3 × 1 = 3 (14%). The most reactive H isn’t the biggest share: there is only one of it.',
   },
   // ---------------- World 11: the Arena of Five (Chapter 11)
   {

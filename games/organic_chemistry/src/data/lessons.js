@@ -662,22 +662,22 @@ export const LESSONS = {
   // ---------------- World 10: the Halogen Marsh (Chapter 10)
   markers: {
     title: 'Naming alkyl halides',
-    section: '10.1', pages: '318–319',
+    section: '10.1', pages: '318–320',
     points: [
       'Halogens are named as substituents (fluoro, chloro, bromo, iodo), just like alkyl groups, on the longest chain.',
       'Number from the end nearer the first substituent, halogen or alkyl. If it’s a tie, the one first in the alphabet takes the lower number.',
     ],
-    example: 'CH₃CHClCH₂CH(CH₃)₂ is 2-chloro-4-methylpentane.',
+    example: '2-Chloro-3,3-dimethylhexane (Problem 10-2a): six carbons; numbered from the end nearer the first substituent, Cl lands on C2 and both methyls on C3.',
   },
   bogInfo: {
     title: 'The carbon–halogen bond',
     section: '10.1', pages: '319–320',
     points: [
-      'Down the group, halogens get bigger: C–X bonds get longer and weaker (Table 10.1).',
-      'CH₃F 139 pm, 460 kJ/mol; CH₃Cl 178 pm, 350; CH₃Br 193 pm, 294; CH₃I 214 pm, 239.',
+      'Halogens get bigger going down the periodic table, so their bonds to carbon get longer (Table 10.1).',
+      'C–X bond strengths decrease going down the periodic table.',
       'The C–X bond is polar: the carbon is δ+, electrophilic.',
     ],
-    example: 'The weakest of them, C–I, is the easiest to break.',
+    example: 'Every halomethane has a dipole moment: CH₃Cl, 1.87 D (Table 10.1).',
   },
   hunt: {
     title: 'Radical chlorination',
@@ -687,7 +687,27 @@ export const LESSONS = {
       'To predict a ratio: (number of that kind of H) × (its reactivity), for each product.',
       'Tertiary C–H bonds are weakest (400 kJ/mol), then secondary (410), then primary (421): weaker bond, more stable radical.',
     ],
-    example: 'Butane: 6 primary H × 1 : 4 secondary H × 3.5 = 6 : 14, about 30 : 70 (p. 321).',
+    example: 'Butane: 6 primary H × 1 : 4 secondary H × 3.5 = 6 : 14, about 30 : 70, as measured (p. 321).',
+  },
+  allylInfo: {
+    title: 'Allylic bromination',
+    section: '10.3–10.4', pages: '322–325',
+    points: [
+      'NBS with light puts Br at the allylic position, the carbon next to a double bond (§10.3).',
+      'Typical C–H strengths: secondary alkyl about 410 kJ/mol, vinylic 465, allylic only about 370. The weakest goes first.',
+      'The allyl radical’s unpaired electron is delocalized: the two end carbons share it, so Br can bond at either end (Fig 10.5).',
+    ],
+    example: 'Methylenecyclohexane + NBS gives 1-(bromomethyl)cyclohexene (Problem 10-6).',
+  },
+  springInfo: {
+    title: 'Alkyl halides from alcohols',
+    section: '10.5', pages: '326–327',
+    points: [
+      'HCl, HBr or HI work best with tertiary alcohols, fast enough to bubble HX gas into a cold ether solution.',
+      'Primary and secondary alcohols react much more slowly with HX, and only at higher temperatures.',
+      'For them, use thionyl chloride (SOCl₂) or phosphorus tribromide (PBr₃): mild, less acidic, fewer rearrangements.',
+    ],
+    example: 'Benzoin, a secondary alcohol, + SOCl₂ in pyridine → its chloride, 86% (p. 327).',
   },
   gilman: {
     title: 'Grignard and Gilman reagents',
@@ -696,24 +716,25 @@ export const LESSONS = {
       'RX + Mg → RMgX, a Grignard reagent: the carbon is now nucleophilic and strongly basic. Water destroys it: RMgX + H₂O → RH.',
       'Lithium diorganocopper (Gilman) reagents, R₂CuLi, couple with organochlorides, bromides and iodides (not fluorides), making a new C–C bond.',
     ],
-    example: '(CH₃)₂CuLi + 1-iododecane → undecane, 90% (p. 328).',
+    example: '(CH₃)₂CuLi + iodobenzene → toluene, 91%: a methyl takes the iodine’s place (p. 329).',
   },
   oxLadder: {
     title: 'Oxidation levels',
     section: '10.8', pages: '330–332',
     points: [
       'An organic oxidation forms bonds from carbon to O, N or halogen, or breaks bonds to H. A reduction does the reverse.',
-      'Compare compounds with the same number of carbons: count C–O, C–N and C–X bonds, subtract C–H bonds. Higher is more oxidized (Worked Example 10.2).',
+      'Compare compounds with the same number of carbons: count C–O, C–N and C–X bonds, subtract C–H bonds. A C=O counts as two. Higher is more oxidized.',
     ],
-    example: 'CH₄ < CH₃Cl < H₂C=O < HCO₂H < CO₂ (Fig 10.7).',
+    example: 'Fig 10.7, one carbon each: CH₃OH = CH₃Cl (−2) < H₂C=O = CH₂Cl₂ (0) < CHCl₃ (+2) < CO₂ (+4). Compounds in one column of the figure share a level (p. 331).',
   },
   hydraCheck: {
-    title: 'Which hydrogen goes',
-    section: '10.2–10.3', pages: '320–323',
+    title: 'Counting a radical hunt',
+    section: '10.2', pages: '320–322',
     points: [
-      'Radicals take the weakest C–H: allylic (about 370 kJ/mol) before tertiary (400), secondary (410) and primary (421).',
+      'Each product’s share follows (number of that kind of H) × (its reactivity per H): tertiary 5, secondary 3.5, primary 1.',
+      'Weigh every kind of H in the molecule before you compare the products.',
     ],
-    example: 'NBS brominates cyclohexene at the allylic position: 3-bromocyclohexene.',
+    example: '2-Methylpropane: 9 primary H × 1 : 1 tertiary H × 5 = 9 : 5; the book measures 65 : 35 (p. 321).',
   },
   // ---------------- World 11: the Arena of Five (Chapter 11)
   waldenCycle: {

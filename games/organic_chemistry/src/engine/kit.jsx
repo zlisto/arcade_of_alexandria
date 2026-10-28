@@ -44,7 +44,7 @@ export function Slab({ world, x0, z0, x1, z1, y = 0, thick = 0.5, color = '#3a35
 export const closedGates = new Map()
 let gateSeq = 0
 /** A gate that blocks until `open`, then slides into the floor. */
-export function Gate({ world, pos, size = [4, 4, 0.6], open, color = '#2a3550', glow = '#43e6f5', label }) {
+export function Gate({ world, pos, size = [4, 4, 0.6], open, color = '#2a3550', glow = '#43e6f5', label, noCam = false }) {
   const ref = useRef()
   const idRef = useRef(null)
   const cur = useRef(open ? 1 : 0)
@@ -52,6 +52,7 @@ export function Gate({ world, pos, size = [4, 4, 0.6], open, color = '#2a3550', 
     const min = [pos[0] - size[0] / 2, pos[1], pos[2] - size[2] / 2]
     const max = [pos[0] + size[0] / 2, pos[1] + size[1], pos[2] + size[2] / 2]
     idRef.current = world.addSolid(min, max)
+    if (noCam) world.solids.get(idRef.current).noCam = true // the follow camera's ray ignores it (Kai still can't pass)
     return () => world.remove(idRef.current)
   }, [world])
   useEffect(() => { world.setEnabled(idRef.current, !open) }, [open])

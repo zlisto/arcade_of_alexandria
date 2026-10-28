@@ -120,9 +120,9 @@ function WastesLevel({ world, onExit }) {
       world.camOverride = twoShot(world, WALDEN, 3.6, 0.6)
       setState({ waldenShot: true })
       await say([
-        { who: 'Sage Walden', text: 'A challenger! Splendid. Mind the cracks, they’re hotter than they look.' },
+        { who: 'Sage Walden', text: 'Magnus sent you? A challenger, then! Splendid. Mind the cracks, they’re hotter than they look.' },
         { who: 'Sage Walden', text: 'Walden. I ran this arena. Five gates, five ways a halide can leave its carbon.' },
-        { who: 'Sage Walden', text: 'Then Malradix’s champion took the floor, and his herald posted this: “Substitution and elimination are random luck.”' },
+        { who: 'Sage Walden', text: 'Then Malradix’s champion took the floor, a violet spark in his chest, and his herald posted this: “Substitution and elimination are random luck.”' },
         { who: 'Pi', text: 'Are they?' },
         { who: 'Sage Walden', text: 'Luck? Every one of those five can be called before the bell. If you know what to look at.' },
         { who: 'Sage Walden', text: 'Prove you can spot an inversion. My cycle is on the stone. Find the step that turns it inside out.' },
