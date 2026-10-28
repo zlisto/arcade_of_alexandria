@@ -40,6 +40,9 @@ export function Slab({ world, x0, z0, x1, z1, y = 0, thick = 0.5, color = '#3a35
   )
 }
 
+// closed gates, so floating Tags behind one stay hidden (labels never show through a shut door)
+export const closedGates = new Map()
+let gateSeq = 0
 /** A gate that blocks until `open`, then slides into the floor. */
 export function Gate({ world, pos, size = [4, 4, 0.6], open, color = '#2a3550', glow = '#43e6f5', label }) {
   const ref = useRef()
@@ -52,8 +55,12 @@ export function Gate({ world, pos, size = [4, 4, 0.6], open, color = '#2a3550', 
     return () => world.remove(idRef.current)
   }, [world])
   useEffect(() => { world.setEnabled(idRef.current, !open) }, [open])
+  const gk = useRef(++gateSeq)
+  useEffect(() => () => closedGates.delete(gk.current), [])
   useFrame((_, dt) => {
     cur.current += ((open ? 1 : 0) - cur.current) * Math.min(1, dt * 2.5)
+    if (cur.current < 0.6) closedGates.set(gk.current, { z: pos[2], x0: pos[0] - size[0] / 2, x1: pos[0] + size[0] / 2, y1: pos[1] + size[1] })
+    else closedGates.delete(gk.current)
     if (ref.current) ref.current.position.y = pos[1] + size[1] / 2 - cur.current * (size[1] + 0.05)
   })
   return (
@@ -295,7 +302,16 @@ export function Tag({ position, children, df = 10, near = 3.2, far = 24, classNa
   useFrame(() => {
     if (!g.current || !el.current) return
     const d = camera.position.distanceTo(g.current.getWorldPosition(_tagV))
-    el.current.style.opacity = d < near || d > far ? '0' : d < near + 1 ? String(d - near) : '1'
+    let hidden = d < near || d > far
+    if (!hidden) for (const gt of closedGates.values()) {
+      // a shut gate between the camera and the tag (both sides at least 0.4 m clear of it) hides the tag
+      const cz = camera.position.z - gt.z, tz = _tagV.z - gt.z
+      if (cz * tz < 0 && Math.abs(cz) > 0.4 && Math.abs(tz) > 0.4) {
+        const t = cz / (cz - tz), xa = camera.position.x + (_tagV.x - camera.position.x) * t, ya = camera.position.y + (_tagV.y - camera.position.y) * t
+        if (xa > gt.x0 && xa < gt.x1 && ya < gt.y1 + 0.6) { hidden = true; break }
+      }
+    }
+    el.current.style.opacity = hidden ? '0' : d < near + 1 ? String(d - near) : '1'
     // readable at every distance: shrink gently with distance, but never below ~11 px or above ~18 px
     el.current.style.transform = `scale(${Math.min(1.45, Math.max(0.95, (df * 1.1) / Math.max(1, d)))})`
   })

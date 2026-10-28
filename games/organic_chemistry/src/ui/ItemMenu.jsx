@@ -6,6 +6,11 @@ import { CODEX, BOOK } from '../data/codex'
 import { ROOMS } from '../data/dungeon1'
 import { ROOMS2 } from '../data/dungeon2'
 import { ROOMS3 } from '../data/dungeon3'
+import { ROOMS4 } from '../data/dungeon4'
+import { ROOMS5 } from '../data/dungeon5'
+import { ROOMS6 } from '../data/dungeon6'
+import { ROOMS7 } from '../data/dungeon7'
+import { ROOMS8 } from '../data/dungeon8'
 import { sfx } from '../audio/sfx'
 import { MOLECULES } from '../data/molecules'
 import MoleculeView from './MoleculeView'
@@ -25,6 +30,11 @@ const Icon = {
   shield: <svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="14" fill="#2c3038" stroke="#8a93a3" strokeWidth="2" /><circle cx="20" cy="20" r="8" fill="none" stroke="#43e6f5" strokeWidth="1.5" /></svg>,
   crystal: <svg viewBox="0 0 40 40"><polygon points="20,3 31,17 20,37 9,17" fill="#43e6f5" opacity=".85" /><polygon points="20,3 31,17 20,20 9,17" fill="#bff6ff" opacity=".8" /></svg>,
   hookshot: <svg viewBox="0 0 40 40"><path d="M7 32 C 10 12, 26 8, 32 9" fill="none" stroke="#4aa8ff" strokeWidth="3" strokeLinecap="round" /><polygon points="33,4 37,12 28,11" fill="#cfe6ff" /><circle cx="7" cy="32" r="3.5" fill="#ffd760" /><circle cx="12" cy="31" r="3.5" fill="#ffd760" /></svg>,
+  shield: <svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="15" fill="#c8d0e0" stroke="#7a8090" strokeWidth="2" /><circle cx="20" cy="20" r="10" fill="#e8f0fa" /><circle cx="20" cy="5" r="2" fill="#ff5a6a" /><circle cx="35" cy="20" r="1.8" fill="#5aa0ff" /><circle cx="20" cy="35" r="1.6" fill="#ffd04a" /><circle cx="5" cy="20" r="1.4" fill="#3a3a4a" /></svg>,
+  boots: <svg viewBox="0 0 40 40"><path d="M12 6 h10 v18 l10 4 v6 h-22 z" fill="#8a5a3a" stroke="#3a2418" strokeWidth="1.5" /><path d="M12 30 h20" stroke="#ffb04a" strokeWidth="2" /><path d="M14 12 h6 M14 17 h6" stroke="#ffb04a" strokeWidth="1.5" /></svg>,
+  sling: <svg viewBox="0 0 40 40"><path d="M20 36 V22 M20 22 L12 8 M20 22 L28 8" stroke="#7a5030" strokeWidth="3.5" fill="none" strokeLinecap="round" /><path d="M12 8 Q20 18 28 8" stroke="#6a3e22" strokeWidth="1.5" fill="none" /><circle cx="20" cy="13" r="3" fill="#ff8aa0" /></svg>,
+  satchel: <svg viewBox="0 0 40 40"><rect x="8" y="16" width="24" height="18" rx="4" fill="#2a2428" /><rect x="8" y="14" width="24" height="7" rx="2" fill="#3a3238" /><rect x="12" y="6" width="3" height="10" fill="#4ac8e8" /><rect x="18" y="5" width="3" height="11" fill="#e84a4a" /><rect x="24" y="7" width="3" height="9" fill="#a04ae8" /><rect x="18" y="19" width="4" height="4" fill="#c8a050" /></svg>,
+  gauntlet: <svg viewBox="0 0 40 40"><rect x="13" y="22" width="14" height="14" rx="2" fill="#4a4a5a" /><rect x="12" y="10" width="16" height="14" rx="3" fill="#5a5a6a" />{[13, 17, 21, 25].map((x) => <rect key={x} x={x} y="3" width="3" height="9" rx="1.4" fill="#5a5a6a" />)}<circle cx="20" cy="17" r="5" fill="none" stroke="#2fd8f0" strokeWidth="1.6" /><path d="M17 18 l2-3 h2 l2 3 l-2 2 h-2 z" fill="none" stroke="#2fd8f0" strokeWidth="1" /></svg>,
   lantern: <svg viewBox="0 0 40 40"><rect x="15" y="4" width="10" height="4" rx="1" fill="#b8904a" /><circle cx="20" cy="21" r="13" fill="#b8904a" /><circle cx="20" cy="21" r="9" fill="#ffd8a0" /><g stroke="#2fd8f0" strokeWidth="1.6"><line x1="20" y1="21" x2="20" y2="13" /><line x1="20" y1="21" x2="13" y2="25" /><line x1="20" y1="21" x2="27" y2="25" /></g><circle cx="20" cy="21" r="5" fill="none" stroke="#2fd8f0" strokeWidth="1.2" /></svg>,
   locked: <svg viewBox="0 0 40 40"><polygon points="20,3 31,17 20,37 9,17" fill="none" stroke="#4a4458" strokeWidth="2" strokeDasharray="3 3" /><text x="20" y="25" textAnchor="middle" fill="#5a5468" fontSize="13" fontWeight="700">?</text></svg>,
 }
@@ -43,6 +53,21 @@ function Items({ s, sel, setSel }) {
     s.save.hasLantern
       ? { id: 'lantern', name: 'Newman Lantern', icon: Icon.lantern, text: 'Press G facing a bond — a round door, a bat roost, a serpent\'s knot — to see it end-on as a Newman projection and turn the back carbon 60°. The dial shows the strain in kJ/mol (§3.6–3.7).' }
       : s.save.shards >= 2 ? { id: 'lantern', name: '???', icon: Icon.locked, text: 'Something waits in the Chain Labyrinth.' } : null,
+    s.save.hasGauntlet
+      ? { id: 'gauntlet', name: 'Ring-Flip Gauntlet', icon: Icon.gauntlet, text: 'Press G aimed at a chair ring (a throne floor, a banquet table, an ogre’s seal, the arena) to ring-flip it: every axial seat becomes equatorial and every equatorial axial; nothing changes face (§4.6).' }
+      : s.save.shards >= 3 ? { id: 'gauntlet', name: '???', icon: Icon.locked, text: 'Something waits in the Chair Fortress.' } : null,
+    s.save.hasShield
+      ? { id: 'shield', name: 'Mirror Shield', icon: Icon.shield, text: 'Press G aimed at a chirality centre (a lock, a statue’s centre) to reflect it: its mirror image takes its place, R ↔ S. Aimed at an Enantiomer Shade, it breaks the reflection for a moment (§5.1, 5.5).' }
+      : s.save.shards >= 4 ? { id: 'shield', name: '???', icon: Icon.locked, text: 'Something waits in the Mirror Palace.' } : null,
+    s.save.hasBoots
+      ? { id: 'boots', name: 'Activation Boots', icon: Icon.boots, text: `They hold energy: ${s.save.t6meter || 0} kJ/mol now. A heat vent charges them. On an energy-diagram floor, a pass higher than your boots is sealed by frost: the highest pass on a route sets how fast you get across (§6.9–6.10). (A picture: molecules don’t wear boots.)` }
+      : s.save.shards >= 5 ? { id: 'boots', name: '???', icon: Icon.locked, text: 'Something waits in the Pass Caves.' } : null,
+    s.save.hasSling
+      ? { id: 'sling', name: 'Proton Sling', icon: Icon.sling, text: 'Press G aimed at a carbon of a double bond: an H⁺ lands there, and the + ends up on the other carbon. Only the more stable carbocation forms, so aim at the carbon that already has more H (Markovnikov, §7.8).' }
+      : s.save.shards >= 6 ? { id: 'sling', name: '???', icon: Icon.locked, text: 'Something waits in the Tower of Addition.' } : null,
+    s.save.hasSatchel
+      ? { id: 'satchel', name: 'Reagent Satchel', icon: Icon.satchel, text: 'Carries one flask from a grove tree (E). Press G at an alkene altar to pour it. Every reagent makes something; each door wants one product (§8.2–8.9).' }
+      : s.save.shards >= 7 ? { id: 'satchel', name: '???', icon: Icon.locked, text: 'Something waits in Borana’s Glasshouse.' } : null,
   ].filter(Boolean)
   const cur = cards.find((c) => c.id === sel) || cards[0]
   const pickForm = (f) => {
@@ -70,6 +95,61 @@ function Items({ s, sel, setSel }) {
               <span className="im-fu">{f.use}</span>
             </button>
           ))}
+        </div>
+      )}
+      {s.screen === 'glasshouse' && (
+        <div className="im-box im-dungeon">
+          <h4>Borana’s Glasshouse</h4>
+          <div className="im-ditems">
+            <span className={s.save.solved['t8-map'] ? 'got' : ''}>🗺 Dungeon Map</span>
+            <span className={s.save.solved['t8-compass'] ? 'got' : ''}>🧭 Compass</span>
+            <span className={s.save.t8key ? 'got' : ''}>🗝 Small Key ×{s.save.t8key ? 1 : 0}</span>
+            <span className={s.save.t8bossKey ? 'got' : ''}>🔑 Boss Key</span>
+          </div>
+        </div>
+      )}
+      {s.screen === 'tower' && (
+        <div className="im-box im-dungeon">
+          <h4>Tower of Addition</h4>
+          <div className="im-ditems">
+            <span className={s.save.solved['t7-map'] ? 'got' : ''}>🗺 Dungeon Map</span>
+            <span className={s.save.solved['t7-compass'] ? 'got' : ''}>🧭 Compass</span>
+            <span className={s.save.t7key ? 'got' : ''}>🗝 Small Key ×{s.save.t7key ? 1 : 0}</span>
+            <span className={s.save.t7bossKey ? 'got' : ''}>🔑 Boss Key</span>
+          </div>
+        </div>
+      )}
+      {s.screen === 'caves' && (
+        <div className="im-box im-dungeon">
+          <h4>Pass Caves</h4>
+          <div className="im-ditems">
+            <span className={s.save.solved['t6-map'] ? 'got' : ''}>🗺 Dungeon Map</span>
+            <span className={s.save.solved['t6-compass'] ? 'got' : ''}>🧭 Compass</span>
+            <span className={s.save.t6key ? 'got' : ''}>🗝 Small Key ×{s.save.t6key ? 1 : 0}</span>
+            <span className={s.save.t6bossKey ? 'got' : ''}>🔑 Boss Key</span>
+          </div>
+        </div>
+      )}
+      {s.screen === 'palace' && (
+        <div className="im-box im-dungeon">
+          <h4>Mirror Palace</h4>
+          <div className="im-ditems">
+            <span className={s.save.solved['t5-map'] ? 'got' : ''}>🗺 Dungeon Map</span>
+            <span className={s.save.solved['t5-compass'] ? 'got' : ''}>🧭 Compass</span>
+            <span className={s.save.t5key ? 'got' : ''}>🗝 Small Key ×{s.save.t5key ? 1 : 0}</span>
+            <span className={s.save.t5bossKey ? 'got' : ''}>🔑 Boss Key</span>
+          </div>
+        </div>
+      )}
+      {s.screen === 'fortress' && (
+        <div className="im-box im-dungeon">
+          <h4>Chair Fortress</h4>
+          <div className="im-ditems">
+            <span className={s.save.solved['t4-map'] ? 'got' : ''}>🗺 Dungeon Map</span>
+            <span className={s.save.solved['t4-compass'] ? 'got' : ''}>🧭 Compass</span>
+            <span className={s.save.t4key ? 'got' : ''}>🗝 Small Key ×{s.save.t4key ? 1 : 0}</span>
+            <span className={s.save.t4bossKey ? 'got' : ''}>🔑 Boss Key</span>
+          </div>
         </div>
       )}
       {s.screen === 'labyrinth' && (
@@ -211,6 +291,51 @@ function Quest({ s }) {
             <li className={s.save.shards >= 3 ? 'done' : ''}>Recover Bond Shard 3</li>
           </ul>
         </>)}
+        {s.save.shards >= 3 && (<>
+          <h4>The Chair Fortress · Chapter 4</h4>
+          <ul className="im-steps">
+            <li className={s.save.hillsSeen ? 'done' : ''}>Take the east road to the Chair Hills</li>
+            <li className={s.save.t4rings ? 'done' : ''}>Name Lady Sachse's banner rings <span className="sec"> §4.1</span></li>
+            {ROOMS4.map((r) => <li key={r.id} className={r.needs.every((id) => solved[id]) ? 'done' : ''}>{r.title}{r.sections.length ? <span className="sec"> §{r.sections[0]}{r.sections.length > 1 ? '–' + r.sections[r.sections.length - 1] : ''}</span> : null}</li>)}
+            <li className={s.save.shards >= 4 ? 'done' : ''}>Recover Bond Shard 4</li>
+          </ul>
+        </>)}
+        {s.save.shards >= 4 && (<>
+          <h4>The Mirror Palace · Chapter 5</h4>
+          <ul className="im-steps">
+            <li className={s.save.lakeSeen ? 'done' : ''}>Take the east road to the Mirror Lake</li>
+            <li className={s.save.t5crystals ? 'done' : ''}>Sort Sister Tartara’s crystals <span className="sec"> §5.4</span></li>
+            {ROOMS5.map((r) => <li key={r.id} className={r.needs.every((id) => solved[id]) ? 'done' : ''}>{r.title}{r.sections.length ? <span className="sec"> §{r.sections[0]}{r.sections.length > 1 ? '–' + r.sections[r.sections.length - 1] : ''}</span> : null}</li>)}
+            <li className={s.save.shards >= 5 ? 'done' : ''}>Recover Bond Shard 5</li>
+          </ul>
+        </>)}
+        {s.save.shards >= 5 && (<>
+          <h4>The Activation Peaks · Chapter 6</h4>
+          <ul className="im-steps">
+            <li className={s.save.peaksSeen ? 'done' : ''}>Take the east road to the Activation Peaks</li>
+            <li className={s.save.t6signs ? 'done' : ''}>Sort Hammond’s trail signs <span className="sec"> §6.1</span></li>
+            {ROOMS6.map((r) => <li key={r.id} className={r.needs.every((id) => solved[id]) ? 'done' : ''}>{r.title}{r.sections.length ? <span className="sec"> §{r.sections[0]}{r.sections.length > 1 ? '–' + r.sections[r.sections.length - 1] : ''}</span> : null}</li>)}
+            <li className={s.save.shards >= 6 ? 'done' : ''}>Recover Bond Shard 6</li>
+          </ul>
+        </>)}
+        {s.save.shards >= 6 && (<>
+          <h4>The Tower of Addition · Chapter 7</h4>
+          <ul className="im-steps">
+            <li className={s.save.plainsSeen ? 'done' : ''}>Take the east road to the Plains of Addition</li>
+            <li className={s.save.t7seeds ? 'done' : ''}>Label Markov’s seed sacks <span className="sec"> §7.3</span></li>
+            {ROOMS7.map((r) => <li key={r.id} className={r.needs.every((id) => solved[id]) ? 'done' : ''}>{r.title}{r.sections.length ? <span className="sec"> §{r.sections[0]}{r.sections.length > 1 ? '–' + r.sections[r.sections.length - 1] : ''}</span> : null}</li>)}
+            <li className={s.save.shards >= 7 ? 'done' : ''}>Recover Bond Shard 7</li>
+          </ul>
+        </>)}
+        {s.save.shards >= 7 && (<>
+          <h4>The Reagent Orchards · Chapter 8</h4>
+          <ul className="im-steps">
+            <li className={s.save.orchardSeen ? 'done' : ''}>Take the south road to the Reagent Orchards</li>
+            <li className={s.save.t8board ? 'done' : ''}>Fill in Borana’s recipe board <span className="sec"> §8.2–8.9</span></li>
+            {ROOMS8.map((r) => <li key={r.id} className={r.needs.every((id) => solved[id]) ? 'done' : ''}>{r.title}{r.sections.length ? <span className="sec"> §{r.sections[0]}{r.sections.length > 1 ? '–' + r.sections[r.sections.length - 1] : ''}</span> : null}</li>)}
+            <li className={s.save.shards >= 8 ? 'done' : ''}>Recover Bond Shard 8</li>
+          </ul>
+        </>)}
       </div>
     </div>
   )
@@ -222,7 +347,7 @@ export default function ItemMenu({ onTitle, onResume }) {
   if (!s.paused) return null
   const tab = s.menuTab || 'items'
   const resume = () => { setState({ paused: false }); onResume && onResume() }
-  const tabs = [['items', 'Items'], ['gauntlet', 'Gauntlet'], ['notes', 'Notes'], ['quest', 'Quest']]
+  const tabs = [['items', 'Items'], ['gauntlet', 'Album'], ['notes', 'Notes'], ['quest', 'Quest']]
   return (
     <div className="itemmenu" onClick={(e) => { if (e.target === e.currentTarget) resume() }}>
       <div className="im-box-outer">

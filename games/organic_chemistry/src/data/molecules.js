@@ -1,4 +1,4 @@
-// The Molecule Gauntlet: every molecule Kai meets in Chapter 1, with real 3D geometry
+// The Molecule Album: every molecule Kai meets in Chapter 1, with real 3D geometry
 // (tetrahedral 109.5°, trigonal 120°, linear 180°; bond lengths in Å, roughly). `unlocked(save)`
 // says when it is logged. `use` goes beyond the book (marked so in the menu); the rest is from it.
 
@@ -318,3 +318,98 @@ export const MOLECULES = [
     H(k, [0, up, 0]) // axial
   }
 })()
+
+// ---------------- World 4 (Chapter 4): rings. A ring of n carbons, puckered the way §4.4–4.5 describe
+// (cyclobutane bent ~25°, cyclopentane an envelope, cyclohexane a chair); each carbon gets one "up/axial"
+// and one "out/equatorial" position. subs: { [carbon]: { face: 'top' | 'bottom', g: 'CH3' | 'tBu' | 'Cl' } }.
+function cycloGeo(n, subs = {}) {
+  return build(({ at, atoms, bonds }) => {
+    const R = n === 3 ? 0.87 : n === 4 ? 1.08 : n === 5 ? 1.27 : 1.45
+    const C = []
+    for (let k = 0; k < n; k++) {
+      const a = (k * 2 * Math.PI) / n
+      const y = n === 6 ? (k % 2 ? 0.25 : -0.25) : n === 4 && k === 0 ? 0.42 : n === 5 && k === 0 ? 0.5 : 0
+      C.push(at('C', [Math.cos(a) * R, y, Math.sin(a) * R]))
+    }
+    for (let k = 0; k < n; k++) bonds.push([C[k], C[(k + 1) % n], 1])
+    const put = (i, dir, el, d) => { atoms.push([el, add(atoms[i][1], dir, d)]); bonds.push([i, atoms.length - 1, 1]); return atoms.length - 1 }
+    for (let k = 0; k < n; k++) {
+      const p = atoms[C[k]][1]
+      // chair: odd carbons are raised, so their axial bond points up; elsewhere "top" is tipped up and out
+      const raised = n === 6 ? k % 2 === 1 : null
+      const topDir = n === 6 ? (raised ? [0, 1, 0] : norm([p[0], 0.33, p[2]])) : norm([p[0] * 0.55, 1, p[2] * 0.55])
+      const botDir = n === 6 ? (raised ? norm([p[0], -0.33, p[2]]) : [0, -1, 0]) : norm([p[0] * 0.55, -1, p[2] * 0.55])
+      for (const [face, dir] of [['top', topDir], ['bottom', botDir]]) {
+        const s = subs[k]
+        if (s && s.face === face) {
+          if (s.g === 'Cl') put(C[k], dir, 'Cl', 1.78)
+          else {
+            const me = put(C[k], dir, 'C', 1.54)
+            const back = dir.map((x) => -x)
+            if (s.g === 'tBu') tetra(back, 0.3).forEach((d) => { const c2 = put(me, d, 'C', 1.54); tetra(d.map((x) => -x), 0).forEach((d2) => put(c2, d2, 'H', len.CH)) })
+            else tetra(back, 0).forEach((d) => put(me, d, 'H', len.CH))
+          }
+        } else put(C[k], dir, 'H', len.CH)
+      }
+    }
+  })
+}
+MOLECULES.push(
+  { id: 'cyclopropane', name: 'Cyclopropane', formula: 'C₃H₆', unlocked: (s) => (s.t4placed || {})[3] !== undefined,
+    met: 'The Strain Towers (4-2)', shape: 'A flat triangle; every C–H eclipsed', hybrid: 'sp³ carbons, bent bonds', angles: '60° in the ring', section: '4.3–4.4', pages: '110–113',
+    fact: 'The most strained ring: 115 kJ/mol. Its C–C bonds are bent and weaker (255 vs. 370 kJ/mol for an ordinary C–C).', use: 'Its ring is in chrysanthemic acid, the insecticide in chrysanthemum flowers.', geo: cycloGeo(3) },
+  { id: 'cyclobutane', name: 'Cyclobutane', formula: 'C₄H₈', unlocked: (s) => (s.t4placed || {})[4] !== undefined,
+    met: 'The Strain Towers (4-2)', shape: 'A square with one carbon about 25° out of the plane', hybrid: 'All carbons sp³', angles: 'just under 90°', section: '4.4', pages: '112–113',
+    fact: '110 kJ/mol of strain. It puckers to ease the eclipsing a little, at the cost of slightly smaller angles.', use: 'Beyond the book: rare in nature; its strained ring makes it a reactive building block.', geo: cycloGeo(4) },
+  { id: 'cyclopentane', name: 'Cyclopentane', formula: 'C₅H₁₀', unlocked: (s) => (s.t4placed || {})[5] !== undefined,
+    met: 'The Strain Towers (4-2)', shape: 'Four carbons nearly flat, one out of the plane', hybrid: 'All carbons sp³', angles: 'near 108°', section: '4.4', pages: '112–113',
+    fact: 'Flat, its angles would be nearly perfect, but every C–H would be eclipsed. Puckered, only 26 kJ/mol of strain remains.', use: 'Its ring is in the prostaglandins, hormones that control many body functions.', geo: cycloGeo(5) },
+  { id: 'cyclohexane', name: 'Cyclohexane', formula: 'C₆H₁₂', unlocked: (s) => (s.t4placed || {})[6] !== undefined,
+    met: 'The Strain Towers (4-2)', shape: 'The chair', hybrid: 'All carbons sp³', angles: '111.5°', section: '4.5–4.6', pages: '113–118',
+    fact: 'Strain-free: angles 111.5° and every neighbouring C–H staggered. Six axial H (up, down, alternating) and six equatorial.', use: 'Its chair is the shape six-membered rings take (§4.5–4.6).', geo: cycloGeo(6) },
+  { id: 'cis-dimethylcyclopropane', name: 'cis-1,2-Dimethylcyclopropane', formula: 'C₅H₁₀', unlocked: (s) => s.solved['4-1a'],
+    met: 'The cyclopropane altar (4-1)', shape: 'A triangle with both CH₃ on one face', hybrid: 'All carbons sp³', angles: '60° in the ring', section: '4.2', pages: '108–110',
+    fact: 'Its trans isomer has the CH₃ groups on opposite faces. Neither can turn into the other without breaking a bond: cis–trans stereoisomers (Fig 4.3).', use: 'Beyond the book: cis/trans rings like this decide whether a drug fits its target.', geo: cycloGeo(3, { 0: { face: 'top', g: 'CH3' }, 1: { face: 'top', g: 'CH3' } }) },
+  { id: 'trans-dimethylcyclohexane', name: 'trans-1,2-Dimethylcyclohexane', formula: 'C₈H₁₆', unlocked: (s) => s.solved['4-4b'],
+    met: 'The banquet tables (4-4)', shape: 'A chair, both CH₃ equatorial', hybrid: 'All carbons sp³', angles: 'about 111°', section: '4.8', pages: '120–123',
+    fact: 'Diequatorial has one gauche CH₃↔CH₃ (3.8 kJ/mol); diaxial has four CH₃↔H diaxial interactions (15.2). It sits almost entirely diequatorial (Fig 4.17).', use: 'Beyond the book: a favourite test molecule for conformational analysis.', geo: cycloGeo(6, { 0: { face: 'top', g: 'CH3' }, 1: { face: 'bottom', g: 'CH3' } }) },
+  { id: 'tbutylcyclohexane', name: 'tert-Butylcyclohexane', formula: 'C₁₀H₂₀', unlocked: (s) => s.solved.boss4,
+    met: 'The tert-Butyl Titan', shape: 'A chair with the tert-butyl equatorial', hybrid: 'All carbons sp³', angles: 'about 109.5°', section: '4.7–4.8', pages: '118–123',
+    fact: 'An axial tert-butyl would bump two axial H at 11.4 kJ/mol each (Worked Example 4.3), so it sits equatorial almost all the time.', use: 'So big it sits equatorial almost all the time: it holds its ring in one chair.', geo: cycloGeo(6, { 0: { face: 'top', g: 'tBu' } }) },
+  { id: 'tbutyl-chloro', name: 'cis-1-tert-Butyl-4-chlorocyclohexane', formula: 'C₁₀H₁₉Cl', unlocked: (s) => s.solved['4-4c'],
+    met: 'The third banquet table (4-4)', shape: 'A chair: tert-butyl equatorial, Cl axial', hybrid: 'All carbons sp³', angles: 'about 109.5°', section: '4.8', pages: '120–123',
+    fact: 'Worked Example 4.3: an axial tert-butyl costs 2 × 11.4, an axial Cl only 2 × 1.0, so the Cl takes the axial seat: 20.8 kJ/mol lower.', use: 'Beyond the book: a classic test molecule for conformational analysis.', geo: cycloGeo(6, { 0: { face: 'top', g: 'tBu' }, 3: { face: 'top', g: 'Cl' } }) },
+)
+
+// ---------------- World 5 (Chapter 5): chirality centres. centreGeo builds a carbon with four groups
+// (each group a short fragment) at the tetrahedral directions, in the given arrangement.
+function centreGeo(groups) {
+  const T = [[0, 1, 0], [0.943, -0.333, 0], [-0.471, -0.333, -0.816], [-0.471, -0.333, 0.816]]
+  return build(({ at, from }) => {
+    const c = at('C', [0, 0, 0])
+    groups.forEach((g, i) => {
+      const d = T[i]
+      if (g === 'H') from(c, d, 'H', len.CH)
+      else if (g === 'OH') { const o = from(c, d, 'O', len.CO); from(o, tetra(d.map((x) => -x), 0)[0], 'H', len.OH) }
+      else if (g === 'NH2') { const n = from(c, d, 'N', len.CN); tetra(d.map((x) => -x), 0).slice(0, 2).forEach((e) => from(n, e, 'H', len.NH)) }
+      else if (g === 'CH3') { const m = from(c, d, 'C', len.CC); tetra(d.map((x) => -x), 0).forEach((e) => from(m, e, 'H', len.CH)) }
+      else if (g === 'CH2OH') { const m = from(c, d, 'C', len.CC); const t = tetra(d.map((x) => -x), 0); from(m, t[0], 'H', len.CH); from(m, t[1], 'H', len.CH); const o = from(m, t[2], 'O', len.CO); from(o, tetra(t[2].map((x) => -x), 0)[0], 'H', len.OH) }
+      else if (g === 'CHO') { const m = from(c, d, 'C', len.CC); const t = trig(d.map((x) => -x)); from(m, t[0], 'O', len['C=O'], 2); from(m, t[1], 'H', len.CH) }
+      else if (g === 'CO2H') { const m = from(c, d, 'C', len.CC); const t = trig(d.map((x) => -x)); from(m, t[0], 'O', len['C=O'], 2); const o = from(m, t[1], 'O', len.CO); from(o, trig(t[1].map((x) => -x))[0], 'H', len.OH) }
+    })
+  })
+}
+MOLECULES.push(
+  { id: 'lactic', name: 'Lactic acid', formula: 'C₃H₆O₃', unlocked: (s) => s.solved['5-1'],
+    met: 'The Hall of Hands (5-1)', shape: 'One chirality centre: H, OH, CH₃, CO₂H', hybrid: 'C2 sp³', angles: '109.5° at C2', section: '5.1–5.5', pages: '136–147',
+    fact: 'Its two enantiomers can’t be superimposed (Fig 5.3). (+)-Lactic acid has [α]D +3.82, (−)-lactic acid −3.82. (R)-lactic acid is the (−) one (Fig 5.9).', use: 'Made in working muscles and in sour milk.', geo: centreGeo(['H', 'OH', 'CH3', 'CO2H']) },
+  { id: 'propanoic', name: 'Propanoic acid', formula: 'C₃H₆O₂', unlocked: (s) => (s.t5statues || {}).s3,
+    met: 'The Hall of Hands (5-1)', shape: 'Two H on C2: a symmetry plane', hybrid: 'C2 sp³', angles: '109.5° at C2', section: '5.2', pages: '137–140',
+    fact: 'Its C2 carries two identical H, so a plane through the other two groups maps the molecule onto itself: achiral (Fig 5.5).', use: 'A food preservative, as its salts.', geo: centreGeo(['H', 'H', 'CH3', 'CO2H']) },
+  { id: 'glyceraldehyde', name: '(S)-Glyceraldehyde', formula: 'C₃H₆O₃', unlocked: (s) => s.solved['5-3b'],
+    met: 'The second steering-wheel lock (5-3)', shape: 'One chirality centre: H, OH, CHO, CH₂OH', hybrid: 'C2 sp³', angles: '109.5° at C2', section: '5.5', pages: '143–147',
+    fact: 'OH > CHO > CH₂OH > H. (S)-Glyceraldehyde is levorotatory (−): S does not mean (−) in general (Fig 5.10).', use: 'The simplest sugar.', geo: centreGeo(['H', 'CHO', 'OH', 'CH2OH']) },
+  { id: 'alanine', name: '(R)-Alanine', formula: 'C₃H₇NO₂', unlocked: (s) => s.solved['5-3c'],
+    met: 'The third steering-wheel lock (5-3)', shape: 'One chirality centre: H, NH₂, CH₃, CO₂H', hybrid: 'C2 sp³', angles: '109.5° at C2', section: '5.5', pages: '143–147',
+    fact: 'NH₂ > CO₂H > CH₃ > H. Natural alanine is (S)-(+) (Fig 5.10); the lock wanted the other hand.', use: 'Beyond the book: (S)-alanine is one of the twenty amino acids in proteins.', geo: centreGeo(['H', 'NH2', 'CO2H', 'CH3']) },
+)

@@ -223,4 +223,368 @@ export const LESSONS = {
     ],
     example: 'All the conformations interconvert rapidly, but at any moment more butane molecules are in the anti form than in any other.',
   },
+  // ---------------- World 4: the Chair Fortress (Chapter 4)
+  ringNames: {
+    title: 'Naming cycloalkanes',
+    section: '4.1', pages: '106–108',
+    points: [
+      'Step 1, the parent: if the ring has at least as many carbons as the biggest substituent, name a substituted cycloalkane. If the substituent is bigger, the chain is the parent and the ring a cycloalkyl group.',
+      'Step 2, the numbers: start at a substituent as C1 and go round so the next substituent gets the lowest number possible.',
+      'If the numbers still tie, the substituent first in the alphabet gets the lower number. Halogens (bromo, chloro) count just like alkyl groups.',
+    ],
+    example: '1,3-Dibromo-5-methylcyclohexane: 1,3,5 either way round, so b (bromo) comes before m (methyl) and takes C1.',
+  },
+  cisTrans: {
+    title: 'Cis–trans isomers of rings',
+    section: '4.2', pages: '108–110',
+    points: [
+      'A ring can’t rotate about its C–C bonds without breaking open, so it has a top face and a bottom face.',
+      'Two groups on the same face are cis; on opposite faces, trans.',
+      'cis- and trans-1,2-dimethylcyclopropane are different compounds that never interconvert: stereoisomers (same connections, different 3D arrangement).',
+    ],
+    example: 'On each altar: hit a carbon’s post to put a methyl on top (gold), below (blue) or none, then present it to the gate.',
+  },
+  ringStrain: {
+    title: 'Ring strain',
+    section: '4.3–4.5', pages: '110–115',
+    points: [
+      'Angle strain: bond angles squeezed away from 109.5°. Torsional strain: neighbouring bonds eclipsed. Steric strain: atoms too close.',
+      'Measured strain (Fig 4.4): cyclopropane 115 kJ/mol, cyclobutane 110, cyclopentane 26, cyclohexane 0.',
+      'Baeyer thought rings were flat. They pucker: cyclobutane bends one carbon about 25° out of the plane, cyclopentane puts one carbon out of the plane, cyclohexane takes the chair (111.5°, every C–H staggered).',
+    ],
+    example: 'Flat cyclopentane would have fine 108° angles but every neighbouring C–H eclipsed. Puckering trades a little angle strain for much less torsional strain.',
+  },
+  chairFlip: {
+    title: 'Axial, equatorial and the ring-flip',
+    section: '4.6', pages: '115–118',
+    points: [
+      'Every chair carbon has one axial position (straight up or down, parallel to the ring axis) and one equatorial position (out round the equator).',
+      'Axial positions alternate up, down, up round the ring. A group on the top face is axial on a raised carbon and equatorial on a lowered one.',
+      'A ring-flip (only about 45 kJ/mol, so it happens fast at room temperature) lowers the raised carbons and raises the lowered ones: every axial position becomes equatorial and vice versa. Nothing changes face.',
+    ],
+    example: 'Axial bromocyclohexane becomes equatorial bromocyclohexane after a ring-flip (Fig 4.12).',
+  },
+  diaxial: {
+    title: '1,3-Diaxial interactions',
+    section: '4.7–4.8', pages: '118–123',
+    points: [
+      'An axial group bumps the two axial hydrogens on the same face, three carbons away (C3 and C5): 1,3-diaxial interactions.',
+      'Axial CH₃: 2 × 3.8 = 7.6 kJ/mol, so about 95% of methylcyclohexane is equatorial. Each one costs the same as a gauche butane interaction.',
+      'Bigger groups cost more: tert-butyl 11.4 per interaction (22.8 in all); Cl only 1.0. Neighbouring CH₃ groups that aren’t both axial add a gauche 3.8.',
+      'Look at both chairs and take the lower one: trans-1,2-dimethyl is diequatorial (3.8 vs 15.2); a tert-butyl takes the equator even if Cl must go axial (20.8 lower).',
+    ],
+    example: 'cis-1,2-Dimethylcyclohexane: each chair has one axial CH₃ and a gauche pair, 11.4 kJ/mol both ways, so the two chairs are equal (Fig 4.16). (These are the values the text uses, p. 123; Table 4.1 in this edition lists slightly different numbers.)',
+  },
+  decalin: {
+    title: 'Fused rings: decalin and steroids',
+    section: '4.9', pages: '123–125',
+    points: [
+      'Decalin is two cyclohexane rings sharing a bond; the shared carbons are the bridgeheads.',
+      'cis-Decalin has both bridgehead hydrogens on the same face; trans-decalin, on opposite faces. They are cis–trans stereoisomers and never interconvert.',
+      'cis-Decalin can ring-flip; trans-decalin is rigid and cannot (Problem 4-52). Steroids such as testosterone are fused rings too: three six-membered and one five-membered (p. 124).',
+    ],
+    example: 'Trans-decalin’s bridgehead H point opposite ways, one up and one down; cis-decalin’s point the same way (Fig 4.18).',
+  },
+  titanCheck: {
+    title: 'Why bulky groups go equatorial',
+    section: '4.7–4.8', pages: '118–123',
+    points: [
+      'An axial group meets the two axial H on its face, three carbons away (Fig 4.15).',
+      'The cost per interaction grows with size: CH₃ 3.8, tert-butyl 11.4 kJ/mol.',
+      'So the chair with the biggest group equatorial wins (Worked Example 4.3).',
+    ],
+    example: 'cis-1-tert-Butyl-4-chlorocyclohexane: tert-butyl equatorial and Cl axial is 2 × 11.4 − 2 × 1.0 = 20.8 kJ/mol lower.',
+  },
+  // ---------------- World 5: the Mirror Palace (Chapter 5)
+  pasteur: {
+    title: 'Pasteur’s crystals',
+    section: '5.4', pages: '142–143',
+    points: [
+      'In 1848 Louis Pasteur crystallized sodium ammonium tartrate and saw two kinds of crystal, mirror images of each other.',
+      'He sorted them by hand with tweezers. Dissolved, each kind rotated plane-polarized light by the same amount, in opposite directions.',
+      'Enantiomers share every physical property except the direction in which they rotate light.',
+    ],
+    example: 'Pasteur proposed molecular handedness decades before anyone knew carbon was tetrahedral.',
+  },
+  chirality: {
+    title: 'Enantiomers and chirality',
+    section: '5.1–5.2', pages: '136–140',
+    points: [
+      'CH₃X and CH₂XY are identical to their mirror images. A carbon with four different groups, CHXYZ, is not: its mirror image is an enantiomer.',
+      'A molecule that is not identical to its mirror image is chiral. A symmetry plane, which cuts it into two mirror-image halves, makes it achiral.',
+      'A chirality centre is a tetrahedral carbon bonded to four different groups. The difference can be several atoms away.',
+    ],
+    example: 'Propanoic acid has a symmetry plane: achiral. Lactic acid’s C2 carries H, OH, CH₃ and CO₂H: chiral (Fig 5.5).',
+  },
+  polarimeter: {
+    title: 'Optical activity',
+    section: '5.3', pages: '140–142',
+    points: [
+      'Solutions of chiral compounds rotate plane-polarized light: clockwise is dextrorotatory (+), counterclockwise levorotatory (−).',
+      'The observed rotation α grows with pathlength l (dm) and concentration c (g/mL): [α]D = α / (l × c) is a constant for each compound.',
+      'Enantiomers have equal and opposite specific rotations: (+)-lactic acid +3.82, (−)-lactic acid −3.82.',
+    ],
+    example: 'Table 5.1: sucrose +66.47, camphor +44.26, cholesterol −31.5, morphine −132, chloroform 0.',
+  },
+  cip: {
+    title: 'R and S: the sequence rules',
+    section: '5.5', pages: '143–147',
+    points: [
+      'Rank the four groups on the centre by the atomic number of the atom attached: higher number, higher priority.',
+      'If two tie, compare the atoms one bond further out until there is a difference. A double bond counts its atom twice.',
+      'Turn the molecule so the lowest-ranked group points away. If 1 → 2 → 3 runs clockwise, the centre is R; counterclockwise, S.',
+      'R/S says nothing about the sign of rotation: (S)-glyceraldehyde is (−), (S)-alanine is (+).',
+    ],
+    example: 'Lactic acid: OH > CO₂H > CH₃ > H. CO₂H wins over CH₃ because its carbon carries (O, O, O).',
+  },
+  diastereomers: {
+    title: 'Diastereomers and meso compounds',
+    section: '5.6–5.7, 5.9', pages: '147–155',
+    points: [
+      'n chirality centres give up to 2ⁿ stereoisomers. Threonine (two centres) has four: (2R,3R), (2S,3S), (2R,3S), (2S,3R).',
+      'Opposite at every centre: enantiomers. Opposite at some centres only: diastereomers, which are not mirror images.',
+      'A meso compound has chirality centres but a symmetry plane, so it is achiral: meso-tartaric acid is (2R,3S), the same compound as (2S,3R).',
+    ],
+    example: 'Tartaric acid has only three stereoisomers: the (+) and (−) enantiomers and the meso form (Fig 5.12).',
+  },
+  resolution: {
+    title: 'Racemates and resolution',
+    section: '5.8, 5.10, 5.12', pages: '152–160',
+    points: [
+      'A racemate (±) is a 50:50 mixture of enantiomers. It shows no optical rotation.',
+      'Reacting racemic acid with an achiral amine gives salts that are still mirror images: no separation. A single enantiomer of a chiral amine gives diastereomeric salts that differ and can be separated.',
+      'Amines invert like umbrellas, too fast to isolate their enantiomers; phosphines invert slowly and can be kept (§5.10).',
+      'Biological receptors are chiral, so often only one enantiomer fits, like a hand in a glove (§5.12).',
+    ],
+    example: '(R)-lactic acid + (R)-1-phenylethylamine gives the R,R salt; (S)-lactic acid gives S,R. Different salts, different properties (Fig 5.14).',
+  },
+  cipLock: {
+    title: 'Reading a lock',
+    section: '5.5', pages: '143–147',
+    points: [
+      'Rank the four groups, highest atomic number first; break ties one atom further out.',
+      'With the lowest group pointing away, read 1 → 2 → 3: clockwise R, counterclockwise S.',
+      'Reflecting a centre in a mirror swaps its hand: R becomes S.',
+    ],
+    example: 'Glyceraldehyde: OH > CHO > CH₂OH > H. The CHO carbon carries (O, O, H); CH₂OH carries (O, H, H).',
+  },
+  kingCheck: {
+    title: 'Resolving a racemate',
+    section: '5.8', pages: '152–154',
+    points: [
+      'Enantiomers have identical physical properties, so an achiral partner can’t separate them.',
+      'A single-enantiomer partner turns them into diastereomers, which differ and can be separated.',
+    ],
+    example: 'Racemic lactic acid + methylamine: still a racemate (Fig 5.13). + (R)-1-phenylethylamine: two different salts (Fig 5.14).',
+  },
+  // ---------------- World 6: the Activation Peaks (Chapter 6)
+  trailSigns: {
+    title: 'Four kinds of reaction',
+    section: '6.1', pages: '172–173',
+    points: [
+      'Addition: two reactants add together to give one product, with no atoms left over.',
+      'Elimination: one reactant splits apart into two products, often with a small molecule such as H₂O or HBr.',
+      'Substitution: two reactants exchange parts to give two new products.',
+      'Rearrangement: one reactant reorganizes its bonds and atoms into an isomer.',
+    ],
+    example: 'Ethylene + HBr → bromoethane is an addition; bromoethane → ethylene + HBr, an elimination (p. 172).',
+  },
+  bondBreak: {
+    title: 'How bonds break',
+    section: '6.2', pages: '173–175',
+    points: [
+      'A bond is a shared pair of electrons. It can break symmetrically, one electron to each fragment: homolytic, giving radicals.',
+      'Or unsymmetrically, both electrons to one fragment: heterolytic, giving ions.',
+      'A full curved arrow moves an electron pair; a half-headed "fishhook" arrow moves one electron.',
+      'Radical reactions make and break bonds one electron at a time; polar reactions move electron pairs.',
+    ],
+    example: 'H–Br heterolysis: H⁺ + Br⁻. Cl–Cl homolysis: Cl· + Cl·.',
+  },
+  arrows: {
+    title: 'Electrophiles, nucleophiles and curved arrows',
+    section: '6.3–6.5', pages: '175–183',
+    points: [
+      'A carbon bonded to a more electronegative atom is δ+, electron-poor: an electrophile. Bonded to a metal it is δ−, electron-rich: a nucleophile.',
+      'A curved arrow starts at the electrons that move (a lone pair or a bond) and points to where they go: from the nucleophile to the electrophile.',
+      'Charge is conserved: count it before and after each step.',
+    ],
+    example: 'Ethylene + HBr: the π electrons attack H, the H–Br pair leaves with Br; then Br⁻ attacks the carbocation (§6.5).',
+  },
+  chain: {
+    title: 'A radical chain',
+    section: '6.6', pages: '183–185',
+    points: [
+      'Initiation: light or heat splits a few Cl₂ into Cl· radicals.',
+      'Propagation: Cl· takes H from CH₄, giving HCl and ·CH₃; ·CH₃ takes Cl from Cl₂, giving CH₃Cl and a new Cl·. The chain repeats.',
+      'Termination: two radicals meet and pair their electrons. Termination is rare next to propagation.',
+    ],
+    example: 'One initiation can run a chain of many propagation cycles before two radicals happen to meet.',
+  },
+  ledger: {
+    title: 'Bond dissociation energies',
+    section: '6.7–6.8', pages: '185–189',
+    points: [
+      'Breaking a bond takes energy in; forming a bond gives it out. The bond dissociation energy, D, is the energy to break it (Table 6.3).',
+      'ΔH = (energy of bonds broken) − (energy of bonds formed). Negative: exothermic.',
+      'Keq and ΔG° say how far a reaction goes. They say nothing about how fast.',
+    ],
+    example: 'CH₄ + Cl₂ → CH₃Cl + HCl: (439 + 242) − (350 + 431) = −100 kJ/mol (p. 188).',
+  },
+  passes: {
+    title: 'Energy diagrams and transition states',
+    section: '6.9–6.10', pages: '189–194',
+    points: [
+      'The transition state is the highest point between reactants and products. The energy needed to reach it, ΔG‡, sets the rate.',
+      'Reactions with ΔG‡ below about 80 kJ/mol go fast at room temperature; ethylene + HBr’s first step needs about 140 and is slow (p. 190).',
+      'A multistep reaction has an intermediate in each valley and a transition state on each peak. The highest peak is rate-limiting.',
+      'Enzymes speed reactions by giving a different path, many small steps with no big barrier (§6.11).',
+    ],
+    example: 'ΔG° tells you how far down the products are. It does not tell you how high the pass is.',
+  },
+  wyrmCheck: {
+    title: 'How far vs how fast',
+    section: '6.7, 6.9', pages: '185–191',
+    points: [
+      'ΔG° (and Keq) say how far downhill the products lie.',
+      'ΔG‡ says how high the barrier is, and so how fast the reaction goes.',
+    ],
+    example: 'Ethylene + HBr: ΔG° = −44.8 kJ/mol, but the first barrier is about 140 kJ/mol.',
+  },
+  // ---------------- World 7: the Tower of Addition (Chapter 7)
+  seedLabels: {
+    title: 'Naming alkenes',
+    section: '7.3', pages: '211–212',
+    points: [
+      'Find the longest carbon chain that contains the double bond; the suffix is -ene.',
+      'Number from the end nearer the double bond, so its carbons get the lowest numbers.',
+      'Give the number of the first alkene carbon before the parent name; list substituents alphabetically with their numbers.',
+    ],
+    example: 'CH₃CH=CHCH₂CH₂CH₃ is 2-hexene, not 4-hexene.',
+  },
+  unsatInfo: {
+    title: 'Degree of unsaturation',
+    section: '7.2', pages: '209–210',
+    points: [
+      'Each ring or π bond costs a molecule two hydrogens from the saturated formula CₙH₂ₙ₊₂.',
+      'Add halogens to the H count. Ignore oxygen. Subtract one H for each nitrogen.',
+    ],
+    example: 'C₆H₁₀: hexane is C₆H₁₄, four H short, so two degrees (two double bonds, a ring and a double bond, two rings, or a triple bond).',
+  },
+  ezInfo: {
+    title: 'Cis–trans and E,Z',
+    section: '7.4–7.5', pages: '213–216',
+    points: [
+      'The C=C can’t rotate, so groups stay on their side. Cis–trans isomers need two different groups on each alkene carbon.',
+      'For E/Z, rank the two groups on each carbon by the sequence rules (§5.5): higher atomic number first; tie, look one atom further out.',
+      'Higher-ranked groups on the same side: Z (zusammen). Opposite sides: E (entgegen).',
+    ],
+    example: '2-Chloro-2-butene: Cl beats CH₃ on one carbon, CH₃ beats H on the other.',
+  },
+  stabInfo: {
+    title: 'Alkene stability',
+    section: '7.6', pages: '216–219',
+    points: [
+      'Hydrogenating an alkene gives off heat. The less heat given off, the more stable the alkene was.',
+      'More alkyl groups on the double bond means more stable (Table 7.2): tetrasubstituted −110, trisubstituted −112, disubstituted −115 to −119, monosubstituted −125, ethylene −136 kJ/mol.',
+      'trans-2-Butene is more stable than cis (−115 vs −119): in cis the methyls crowd each other.',
+    ],
+    example: 'The stabilizing effects are hyperconjugation and the strength of bonds to sp² carbons.',
+  },
+  hammond: {
+    title: 'Markovnikov and the Hammond postulate',
+    section: '7.7–7.10', pages: '219–230',
+    points: [
+      'HX adds in two steps: H⁺ adds to one alkene carbon, making a carbocation; X⁻ adds to it.',
+      'Markovnikov: the H goes to the carbon with more H; that is, the more substituted carbocation forms. Carbocations: 3° > 2° > 1° > methyl (§7.9).',
+      'Hammond postulate: a transition state looks like the species nearest it in energy. Protonation is uphill, so its transition state looks like the carbocation: a more stable cation, a lower barrier.',
+    ],
+    example: '2-Methylpropene + HCl gives only 2-chloro-2-methylpropane (p. 222).',
+  },
+  shiftName: {
+    title: 'Carbocation rearrangements',
+    section: '7.11', pages: '230–232',
+    points: [
+      'A carbocation can rearrange: a hydride (H:⁻) or an alkyl group (CH₃:⁻) moves, with its electron pair, to the neighbouring positive carbon.',
+      'It happens when the new cation is more stable, usually secondary to tertiary.',
+      'Rearranged products are strong evidence for the carbocation mechanism (Whitmore, 1930s).',
+    ],
+    example: '3-Methyl-1-butene + HCl gives 2-chloro-3-methylbutane and also 2-chloro-2-methylbutane, by a hydride shift.',
+  },
+  phantomCheck: {
+    title: 'Markovnikov’s rule',
+    section: '7.8', pages: '222–225',
+    points: [
+      'In the addition of HX to an alkene, the more highly substituted carbocation is formed as the intermediate.',
+      'So H goes to the alkene carbon with more H, and X to the one with more alkyl groups.',
+    ],
+    example: '1-Ethylcyclopentene + HCl → 1-chloro-1-ethylcyclopentane (Worked Example 7.2).',
+  },
+  // ---------------- World 8: the Reagent Orchards (Chapter 8)
+  recipeBoard: {
+    title: 'Reagents for alkenes',
+    section: '8.2–8.9', pages: '247–265',
+    points: [
+      'Each reagent adds its own pieces across the C=C: Br₂ adds Br and Br; Br₂ with water adds Br and OH; H₂ adds H and H.',
+      'Water can be added two ways: oxymercuration (Markovnikov) and hydroboration (non-Markovnikov, syn).',
+      'OsO₄ adds two OH from one face; ozone cuts the double bond; a carbene adds a CH₂ (or CCl₂) to make a cyclopropane.',
+    ],
+    example: 'Same alkene, different reagent, different product.',
+  },
+  halogenInfo: {
+    title: 'Halogens and halohydrins',
+    section: '8.2–8.3', pages: '247–251',
+    points: [
+      'Br₂ forms a cyclic bromonium ion on one face of the alkene. Br⁻ attacks from the other face: anti addition (cyclopentene → trans-1,2-dibromocyclopentane).',
+      'With water present, water opens the bromonium instead of Br⁻: a halohydrin, still anti, OH on the more substituted carbon.',
+    ],
+    example: 'The bromonium ion was proposed more than 85 years ago; George Olah later prepared stable solutions of them (p. 248).',
+  },
+  watersInfo: {
+    title: 'Two ways to add water',
+    section: '8.4–8.5', pages: '251–257',
+    points: [
+      'Oxymercuration–demercuration (Hg(OAc)₂, H₂O; then NaBH₄) gives the Markovnikov alcohol.',
+      'Hydroboration–oxidation (BH₃; then H₂O₂, OH⁻): B and H add together from one face, B to the less substituted carbon; OH replaces B. Syn, non-Markovnikov.',
+    ],
+    example: '1-Methylcyclopentene → 1-methylcyclopentanol (oxymercuration) or trans-2-methylcyclopentanol (hydroboration).',
+  },
+  facesInfo: {
+    title: 'Syn and anti additions',
+    section: '8.6–8.7', pages: '257–260',
+    points: [
+      'Hydrogenation (H₂, Pd/C) is syn: both H come from the catalyst’s face.',
+      'A peroxyacid makes an epoxide (syn). Aqueous acid opens it from the back, like a bromonium: a trans-1,2-diol.',
+      'OsO₄ adds both O at once through a cyclic osmate: a cis-1,2-diol.',
+    ],
+    example: 'Cyclohexene → cis-1,2-cyclohexanediol (OsO₄) or trans-1,2-cyclohexanediol (epoxide, then H₃O⁺).',
+  },
+  backward: {
+    title: 'Ozonolysis',
+    section: '8.8', pages: '261–262',
+    points: [
+      'O₃ cleaves the C=C; reduction with Zn in acetic acid gives two carbonyl compounds. Each alkene carbon becomes a C=O.',
+      'A tetrasubstituted alkene gives two ketones; a trisubstituted one, a ketone and an aldehyde.',
+      'Working backward: join the two C=O carbons with a double bond to find the alkene.',
+    ],
+    example: '(CH₃)₂C=CHCH₃ → (CH₃)₂C=O + CH₃CH=O.',
+  },
+  racemate: {
+    title: 'New chirality centres',
+    section: '8.12–8.13', pages: '271–274',
+    points: [
+      'When achiral reactants make a new chirality centre, the product is racemic: 1-butene + H₂O, H⁺ gives (±)-2-butanol.',
+      'The carbocation is flat, so water attacks from either face equally (Fig 8.13).',
+      'A chiral reactant makes the two faces unequal: the diastereomeric products form in unequal amounts.',
+    ],
+    example: 'Optically inactive reactants give optically inactive products.',
+  },
+  leviCheck: {
+    title: 'Hydration, two ways',
+    section: '8.4–8.5', pages: '251–257',
+    points: [
+      'Oxymercuration: Markovnikov, no rearrangement.',
+      'Hydroboration–oxidation: non-Markovnikov, syn.',
+    ],
+    example: 'They give complementary products from the same alkene.',
+  },
 }

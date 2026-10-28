@@ -244,7 +244,7 @@ button { font: inherit; }
 .lesson-ex b { color: var(--gold); margin-right: .35rem; }
 .lesson-cite { font-size: .78rem; color: var(--muted); margin: .2rem 0 .8rem; }
 
-/* ---------- Molecule Gauntlet (item menu) */
+/* ---------- Molecule Album (item menu) */
 .im-gauntlet { display: grid; grid-template-columns: 190px 1fr; gap: .8rem; }
 .mg-list { display: flex; flex-direction: column; gap: 3px; }
 .mg-list .small { color: #888; font-size: .78rem; margin: 0 0 .3rem; }
@@ -351,3 +351,51 @@ button { font: inherit; }
 
 /* the boss core's carbon: the key line of the fight, readable at any distance */
 .coretag { font-size: 16px !important; padding: 4px 10px !important; }
+
+/* World 4: ring numbering panel */
+.ring-wrap { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
+.ring-svg { width: 260px; height: 240px; background: #1a1428; border-radius: 10px; }
+.ring-side { display: flex; flex-direction: column; gap: 8px; min-width: 200px; }
+.ring-name { font-size: 1.15rem; font-weight: 700; color: var(--gold); min-height: 1.6em; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chips button { padding: 4px 8px; }
+.chips button:disabled { opacity: 0.35; }
+
+/* World 5 panels */
+.crys-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; }
+.crys { background: #1a2236; border: 2px solid transparent; border-radius: 8px; padding: 2px; }
+.crys.sel { border-color: var(--gold); }
+.crys-trays { display: flex; gap: 12px; }
+.crys-tray { flex: 1; min-height: 70px; background: #222c44; border-radius: 8px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.crys-tray span { display: flex; flex-wrap: wrap; gap: 2px; }
+.polar { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+.polar-light { width: 90px; height: 90px; border-radius: 50%; background: radial-gradient(circle, #fff8d0, #ffd060 60%, #6a5020); box-shadow: 0 0 30px #ffd060; }
+.polar-ctrl { display: flex; flex-direction: column; gap: 8px; }
+.polar-ctrl button.sel { outline: 2px solid var(--gold); }
+.cip { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+.cip-svg { width: 230px; height: 230px; background: #1a2236; border-radius: 10px; }
+.cip-side { display: flex; flex-direction: column; gap: 8px; min-width: 200px; }
+.cip-order { display: flex; flex-direction: column; color: var(--gold); font-weight: 700; }
+
+.prompt-sep { margin: 0 10px; opacity: 0.6; }
+/* World 4 name chips and plain buttons in panels: the same dark pill style as the answer buttons */
+.chips button, .ring-side button:not(.go) { background: #1d1a2a; color: #e8e4f4; border: 1px solid #3a3450; border-radius: 999px; font-size: .95rem; cursor: pointer; }
+.chips button:hover:not(:disabled), .ring-side button:not(.go):hover { border-color: var(--cyan); }
+
+/* World 6 panels */
+.rx-list { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+.rx-list .rx { background: #1d1a2a; color: #e8e4f4; border: 1px solid #3a3450; border-radius: 8px; padding: 6px 10px; cursor: pointer; }
+.rx-list .rx.sel { border-color: var(--gold); box-shadow: 0 0 0 1px var(--gold); }
+.rx-trails { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.rx-trail { background: #222c44; color: #e8e4f4; border: 1px solid #3a4a6a; border-radius: 8px; padding: 8px; min-height: 64px; text-align: left; cursor: pointer; display: flex; flex-direction: column; gap: 4px; }
+.rx-trail:hover { border-color: var(--cyan); }
+.rx-trail span { display: flex; flex-direction: column; gap: 2px; font-size: .8rem; color: #b8c8e8; }
+.ledger { display: flex; gap: 10px; align-items: flex-start; }
+.ledger-pan { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.ledger-pan button { background: #1d1a2a; color: #e8e4f4; border: 1px solid #3a3450; border-radius: 6px; padding: 3px 6px; font-size: .85rem; cursor: pointer; }
+.ledger-pan button.sel { border-color: var(--gold); background: #3a3020; }
+.ledger-pan i { color: var(--gold); font-style: normal; font-weight: 700; }
+.ledger-beam { width: 120px; height: 60px; flex: none; }
+
+/* World 7 panels */
+.skel-svg { width: 100%; max-width: 320px; height: auto; background: #1a1428; border-radius: 10px; display: block; margin: 8px auto; }

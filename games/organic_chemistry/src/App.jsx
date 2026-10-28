@@ -11,6 +11,16 @@ import Coast from './scenes/Coast'
 import Temple from './scenes/Temple'
 import Forest from './scenes/Forest'
 import Labyrinth from './scenes/Labyrinth'
+import Hills from './scenes/Hills'
+import Fortress from './scenes/Fortress'
+import MirrorLake from './scenes/Lake'
+import Palace from './scenes/Palace'
+import Peaks from './scenes/Peaks'
+import Caves from './scenes/Caves'
+import Plains from './scenes/Plains'
+import Tower from './scenes/Tower'
+import Orchard from './scenes/Orchard'
+import Glasshouse from './scenes/Glasshouse'
 import HUD, { Fade } from './ui/HUD'
 import ItemMenu from './ui/ItemMenu'
 import Dialogue from './ui/Dialogue'
@@ -20,7 +30,7 @@ import { MiniMap, FullMap } from './ui/MapView'
 import { playMusic, stopMusic, sfx } from './audio/sfx'
 
 // screens with Kai walking around in them
-const GAME = ['village', 'caverns', 'field', 'coast', 'temple', 'forest', 'labyrinth']
+const GAME = ['village', 'caverns', 'field', 'coast', 'temple', 'forest', 'labyrinth', 'hills', 'fortress', 'lake', 'palace', 'peaks', 'caves', 'plains', 'tower', 'orchard', 'glasshouse']
 const inGameScreen = (sc) => GAME.includes(sc)
 
 // If a 3D scene throws, show a way back instead of a black screen.
@@ -144,7 +154,7 @@ export default function App() {
     const now = new Set(MOLECULES.filter((m) => { try { return !!m.unlocked(save) } catch { return false } }).map((m) => m.id))
     if (logged.current && inGameScreen(screen)) {
       const fresh = MOLECULES.filter((m) => now.has(m.id) && !logged.current.has(m.id))
-      if (fresh.length) setTimeout(() => toast(`Logged in your Molecule Gauntlet: ${fresh.map((m) => `${m.name} (${m.formula})`).join(', ')} — press Esc to see it`, 'good', 4200), 1800)
+      if (fresh.length) setTimeout(() => toast(`Logged in your Molecule Album: ${fresh.map((m) => `${m.name} (${m.formula})`).join(', ')} — press Esc to see it`, 'good', 4200), 1800)
     }
     logged.current = now
   }, [save, screen])
@@ -175,6 +185,16 @@ export default function App() {
           {screen === 'temple' && <Temple key={sceneKey} onExit={exitTo} />}
           {screen === 'forest' && <Forest key={sceneKey} onExit={exitTo} />}
           {screen === 'labyrinth' && <Labyrinth key={sceneKey} onExit={exitTo} />}
+          {screen === 'hills' && <Hills key={sceneKey} onExit={exitTo} />}
+          {screen === 'fortress' && <Fortress key={sceneKey} onExit={exitTo} />}
+          {screen === 'lake' && <MirrorLake key={sceneKey} onExit={exitTo} />}
+          {screen === 'palace' && <Palace key={sceneKey} onExit={exitTo} />}
+          {screen === 'peaks' && <Peaks key={sceneKey} onExit={exitTo} />}
+          {screen === 'caves' && <Caves key={sceneKey} onExit={exitTo} />}
+          {screen === 'plains' && <Plains key={sceneKey} onExit={exitTo} />}
+          {screen === 'tower' && <Tower key={sceneKey} onExit={exitTo} />}
+          {screen === 'orchard' && <Orchard key={sceneKey} onExit={exitTo} />}
+          {screen === 'glasshouse' && <Glasshouse key={sceneKey} onExit={exitTo} />}
         </Canvas>
         </SceneGuard>
       </div>

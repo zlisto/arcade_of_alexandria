@@ -522,7 +522,7 @@ function LabyrinthLevel({ world, onExit }) {
     setArenaBats(false)
     await say([
       { who: 'Pi', text: 'It stretched into a perfect zigzag and went still. Anti — no strain at all.' },
-      { who: 'Pi', text: 'The spark tore loose and fled north — toward the Chair Fortress? Malradix kept it wound up and strained.' },
+      { who: 'Pi', text: 'The spark tore loose and fled east, toward the Chair Fortress? Malradix kept it wound up and strained.' },
       { who: 'Pi', text: 'Every move it made followed one energy curve. Not such a strange beast. Look — the shard!' },
     ])
   }

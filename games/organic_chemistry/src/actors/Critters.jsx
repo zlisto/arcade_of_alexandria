@@ -4,7 +4,7 @@ import * as THREE from 'three'
 import { rimMat, softDot } from '../engine/materials'
 import { Part } from '../engine/models'
 import { sfx } from '../audio/sfx'
-import { toast, inCinematic } from '../engine/store'
+import { toast, enemiesPaused } from '../engine/store'
 
 // Overworld critters for the Tide Coast region (World 2).
 // • Lone-Pair Imps (§2.11): small red imps carrying an electron pair, leaping at Kai. One hit pops them.
@@ -54,7 +54,7 @@ export function ImpPack({ world, spawns, active = true }) {
       onHit: () => {
         if (m.state === 'dead' || m.state === 'gone') return false
         m.state = 'dead'; m.t = 0; sfx('pair')
-        if (!told.imp) { told.imp = true; toast('Popped a Lone-Pair Imp! A lone pair is a Lewis base: it goes looking for something electron-poor (§2.11).', 'good', 4200) }
+        if (!told.imp) { told.imp = true; toast('Popped a Lone-Pair Imp! A lone pair is a Lewis base: it goes looking for something electron-poor (§2.11).', 'good', 4200, true) }
         return true
       },
     }))
@@ -62,7 +62,7 @@ export function ImpPack({ world, spawns, active = true }) {
   }, [active])
   useFrame((state, rawDt) => {
     if (!active) return
-    const dt = world.hitStop > 0 || inCinematic() ? 0 : Math.min(rawDt, 1 / 30)
+    const dt = world.hitStop > 0 || enemiesPaused() ? 0 : Math.min(rawDt, 1 / 30)
     const p = world.player
     for (const m of imps.current) {
       const g = refs.current[m.i]
@@ -157,7 +157,7 @@ export function CrabPack({ world, spawns, active = true }) {
       onHit: () => {
         if (c.state === 'dead' || c.state === 'gone') return false
         sfx('block')
-        if (!told.crabHit) { told.crabHit = true; toast('Clang — its shell is too hard. Block (Shift) the proton it throws and knock it back!', 'warn', 4200) }
+        if (!told.crabHit) { told.crabHit = true; toast('Clang — its shell is too hard. Block (Shift) the proton it throws and knock it back!', 'warn', 4200, true) }
         return false
       },
     }))
@@ -165,7 +165,7 @@ export function CrabPack({ world, spawns, active = true }) {
   }, [active])
   useFrame((state, rawDt) => {
     if (!active) return
-    const dt = world.hitStop > 0 || inCinematic() ? 0 : Math.min(rawDt, 1 / 30)
+    const dt = world.hitStop > 0 || enemiesPaused() ? 0 : Math.min(rawDt, 1 / 30)
     const p = world.player
     for (const c of crabs.current) {
       const g = refs.current[c.i]
@@ -199,7 +199,7 @@ export function CrabPack({ world, spawns, active = true }) {
           const aim = new THREE.Vector3(p.pos.x, p.pos.y + 1.1, p.pos.z).sub(from).normalize()
           shots.current.push({ pos: from, vel: aim.multiplyScalar(8), owner: c, back: false, life: 3 })
           c.state = 'walk'; c.cd = 2.6 + Math.random() * 0.8; sfx('hookFire')
-          if (!told.crab) { told.crab = true; toast('A Hydronium Crab (H₃O⁺, a strong acid) flings protons. Block with Shift to send one back!', 'info', 4200) }
+          if (!told.crab) { told.crab = true; toast('A Hydronium Crab (H₃O⁺, a strong acid) flings protons. Block with Shift to send one back!', 'info', 4200, true) }
         }
       }
       g.position.copy(c.pos)
@@ -217,7 +217,7 @@ export function CrabPack({ world, spawns, active = true }) {
         const c = sh.owner
         if (c.state !== 'dead' && c.state !== 'gone' && sh.pos.distanceTo(new THREE.Vector3(c.pos.x, 0.5, c.pos.z)) < 0.8) {
           c.state = 'dead'; c.t = 0; sfx('pair')
-          toast('The crab got its own proton back — knocked out!', 'good', 2200)
+          toast('The crab got its own proton back — knocked out!', 'good', 2200, true)
           return false
         }
       } else if (p && sh.pos.distanceTo(new THREE.Vector3(p.pos.x, p.pos.y + 1.0, p.pos.z)) < 0.75) {

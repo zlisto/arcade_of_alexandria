@@ -5,6 +5,7 @@ import Player from './Player'
 import CameraRig from './CameraRig'
 import LightPool from './LightPool'
 import { WarpFx } from './Warp'
+import { ItemGetFx } from './ItemGet'
 import { getState, setState } from './store'
 import { setActiveWorld } from './active'
 
@@ -28,6 +29,7 @@ export default function GameScene({ children, start, startFacing = 0, background
       <CameraRig world={world} dist={camDist} />
       <LightPool k={6} />
       <WarpFx world={world} />
+      <ItemGetFx world={world} />
       {children(world)}
     </>
   )

@@ -147,6 +147,197 @@ export const CODEX = [
     unlocked: (s) => s.solved['3-4c'],
     text: 'About butane\'s C2–C3 bond: anti (CH₃ groups 180° apart) is lowest; gauche (60°) is 3.8 kJ/mol higher from steric strain; eclipsed is 16 kJ/mol (CH₃↔H) or 19 kJ/mol (CH₃↔CH₃) higher (Fig 3.10, Table 3.5). The costs add: 19 = 11 (CH₃↔CH₃) + 2 × 4.0 (H↔H). At any moment, more molecules are anti than in any other shape.',
   },
+  // ---------------- World 4: the Chair Fortress (Chapter 4)
+  {
+    title: 'Naming cycloalkanes',
+    section: '4.1', pages: '106–108',
+    unlocked: (s) => s.t4rings,
+    text: 'Cycloalkanes are CₙH₂ₙ rings drawn as polygons. If the ring is at least as big as its largest substituent, name a substituted cycloalkane; otherwise the ring is a cycloalkyl group on a chain (1-cyclopropylbutane). Number from a substituent so the next gets the lowest number; ties go alphabetically; halogens count like alkyl groups.',
+  },
+  {
+    title: 'Cis and trans on a ring',
+    section: '4.2', pages: '108–110',
+    unlocked: (s) => s.solved['4-1b'],
+    text: 'A ring can’t rotate without breaking, so it has two faces. Same face: cis. Opposite faces: trans. cis- and trans-1,2-dimethylcyclopropane never interconvert. They are stereoisomers: same connections, different arrangement in space (Fig 4.3).',
+  },
+  {
+    title: 'Ring strain and puckering',
+    section: '4.3–4.4', pages: '110–113',
+    unlocked: (s) => s.solved['4-2'],
+    text: 'Strain comes from squeezed angles (angle strain), eclipsed neighbours (torsional strain) and crowding (steric strain). Fig 4.4: cyclopropane 115, cyclobutane 110, cyclopentane 26, cyclohexane 0 kJ/mol. Baeyer assumed flat rings; real rings pucker (cyclobutane bends about 25°; cyclopentane puts one carbon out of the plane).',
+  },
+  {
+    title: 'The chair',
+    section: '4.5–4.6', pages: '113–118',
+    unlocked: (s) => s.solved['4-3'],
+    text: 'Cyclohexane is a chair: C–C–C angles 111.5°, every neighbouring C–H staggered, no strain (the twist-boat is about 23 kJ/mol higher). Each carbon has one axial bond (up or down, alternating) and one equatorial. A ring-flip (about 45 kJ/mol, fast) swaps every axial and equatorial position; no group changes face.',
+  },
+  {
+    title: '1,3-Diaxial interactions',
+    section: '4.7', pages: '118–120',
+    unlocked: (s) => s.solved['4-4a'],
+    text: 'An axial group bumps the axial H on C3 and C5 of its face. For CH₃ each costs 3.8 kJ/mol (like gauche butane), 7.6 in all, so about 95% of methylcyclohexane is equatorial. Bigger groups cost more: tert-butyl 11.4 per interaction.',
+  },
+  {
+    title: 'Two groups on a chair',
+    section: '4.8', pages: '120–123',
+    unlocked: (s) => s.solved['4-4c'],
+    text: 'Count every interaction in both chairs and take the lower. trans-1,2-Dimethyl: diequatorial (3.8, one gauche) beats diaxial (15.2) by 11.4. cis-1,2: the chairs are equal (11.4 each). cis-1-tert-Butyl-4-chloro: tert-butyl equatorial, Cl axial, 20.8 kJ/mol lower (Worked Example 4.3). Values are the text’s (p. 123); Table 4.1 lists slightly different ones.',
+  },
+  {
+    title: 'Fused rings',
+    section: '4.9', pages: '123–125',
+    unlocked: (s) => s.solved['4-5'],
+    text: 'Decalin is two cyclohexanes sharing a bond. Bridgehead H on the same face: cis-decalin; on opposite faces: trans-decalin. They never interconvert. cis-Decalin ring-flips; trans-decalin is rigid (Problem 4-52). Steroids such as testosterone fuse three six-membered rings and one five-membered ring (p. 124).',
+  },
+  // ---------------- World 5: the Mirror Palace (Chapter 5)
+  {
+    title: 'Enantiomers and chirality',
+    section: '5.1–5.2', pages: '136–140',
+    unlocked: (s) => s.solved['5-1'],
+    text: 'A carbon with four different groups is not identical to its mirror image: the two are enantiomers, like left and right hands. A molecule that is not identical to its mirror image is chiral; a symmetry plane makes it achiral. CH₃X and CH₂XY are achiral; lactic acid is chiral.',
+  },
+  {
+    title: 'Optical activity',
+    section: '5.3–5.4', pages: '140–143',
+    unlocked: (s) => s.solved['5-2'],
+    text: 'Chiral compounds rotate plane-polarized light: (+) clockwise, (−) counterclockwise. [α]D = α / (l × c), with l in dm and c in g/mL. Enantiomers rotate equally and oppositely (lactic acid ±3.82). Pasteur first separated enantiomers by hand-sorting tartrate crystals in 1848.',
+  },
+  {
+    title: 'R and S',
+    section: '5.5', pages: '143–147',
+    unlocked: (s) => s.solved['5-3c'],
+    text: 'Rank the groups by atomic number (ties: one atom further out; double bonds count twice). With the lowest group away, clockwise 1→2→3 is R, counterclockwise S. R/S and the sign of rotation are unrelated: (S)-glyceraldehyde is (−), (S)-alanine (+).',
+  },
+  {
+    title: 'Diastereomers and meso compounds',
+    section: '5.6–5.7', pages: '147–152',
+    unlocked: (s) => s.solved['5-4c'],
+    text: 'n centres give up to 2ⁿ stereoisomers. Opposite at every centre: enantiomers; at some: diastereomers (epimers differ at one). Meso compounds have centres but a symmetry plane: meso-tartaric acid, (2R,3S) = (2S,3R), achiral, with properties different from the (+) and (−) forms.',
+  },
+  {
+    title: 'Racemates and resolution',
+    section: '5.8', pages: '152–154',
+    unlocked: (s) => s.solved['5-5a'],
+    text: 'A racemate (±) is 50:50 and rotates no light. An achiral amine gives mirror-image salts (no separation); a single enantiomer of a chiral amine, such as (R)-1-phenylethylamine, gives diastereomeric salts that can be separated and then turned back into the pure enantiomers.',
+  },
+  {
+    title: 'Chirality at N, P and S; chiral receptors',
+    section: '5.10, 5.12', pages: '155–160',
+    unlocked: (s) => s.solved['5-5c'],
+    text: 'Amines invert rapidly, like umbrellas, so their enantiomers can’t be isolated; phosphines and sulfonium salts hold their shape. Biological receptors are chiral, so one enantiomer may fit and the other not: (S)-fluoxetine prevents migraine; (S)-ibuprofen is the active pain reliever.',
+  },
+  {
+    title: 'Prochirality',
+    section: '5.11', pages: '156–158',
+    unlocked: (s) => s.solved.boss5,
+    text: 'A prochiral molecule becomes chiral in one step. The two faces of a trigonal carbon are Re (clockwise ranking) and Si (counterclockwise); adding H to opposite faces of 2-butanone gives opposite enantiomers of 2-butanol. Enzymes tell such faces and groups apart.',
+  },
+  // ---------------- World 6: the Activation Peaks (Chapter 6)
+  {
+    title: 'Kinds of reaction',
+    section: '6.1', pages: '172–173',
+    unlocked: (s) => s.t6signs,
+    text: 'Additions combine two reactants into one product; eliminations split one into two; substitutions swap parts between two reactants; rearrangements reorganize one molecule into an isomer.',
+  },
+  {
+    title: 'Bond breaking: radicals and ions',
+    section: '6.2', pages: '173–175',
+    unlocked: (s) => s.solved['6-1b'],
+    text: 'Homolytic breaking gives each fragment one electron: radicals (fishhook arrows). Heterolytic breaking gives both electrons to one fragment: ions (full arrows). Radical reactions and polar reactions follow from these.',
+  },
+  {
+    title: 'Electrophiles and nucleophiles',
+    section: '6.3–6.5', pages: '175–183',
+    unlocked: (s) => s.solved['6-2arrows'],
+    text: 'Electronegative neighbours make a carbon δ+ (electrophilic); metals make it δ− (nucleophilic). Curved arrows run from the electron source (nucleophile) to the electron sink (electrophile), and charge balances across every step.',
+  },
+  {
+    title: 'Radical chain reactions',
+    section: '6.6', pages: '183–185',
+    unlocked: (s) => s.solved['6-3'],
+    text: 'Chlorination of methane: initiation (light splits Cl₂), propagation (Cl· + CH₄ → HCl + ·CH₃; ·CH₃ + Cl₂ → CH₃Cl + Cl·, repeated), termination (two radicals combine).',
+  },
+  {
+    title: 'Equilibria, rates and bond energies',
+    section: '6.7–6.8', pages: '185–189',
+    unlocked: (s) => s.solved['6-4'],
+    text: 'ΔG° = −RT ln Keq: a negative ΔG° favours products. ΔH can be estimated from bond dissociation energies (Table 6.3): bonds broken minus bonds formed. Chlorination of methane: −100 kJ/mol. None of this tells you the rate.',
+  },
+  {
+    title: 'Energy diagrams',
+    section: '6.9–6.11', pages: '189–196',
+    unlocked: (s) => s.solved['6-5'],
+    text: 'The transition state is the top of the barrier; ΔG‡ sets the rate (below ~80 kJ/mol: fast at room temperature). Intermediates sit in the valleys of a multistep reaction. Enzymes give lower-barrier paths of many small steps.',
+  },
+  // ---------------- World 7: the Tower of Addition (Chapter 7)
+  {
+    title: 'Naming alkenes',
+    section: '7.3', pages: '211–212',
+    unlocked: (s) => s.t7seeds,
+    text: 'The longest chain containing the C=C, numbered from the end nearer it; the first alkene carbon’s number goes before the -ene parent. Cycloalkenes number the double bond C1–C2. Common names: ethylene, propylene, isobutylene, isoprene (Table 7.1).',
+  },
+  {
+    title: 'Degree of unsaturation',
+    section: '7.1–7.2', pages: '208–210',
+    unlocked: (s) => s.solved['7-1'],
+    text: 'Rings plus π bonds, counted from the formula: each costs two H from CₙH₂ₙ₊₂. Add halogens to H, ignore O, subtract N. C₄H₆Br₂ → 1, C₅H₈O → 2, C₅H₉N → 2.',
+  },
+  {
+    title: 'E,Z geometry',
+    section: '7.4–7.5', pages: '213–216',
+    unlocked: (s) => s.solved['7-2'],
+    text: 'Rank the two groups on each alkene carbon with the sequence rules. Higher groups on the same side: Z; opposite: E. An alkene with two identical groups on one carbon has no cis–trans isomers (Fig 7.5).',
+  },
+  {
+    title: 'Alkene stability',
+    section: '7.6', pages: '216–219',
+    unlocked: (s) => s.solved['7-3'],
+    text: 'Heats of hydrogenation (Table 7.2): ethylene −136, monosubstituted −125, cis −119, trans −115, trisubstituted −112, tetrasubstituted −110 kJ/mol. More substituted is more stable; trans beats cis.',
+  },
+  {
+    title: 'Electrophilic addition and Markovnikov’s rule',
+    section: '7.7–7.10', pages: '219–230',
+    unlocked: (s) => s.solved['7-4'],
+    text: 'H⁺ adds first, making the more substituted carbocation (3° > 2° > 1° > methyl, from inductive effects and hyperconjugation); then X⁻ adds. The Hammond postulate: the transition state resembles the carbocation, so a steadier cation forms faster.',
+  },
+  {
+    title: 'Carbocation rearrangements',
+    section: '7.11', pages: '230–232',
+    unlocked: (s) => s.solved['7-5name'],
+    text: 'A less stable carbocation can become a more stable one when a neighbouring hydride or alkyl group shifts over with its electron pair. 3-Methyl-1-butene + HCl gives rearranged 2-chloro-2-methylbutane; 3,3-dimethyl-1-butene gives 2-chloro-2,3-dimethylbutane.',
+  },
+  // ---------------- World 8: the Reagent Orchards (Chapter 8)
+  {
+    title: 'Halogenation and halohydrins',
+    section: '8.2–8.3', pages: '247–251',
+    unlocked: (s) => s.solved['8-1a'] && s.solved['8-1b'],
+    text: 'Br₂ adds through a cyclic bromonium ion, opened from the back: anti addition. In water, H₂O opens it instead, giving a halohydrin with OH on the more substituted carbon.',
+  },
+  {
+    title: 'Hydration: oxymercuration and hydroboration',
+    section: '8.4–8.5', pages: '251–257',
+    unlocked: (s) => s.solved['8-2a'] && s.solved['8-2b'],
+    text: 'Oxymercuration–demercuration gives the Markovnikov alcohol. Hydroboration–oxidation adds H and B in one step from one face, B to the less substituted carbon: a syn, non-Markovnikov alcohol (1-methylcyclopentene → trans-2-methylcyclopentanol).',
+  },
+  {
+    title: 'Hydrogenation, epoxides and diols',
+    section: '8.6–8.7', pages: '257–260',
+    unlocked: (s) => s.solved['8-3a'] && s.solved['8-3b'],
+    text: 'H₂ with Pd or Pt adds syn on the catalyst surface. Peroxyacids give epoxides; acid opens them anti to trans-1,2-diols. OsO₄ gives cis-1,2-diols through a cyclic osmate.',
+  },
+  {
+    title: 'Oxidative cleavage and carbenes',
+    section: '8.8–8.9', pages: '261–265',
+    unlocked: (s) => s.solved['8-4'],
+    text: 'Ozonolysis turns each alkene carbon into a C=O: tetrasubstituted gives two ketones, trisubstituted a ketone and an aldehyde. KMnO₄ gives acids and CO₂. Carbenes (:CCl₂ from CHCl₃ + KOH; the Simmons–Smith carbenoid) add stereospecifically to give cyclopropanes.',
+  },
+  {
+    title: 'Polymers and new chirality centres',
+    section: '8.10–8.13', pages: '265–274',
+    unlocked: (s) => s.solved['8-5p'] && s.solved['8-5race'],
+    text: 'Chain-growth polymerization: a radical initiator (from benzoyl peroxide) adds to a monomer, the chain grows one monomer at a time, and two chains combine to end it. Achiral reactants making a new chirality centre give a racemate.',
+  },
 ]
 
 export const BOOK = { title: 'Organic Chemistry, 10th edition', author: 'John McMurry', publisher: 'OpenStax', license: 'CC BY-NC-SA 4.0' }

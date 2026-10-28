@@ -71,10 +71,13 @@ export function resetSave() {
 }
 
 let toastId = 0
-export function toast(text, kind = 'info', ms = 3200) {
+export function toast(text, kind = 'info', ms = 3200, low = false) {
+  // a low-priority toast (an enemy's hint) never replaces a teaching toast still on screen
+  if (low && state.toast && !state.toast.low) return false
   const id = ++toastId
-  setState({ toast: { text, kind, id } })
+  setState({ toast: { text, kind, id, low } })
   setTimeout(() => { if (state.toast && state.toast.id === id) setState({ toast: null }) }, ms)
+  return true
 }
 
 /** Show dialogue lines; resolves when the player finishes them. */
@@ -82,6 +85,8 @@ export function say(lines) {
   return new Promise((resolve) => setState({ dialogue: { lines, onDone: resolve } }))
 }
 /** True while a cinematic plays (a cutscene, the shard warp or its world card): enemies hold still. */
+/** enemies hold still during cutscenes, dialogue and open panels (lesson cards included) */
+export function enemiesPaused() { const s = state; return !!(inCinematic() || s.dialogue || s.panel || s.lesson) }
 export function inCinematic() { const s = state; return !!(s.cutscene || s.warpIn || (s.panel && s.panel.kind === 'worldDone')) }
 
 export function openPanel(kind, props = {}) {

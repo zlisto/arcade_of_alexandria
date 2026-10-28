@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { sfx } from '../audio/sfx'
-import { toast, inCinematic } from '../engine/store'
+import { toast, enemiesPaused } from '../engine/store'
 import { WolfBody, useWolfAssets, animateWolf } from './WolfModel'
 
 // Radical Wolves (book §6.6, §10.2): each carries one unpaired electron.
@@ -90,7 +90,7 @@ export default function WolfPack({ world, spawns, onCleared, active = true, tuto
 
   useFrame((state, rawDt) => {
     if (!active) return
-    const dt = world.hitStop > 0 || inCinematic() ? 0 : Math.min(rawDt, 1 / 30)
+    const dt = world.hitStop > 0 || enemiesPaused() ? 0 : Math.min(rawDt, 1 / 30)
     const p = world.player
     const list = wolves.current
     for (const w of list) {
@@ -130,7 +130,7 @@ export default function WolfPack({ world, spawns, onCleared, active = true, tuto
             w.pairAt = mid; o.pairAt = mid
             sfx('pair')
             world.emit('pair', { at: [mid.x, mid.y, mid.z] })
-            if (tutorial && !told.current.pair) { told.current.pair = true; toast('Termination! Two radicals paired their electrons — both are gone.', 'good', 3600) }
+            if (tutorial && !told.current.pair) { told.current.pair = true; toast('Termination! Two radicals paired their electrons — both are gone.', 'good', 3600, true) }
             break
           }
         }
@@ -141,13 +141,13 @@ export default function WolfPack({ world, spawns, onCleared, active = true, tuto
           if (others === 0) {
             w.state = 'pairing'; w.t = 0; w.pairAt = w.pos.clone(); sfx('pair')
             world.emit('pair', { at: [w.pos.x, w.pos.y, w.pos.z] })
-            if (tutorial) toast('The last radical grabbed a stray H· — two unpaired electrons, one bond. Gone!', 'good', 3600)
+            if (tutorial) toast('The last radical grabbed a stray H· — two unpaired electrons, one bond. Gone!', 'good', 3600, true)
             continue
           }
           w.state = 'chase'
           w.t = 0
           w.flash = 0.4; sfx('split')
-          if (tutorial && !told.current.split) { told.current.split = true; toast('Alone, it just passes its spark on — still a radical! Knock it into another wolf.', 'warn', 4600) }
+          if (tutorial && !told.current.split) { told.current.split = true; toast('Alone, it just passes its spark on — still a radical! Knock it into another wolf.', 'warn', 4600, true) }
         }
       } else if (p) {
         // chase / circle / lunge

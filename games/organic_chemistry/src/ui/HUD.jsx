@@ -39,11 +39,16 @@ export default function HUD({ scene }) {
         </div>
         {s.save.shards > 0 && <div className="shards">Bond Shards {s.save.shards} / 12</div>}
       </div>
-      {s.bossHp && (
+      {s.bossHp && !s.dialogue && (
         <div className="bossbar"><div className="bossname">{s.bossHp.name}</div><div className="bar"><div style={{ width: `${(100 * s.bossHp.hp) / s.bossHp.max}%` }} /></div></div>
       )}
-      {s.prompt && !s.dialogue && !s.panel && <div className="prompt"><span className="key">E</span> {s.prompt}</div>}
-      {!s.prompt && s.lanternPrompt && !s.dialogue && !s.panel && <div className="prompt"><span className="key">G</span> {s.lanternPrompt}</div>}
+      {(s.prompt || s.lanternPrompt) && !s.dialogue && !s.panel && (
+        <div className="prompt">
+          {s.prompt && <><span className="key">E</span> {s.prompt}</>}
+          {s.prompt && s.lanternPrompt && <span className="prompt-sep">·</span>}
+          {s.lanternPrompt && <><span className="key">G</span> {s.lanternPrompt}</>}
+        </div>
+      )}
       {s.newman && !s.dialogue && !s.panel && <NewmanHud n={s.newman} />}
       {s.lockTarget && !s.dialogue && <div className="locktip">Locked on · <span className="key">Space</span> + direction to sidestep / backhop · <span className="key">Tab</span> release</div>}
       {s.toast && <div className={'toast ' + s.toast.kind}>{s.toast.text}</div>}

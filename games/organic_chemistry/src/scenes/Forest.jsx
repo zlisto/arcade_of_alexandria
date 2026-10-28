@@ -131,6 +131,18 @@ function RootGate({ world, open }) {
   )
 }
 
+/** The east gate to the Chair Hills: briars across the path until Shard 3 is held. */
+function EastGate({ open }) {
+  return (
+    <group position={[HALF - 0.5, 0, 0]}>
+      {[-4.5, 4.5].map((z) => <mesh key={z} position={[0, 4, z]} castShadow><cylinderGeometry args={[1.0, 1.3, 8, 10]} /><meshStandardMaterial color="#4a3426" roughness={0.95} /></mesh>)}
+      <mesh position={[-21, 0.02, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow><planeGeometry args={[44, 3.6]} /><meshStandardMaterial color="#6a5a44" roughness={1} /></mesh>
+      {!open && [...Array(9)].map((_, i) => <mesh key={i} position={[0, 0.8 + (i % 3) * 1.1, -3 + (i * 0.75)]} rotation={[(i % 2 ? 1 : -1) * 0.6, 0, 0]} castShadow><cylinderGeometry args={[0.12, 0.16, 3.4, 6]} /><meshStandardMaterial color="#3e2a1e" roughness={0.95} /></mesh>)}
+      <Tag position={[0, 8.6, 0]} df={14}>{open ? 'East road · the Chair Hills' : 'East road · overgrown with briars'}</Tag>
+    </group>
+  )
+}
+
 function ForestLevel({ world, onExit }) {
   const save = useGame((s) => s.save)
   const shot = useGame((s) => !!s.iupacaShot)
@@ -138,11 +150,13 @@ function ForestLevel({ world, onExit }) {
   const giants = useMemo(() => scatter(26, 77, (r) => {
     const x = (r() - 0.5) * 2 * (HALF - 4), z = (r() - 0.5) * 2 * (HALF - 4)
     if (Math.abs(x) < 9 || Math.hypot(x - TOWER[0], z - TOWER[2]) < 10) return null
+    if (x > 0 && Math.abs(z) < 6) return null // the east road
     return [x, z, 0.8 + r() * 0.6]
   }), [])
   const small = useMemo(() => scatter(90, 79, (r) => {
     const x = (r() - 0.5) * 2 * (HALF - 2), z = (r() - 0.5) * 2 * (HALF - 2)
     if (Math.abs(x) < 6 || Math.hypot(x - TOWER[0], z - TOWER[2]) < 9) return null
+    if (x > 0 && Math.abs(z) < 4) return null
     return [x, z, 0.8 + r() * 0.7, r() * 6]
   }), [])
   const glow = useMemo(() => scatter(40, 83, (r) => [(r() - 0.5) * 80, (r() - 0.5) * 80, 0.12 + r() * 0.14]), [])
@@ -150,11 +164,16 @@ function ForestLevel({ world, onExit }) {
   useEffect(() => {
     playMusic('forest')
     const ids = [
-      world.addSolid([-HALF - 2, 0, -HALF - 2], [-HALF, 8, HALF + 2]), world.addSolid([HALF, 0, -HALF - 2], [HALF + 2, 8, HALF + 2]),
+      world.addSolid([-HALF - 2, 0, -HALF - 2], [-HALF, 8, HALF + 2]), world.addSolid([HALF, 0, -HALF - 2], [HALF + 2, 8, -3.5]), world.addSolid([HALF, 0, 3.5], [HALF + 2, 8, HALF + 2]),
       world.addSolid([-HALF, 0, -HALF - 2], [HALF, 8, GATE_Z - 1.5]),
       world.addSolid([-HALF, 0, GATE_Z - 1.5], [-5, 8, GATE_Z + 1]), world.addSolid([5, 0, GATE_Z - 1.5], [HALF, 8, GATE_Z + 1]),
       world.addSolid([-HALF, 0, HALF], [-3.5, 8, HALF + 2]), world.addSolid([3.5, 0, HALF], [HALF, 8, HALF + 2]),
     ]
+    // the east gate to the Chair Hills: thorny briars until Shard 3 is held
+    const briar = world.addSolid([HALF - 1, 0, -3.5], [HALF + 2, 8, 3.5])
+    world.setEnabled(briar, (getState().save.shards || 0) < 3)
+    const east = world.addTrigger([HALF - 1.2, 0, -3.5], [HALF + 2, 4, 3.5], () => { if ((getState().save.shards || 0) >= 3) onExit('hills', { scene: 'hills', at: 'west' }) })
+    ids.push(briar, east)
     const back = world.addTrigger([-3.5, 0, HALF - 1.2], [3.5, 4, HALF + 2], () => onExit('field', { scene: 'field', at: 'forest' }))
     const into = world.addTrigger([-5, 0, GATE_Z - 1.5], [5, 4, GATE_Z - 0.2], () => onExit('labyrinth', { scene: 'labyrinth', room: 'entrance' }))
     const iu = world.addInteractable({ pos: IUPACA, radius: 2.6, label: 'Talk to Archivist Iupaca', onInteract: () => talkIupaca() })
@@ -167,7 +186,7 @@ function ForestLevel({ world, onExit }) {
 
   useEffect(() => {
     const s = getState().save
-    setState({ objective: (s.shards || 0) >= 3 ? 'Bond Shard 3 recovered: the Chair Fortress awaits (Chapter 4, coming soon)' : !s.metIupaca ? 'Follow the path to the library tower' : !s.t3shelf ? 'Shelve the first ten alkanes for Iupaca' : 'Enter the Chain Labyrinth' })
+    setState({ objective: (s.shards || 0) >= 4 ? 'The Chair Hills lie east' : (s.shards || 0) >= 3 ? 'Take the east road to the Chair Hills' : !s.metIupaca ? 'Follow the path to the library tower' : !s.t3shelf ? 'Shelve the first ten alkanes for Iupaca' : 'Enter the Chain Labyrinth' })
     if (!s.forestSeen) {
       saveGame({ forestSeen: true })
       setTimeout(() => say([
@@ -184,12 +203,14 @@ function ForestLevel({ world, onExit }) {
         { pos: [0, HALF - 4], text: '↓ Valence Fields', align: 'center' },
         { pos: [TOWER[0], TOWER[2] - 6], text: 'Library of Names', align: 'center' },
         { pos: [0, GATE_Z - 3], text: 'Chain Labyrinth', align: 'center' },
+        { pos: [HALF - 8, 0], text: 'Chair Hills →', align: 'left' },
       ],
       goal: () => {
         const s = getState().save
         if (!s.metIupaca) return { pos: [IUPACA[0], IUPACA[2]], label: 'Talk to Archivist Iupaca' }
         if (!s.t3shelf) return { pos: [SHELF[0], SHELF[2]], label: 'Shelve the first ten alkanes' }
         if ((s.shards || 0) < 3) return { pos: [0, GATE_Z - 1], label: 'Enter the Chain Labyrinth' }
+        if ((s.shards || 0) < 5) return { pos: [HALF - 1, 0], label: 'Take the east road to the Chair Hills' }
         return { pos: [0, HALF - 2], label: 'Back to the Valence Fields' }
       },
     }
@@ -264,6 +285,7 @@ function ForestLevel({ world, onExit }) {
       {/* the bats above Iupaca's door: out of reach until Kai has the Lantern — then a little secret */}
       <EclipsedBats world={world} roosts={[[0, -19.2]]} decor active saved={save.t3forestBats ? [180] : [0]} onSleep={() => { if (!getState().save.t3forestBats) { saveGame({ t3forestBats: true }); setTimeout(() => say([{ who: 'Archivist Iupaca', text: 'Asleep. At last. Here — a page from my own shelf. Hexane: six carbons, an all-anti zigzag.' }]), 800) } }} />
       <Signpost pos={[3, 0, HALF - 4]} rotY={Math.PI} text="↓ Valence Fields · Library ↑" />
+      <EastGate open={(save.shards || 0) >= 3} />
       <Motes count={160} area={[90, 6, 90]} center={[0, 0.3, 0]} color="#9ff8e0" size={0.07} />
       <WolfPack world={world} spawns={[[-26, 20], [-22, 24], [-28, 26]]} tutorial={false} />
       <ImpPack world={world} spawns={[[12, 10], [16, 6], [10, 2], [14, -4]]} />
@@ -274,9 +296,9 @@ function ForestLevel({ world, onExit }) {
 
 export default function Forest({ onExit }) {
   const cp = getState().save.checkpoint || {}
-  const fromDungeon = cp.at === 'gate'
+  const fromDungeon = cp.at === 'gate', fromHills = cp.at === 'east'
   return (
-    <GameScene start={fromDungeon ? [0, 0, GATE_Z + 4] : [0, 0, HALF - 4]} startFacing={fromDungeon ? 0 : Math.PI} background="#14261e" camDist={6.2}>
+    <GameScene start={fromHills ? [HALF - 4, 0, 0] : fromDungeon ? [0, 0, GATE_Z + 4] : [0, 0, HALF - 4]} startFacing={fromHills ? -Math.PI / 2 : fromDungeon ? 0 : Math.PI} background="#14261e" camDist={6.2}>
       {(world) => <ForestLevel world={world} onExit={onExit} />}
     </GameScene>
   )

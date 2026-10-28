@@ -1,4 +1,9 @@
+import { RingNames, InfoCard, TitanCheck, DecalinPredict } from './Panels4'
 import WorldDone from './WorldDone'
+import { PasteurCrystals, Polarimeter, CipLock, KingCheck } from './Panels5'
+import { TrailSigns, Arrows, Ledger, WyrmCheck } from './Panels6'
+import { SeedLabels, HammondStone, ShiftName, PhantomCheck } from './Panels7'
+import { RecipeBoard, Backward, Racemate, LeviCheck } from './Panels8'
 import { Shelf, Families, Isomers, Badges, NamingRules, NameTiles, NewmanPractice, ButaneCheck } from './Panels3'
 import { useEffect, useMemo, useState } from 'react'
 import { setState, useGame, getState, saveGame } from '../engine/store'
@@ -23,7 +28,7 @@ export default function Panels() {
   if (!p) return null
   // only close the panel this render belongs to (a trial's delayed done() must not close the next one)
   const close = (ok) => { if (getState().panel !== p) return; const f = p.onClose; setState({ panel: null }); setTimeout(() => f && f(ok), 0) }
-  const C = { atomForge: AtomForge, shells: Shells, octet: OctetBridge, well: EnergyWell, skeleton: Skeleton, hybridCheck: HybridCheck, polarity: Polarity, dipole: Dipole, formal: Formal, resonance: Resonance, pka: PKa, hbond: HBond, resonanceCheck: ResonanceCheck, shelf: Shelf, families: Families, isomers: Isomers, badges: Badges, namingRules: NamingRules, nameTiles: NameTiles, newman: NewmanPractice, butaneCheck: ButaneCheck, worldDone: WorldDone }[p.kind]
+  const C = { atomForge: AtomForge, shells: Shells, octet: OctetBridge, well: EnergyWell, skeleton: Skeleton, hybridCheck: HybridCheck, polarity: Polarity, dipole: Dipole, formal: Formal, resonance: Resonance, pka: PKa, hbond: HBond, resonanceCheck: ResonanceCheck, shelf: Shelf, families: Families, isomers: Isomers, badges: Badges, namingRules: NamingRules, nameTiles: NameTiles, newman: NewmanPractice, butaneCheck: ButaneCheck, worldDone: WorldDone, ringNames: RingNames, cisTrans: InfoCard, ringStrain: InfoCard, chairFlip: InfoCard, diaxial: InfoCard, decalin: InfoCard, titanCheck: TitanCheck, decalinPredict: DecalinPredict, pasteur: PasteurCrystals, polarimeter: Polarimeter, cipLock: CipLock, kingCheck: KingCheck, chirality: InfoCard, cip: InfoCard, diastereomers: InfoCard, resolution: InfoCard, trailSigns: TrailSigns, arrows: Arrows, ledger: Ledger, wyrmCheck: WyrmCheck, bondBreak: InfoCard, chain: InfoCard, passes: InfoCard, seedLabels: SeedLabels, hammond: HammondStone, shiftName: ShiftName, phantomCheck: PhantomCheck, unsatInfo: InfoCard, ezInfo: InfoCard, stabInfo: InfoCard, recipeBoard: RecipeBoard, backward: Backward, racemate: Racemate, leviCheck: LeviCheck, halogenInfo: InfoCard, watersInfo: InfoCard, facesInfo: InfoCard }[p.kind]
   const L = LESSONS[p.kind]
   const gotIt = () => { saveGame({ lessonsSeen: { ...(getState().save.lessonsSeen || {}), [p.kind]: true } }); setLesson(false); sfx('lock') }
   return (

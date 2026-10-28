@@ -1,4 +1,6 @@
 import { LEVELS } from '../data/levels'
+import { OPEN_UP_TO } from '../data/release'
+const worldOf = (label) => { const m = /World (\d+)/.exec(label); return m ? +m[1] : 0 }
 
 // Title-screen level select, like Winding World's: groups fold open into their entries.
 // Picking one replaces the saved game with that point's save.
@@ -11,7 +13,7 @@ export default function LevelSelect({ onGo, onClose }) {
           <button type="button" onClick={onClose} aria-label="Close">✕</button>
         </div>
         <p className="ls-note">Jump to any point. This replaces your saved progress.</p>
-        {LEVELS.map((g) => (
+        {LEVELS.filter((g) => import.meta.env.DEV || worldOf(g.group) <= OPEN_UP_TO).map((g) => ({ ...g, items: g.items.filter((it) => import.meta.env.DEV || worldOf(it.label) <= OPEN_UP_TO || !/cleared/.test(it.label)) })).map((g) => (
           g.items.length === 1
             ? <button key={g.group} type="button" className="ls-item ls-solo" onClick={() => onGo(g.items[0])}>{g.group}</button>
             : (

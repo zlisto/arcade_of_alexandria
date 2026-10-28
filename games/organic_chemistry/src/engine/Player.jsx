@@ -5,6 +5,18 @@ import KaiModel from '../actors/KaiModel'
 import { poll } from './input'
 import { getState, setState, toast } from './store'
 import { sfx } from '../audio/sfx'
+import { closedGates } from './kit'
+
+/** is a shut gate standing between two points on the floor? */
+function gateBetween(x1, z1, x2, z2) {
+  for (const g of closedGates.values()) {
+    const a = z1 - g.z, b = z2 - g.z
+    if (a * b >= 0 || Math.abs(a) < 0.3 || Math.abs(b) < 0.3) continue
+    const x = x1 + (x2 - x1) * (a / (a - b))
+    if (x > g.x0 && x < g.x1) return true
+  }
+  return false
+}
 
 // Kai's controller. Ocarina-style: camera-relative running, roll (i-frames), lock-on with strafe,
 // sidestep and backhop, a 3-hit combo, a charged spin, block, hybrid stances, and auto-jump off ledges.
@@ -70,6 +82,7 @@ export default function Player({ world, start = [0, 0, 0], startFacing = 0 }) {
             const cp = world.respawn
             s.pos.set(...cp)
             s.vel.set(0, 0, 0)
+            world.knockouts = (world.knockouts || 0) + 1
             toast('Kai is knocked out — back to the last checkpoint.', 'warn')
           }, 400)
         }
@@ -443,23 +456,25 @@ export default function Player({ world, start = [0, 0, 0], startFacing = 0 }) {
     if (gs.prompt !== label) setState({ prompt: label })
     if (near && inp.interact && !busy) near.onInteract()
 
-    // ---- Newman Lantern (G): turn the bond of whatever axle Kai faces by 60° (§3.6–3.7)
+    // ---- G tools: the Newman Lantern turns a bond (§3.6–3.7); the Ring-Flip Gauntlet flips a chair (§4.6).
+    // Each target names the item it needs (`needs`, a save flag; the Lantern by default).
     let lt = null
-    if (!busy && gs.save.hasLantern && world.lanterns.size) {
+    if (!busy && world.lanterns.size) {
       let bd = Infinity
       for (const l of world.lanterns.values()) {
-        if (!l.enabled) continue
+        if (!l.enabled || !gs.save[l.needs || 'hasLantern']) continue
         if (typeof l.label === 'function' && !l.label()) continue
         const lp = typeof l.pos === 'function' ? l.pos() : l.pos
         const dx = lp[0] - s.pos.x, dz = lp[2] - s.pos.z, d = Math.hypot(dx, dz)
         if (d > l.radius || Math.abs(lp[1] - s.pos.y) > 4) continue
+        if (gateBetween(s.pos.x, s.pos.z, lp[0], lp[2])) continue // a shut gate between
         const ang = d < 0.8 ? 0 : Math.acos(Math.max(-1, Math.min(1, (dx * Math.sin(s.facing) + dz * Math.cos(s.facing)) / d)))
-        if (ang > 1.2) continue
+        if (ang > 1.2 && !l.omni) continue
         const score = d - (l.priority || 0) * 10 // a higher-priority target (the boss's knot) wins over nearby ones
         if (score < bd) { bd = score; lt = l }
       }
     }
-    const lprompt = !label && lt ? (typeof lt.label === 'function' ? lt.label() : lt.label) : null
+    const lprompt = lt ? (typeof lt.label === 'function' ? lt.label() : lt.label) : null
     if (gs.lanternPrompt !== lprompt) setState({ lanternPrompt: lprompt })
     if (lt && inp.lantern && !busy) { sfx('stance'); lt.onLantern(inp.lanternRev ? -1 : 1) }
 
