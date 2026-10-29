@@ -111,7 +111,7 @@ function SummitLevel({ world, onExit }) {
       world.camOverride = twoShot(world, SPECTRA, 3.6, 0.6)
       setState({ spectraShot: true })
       await say([
-        { who: 'Astronomer Spectra', text: 'You climbed in the dark. Brave. The stars are clearer from here, and so is everything else.' },
+        { who: 'Astronomer Spectra', text: 'Walden’s challenger? A violet spark streaked up the mountain an hour ahead of you. Brave, climbing after it in the dark.' },
         { who: 'Astronomer Spectra', text: 'Spectra. I read light. A molecule can’t hide from the right light.' },
         { who: 'Astronomer Spectra', text: 'Malradix is in my observatory, in a false shape. He wrote: “No one can ever know what I truly am.”' },
         { who: 'Pi', text: 'Can we?' },

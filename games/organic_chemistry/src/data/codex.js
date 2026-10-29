@@ -450,28 +450,52 @@ export const CODEX = [
   },
   // ---------------- World 11: the Arena of Five (Chapter 11)
   {
+    title: '† on a product name (the Arena)',
+    section: '11.1, 11.5', pages: '344, 354',
+    unlocked: (s) => s.solved['11-1b'] || s.solved['11-3'],
+    text: '† worked out from the book’s rules; not printed in the text. (R)-Hexan-2-yl acetate (Problem 11-1 asks for it but prints no answer), and 3,7-dimethyloctan-3-ol, the IUPAC name of the Cation Pit’s alcohol (the text calls it only “an alcohol product”). Products without a † are printed in the chapter.',
+  },
+  {
+    title: 'Walden’s cycle',
+    section: '11.1', pages: '342–344',
+    unlocked: (s) => s.t11cycle,
+    text: 'In the 1-phenyl-2-propanol cycle (Fig 11.3), step 1 (tosylate formation) breaks the O–H bond and step 3 (hydroxide cleaving the acetate) leaves the C–O bond at the centre alone. Only step 2, acetate replacing tosylate at the chirality centre, inverts it.',
+  },
+  {
+    title: 'The Walden Gate',
+    section: '11.1–11.2', pages: '344–346',
+    unlocked: (s) => s.solved['11-1a'] && s.solved['11-1b'],
+    text: 'SN2 attack comes from 180° away from the leaving group, and the centre inverts. (R)-1-Bromo-1-phenylethane + CN⁻ → (S)-2-phenylpropanenitrile (Worked Example 11.1); (S)-2-bromohexane + acetate → (R)-hexan-2-yl acetate † (Problem 11-1).',
+  },
+  {
     title: 'The SN2 reaction',
-    section: '11.1–11.3', pages: '342–354',
+    section: '11.1–11.3', pages: '342–352',
     unlocked: (s) => s.solved['11-2'],
-    text: 'One step, backside attack, inversion of configuration (Walden inversion). Fastest at methyl and primary carbons, with charged nucleophiles, good leaving groups (weak bases like Br⁻ and TsO⁻) and polar aprotic solvents.',
+    text: 'One step, backside attack, inversion of configuration (Walden inversion). Fastest at methyl, then primary carbons; tertiary halts it. Nucleophiles with CH₃Br (Table 11.1): H₂O 1, CH₃CO₂⁻ 500, NH₃ 700, HO⁻ 10,000. Leaving groups: HO⁻, H₂N⁻ ≪ 1, F⁻ 1, Cl⁻ 200, Br⁻ 10,000, TsO⁻ 60,000. Polar aprotic solvents (DMSO, DMF, acetonitrile, HMPA) beat protic ones (water, methanol, ethanol); benzene is neither protic nor strongly polar (Problem 11-7).',
   },
   {
     title: 'The SN1 reaction',
-    section: '11.4–11.5', pages: '354–361',
+    section: '11.4–11.5', pages: '352–360',
     unlocked: (s) => s.solved['11-3'],
-    text: 'Two steps: the leaving group departs first to give a planar carbocation, which the nucleophile attacks from either face. First-order kinetics; tertiary, allylic and benzylic substrates; polar protic solvents; mostly racemic products.',
+    text: 'Two steps: the leaving group departs first to give a planar carbocation, which the nucleophile attacks from either face. First-order kinetics; tertiary, allylic and benzylic substrates; polar protic solvents. A tertiary carbon takes no backside attack, and a strong base would eliminate instead. (R)-6-Chloro-2,6-dimethyloctane in water gives the alcohol, 3,7-dimethyloctan-3-ol †, about 80% racemized and 20% inverted: 40% (R) : 60% (S) (p. 354). The departing chloride briefly shields one face (an ion pair, Fig 11.12).',
   },
   {
-    title: 'Eliminations: Zaitsev, E2, E1, E1cB',
-    section: '11.7–11.10', pages: '362–371',
+    title: 'Zaitsev and E2',
+    section: '11.7–11.9', pages: '362–369',
     unlocked: (s) => s.solved['11-4e'] && s.solved['11-4z'],
-    text: 'The more substituted alkene usually wins (Zaitsev). E2 needs H and the leaving group anti-periplanar, trans-diaxial in a ring. E1 goes through a carbocation; E1cB loses the proton first, next to a carbonyl.',
+    text: 'The more substituted alkene usually wins: 2-bromobutane + NaOEt gives 2-butene 81%, 1-butene 19%; 2-bromo-2-methylbutane gives 2-methyl-2-butene 70%, 2-methyl-1-butene 30%. E2 needs H and the leaving group anti-periplanar, trans-diaxial in a ring. Menthyl chloride must ring-flip, and its only trans-diaxial H gives the non-Zaitsev 2-menthene.',
   },
   {
     title: 'A summary of reactivity',
-    section: '11.12', pages: '372–374',
+    section: '11.10–11.12', pages: '369–372',
     unlocked: (s) => s.solved['11-5'],
-    text: 'Primary: SN2 (good nucleophile) or E2 (hindered base). Secondary: SN2 (weakly basic nucleophile, polar aprotic) or E2 (strong base). Tertiary: E2 (base), or SN1 + E1 (neutral). E1cB two carbons from a carbonyl.',
+    text: 'Primary: SN2 (good nucleophile) or E2 (strong, hindered base). Secondary: SN2 (weakly basic nucleophile, polar aprotic) or E2 (strong base). Tertiary: E2 (base), or SN1 + E1 together (neutral). E1 goes through a carbocation, shows no deuterium isotope effect and gives the Zaitsev product; E1cB loses the proton first, two carbons from a carbonyl.',
+  },
+  {
+    title: 'The Five-Stanced Champion',
+    section: '11.2–11.12', pages: '344–372',
+    unlocked: (s) => s.solved.boss11,
+    text: 'Four rounds, in a new order each fight. SN2: CH₃Br + HO⁻; 1-bromobutane + azide in HMPA; 1-bromobutane + NaI (Problem 11-4). SN1, with E1: (CH₃)₃CBr in water; (S)-3-chloro-3-methyloctane in acetic acid (Problem 11-8); 2-chloro-2-methylpropane in aqueous ethanol. E2, secondary: 2-bromobutane + ethoxide; neomenthyl chloride + ethoxide; menthyl chloride + strong base in ethanol (Fig 11.23). E2, tertiary with a base: 2-bromo-2-methylbutane + ethoxide; 1-chloro-1-methylcyclohexane + KOH (Worked Example 11.3).',
   },
   // ---------------- World 12: the Observatory of Light (Chapter 12)
   {

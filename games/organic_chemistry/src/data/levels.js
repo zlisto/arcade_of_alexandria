@@ -228,7 +228,7 @@ const col = (room, upTo, extra = {}) => {
       ...base, wastesSeen: true, metWalden: true, t11cycle: true,
       solved: { ...base.solved, ...done, 't11-map': true, 't11-decree': true },
       hasUmbrella: !!done['t11-umb'], t11key: !!done['t11-key'] && !done['t11-door'], t11bossKey: !!done['t11-bosskey'],
-      t11dials: done['11-2'] ? { sub: 'me', nu: 'ho', lg: 'br', sol: 'dmf' } : {}, t11pit: done['11-3'] ? { ion: true, top: true, bottom: true } : {}, t11flip: !!done['11-4e'],
+      t11dials: done['11-2'] ? { sub: 'me', nu: 'ho', lg: 'ts', sol: 'dmso' } : {}, t11pit: done['11-3'] ? { ion: true, top: true, bottom: true } : {}, t11flip: !!done['11-4e'],
       t11seen: Object.fromEntries(ROOMS11.slice(0, r + 1).map((x) => [x.id, true])),
       checkpoint: { scene: 'coliseum', room }, ...extra,
     },
