@@ -1,4 +1,8 @@
+import { useState } from 'react'
+import { createPortal } from 'react-dom'
 import { BOOK } from '../data/codex'
+import { setState } from '../engine/store'
+import { sfx } from '../audio/sfx'
 
 // The card that opens after Kai warps out of a cleared dungeon: which chapter the world taught, with
 // its sections, and where to go next. (It replaced the separate end-of-world screens.)
@@ -162,14 +166,42 @@ const WORLDS = {
       'Mass spectrometry: the molecular ion M⁺, the base peak, and what each fragment lost (§12.1–12.2)',
       'Isotopes: Cl gives M : M + 2 at 3 : 1, Br at 1 : 1; an odd M⁺ means an odd number of N (§12.3)',
       'ε = hν: radio to gamma by energy; infrared makes bonds vibrate (§12.5–12.6)',
+      'High-resolution mass tells formulas of the same nominal mass apart (§12.2)',
       'IR bands: O–H broad near 3400, ≡C–H 3300, C=O 1715 ketone, 1730 aldehyde (+2750), 1735 ester (§12.7–12.8)',
     ],
-    next: 'All twelve Bond Shards. Next: Malradix’s Keep, the finale (coming soon).',
+    next: 'All twelve Bond Shards. The Crown of Tetravalence is whole, and the kingdom’s bonds hold.',
   },
+}
+
+// the game's end: after the last card, a short roll of the journey and its source, then the title or the Summit
+function Ending({ done }) {
+  const toTitle = () => { sfx('lock'); setState({ fade: 1 }); setTimeout(() => setState({ panel: null, screen: 'title', fade: 0, objective: '', bossHp: null }), 450) }
+  // a full-screen card of its own, over the HUD and the minimap (portalled out of the panel so nothing shows through)
+  return createPortal(
+    <div className="ending-screen">
+      <div className="worlddone ending">
+        <svg className="ending-crown" viewBox="0 0 120 70" aria-hidden="true">
+          <path d="M14 58 L10 18 L36 38 L60 8 L84 38 L110 18 L106 58 Z" fill="#e8c46a" stroke="#fff0b8" strokeWidth="2" strokeLinejoin="round" />
+          <rect x="14" y="56" width="92" height="9" rx="3" fill="#c8a050" />
+          {[[10, 18], [60, 8], [110, 18], [36, 38], [84, 38]].map(([x, y]) => <circle key={x} cx={x} cy={y} r="4.5" fill="#9ff6ff" />)}
+        </svg>
+        <p className="lesson-kicker">The End</p>
+        <h2>The Legend of Valence</h2>
+        <p>Malradix shares his electron at last, and Octavia keeps the Octet again. Sir Kai, Knight of Valence, and Pi walk home with the Crown.</p>
+        <ol className="ending-worlds">{Object.entries(WORLDS).map(([k, w]) => <li key={k}>{w.world}</li>)}</ol>
+        <p className="lesson-cite">Based on <i>{BOOK.title}</i>, Chapters 1–12 — {BOOK.author}, {BOOK.publisher} ({BOOK.license}).</p>
+        <p className="small">Made at the Arcade of Alexandria. Thank you for playing.</p>
+        <div className="title-buttons"><button className="primary" onClick={toTitle}>Back to the title</button><button className="ghost" onClick={done}>Keep exploring</button></div>
+      </div>
+    </div>,
+    document.body,
+  )
 }
 
 export default function WorldDone({ n, done }) {
   const w = WORLDS[n] || WORLDS[1]
+  const [end, setEnd] = useState(false)
+  if (end) return <Ending done={done} />
   return (
     <div className="worlddone">
       <p className="lesson-kicker">World cleared</p>
@@ -178,7 +210,7 @@ export default function WorldDone({ n, done }) {
       <ul>{w.points.map((t, i) => <li key={i}>{t}</li>)}</ul>
       <p className="small">{w.next}</p>
       <p className="lesson-cite">{BOOK.author}, <i>{BOOK.title}</i> ({BOOK.publisher}, {BOOK.license}) · {w.chapter.split(',')[0]}, pp. {w.pages}</p>
-      <div className="title-buttons"><button className="primary" onClick={done}>Continue the journey</button></div>
+      <div className="title-buttons">{n === 12 ? <button className="primary" onClick={() => { sfx('lock'); setEnd(true) }}>The end of the journey</button> : <button className="primary" onClick={done}>Continue the journey</button>}</div>
     </div>
   )
 }

@@ -502,7 +502,7 @@ export const CODEX = [
     title: 'Mass spectrometry',
     section: '12.1–12.3', pages: '386–395',
     unlocked: (s) => s.solved['12-2'],
-    text: 'Electron impact makes M⁺, the molecular ion; fragments show what broke off (hexane: 86 → 71, 57, 43, 29; base peak 57). Chlorine gives M and M + 2 at 3 : 1; bromine 1 : 1. An odd molecular weight means an odd number of nitrogens.',
+    text: 'Electron impact makes M⁺, the molecular ion; fragments show what broke off (hexane: 86 → 71, 57, 43, 29; base peak 57). Chlorine gives M and M + 2 at 3 : 1; bromine 1 : 1. An odd molecular weight means an odd number of nitrogens. The bar graphs here are read off the book’s figures: propane (Fig 12.4), hexane (12.6), the two samples (12.8), triethylamine (12.11), chloroethane (12.12) and 1-bromohexane (12.13). A plaque or crystal whose window looks magnified (×k) has been scaled up so small peaks can be read, as real spectra are.',
   },
   {
     title: 'The electromagnetic spectrum',
@@ -514,7 +514,19 @@ export const CODEX = [
     title: 'Infrared spectroscopy',
     section: '12.6–12.8', pages: '399–410',
     unlocked: (s) => s.solved['12-4'],
-    text: 'Characteristic bands (Table 12.1): O–H 3400–3650 broad; N–H 3300–3500; ≡C–H 3300; C≡C 2100–2260; C=C 1640–1680; C=O 1670–1780 (ketone 1715, aldehyde 1730 with 2750/2850, ester 1735).',
+    text: 'Characteristic bands (Table 12.1): O–H 3400–3650 broad; N–H 3300–3500 (two bands for a primary amine); ≡C–H 3300; C≡C 2100–2260; =C–H 3020–3100; C=C 1640–1680; C=O 1670–1780 (ketone 1715, aldehyde 1730 with 2750/2850, ester 1735 with C–O at 1300–1000, acid 1710 with O–H at 2500–3100); NO₂ 1540. The spectra here are drawn from these ranges, not traced from the book’s figures: each band lands at a fresh spot inside its range every time, with a few weak fingerprint dips. Table 12.1 gives the nitro group only its 1540 band, so that is the only one drawn.',
+  },
+  {
+    title: '† on a compound’s name (the Observatory)',
+    section: '12.2–12.8', pages: '388–408',
+    unlocked: (s) => s.solved['12-4'],
+    text: 'A † marks a compound Chapter 12 never prints: propanal, methyl vinyl ether, methyl acetate and 1-butanol. Their bands follow Table 12.1 for their functional groups. The exact masses (58.0419, 74.0368 and 74.0732) are summed from the isotope masses on p. 388. A † also marks answers the book asks for but doesn’t print: cyclohexanol dehydrating to m/z 82 (Problem 12-3b), how IR tells CH₃CH₂CO₂H from HOCH₂CH₂CHO (Problem 12-8c), and triethylamine showing no N–H band (§12.8 covers only primary and secondary amines). A “† built” mass spectrum is one the book never draws (cyclohexylamine, cyclohexanol, the C₃H₆O and weight-74 compounds): it holds only M⁺, M + 1 at 1.10% per carbon (p. 389) and, for cyclohexanol, M − 18; its heights are illustrative. In the duel the tag is held back until he is named, so it can’t single out an answer. The dome’s two infrared frequencies (1.5 × 10¹³ and 3.3 × 10¹³ Hz) are worked out as c/λ from Problems 12-6e and 12-5, and its microwave wavelength (3.0 × 10⁻³ m) as c/ν from Problem 12-6f.',
+  },
+  {
+    title: 'The Disguised Sorcerer',
+    section: '12.2–12.8', pages: '388–408',
+    unlocked: (s) => s.solved.boss12,
+    text: 'Three rounds, one of each kind, in a new order each fight. The weighing crystal shows his M⁺ region; the second crystal is named for its clue: the high-resolution crystal gives an exact mass, the fragment crystal his whole bar graph. Same weight, IR decides: C₃H₆O (acetone 1715; 2-propen-1-ol O–H 3500, C=C 1660, Worked Example 12.4; propanal †; methyl vinyl ether †) or weight 74 (CH₃CH₂CO₂H and HOCH₂CH₂CHO, Problem 12-8c †; methyl acetate †; 1-butanol †, told apart by exact mass). Isotopes and the nitrogen rule: chloroethane 64/66, 1-bromohexane 164/166 (and 135/137), triethylamine 101 (base 86), cyclohexylamine 99. Fragments: methylcyclohexane (base 83) and ethylcyclopentane (base 69), Worked Example 12.1; hexane 86 (base 57); cyclohexanol 100, dehydrating to 82 (Problem 12-3b †). Every wrong name makes him strike sooner for the rest of that round.',
   },
 ]
 

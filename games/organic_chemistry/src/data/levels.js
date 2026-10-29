@@ -248,7 +248,7 @@ const obs = (room, upTo, extra = {}) => {
       ...base, summitSeen: true, metSpectra: true, t12scope: true,
       solved: { ...base.solved, ...done, 't12-map': true, 't12-decree': true },
       hasLens: !!done['t12-lens'], t12key: !!done['t12-key'] && !done['t12-door'], t12bossKey: !!done['t12-bosskey'],
-      t12placed: done['12-2'] ? { cl: 'chlorine', br: 'bromine', n: 'nitrogen' } : {}, t12bells: done['12-4'] ? { b1: true, b2: true, b3: true, b4: true, b5: true } : {},
+      t12placed: done['12-2'] ? { cl: 'chlorine', br: 'bromine', n: 'nitrogen', none: 'none of the three' } : {}, t12bells: done['12-4'] ? { b1: true, b2: true, b3: true, b4: true, b5: true } : {},
       t12seen: Object.fromEntries(ROOMS12.slice(0, r + 1).map((x) => [x.id, true])),
       checkpoint: { scene: 'observatory', room }, ...extra,
     },
