@@ -30,4 +30,13 @@ The sorcerer Malradix has shattered the Crown of Tetravalence. You play a young 
 
 Walk to the orange **LEGEND OF VALENCE** cabinet and press **E**, or play it right here.`,
   },
+  {
+    q: 'Tell me about Mini Max',
+    gameId: 'game_theory',
+    a: `**Mini Max** is our Game Theory game, built from Martin J. Osborne and Ariel Rubinstein's **A Course in Game Theory** (MIT Press).
+
+In the neon city of Equilibria, Impresario Zero rigs every contest around one belief: for anyone to win, someone must lose. Pop star and street brawler Lisa "Mini" Maxobal fights through his Grand Tour to free her duet partner Juno. Every standoff is a game you solve: best responses, Nash equilibria and mixed strategies decide each fight.
+
+Walk to the purple **MINI MAX** cabinet and press **E**, or play it right here.`,
+  },
 ]

@@ -84,6 +84,16 @@ export const GAMES = [
     status: 'coming_soon',
     theme: { primary: '#3ecf8e', secondary: '#143528', accent: '#b8ffe0', wood: '#3a3228', label: 'CS' },
   },
+  {
+    id: 'game_theory',
+    title: 'Mini Max',
+    subject: 'Game Theory',
+    blurb: 'A neon beat ’em up where every fight is a game — Nash equilibrium, mixed strategies, and why most games aren’t zero-sum, from Osborne & Rubinstein.',
+    authors: 'Martin J. Osborne & Ariel Rubinstein · A Course in Game Theory (MIT Press, 1994)',
+    href: 'https://zlisto.github.io/mini-max/',
+    status: 'live',
+    theme: { primary: '#c04ce0', secondary: '#2a1238', accent: '#f0c0ff', wood: '#4a3040', label: 'GAME' },
+  },
 ]
 
 export function gameById(id) {
